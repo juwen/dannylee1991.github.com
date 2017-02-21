@@ -1,0 +1,840 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="一只在迈向机器学习道路上狂奔的程序猿." />
+
+
+
+  <meta name="keywords" content="Android," />
+
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="Android的测试是基于JUnit的，你可以以一个本地单元测试的模式在JVM上运行，也可以在Android设备上运行它们。这个页面提供了一个关于构建android测试的概念和工具的介绍。
+
+测试类型当使用Android Studio来写测试的时候，你的测试代码必须放置在两个不同的代码目录下。对于你项目中的每个模块，Android Studio包含两个代码集合，对应以下的测试类型：
+
+本地单元测">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Android文档翻译】入门测试">
+<meta property="og:url" content="http://dannylee1991.github.io/2017/01/11/【Android文档翻译】入门测试/index.html">
+<meta property="og:site_name" content="DannyLee">
+<meta property="og:description" content="Android的测试是基于JUnit的，你可以以一个本地单元测试的模式在JVM上运行，也可以在Android设备上运行它们。这个页面提供了一个关于构建android测试的概念和工具的介绍。
+
+测试类型当使用Android Studio来写测试的时候，你的测试代码必须放置在两个不同的代码目录下。对于你项目中的每个模块，Android Studio包含两个代码集合，对应以下的测试类型：
+
+本地单元测">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_01_11/001.png">
+<meta property="og:updated_time" content="2017-01-14T11:18:06.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【Android文档翻译】入门测试">
+<meta name="twitter:description" content="Android的测试是基于JUnit的，你可以以一个本地单元测试的模式在JVM上运行，也可以在Android设备上运行它们。这个页面提供了一个关于构建android测试的概念和工具的介绍。
+
+测试类型当使用Android Studio来写测试的时候，你的测试代码必须放置在两个不同的代码目录下。对于你项目中的每个模块，Android Studio包含两个代码集合，对应以下的测试类型：
+
+本地单元测">
+<meta name="twitter:image" content="http://dannylee1991.github.io/img/17_01_11/001.png">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post'
+  };
+</script>
+
+<!--baidu统计-->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?2f967e5ec4f276411160d27aeace7722";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+  <title> 【Android文档翻译】入门测试 | DannyLee </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">DannyLee</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+        <li class="menu-item menu-item-search">
+          <a href="#" class="st-search-show-outputs">
+            <i class="menu-item-icon icon-next-search"></i> <br />
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'ss9-_Hsd4DyhyGw4m99P','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              【Android文档翻译】入门测试
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-01-11T22:21:58+08:00" content="2017-01-11">
+            2017-01-11
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/Android/" itemprop="url" rel="index">
+                  <span itemprop="name">Android</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/01/11/【Android文档翻译】入门测试/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/11/【Android文档翻译】入门测试/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><blockquote>
+<p>Android的测试是基于<a href="http://junit.org/" target="_blank" rel="external">JUnit</a>的，你可以以一个本地单元测试的模式在JVM上运行，也可以在Android设备上运行它们。这个页面提供了一个关于构建android测试的概念和工具的介绍。</p>
+</blockquote>
+<h2 id="测试类型">测试类型</h2><p>当使用Android Studio来写测试的时候，你的测试代码必须放置在两个不同的代码目录下。对于你项目中的每个模块，Android Studio包含两个代码集合，对应以下的测试类型：</p>
+<ul>
+<li><strong>本地单元测试</strong></li>
+</ul>
+<p>放置在<code>module-name/src/test/java/</code>目录下。</p>
+<p>这些测试运行在本地的JVM上，并且没有访问Android 框架的API的权限。</p>
+<p>开始请看：<a href="/2017/01/11/【Android文档翻译】构建本地单元测试/">构建本地单元测试</a></p>
+<ul>
+<li><strong>仪表化测试</strong></li>
+</ul>
+<p>放置在<code>module-name/src/androidTest/java/</code>目录下。</p>
+<p>这些所有的测试必须运行在Android硬件设备上，或者Android模拟器上。</p>
+<p>仪表化测试是内置在APK中的依附于你的APP的运行在设备上的测试。系统运行你的测试APK，并且与你的app运行在同一进程中，因此你的测试能调用app中的方法并且改变app中的字段，并且自动化的运行你的UI界面。</p>
+<p>有关如何创建仪表化测试，请参阅以下的主题：</p>
+<ul>
+<li><a href="/2017/01/11/【Android文档翻译】构建仪表化单元测试/">构建仪表化单元测试</a>：通过Android依赖来构建复杂的单元测试，对于mock对象来说是不安全的。</li>
+<li><a href="/2017/01/11/【Android文档翻译】自动化UI测试/">自动化UI测试</a>：创建测试，在单个应用程序和多个应用程序之间的交互，来确认你的UI的交互行为是否准确。</li>
+<li><a href="/2017/01/11/【Android文档翻译】APP测试组件集成/">APP测试组件集成</a>：验证那些用户不直接与之交互的组件的行为，例如一个Service或者一个Content Provider。</li>
+</ul>
+<p><img src="/img/17_01_11/001.png" alt=""></p>
+<p>然而，<em>本地单元测试</em>和<em>仪表化测试</em>只是用于区分在本地JVM上运行的测试和在Android平台上(在硬件设备或者模拟器上)运行的测试的术语。在构建完整测试体系的时候应该理解的真正的测试类型见下表的描述：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">子类型</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">单元测试</td>
+<td style="text-align:center">本地单元测试</td>
+<td style="text-align:center">运行在本地JVM的单元测试。当你的测试没有Android框架依赖或者当你能模拟Android框架依赖时，你可以使用这些测试来最小化执行时间。</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">仪表化测试</td>
+<td style="text-align:center">单元测试可以运行在一个Android设备或者模拟器上。这些测试可以访问仪表信息，例如你正在测试的App的Context。当你的测试有Android依赖时，摸你对象不能满足时，可以使用这些测试。</td>
+</tr>
+<tr>
+<td style="text-align:center">集成测试</td>
+<td style="text-align:center">仅仅在你App内部的原件</td>
+<td style="text-align:center">这个类型的测试可以在一个用户执行一个特殊的事件或者在它的activity中传入了一个特殊的输入时，用来验证目标的app行为与期望的是否相同。例如，它允许你检查目标app返回的正确的UI输出，响应到app的Activity的交互界面。UI测试框架，像Espresso允许你程序化模拟用户操作，并测试复杂的应用内的用户交互。</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">跨应用组件</td>
+<td style="text-align:center">这个类型的测试用于验证不同用户应用程序之间或用户应用程序和系统应用程序之间的交互的正确行为。例如，当你在Android的菜单中执行一个事件，也许想测试你的app行为的正确性。UI测试框架支持跨应用互动，例如UIAutomator，允许你为这种情况创建测试。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="测试API">测试API</h2><p>接下来的通用API用于在Android上测试app。</p>
+<h3 id="JUnit">JUnit</h3><p>你应该写你自己的单元测试或者集成测试类，正如JUnit4测试类。框架提供了一个方便的方法来在测试中执行通用的设置，拆卸以及断言操作。</p>
+<p>一个基本的JUnit测试类是一个包含一个或多个测试模块的Java类。测试方法以<code>@Test</code>注解开头，包含练习和验证要测试的组件中的单个功能（即逻辑单元）的代码。</p>
+<p>以下代码段显示了一个JUnit集成测试的例子，它使用Espresso API对UI元素执行单击操作，然后检查是否显示预期的字符串。</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="variable">@RunWith</span>(AndroidJUnit4.class)</div><div class="line"><span class="variable">@LargeTest</span></div><div class="line">public class MainActivityInstrumentationTest &#123;</div><div class="line"></div><div class="line">    <span class="variable">@Rule</span></div><div class="line">    public ActivityTestRule mActivityRule = new ActivityTestRule&lt;&gt;(</div><div class="line">            MainActivity.class);</div><div class="line"></div><div class="line">    <span class="variable">@Test</span></div><div class="line">    public void sayHello()&#123;</div><div class="line">        onView(withText("Say hello!"))<span class="selector-class">.perform</span>(click());</div><div class="line"></div><div class="line">        onView(withId(R<span class="selector-class">.id</span><span class="selector-class">.textView</span>))<span class="selector-class">.check</span>(matches(withText(<span class="string">"Hello, World!"</span>)));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在你的JUnit测试类中，你可以通过使用以下注释调出测试代码中的部分进行特殊处理：</p>
+<ul>
+<li><code>@Before</code>:使用此注释可以指定包含测试设置操作的代码块。测试类会在每次测试之前调用这些代码块。你可以拥有多个<code>@Before</code>方法，但测试类调用这些方法的顺序不能保证。</li>
+<li><code>@After</code>:这个注解指定一个包含测试拆分操作的代码块。测试类在每个测试方法之后调用这个代码块。你可以在代码中定义多个<code>@After</code>操作。可以通过使用这个注解来释放任何内存中的资源。</li>
+<li><code>@Rule</code>:Rules允许你以一种可复用的方式来灵活的添加或者重定义每个测试方法的行为。在Android测试中，将此注解与某个Android测试支持库提供的测试规则一起使用，例如<a href="https://developer.android.google.cn/training/testing/start/index.html#test-apis" target="_blank" rel="external">ActivityTestRule</a>或者<a href="https://developer.android.google.cn/reference/android/support/test/rule/ServiceTestRule.html" target="_blank" rel="external">ServiceTestRule</a>。</li>
+<li><code>@BeforeClass</code>:使用这个注解来为每个测试类指定仅调用一次的静态方法。这个测试步骤在某些昂贵的操作(例如连接数据库)非常有用。</li>
+<li><code>@AfterClass</code>:使用这个注解来为每个测试类指定在所有的测试运行结束后仅调用一次的静态方法。这个测试步骤对于释放在<code>@BeforeClass</code>块之后分配的任意资源非常有用。</li>
+<li><code>@Test(timeout=)</code>:一些注解支持传递可以设置值的元素。例如，你可以指定测试的timeout时长。如果测试开始，但是没有在给定的超时时间内完成，它会自动失败。例如:<code>@Test(timeout=5000)</code></li>
+</ul>
+<p>更多的注解，见文档<a href="http://junit.sourceforge.net/javadoc/org/junit/package-summary.html" target="_blank" rel="external">JUnit注解</a>和<a href="https://developer.android.google.cn/reference/android/support/annotation/package-summary.html" target="_blank" rel="external">Android注解</a>。</p>
+<p>使用JUnit <a href="https://developer.android.google.cn/reference/junit/framework/Assert.html" target="_blank" rel="external">Assert</a>类来验证对象状态的正确性。这个断言方法会比较你测试中期望的值与实际结果的值，当两者值不一致时，会抛出一个异常。<a href="https://developer.android.google.cn/training/testing/start/index.html#AssertionClasses" target="_blank" rel="external">断言类</a>中有更多关于这些方法的描述。</p>
+<h3 id="Android测试支持库">Android测试支持库</h3><p><a href="https://developer.android.google.cn/topic/libraries/testing-support-library/index.html" target="_blank" rel="external">Android测试支持库</a>提供一个允许你快速构建并执行关于你app的测试代码的API接口，包括JUnit4和UI功能测试。这个库包括以下基于工具的API，当你想要自动化测试时，这些API非常有用：</p>
+<p><a href="https://developer.android.google.cn/topic/libraries/testing-support-library/index.html#AndroidJUnitRunner" target="_blank" rel="external">AndroidJUnitRunner</a>:</p>
+<pre><code>一个适用于Android的JUnit4兼容测试运行器。
+</code></pre><p><a href="https://developer.android.google.cn/topic/libraries/testing-support-library/index.html#Espresso" target="_blank" rel="external">Espresso</a>:</p>
+<pre><code>一个UI测试框架；适合在应用程序内的功能UI测试。
+</code></pre><p><a href="https://developer.android.google.cn/topic/libraries/testing-support-library/index.html#UIAutomator" target="_blank" rel="external">UI Automator</a>:</p>
+<pre><code>适用于系统和已安装应用程序之间跨应用程序功能UI测试的UI测试框架。
+</code></pre><h3 id="断言类">断言类</h3><p>由于Android测试支持库继承自JUnit，因此你可以使用断言方法来展示测试结果。断言方法将测试返回的实际值与预期值进行比较，如果比较测试失败，则抛出AssertionException。使用断言比记录更方便，并提供更好的测试性能。</p>
+<p>为了简化测试开发，你应该使用<a href="https://github.com/hamcrest" target="_blank" rel="external">Hamcrest library</a>,它可以使用Hamcrest匹配器的API创建更灵活的测试。</p>
+<h3 id="Monkey和monkeyrunner">Monkey和monkeyrunner</h3><p>Android SDK包含两个功能级别的测试工具:</p>
+<p>Monkey</p>
+<pre><code>这是一个命令行工具，用于向设备发送按键，触摸和手势的伪随机流。你使用Android Debug <span class="function"><span class="title">Bridge</span><span class="params">(adb)</span></span>工具运行它，并使用它来压力测试您的应用程序，报告所遇到的错误，或通过使用相同的随机数种子多次运行该工具来重复事件流。
+</code></pre><p>monkeyrunner</p>
+<pre><code>这个工具是<span class="keyword">python</span>写的测试程序的API和执行环境。API包括用于连接到设备，安装和卸载软件包，截屏，比较两个图像以及针对应用程序运行测试包的功能。使用API，你可以编写大量，强大和复杂的测试。您使用monkeyrunner命令行工具运行使用API的程序。
+</code></pre><h3 id="构建Android测试的指南">构建Android测试的指南</h3><p>以下文档提供了有关如何构建和运行各种测试类型的更多详细信息：</p>
+<p><a href="/2017/01/11/【Android文档翻译】构建本地单元测试/">构建本地单元测试</a></p>
+<pre><code>构建没有依赖或只有简单的依赖的单元测试，你可以mock，它运行在本地JVM上。
+</code></pre><p><a href="/2017/01/11/【Android文档翻译】构建仪表化单元测试/">构建仪表化单元测试</a></p>
+<pre><code>使用Android依赖项构建复杂的单元测试，这对于在硬件设备或模拟器上运行的模拟对象无法满足。
+</code></pre><p><a href="/2017/01/11/【Android文档翻译】自动化UI测试/">自动化UI测试</a></p>
+<pre><code>创建测试以验证用户界面在单个应用程序内的用户交互或多个应用程序之间的交互正确运行。
+</code></pre><p><a href="/2017/01/11/【Android文档翻译】APP测试组件集成/">测试应用程序集成</a></p>
+<pre><code>验证用户不直接与之交互的组件（例如服务或内容提供者）的行为
+</code></pre><p><a href="/2017/01/14/【Android文档翻译】测试性能展示/">测试性能展示</a></p>
+<pre><code>编写测试应用程序UI性能的测试，以确保持续流畅的用户体验
+</code></pre></span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/11/【Android文档翻译】构建本地单元测试/" rel="prev">【Android文档翻译】构建本地单元测试</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/11/【Android文档翻译】APP测试组件集成/" rel="next">【Android文档翻译】APP测试组件集成</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2017/01/11/【Android文档翻译】入门测试/"
+                   data-title="【Android文档翻译】入门测试" data-url="http://dannylee1991.github.io/2017/01/11/【Android文档翻译】入门测试/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="http://dannylee1991.github.io/images/avatar.jpg" alt="DannyLee佳楠" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">DannyLee佳楠</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">一只在迈向机器学习道路上狂奔的程序猿.</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">92</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/DannyLee1991" target="_blank">GitHub</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#测试类型"><span class="nav-number">1.</span> <span class="nav-text">测试类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#测试API"><span class="nav-number">2.</span> <span class="nav-text">测试API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JUnit"><span class="nav-number">2.1.</span> <span class="nav-text">JUnit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Android测试支持库"><span class="nav-number">2.2.</span> <span class="nav-text">Android测试支持库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#断言类"><span class="nav-number">2.3.</span> <span class="nav-text">断言类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Monkey和monkeyrunner"><span class="nav-number">2.4.</span> <span class="nav-text">Monkey和monkeyrunner</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#构建Android测试的指南"><span class="nav-number">2.5.</span> <span class="nav-text">构建Android测试的指南</span></a></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">DannyLee佳楠</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dannylee1991"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+  	<script src="/js/ua-parser.min.js"></script>
+  	<script src="/js/hook-duoshuo.js"></script>
+  
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"slide":{"type":"slide","bdImg":"3","bdPos":"left","bdTop":"250"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+</html>

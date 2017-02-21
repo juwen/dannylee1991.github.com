@@ -1,0 +1,808 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="一只在迈向机器学习道路上狂奔的程序猿." />
+
+
+
+  <meta name="keywords" content="django," />
+
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="以ubuntu为例，部署Django到Apache上
+1.安装apache21sudo apt-get install apache2
+2.安装mod_wsgiPython2：
+1sudo apt-get install libapache2-mod-wsgi
+Python3:
+1sudo apt-get install libapache2-mod-wsgi-py3
+3.准备一个新网站的配置文件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="部署Django到Apach">
+<meta property="og:url" content="http://dannylee1991.github.io/2017/01/09/部署Django到Apach/index.html">
+<meta property="og:site_name" content="DannyLee">
+<meta property="og:description" content="以ubuntu为例，部署Django到Apache上
+1.安装apache21sudo apt-get install apache2
+2.安装mod_wsgiPython2：
+1sudo apt-get install libapache2-mod-wsgi
+Python3:
+1sudo apt-get install libapache2-mod-wsgi-py3
+3.准备一个新网站的配置文件">
+<meta property="og:updated_time" content="2017-01-09T06:25:08.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="部署Django到Apach">
+<meta name="twitter:description" content="以ubuntu为例，部署Django到Apache上
+1.安装apache21sudo apt-get install apache2
+2.安装mod_wsgiPython2：
+1sudo apt-get install libapache2-mod-wsgi
+Python3:
+1sudo apt-get install libapache2-mod-wsgi-py3
+3.准备一个新网站的配置文件">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post'
+  };
+</script>
+
+<!--baidu统计-->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?2f967e5ec4f276411160d27aeace7722";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+  <title> 部署Django到Apach | DannyLee </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">DannyLee</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+        <li class="menu-item menu-item-search">
+          <a href="#" class="st-search-show-outputs">
+            <i class="menu-item-icon icon-next-search"></i> <br />
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'ss9-_Hsd4DyhyGw4m99P','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              部署Django到Apach
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-01-09T14:21:58+08:00" content="2017-01-09">
+            2017-01-09
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/django/" itemprop="url" rel="index">
+                  <span itemprop="name">django</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/01/09/部署Django到Apach/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/09/部署Django到Apach/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>以ubuntu为例，部署Django到Apache上</p>
+<h2 id="1-安装apache2">1.安装apache2</h2><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="keyword">get</span> install apache2</div></pre></td></tr></table></figure>
+<h2 id="2-安装mod_wsgi">2.安装mod_wsgi</h2><p>Python2：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="keyword">get</span> install libapache2-<span class="keyword">mod</span>-wsgi</div></pre></td></tr></table></figure>
+<p>Python3:</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="built_in">get</span> install libapache2-<span class="keyword">mod</span>-wsgi-<span class="keyword">py3</span></div></pre></td></tr></table></figure>
+<h2 id="3-准备一个新网站的配置文件">3.准备一个新网站的配置文件</h2><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo vi <span class="meta-keyword">/etc/</span>apache2<span class="meta-keyword">/sites-available/</span>sitename.conf</div></pre></td></tr></table></figure>
+<p>内容如下：</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="params">&lt;VirtualHost *:<span class="number">8888</span>&gt;</span></div><div class="line">    ServerName www.yourdomain.com</div><div class="line">    ServerAlias otherdomain.com</div><div class="line">    ServerAdmin tuweizhong@<span class="number">163.</span>com</div><div class="line">  </div><div class="line">    Alias <span class="meta-keyword">/media/</span> <span class="meta-keyword">/home/</span>tu<span class="meta-keyword">/blog/</span>media/</div><div class="line">    Alias <span class="meta-keyword">/static/</span> <span class="meta-keyword">/home/</span>tu<span class="meta-keyword">/blog/</span>static/</div><div class="line">  </div><div class="line">    <span class="params">&lt;Directory /home/tu/blog/media&gt;</span></div><div class="line">        Require all granted</div><div class="line">    <span class="params">&lt;/Directory&gt;</span></div><div class="line">  </div><div class="line">    <span class="params">&lt;Directory /home/tu/blog/static&gt;</span></div><div class="line">        Require all granted</div><div class="line">    <span class="params">&lt;/Directory&gt;</span></div><div class="line">  </div><div class="line">    WSGIScriptAlias / <span class="meta-keyword">/home/</span>tu<span class="meta-keyword">/blog/</span>blog/wsgi.py</div><div class="line">  </div><div class="line">    <span class="params">&lt;Directory /home/tu/blog/blog&gt;</span></div><div class="line">    <span class="params">&lt;Files wsgi.py&gt;</span></div><div class="line">        Require all granted</div><div class="line">    <span class="params">&lt;/Files&gt;</span></div><div class="line">    <span class="params">&lt;/Directory&gt;</span></div><div class="line"><span class="params">&lt;/VirtualHost&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="4-修改Django项目中wsgi-py文件">4.修改Django项目中wsgi.py文件</h2><p>上面的配置中写的 WSGIScriptAlias / /home/tu/blog/blog/wsgi.py</p>
+<p>就是把apache2和你的网站project联系起来了</p>
+<figure class="highlight capnproto"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> os</div><div class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join,dirname,abspath</div><div class="line"> </div><div class="line">PROJECT_DIR = dirname(dirname(abspath(__file__)))<span class="comment">#3</span></div><div class="line"><span class="keyword">import</span> sys <span class="comment"># 4</span></div><div class="line">sys.path.insert(<span class="number">0</span>,PROJECT_DIR) <span class="comment"># 5</span></div><div class="line"> </div><div class="line">os.environ[<span class="string">"DJANGO_SETTINGS_MODULE"</span>] = <span class="string">"blog.settings"</span> <span class="comment"># 7</span></div><div class="line"> </div><div class="line"><span class="keyword">from</span> django.core.wsgi <span class="keyword">import</span> get_wsgi_application</div><div class="line">application = get_wsgi_application()</div></pre></td></tr></table></figure>
+<blockquote>
+<p>第 3，4，5 行为新加的内容，作用是让脚本找到django项目的位置，也可以在sitename.conf中做，用WSGIPythonPath,想了解的自行搜索, 第 7 行如果一台服务器有多个django project时一定要修改成上面那样，否则访问的时候会发生网站互相串的情况，即访问A网站到了B网站，一会儿正常，一会儿又不正常（当然也可以使用 mod_wsgi daemon 模式,点击这里查看）</p>
+</blockquote>
+<h2 id="5-监听端口">5.监听端口</h2><figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo <span class="keyword">vim</span> /etc/apache2/ports.<span class="keyword">conf</span></div></pre></td></tr></table></figure>
+<p>将网站的端口加入监听列表：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="attribute"><span class="nomarkup">Listen</span></span> 80</div><div class="line"><span class="attribute"><span class="nomarkup">Listen</span></span> 8888</div><div class="line"></div><div class="line"><span class="section">&lt;IfModule ssl_module&gt;</span></div><div class="line">	<span class="attribute"><span class="nomarkup">Listen</span></span> 443</div><div class="line"><span class="section">&lt;/IfModule&gt;</span></div><div class="line"></div><div class="line"><span class="section">&lt;IfModule mod_gnutls.c&gt;</span></div><div class="line">	<span class="attribute"><span class="nomarkup">Listen</span></span> 443</div><div class="line"><span class="section">&lt;/IfModule&gt;</span></div><div class="line"></div><div class="line"><span class="comment"># vim: syntax=apache ts=4 sw=4 sts=4 sr noet</span></div></pre></td></tr></table></figure>
+<h2 id="6-设置目录和文件权限">6.设置目录和文件权限</h2><p>一般目录权限设置为 755，文件权限设置为 644 </p>
+<p>假如项目位置在 /home/tu/zqxt （在zqxt 下面有一个 manage.py，zqxt 是项目名称）</p>
+<figure class="highlight dos"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">cd</span> /home/tu/</div><div class="line">sudo chmod -R <span class="number">644</span> zqxt</div><div class="line">sudo <span class="built_in">find</span> zqxt -<span class="built_in">type</span> d -exec chmod <span class="number">755</span> \&#123;\&#125; \;</div></pre></td></tr></table></figure>
+<p><strong>apache 服务器运行用户可以在 /etc/apache2/envvars 文件里面改，这里使用的是默认值，当然也可以更改成自己的当前用户，这样的话权限问题就简单很多，但在服务器上推荐有 www-data 用户，更安全。以下是默认设置：</strong></p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># Since there is <span class="keyword">no</span> sane way to get the parsed apache2 config in scripts, some</div><div class="line"># settings are defined via environment <span class="keyword">variables</span> and <span class="comment">then used in apache2ctl,</span></div><div class="line"># /etc/init.d/apache2, /etc/logrotate.d/apache2, etc.</div><div class="line"> </div><div class="line">export <span class="comment">APACHE_RUN_USER=www-data</span></div><div class="line">export <span class="comment">APACHE_RUN_GROUP=www-data</span></div></pre></td></tr></table></figure>
+<h3 id="上传文件夹权限">上传文件夹权限</h3><p>media 文件夹一般用来存放用户上传文件，static 一般用来放自己网站的js，css，图片等，在settings.py中的相关设置</p>
+<p>STATIC_URL 为静态文件的网址 STATIC_ROOT 为静态文件的根目录，</p>
+<p>MEDIA_URL 为用户上传文件夹的根目录，MEDIA_URL为对应的访问网址</p>
+<p>在settings.py中设置：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Static files (CSS, JavaScript, Images)</span></div><div class="line"><span class="comment"># https://docs.djangoproject.com/en/dev/howto/static-files/</span></div><div class="line"><span class="attr">STATIC_URL</span> = <span class="string">'/static/'</span></div><div class="line"><span class="attr">STATIC_ROOT</span> = os.path.join(BASE_DIR,<span class="string">'static'</span>)</div><div class="line"> </div><div class="line"><span class="comment"># upload folder</span></div><div class="line"><span class="attr">MEDIA_URL</span> = <span class="string">'/media/'</span></div><div class="line"><span class="attr">MEDIA_ROOT</span> = os.path.join(BASE_DIR,<span class="string">'media'</span>)</div></pre></td></tr></table></figure>
+<p>在 Linux 服务器上，用户上传目录还要设置给 www-data 用户的写权限，下面的方法比较好，不影响原来的用户的编辑。</p>
+<p>假如上传目录为 zqxt/media/uploads 文件夹,进入media文件夹，将 uploads 用户组改为www-data，并且赋予该组写权限:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">cd</span> media/ <span class="comment"># 进入media文件夹</span></div><div class="line">sudo chgrp -R www-data uploads</div><div class="line">sudo chmod -R g+w uploads</div></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>备注</strong>：这两条命令，比直接用sudo chown -R www-data:www-data uploads 好，因为下面的命令不影响文件原来所属用户编辑文件，fedora系统应该不用设置上面的权限，但是个人强烈推荐用ubuntu,除非你对linux非常熟悉，你自己选择。</p>
+</blockquote>
+<p>如果你使用的是sqlite3数据库，还会提示 Attempt to write a readonly database,同样要给www-data写数据库的权限</p>
+<p>进入项目目录的上一级，比如project目录为 /home/tu/blog 那就进入 /home/tu 执行下面的命令（和修改上传文件夹类似）</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">sudo</span> chgrp www-<span class="meta">data</span> <span class="keyword">blog</span></div><div class="line"><span class="symbol">sudo</span> chmod g+w <span class="keyword">blog</span></div><div class="line"><span class="symbol">sudo</span> chgrp www-<span class="meta">data</span> <span class="keyword">blog/db.sqlite3 </span> # 更改为你的数据库名称</div><div class="line"><span class="symbol">sudo</span> chmod g+w <span class="keyword">blog/db.sqlite3</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>备注</strong>：上面的不要加 -R ,-R是更改包括所有的子文件夹和文件，这样不安全。个人建议可以专门弄一个文件夹,用它来放sqlite3数据库，给该文件夹www-data写权限，而不是整个项目给写权限，有些文件只要读的权限就够了，给写权限会造成不安全。</p>
+</blockquote>
+<h2 id="7-激活新网站">7.激活新网站</h2><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">sudo</span> <span class="selector-tag">a2ensite</span> <span class="selector-tag">sitename</span> 或 <span class="selector-tag">sudo</span> <span class="selector-tag">a2ensite</span> <span class="selector-tag">sitename</span><span class="selector-class">.conf</span></div></pre></td></tr></table></figure>
+<h3 id="8-如果遇到了错误">8.如果遇到了错误</h3><p>如果你重启apache时遇到了以下错误：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Job <span class="keyword">for</span> apache2<span class="selector-class">.service</span> failed. See <span class="string">"systemctl status apache2.service"</span> and <span class="string">"journalctl -xe"</span> <span class="keyword">for</span> <span class="selector-tag">details</span>.</div></pre></td></tr></table></figure>
+<p>尝试运行</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">systemctl</span> <span class="selector-tag">status</span> <span class="selector-tag">apache2</span><span class="selector-class">.service</span></div></pre></td></tr></table></figure>
+<p>得到如下结果时：</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">apache2.service - (null)</div><div class="line"><span class="symbol">   Loaded:</span> loaded (<span class="meta-keyword">/etc/</span>init.d/apache2)</div><div class="line"><span class="symbol">   Active:</span> failed (Result: exit-code) since Sat <span class="number">2015</span><span class="number">-05</span><span class="number">-30</span> <span class="number">02</span>:<span class="number">22</span>:<span class="number">41</span> IST; <span class="number">12</span>s ago</div><div class="line"><span class="symbol">     Docs:</span> man:systemd-sysv-generator(<span class="number">8</span>)</div><div class="line"><span class="symbol">  Process:</span> <span class="number">4866</span> ExecStart=<span class="meta-keyword">/etc/</span>init.d/apache2 start (code=exited, status=<span class="number">1</span>/FAILURE)</div></pre></td></tr></table></figure>
+<p>你可以考虑完全卸载apache，并清空配置，重新再来配置一次：</p>
+<p>重装APACHE2：</p>
+<p>替换已经删除的配置文件，而不重新安装:</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="built_in">get</span> -<span class="keyword">o</span> DPk<span class="variable">g:</span>:Option<span class="variable">s:</span>:=<span class="string">"--force-confmiss"</span> --reinstall install apache2</div></pre></td></tr></table></figure>
+<p>完全移除apache2</p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="keyword">get</span> purge apache2</div></pre></td></tr></table></figure>
+<p>安装apache2</p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="keyword">get</span> install apache2</div></pre></td></tr></table></figure>
+<p>参考文章：</p>
+<ul>
+<li><a href="http://www.ziqiangxuetang.com/django/django-deploy.html" target="_blank" rel="external">Django 部署(Apache)</a></li>
+<li><a href="http://askubuntu.com/questions/629995/apache-not-able-to-restart" target="_blank" rel="external">Apache not able to restart</a></li>
+</ul>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/django/" rel="tag">#django</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/11/【Android文档翻译】最佳测试实践/" rel="prev">【Android文档翻译】最佳测试实践</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/18/斯坦福机器学习课程 第六周 (3)机器学习系统设计/" rel="next">斯坦福机器学习课程 第六周 (3)机器学习系统设计-[构建垃圾邮件分类器][误差分析]</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2017/01/09/部署Django到Apach/"
+                   data-title="部署Django到Apach" data-url="http://dannylee1991.github.io/2017/01/09/部署Django到Apach/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="http://dannylee1991.github.io/images/avatar.jpg" alt="DannyLee佳楠" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">DannyLee佳楠</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">一只在迈向机器学习道路上狂奔的程序猿.</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">92</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/DannyLee1991" target="_blank">GitHub</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-安装apache2"><span class="nav-number">1.</span> <span class="nav-text">1.安装apache2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-安装mod_wsgi"><span class="nav-number">2.</span> <span class="nav-text">2.安装mod_wsgi</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-准备一个新网站的配置文件"><span class="nav-number">3.</span> <span class="nav-text">3.准备一个新网站的配置文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-修改Django项目中wsgi-py文件"><span class="nav-number">4.</span> <span class="nav-text">4.修改Django项目中wsgi.py文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-监听端口"><span class="nav-number">5.</span> <span class="nav-text">5.监听端口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-设置目录和文件权限"><span class="nav-number">6.</span> <span class="nav-text">6.设置目录和文件权限</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#上传文件夹权限"><span class="nav-number">6.1.</span> <span class="nav-text">上传文件夹权限</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-激活新网站"><span class="nav-number">7.</span> <span class="nav-text">7.激活新网站</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-如果遇到了错误"><span class="nav-number">7.1.</span> <span class="nav-text">8.如果遇到了错误</span></a></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">DannyLee佳楠</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dannylee1991"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+  	<script src="/js/ua-parser.min.js"></script>
+  	<script src="/js/hook-duoshuo.js"></script>
+  
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"slide":{"type":"slide","bdImg":"3","bdPos":"left","bdTop":"250"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+</html>

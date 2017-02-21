@@ -1,0 +1,774 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="一只在迈向机器学习道路上狂奔的程序猿." />
+
+
+
+  <meta name="keywords" content="gradle," />
+
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="持续构建是一个正在发孵化中(incubating)的feature。这意味着它目前还是不完整的，并且没有达到gradle产品的标准。这同样也意味着这一章节的用户指南也是在不断完善中的。
+
+通常，你让gradle执行一个你指定task。gradle需要制定一系列实际需要执行的满足要求的task，并将它们全部执行，然后停止工作直到下一次请求出现。持续构建不同于gradle那种通过在检查到之前的构建已">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gradle学习笔记-持续构建">
+<meta property="og:url" content="http://dannylee1991.github.io/2016/07/13/gradle学习笔记-持续构建/index.html">
+<meta property="og:site_name" content="DannyLee">
+<meta property="og:description" content="持续构建是一个正在发孵化中(incubating)的feature。这意味着它目前还是不完整的，并且没有达到gradle产品的标准。这同样也意味着这一章节的用户指南也是在不断完善中的。
+
+通常，你让gradle执行一个你指定task。gradle需要制定一系列实际需要执行的满足要求的task，并将它们全部执行，然后停止工作直到下一次请求出现。持续构建不同于gradle那种通过在检查到之前的构建已">
+<meta property="og:image" content="http://dannylee1991.github.io/img/16_07_13/javaPluginTasks.png">
+<meta property="og:updated_time" content="2016-07-22T07:04:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="gradle学习笔记-持续构建">
+<meta name="twitter:description" content="持续构建是一个正在发孵化中(incubating)的feature。这意味着它目前还是不完整的，并且没有达到gradle产品的标准。这同样也意味着这一章节的用户指南也是在不断完善中的。
+
+通常，你让gradle执行一个你指定task。gradle需要制定一系列实际需要执行的满足要求的task，并将它们全部执行，然后停止工作直到下一次请求出现。持续构建不同于gradle那种通过在检查到之前的构建已">
+<meta name="twitter:image" content="http://dannylee1991.github.io/img/16_07_13/javaPluginTasks.png">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post'
+  };
+</script>
+
+<!--baidu统计-->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?2f967e5ec4f276411160d27aeace7722";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+  <title> gradle学习笔记-持续构建 | DannyLee </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">DannyLee</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+        <li class="menu-item menu-item-search">
+          <a href="#" class="st-search-show-outputs">
+            <i class="menu-item-icon icon-next-search"></i> <br />
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'ss9-_Hsd4DyhyGw4m99P','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              gradle学习笔记-持续构建
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-07-13T22:06:55+08:00" content="2016-07-13">
+            2016-07-13
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/gradle/" itemprop="url" rel="index">
+                  <span itemprop="name">gradle</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/07/13/gradle学习笔记-持续构建/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/13/gradle学习笔记-持续构建/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><blockquote>
+<p>持续构建是一个正在发<strong>孵化中(<a href="https://docs.gradle.org/current/userguide/feature_lifecycle.html" target="_blank" rel="external">incubating</a>)</strong>的feature。这意味着它目前还是不完整的，并且没有达到gradle产品的标准。这同样也意味着这一章节的用户指南也是在不断完善中的。</p>
+</blockquote>
+<p>通常，你让gradle执行一个你指定task。gradle需要制定一系列实际需要执行的满足要求的task，并将它们全部执行，然后停止工作直到下一次请求出现。持续构建不同于gradle那种通过在检查到之前的构建已经过时时执行构建，来保持满足初始化构建的条件（直到指示停止）。例如：如果你将java代码编译为class文件，一个持续构建将在源码文件改变时自动初始化一次编译。持续构建在很多场景下都很有用。</p>
+<h2 id="1-我该如何开始和终止一个持续构建呢？">1.我该如何开始和终止一个持续构建呢？</h2><p>一个持续构建可以通过输入<code>--continuous</code>或<code>-t</code>开关来开启，通过对任务列表中的任务切换开关和参数，来定义要执行的任务。例如：<code>gradle build --continuous</code>。这和执行<code>gradle build</code>的效果是一样的，但当gradle执行完时，它会等待发生改变的文件输入。当有改变产生时，<code>gradle build</code>将会被再次自动的执行，再次执行构建。</p>
+<p>如果gradle附加在了一个交互式输入源，例如终端，持续构建会在按下<strong>CTRL-D</strong>（在Microsoft Windows上，在按下<strong>CTRL-D</strong>之后还需要按下<strong>ENTER</strong>或者<strong>RETURN</strong>）时执行。如果gradle没有附加在交互式输入源(例如以一个脚本的形式运行)，构建进程一定需要被中断（使用<code>kill</code>命令或类似的其他方式）。如果构建是通过Tooling API执行的，构建可以通过Tooling API的取消机制来终止。</p>
+<h2 id="2-什么将会导致后续的构建？">2.什么将会导致后续的构建？</h2><p>这时，只有对task输入的更改会被注意到。gradle会在task开始时就对改变进行监控。没有其他的改变会初始化一次构建。例如：对于构建脚本和构建逻辑的修改不会初始化构建。同样的，对于修改配置文件在构建时读入的文件，没有执行，将不会初始化一次构建。为了纳入这种变化，持续构建必须手动重启。</p>
+<p>对于一个典型的使用java插件的构建，使用传统的文件系统布局。下面是<code>gradle build</code>的生词的task图。</p>
+<p><strong>Java plugin task graph</strong></p>
+<p><img src="/img/16_07_13/javaPluginTasks.png" alt=""></p>
+<p>下面对于图中用到的task使用相对路径作为输入：</p>
+<p><strong>compileJava</strong></p>
+<pre><code>src<span class="regexp">/main/</span>java
+</code></pre><p><strong>processResources</strong></p>
+<pre><code>src<span class="regexp">/main/</span>resources
+</code></pre><p><strong>compileTestJava</strong></p>
+<pre><code>src/<span class="built_in">test</span>/java
+</code></pre><p><strong>processTestResources</strong></p>
+<pre><code>src/<span class="built_in">test</span>/resources
+</code></pre><p>假设初始化构建执行成功（比如：构建task和它的依赖的编译都没有错误），对文件的更改，或者对文件的增删操作，上述的场景将会初始化一次构建。如果在<code>src/main/java</code>目录下的java代码发生了变动，构建将会启动，并且所有的task将开始执行。gradle的增量构建支持，确保只有被变动所影响的task会被执行。</p>
+<p>如果主项目中的java代码编译失败，那么子变动<code>src/test/java</code>目录将不会被执行构建。由于测试代码依赖于主代码，直到主代码发生了改变，才有可能修复编译产生的错误。在每次构建之后，只有task的输入文件会被检测变化。</p>
+<h2 id="3-限制和异常">3.限制和异常</h2><p>目前有几个关于持续构建的问题。这些问题有可能会在未来的gradle版本中进行修复。</p>
+<h3 id="3-1_构建循环">3.1 构建循环</h3><p>gradle会在task执行之前就去监测改变。如果一个task在执行过程中改变了它自己，gradle将会查出这个变动，并且触发一次新的构建。如果每次task的执行，输入都被改变，那么构建就会再一次被触发。这不仅仅在持续构建中会出问题。当在“normally”模式并不是持续构建模式下运行，task改变了他自身的输入时也不会被视为有“up-to-date”标签。</p>
+<p>如果你的构建进入了一个这样的循环，你可以通过gradle的查看报告清单中的变动追踪task。当确认有文件在每次构建期间发生了改变，你应该找到那个出问题的task。在某些情况下，这种问题会很明显（例如：java文件通过<code>compileJava</code>来执行编译）。在其他的情况下，你可以通过使用<code>--info logging</code>来找到识别为<code>out-of-date</code>的文件所在的task。</p>
+<h3 id="3-2_需要Java7或更高版本">3.2 需要Java7或更高版本</h3><p>gradle使用jdk的<a href="http://docs.oracle.com/javase/7/docs/api/java/nio/file/WatchService.html" target="_blank" rel="external">WatchService</a>来在每次构建之间接收文件改变的通知。这个API是在Java7中引进的。由于这个原因，gradle的持续构建暂时不支持在Java6下的构建。</p>
+<h3 id="3-3_性能和稳定性">3.3 性能和稳定性</h3><p>Jdk文件监控设备在 Mac OS X（见<a href="https://bugs.openjdk.java.net/browse/JDK-8079620" target="_blank" rel="external">JDK-8079620</a>）上会依赖于一个无效的文件系统。这在大型项目中能感受到通知改变有显著的延迟。</p>
+<p>此外，监控机制可能在 Mac OS X （见<a href="https://bugs.openjdk.java.net/browse/JDK-8079620" target="_blank" rel="external">JDK-8079620</a>）下进行<strong>超负荷</strong>的加载时发生死锁。这表明，gradle不会通知文件改变。如果你怀疑这种情况发生了，退出持续构建，并且重新启动。</p>
+<p>在Linux下，OpenJDK的文件检测服务有时会丢失一些系统事件（见：<a href="https://bugs.openjdk.java.net/browse/JDK-8145981" target="_blank" rel="external">JDK-8145981</a>）。</p>
+<h3 id="3-4_符号链接的更改">3.4 符号链接的更改</h3><ul>
+<li>创建或删除符号链接到文件将启动一次构建。</li>
+<li>修改一个符号链接的目标不会导致重建。</li>
+<li>创建或删除符号链接目录不会造成重建。</li>
+<li>在一个符号链接的目标目录中创建新文件将不会导致重建。</li>
+<li>删除目标目录将不会导致重建。</li>
+</ul>
+<h3 id="3-5_不考虑构建逻辑的更改">3.5 不考虑构建逻辑的更改</h3><p>当前的实现是在不会重新计算构建模型。这意味着对task配置的更改，或者其他对构建modle的改动，都是被忽略的。</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/gradle/" rel="tag">#gradle</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/19/斯坦福机器学习课程 第一周 (1)欢迎来到机器学习/" rel="prev">斯坦福机器学习课程 第一周 (1)欢迎来到机器学习</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/11/gradle学习笔记-多项目构建介绍/" rel="next">gradle学习笔记-多项目构建介绍</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2016/07/13/gradle学习笔记-持续构建/"
+                   data-title="gradle学习笔记-持续构建" data-url="http://dannylee1991.github.io/2016/07/13/gradle学习笔记-持续构建/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="http://dannylee1991.github.io/images/avatar.jpg" alt="DannyLee佳楠" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">DannyLee佳楠</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">一只在迈向机器学习道路上狂奔的程序猿.</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">92</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/DannyLee1991" target="_blank">GitHub</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-我该如何开始和终止一个持续构建呢？"><span class="nav-number">1.</span> <span class="nav-text">1.我该如何开始和终止一个持续构建呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-什么将会导致后续的构建？"><span class="nav-number">2.</span> <span class="nav-text">2.什么将会导致后续的构建？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-限制和异常"><span class="nav-number">3.</span> <span class="nav-text">3.限制和异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1_构建循环"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 构建循环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2_需要Java7或更高版本"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 需要Java7或更高版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3_性能和稳定性"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 性能和稳定性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4_符号链接的更改"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 符号链接的更改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5_不考虑构建逻辑的更改"><span class="nav-number">3.5.</span> <span class="nav-text">3.5 不考虑构建逻辑的更改</span></a></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">DannyLee佳楠</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dannylee1991"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+  	<script src="/js/ua-parser.min.js"></script>
+  	<script src="/js/hook-duoshuo.js"></script>
+  
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"slide":{"type":"slide","bdImg":"3","bdPos":"left","bdTop":"250"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+</html>

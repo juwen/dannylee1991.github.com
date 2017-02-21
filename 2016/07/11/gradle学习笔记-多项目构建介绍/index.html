@@ -1,0 +1,771 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="一只在迈向机器学习道路上狂奔的程序猿." />
+
+
+
+  <meta name="keywords" content="gradle," />
+
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="只有小规模的项目具有单一的构建文件和源码，除非恰好是一个大规模的整体的应用。项目被分割成更小的、相互依赖的模块，往往会更容易理解和处理。“相互依赖”这个词很重要，因此，这就是为什么你通常希望通过一个单一的构建将多个模块链接起来。
+gradle通过多项目构建(multi-project)来支持这种需求。
+1.多项目构建的结构这种构建引入了各种各样的子项目，但它们都有共同的特点：
+
+在项目的根目录都有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gradle学习笔记-多项目构建介绍">
+<meta property="og:url" content="http://dannylee1991.github.io/2016/07/11/gradle学习笔记-多项目构建介绍/index.html">
+<meta property="og:site_name" content="DannyLee">
+<meta property="og:description" content="只有小规模的项目具有单一的构建文件和源码，除非恰好是一个大规模的整体的应用。项目被分割成更小的、相互依赖的模块，往往会更容易理解和处理。“相互依赖”这个词很重要，因此，这就是为什么你通常希望通过一个单一的构建将多个模块链接起来。
+gradle通过多项目构建(multi-project)来支持这种需求。
+1.多项目构建的结构这种构建引入了各种各样的子项目，但它们都有共同的特点：
+
+在项目的根目录都有">
+<meta property="og:updated_time" content="2016-07-13T14:25:58.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="gradle学习笔记-多项目构建介绍">
+<meta name="twitter:description" content="只有小规模的项目具有单一的构建文件和源码，除非恰好是一个大规模的整体的应用。项目被分割成更小的、相互依赖的模块，往往会更容易理解和处理。“相互依赖”这个词很重要，因此，这就是为什么你通常希望通过一个单一的构建将多个模块链接起来。
+gradle通过多项目构建(multi-project)来支持这种需求。
+1.多项目构建的结构这种构建引入了各种各样的子项目，但它们都有共同的特点：
+
+在项目的根目录都有">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post'
+  };
+</script>
+
+<!--baidu统计-->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?2f967e5ec4f276411160d27aeace7722";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+  <title> gradle学习笔记-多项目构建介绍 | DannyLee </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">DannyLee</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+        <li class="menu-item menu-item-search">
+          <a href="#" class="st-search-show-outputs">
+            <i class="menu-item-icon icon-next-search"></i> <br />
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'ss9-_Hsd4DyhyGw4m99P','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              gradle学习笔记-多项目构建介绍
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-07-11T23:06:55+08:00" content="2016-07-11">
+            2016-07-11
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/gradle/" itemprop="url" rel="index">
+                  <span itemprop="name">gradle</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/07/11/gradle学习笔记-多项目构建介绍/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/11/gradle学习笔记-多项目构建介绍/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>只有小规模的项目具有单一的构建文件和源码，除非恰好是一个大规模的整体的应用。项目被分割成更小的、相互依赖的模块，往往会更容易理解和处理。“相互依赖”这个词很重要，因此，这就是为什么你通常希望通过一个单一的构建将多个模块链接起来。</p>
+<p>gradle通过<strong>多项目构建(multi-project)</strong>来支持这种需求。</p>
+<h2 id="1-多项目构建的结构">1.多项目构建的结构</h2><p>这种构建引入了各种各样的子项目，但它们都有共同的特点：</p>
+<ul>
+<li>在项目的根目录都有一个<code>settings.gradle</code>文件</li>
+<li>在根目录或主目录下都有一个<code>build.gradle</code>文件</li>
+<li>每个字目录都有他们自己的<code>*.gradle</code>文件（有些多项目构建结构也许会胜率子项目的构建脚本）</li>
+</ul>
+<p><code>settings.gradle</code>告诉gradle主项目和子项目的结构是怎样的。幸运的是，你其实不必通过读这个文件来了解项目的结构是怎样，如果你想要了解项目结构的话，通过运行命令<code>gradle projects</code>就可以了。下面是一个在<strong>多项目(multiproject)</strong>下使用命令的例子：</p>
+<p><strong>列出一次构建中的项目</strong></p>
+<p>gradle -q projects</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&gt; gradle -q projects</div><div class="line"></div><div class="line">------------------------------------------------------------</div><div class="line">Root <span class="keyword">project</span></div><div class="line">------------------------------------------------------------</div><div class="line"></div><div class="line">Root <span class="keyword">project</span> <span class="string">'multiproject'</span></div><div class="line">+--- <span class="keyword">Project</span> <span class="string">':api'</span></div><div class="line">+--- <span class="keyword">Project</span> <span class="string">':services'</span></div><div class="line">|    +--- <span class="keyword">Project</span> <span class="string">':services:shared'</span></div><div class="line">|    \--- <span class="keyword">Project</span> <span class="string">':services:webservice'</span></div><div class="line">\--- <span class="keyword">Project</span> <span class="string">':shared'</span></div><div class="line"></div><div class="line">To see a list of the tasks of a <span class="keyword">project</span>, run gradle &lt;<span class="keyword">project</span>-path&gt;:tasks</div><div class="line"><span class="keyword">For</span> example, <span class="keyword">try</span> running gradle :api:tasks</div></pre></td></tr></table></figure>
+<p>输出结果会告诉你，这个多项目构建有三个直接的子项目：<strong>api</strong>，<strong>services</strong>和<strong>shared</strong>。其中<strong>services</strong>还有属于它的子项目:<strong>shared</strong>和<strong>webservice</strong>。通过这个目录结构图，我们可以很容易的找到任意一个其中的项目。例如：你可以通过这张图中发现<strong>webservice</strong>位于<code>&lt;root&gt;/services/webservice.</code>这个位置。</p>
+<p>默认情况下，gradle使用<code>settings.gradle</code>文件的目录名来作为根项目的名称。这样做通常不会有什么问题，因为所有的开发者会在同一个项目中检出相同的目录名。在持续集成服务器上，例如Jenkins，目录名称可能会是自动生成的并且与你的版本控制工具中的名字并不匹配。因此，建议你设置一个可预测的项目名称，即使是一个单一构建的项目。你可以通过设置<code>rootProject.name</code>来配置根项目名。</p>
+<p>每个项目都有属于它们自己的构建文件，但这并不是必须的。在上面的例子中，<strong>services</strong>项目仅仅是其他子项目的一个容器或者说是分组。在它相应的目录中没有构建文件。然而，多构建项目的根项目都有这个构建文件。</p>
+<p>根项目的<code>build.gradle</code>通常会和子项目共享配置，例如主项目会和子项目共享自己的插件和依赖项。当所有的配置都在同一个地方，也可以通过配置这一处来达到配置所有子项目的效果。这意味着，当你发现某个子项目被配置了某个属性，你通常应该先经常检查根项目的构建文件。</p>
+<p>另外一个需要被牢记的是构建配置的文件可能并不叫<code>build.gradle</code>。许多项目都会以子项目的名称来命名构建文件，例如之前例子中的<code>api.gradle</code>和<code>services.gradle</code>。在使用IDE时，这种做法有很大的好处，因为很难从几十个<code>build.gradle</code>文件中找出你要的具体是哪一个。对于<code>settings.gradle</code>文件的处理有一点小小的特殊，但对于一次构建，你不需要了解它是怎么做到这样的。只需要看一看子项目目录，去找一下以<code>.gradle</code>结尾的文件就行了。</p>
+<p>一旦你知道子项目中能用到的是什么，那么关键的问题就是构建者如何在项目中执行这些task。</p>
+<h2 id="2-执行一个多项目构建">2.执行一个多项目构建</h2><p>从用户的角度去看，多项目构建任然是一系列可以用来运行的task。这不同于你想控制哪一个项目的task的执行。这里你有两条选项：</p>
+<ul>
+<li>改变子项目对应的目录到你想要的地方，然后正常的执行<code>gradle &lt;task&gt;</code>。</li>
+<li>在任意目录下都使用一个符合标准的task的名称，尽管这通常是从根目录开始的。例如：<code>gradle :services:webservice:build</code>将执行<strong><code>webservice</code></strong>这个子项目以及它所依赖的所有子项目。</li>
+</ul>
+<p>第一种方法是类似于单项目的使用情况，但在多项目的gradle构建时略有不同。命令<code>gradle test</code>会执行相对于当前工作目录的所有子项目中的test task，前提是如果这些子项目中有这个名为<code>test</code>的task。因此，如果你在根项目的目录下运行命令，你也会在<strong>api</strong>, <strong>shared</strong>, <strong>services:shared</strong> 和<strong>services:webservice</strong>下运行test这个task。如果你仅仅在<strong>services</strong>这个项目下运行这个命令，那么只有<strong> services:shared</strong>和<strong>services:webservice</strong>这两个项目会执行test的task。</p>
+<p>为了能更多的控制执行，可以使用符合标准的名字（上面提到的第二种方法）。这些路径类似于目录路径，但需要使用”:”而不是”/“或”\”。如果路径是以”:”开头的，那么路径会以根项目为相对路径去解析。换句话说，开头的”:”代表根项目本身。所有其他的冒号都是路径分隔符。</p>
+<p>这种方法适用于任何task，所以，如果你想知道在一个特定的子项目的task是什么，只需使用类似这种方式：<code>gradle :services:webservice:tasks</code>。</p>
+<p>无论你使用哪种方式来执行task，gradle都能处理好当前依赖的任何子项目的构建。你不用担心项目间依赖问题。如果你对它们是如何配置的感兴趣，你可以阅读写多项目构建的文档<a href="https://docs.gradle.org/current/userguide/multi_project_builds.html" target="_blank" rel="external">later in the user guide</a>。</p>
+<p>还有最后一件事要注意。当你使用gradle wrapper时，第一种方式不能很好的工作，因为如果你不在项目的根目录，你必须对你的wrapper脚本指定路径。举个例子：如果你在<strong>webservice</strong>这个子项目中，你必须执行<code>../../gradlew build</code></p>
+<p>这就是构建者关于多项目构建需要了解的全部。现在你可以辨别一个构建是否是一个多项目构建项目，并且可以观察它的结构。最终你可以执行指定的子项目的task。</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/gradle/" rel="tag">#gradle</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/13/gradle学习笔记-持续构建/" rel="prev">gradle学习笔记-持续构建</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/11/gradle学习笔记-依赖管理基础/" rel="next">gradle学习笔记-依赖管理基础</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2016/07/11/gradle学习笔记-多项目构建介绍/"
+                   data-title="gradle学习笔记-多项目构建介绍" data-url="http://dannylee1991.github.io/2016/07/11/gradle学习笔记-多项目构建介绍/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="http://dannylee1991.github.io/images/avatar.jpg" alt="DannyLee佳楠" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">DannyLee佳楠</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">一只在迈向机器学习道路上狂奔的程序猿.</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">92</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/DannyLee1991" target="_blank">GitHub</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-多项目构建的结构"><span class="nav-number">1.</span> <span class="nav-text">1.多项目构建的结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-执行一个多项目构建"><span class="nav-number">2.</span> <span class="nav-text">2.执行一个多项目构建</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">DannyLee佳楠</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dannylee1991"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+  	<script src="/js/ua-parser.min.js"></script>
+  	<script src="/js/hook-duoshuo.js"></script>
+  
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"slide":{"type":"slide","bdImg":"3","bdPos":"left","bdTop":"250"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+</html>
