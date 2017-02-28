@@ -199,6 +199,359 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2016/10/24/斯坦福机器学习课程 第六周 (1)评价一个学习算法/" itemprop="url">
+                斯坦福机器学习课程 第六周 (1)评价一个学习算法
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-10-24T22:28:58+08:00" content="2016-10-24">
+            2016-10-24
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/10/24/斯坦福机器学习课程 第六周 (1)评价一个学习算法/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/24/斯坦福机器学习课程 第六周 (1)评价一个学习算法/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="如何少走弯路？">如何少走弯路？</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/OVM4M/deciding-what-to-try-next" target="_blank" rel="external">视频地址</a></p>
+<h3 id="这些坑可能会耽误你几个月">这些坑可能会耽误你几个月</h3><blockquote>
+<p>到目前为止，我们已经介绍了许多不同的学习算法。如果你一直跟着这些视频的进度学习，你会发现自己已经不知不觉地成为一个了解许多先进机器学习技术的专家了。</p>
+<p>然而，在懂机器学习的人当中，依然存在着很大的差距。一部分人确实掌握了怎样高效有力地运用这些学习算法，而另一些人他们可能对我马上要讲的东西就不那么熟悉了，他们可能没有完全理解怎样运用这些算法，因此总是把时间浪费在毫无意义的尝试上。</p>
+<p>我想做的是，确保你在设计机器学习的系统时，你能够明白怎样选择一条最合适、最正确的道路。</p>
+<p>因此，在这节视频和之后的几段视频中，我将向你介绍一些实用的建议和指导，帮助你明白怎样进行选择。</p>
+<p>具体来讲，我将重点关注的问题是：假如你在开发一个机器学习系统，或者想试着改进一个机器学习系统的性能，你应如何决定接下来应该选择哪条道路？</p>
+</blockquote>
+<p>以预测房价为例：</p>
+<p>假如在预测房价的例子中，你已经完成了正则化线性回归，也就是最小化代价函数$J$的值。</p>
+<p><img src="/img/16_10_24/001.png" alt=""></p>
+<p>假如在你得到你的学习参数以后，如果你要将你的假设函数放到一组新的房屋样本上进行测试，假如说你发现在预测房价时产生了巨大的误差，现在的问题是要想改进这个算法接下来该怎么办？</p>
+<p>实际上你可以想出很多方法来改进这个算法的性能。</p>
+<p>通常情况下我们会使用这几种方法：</p>
+<ul>
+<li>通过使用更多的训练样本</li>
+</ul>
+<blockquote>
+<p>但有的时候，更多的训练样本并不能解决问题。</p>
+</blockquote>
+<ul>
+<li>尝试选用更少的特征集</li>
+</ul>
+<blockquote>
+<p>你可以从众多的特征集中仔细挑选一小部分来防止<strong>过拟合</strong>。</p>
+</blockquote>
+<ul>
+<li>尝试选用更多的特征集</li>
+</ul>
+<blockquote>
+<p>也许目前的特征集对你来讲并不是很有帮助，你希望获取更多有用的特征数据</p>
+</blockquote>
+<ul>
+<li>也可以尝试增加多项式特征的方法($x_{1}^{2}$,$x_{2}^{2}$,$x_{1}x_{2}$,etc.)</li>
+<li>通过增大正则化参数$\lambda$</li>
+<li>通过减小正则化参数$\lambda$</li>
+</ul>
+<p>上面的这些方法，都可以扩展开来，都可能是一个花费6个月甚至更长时间的项目。</p>
+<p>遗憾的是，大多数人用来选择这些方法的标准是凭感觉的。而且很多人都会错误的选择其中一种方法花费大量的时间和精力，走上了“不归路”。</p>
+<p>幸运的是，有一系列简单的方法，能让你事半功倍，排除掉上面的那个优化清单上的至少一半的方法，留下真正有用的方法。同时也有一种很简单的方法，可以很轻松的排除掉很多选择从而为你节省大量不必要花费的时间。</p>
+<h3 id="机器学习诊断法引入">机器学习诊断法引入</h3><p>在接下来的视频中，我首先介绍<strong>怎样评估机器学习算法的性能</strong>，然后在之后的几段视频中，我们将开始讨论这些方法，它们也被称为<strong>“机器学习诊断法(Machine learning diagnostic)”</strong>。</p>
+<blockquote>
+<p>Diagnostic:A test that you can run to gain insight what is/isn’t working with a learning algorithm, and gain guidance as to how best to improve its performance.</p>
+<p>诊断法：这是一种测试法，你通过执行这种测试能够深入了解某种算法到底是否有用，并且也可以告诉你如何改进算法的效果。</p>
+</blockquote>
+<p>诊断法是一种很有用的方法，可以更有效率地利用好你的时间，但同时也会花费一些时间来实现。</p>
+<h2 id="评估假设函数">评估假设函数</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/yfbJY/evaluating-a-hypothesis" target="_blank" rel="external">视频地址</a></p>
+<p>当我们确定学习算法的参数的时候，我们考虑的是选择参量来使训练误差最小化。有人认为，得到一个非常小的训练误差一定是一件好事，但我们已经知道，仅仅是因为这个假设具有很小的训练误差并不能说明它就一定是一个好的假设函数，而且我们也学习了过拟合假设函数的例子。所以这推广到新的训练集上是不适用的。</p>
+<p>那么，你该如何判断一个假设函数是过拟合的呢？对于这个简单的例子，我们可以对假设函数$h(x)$进行画图，然后观察图形趋势：</p>
+<p><img src="/img/16_10_24/002.png" alt=""></p>
+<p>但对于特征变量不止一个的这种一般情况：</p>
+<p><img src="/img/16_10_24/003.png" alt=""></p>
+<p>想要通过画出假设函数来进行观察，就会变得很难甚至是不可能实现的。</p>
+<p>因此我们需要另一种方法来评估我们的假设函数。</p>
+<h3 id="评估假设函数的方法">评估假设函数的方法</h3><p>如下给出了一种评估假设函数的标准方法：</p>
+<p>假设我们有这样一组数据组：</p>
+<p><img src="/img/16_10_24/004.png" alt=""></p>
+<p>虽然这里只有十组数据，但通常情况下我们都有成百上千组训练样本。</p>
+<p>为了确保我们可以评估我们的假设函数，我们要做的是将这些数据进行三七分：</p>
+<p><img src="/img/16_10_24/005.png" alt=""></p>
+<p>第一部分（70%）将成为我们的<strong>训练集(Training Set)</strong></p>
+<p>第二部分（30%）将成为我们的<strong>测试集(Test Set)</strong></p>
+<blockquote>
+<p>将所有数据按照7:3的比例划分，是一种常见的划分比例</p>
+</blockquote>
+<p>现在我们有了一部分训练数据集：</p>
+<p>$$<br>(x^{(1)},y^{(1)})\\<br>(x^{(2)},y^{(2)})\\<br>……\\<br>(x^{(m)},y^{(m)})<br>$$</p>
+<blockquote>
+<p>这里的$m$依然表示训练样本的总数</p>
+</blockquote>
+<p>剩下的部分数据将被用作测试数据：</p>
+<p>$$<br>(x^{(1)}_{test},y^{(1)}_{test})\\<br>(x^{(2)}_{test},y^{(2)}_{test})\\<br>……\\<br>(x^{(m_{test})}_{test},y^{(m_{test})}_{test})<br>$$</p>
+<blockquote>
+<p>这里$m_{test}$表示测试样本的总数，$_{test}$表示这些样本是来自测试集。</p>
+<p><strong>注意</strong>：如果说我们的数据是有某种规律的话，那么我们按照7:3的比例取数据时，应该是随机选取的。</p>
+</blockquote>
+<h3 id="评估步骤详解">评估步骤详解</h3><h4 id="线性回归中">线性回归中</h4><p>在线性回归中，的训练/测试流程：</p>
+<ul>
+<li>1.需要对训练集进行学习，得到参数$\theta$。</li>
+</ul>
+<blockquote>
+<p>具体来讲就是最小化训练误差$J(\theta)$。这里的是使用那70%的数据训练得出的结果。</p>
+</blockquote>
+<ul>
+<li>2.计算出测试误差</li>
+</ul>
+<blockquote>
+<p>使用$J_{test}(\theta)$来表示测试误差，我们要做的是取出之前从训练集中学习得到的参数$\theta$带入到$J_{test}(\theta)$来计算我们的测试误差。可以写成如下形式：</p>
+</blockquote>
+<p>$$<br>\begin{align*}<br>J_{test}(\theta)= \frac{1}{2m_{test}}\sum_{i=1}^{m_{test}}(<br> h_{\theta}(x_{test}^{(i)}) - y_{test}^{(i)}<br> )^{2}<br>\end{align*}<br>$$</p>
+<blockquote>
+<p>这实际上是测试集平方误差的平均值。</p>
+</blockquote>
+<hr>
+<h4 id="分类问题中">分类问题中</h4><p>当然，这是当我们使用线性回归和平方误差标准时测试误差的定义，那么如果是分类问题，比如说使用逻辑回归的时候呢？</p>
+<p>训练和测试逻辑回归与之前所说的非常类似：</p>
+<ul>
+<li>1.首先我们要从训练数据中（前70%）学习得到参数$\theta$</li>
+<li>2.然后用下面的式子计算测试数据的误差值:</li>
+</ul>
+<p><img src="/img/16_10_24/006.png" alt=""></p>
+<p>在分类问题中的测试误差$J_{test}(\theta)$其实也被称作<strong>误分类率</strong>（也被称为<strong>0/1错分率</strong>）。表示你预测到的正确或错误样本的情况。</p>
+<p>比如说可以这样定义一次预测的误差：</p>
+<ul>
+<li><p>当$h_{\theta}\ge0.5$时$y=0$</p>
+</li>
+<li><p>或者当$h_{\theta}\lt0.5$时$y=1$</p>
+</li>
+</ul>
+<p>这两种情况下我们的假设都对样本进行另外误判，否则其他情况下假设值都能正确的对样本$y$进行分类。</p>
+<p>$$<br>err(h_{\theta}^{(x)},y)<br>=\{<br>\begin{align*}<br>&amp;= 1 \ \ if\ h_{\theta}(x)\ge0.5,\ y=0<br>        \ or\ if\ h_{\theta}(x)\le0.5,\ y=1 \\<br>&amp;= 0 \ otherwise<br>\end{align*}<br>$$</p>
+<p>然后我们就能应用错分率误差来定义测试误差，也就是：</p>
+<p>$$<br>\begin{align*}<br>Test\ error =<br> \frac{1}{m_{test}}\sum_{i=1}^{m_{test}}err(<br> h_{\theta}(x_{test}^{(i)}), y_{test}^{(i)}<br> )<br>\end{align*}<br>$$</p>
+<blockquote>
+<p>以上我们介绍了一套标准技术来评价一个已经学习过的假设，在下一段视频中，我们要应用这些方法来帮助我们进行诸如特征选择一类的问题（比如多项式次数的选择，或者正则化参数的选择）。</p>
+</blockquote>
+<h2 id="多项式模型的选择以及训练集/验证集/测试集的划分">多项式模型的选择以及训练集/验证集/测试集的划分</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/QGKbr/model-selection-and-train-validation-test-sets" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>假如你想要确定对于某组数据最合适的多项式次数是几次，怎样选用正确的特征来构造学习算法，这些问题我们称之为<strong>”模型选择问题“</strong>。</p>
+<p>在我们对于这一问题的讨论中，我们还将提到如何将数据分为三组：也就是<strong>训练集、验证集和测试集</strong>，而不仅仅是前面提到的两组数据。</p>
+<p>这一节中，我们将会介绍这些内容的含义。</p>
+</blockquote>
+<h3 id="选择合适的模型解决过拟合问题">选择合适的模型解决过拟合问题</h3><p>在过拟合的情况中，学习算法在适用于训练集时表现非常完美，但这并不代表此时的假设也很完美。</p>
+<p>更一般的说，这也是为什么训练集误差通常不能正确预测出该假设是否能很好地拟合新样本的原因。</p>
+<p>具体来讲，如果你把这些参数集，比如$\theta_{0}$,$\theta_{1}$,$\theta_{2}$…调整到尽量拟合你的训练集，那么结果就是你的假设会在训练集上表现地很好，但这并不能确定当你的假设推广到训练集之外的新的样本上时，预测结果是怎样的。</p>
+<p>而更为普遍的规律是，只要你的参数非常拟合某个数据组，比如说非常拟合训练集（当然也可以是其他数据集）：</p>
+<p><img src="/img/16_10_24/007.png" alt=""></p>
+<p>那么你的假设对于相同数据组的预测误差（比如说训练误差）是不能够用来推广到一般情况的，或者说，是不能作为实际的泛化误差的（也就是说，不能说明你的假设对于新样本的效果）。</p>
+<hr>
+<p>接下来具体来说说模型选择问题：</p>
+<p>假如说你现在要选择能最好地拟合你数据的多项式次数，那么下面的式子你应该选择哪一个呢？</p>
+<p><img src="/img/16_10_24/008.png" alt=""></p>
+<p>假设$d$代表我们应该选择的多项式的次数(上面的式子次数依次为从1到10)，我们除了需要确定参数$\theta$之外，还要考虑如何确定这个多项式的次数$d$。</p>
+<p>因此，我们需要确定参数$d$最适当的取值。</p>
+<p>具体地说，比如你想要选择一个模型，那就从这10个模型中，选择一个最适当的多项式次数，并且用这个模型进行估计，预测你的假设能否很好地推广到新的样本上。</p>
+<p>那么你可以这样做：</p>
+<ul>
+<li>你可以先选择第一个模型，然后求训练误差的最小值。这样你就会得到一个参数向量$\theta$。</li>
+<li>然后你再选择第二个模型，进行同样的过程，这样你会得到另一个参数向量$\theta$。</li>
+<li>拟合三次函数模型时，同理，也能得到一个参数向量$\theta$。</li>
+<li>…</li>
+<li>用相同的方式得到第10个模型的向量$\theta$。</li>
+</ul>
+<p><img src="/img/16_10_24/009.png" alt=""></p>
+<p>如果一次模型训练后得到的参数向量为$\theta^{(1)}$,二次模型训练后得到的参数向量为$\theta^{(2)}$，依次类推，十次模型训练后得到的参数向量为$\theta^{(10)}$。</p>
+<p>接下来，我们要做的是对所有这些模型求出<strong>测试集误差</strong>。因此，我们可以算出每一个模型的$Jtest(\theta^{(1)})$、$Jtest(\theta^{(2)})$、$Jtest(\theta^{(3)})$…$Jtest(\theta^{(10)})$。</p>
+<p>接下来为了确定哪一个模型最好，我们可以找出<strong>测试集误差最小的模型</strong>。</p>
+<p>假设我们最终选择了五次多项式模型:</p>
+<p>$$<br>Choose \ \ \theta_{0} + … \theta_{5}x^{5}<br>$$</p>
+<h3 id="正确的评价某个假设函数的预测能力">正确的评价某个假设函数的预测能力</h3><blockquote>
+<p>由于我们使用的是<strong>测试结果集</strong>来衡量的代价函数，从而得到多项式次数$d$这个参数的值为5，所以这样任然不能公平地说明这个假设可以推广到一般情况。</p>
+<p>也就是说我们选择了一个能最好地拟合测试集的参数$d$的值，因此我们的参数向量$\theta^{(5)}$在拟合测试集时的结果很可能导致一个比实际泛化误差更完美的预测结果。（因为我们找到的是一个最能拟合测试集的参数$d$）。因此我们再用测试集来评价我们的假设就显得不公平了。</p>
+<p>而我们其实更关心的是对新样本的拟合效果，所以我们之前说到的如果我们用训练集来拟合参数$\theta_{0}$,$\theta_{1}$等参数时，拟合后的模型在作用于训练集上的效果是不能预测出我们将这个假设推广到新样板上时效果如何的。这是因为这些参数能够很好地拟合训练集，因此它们很有可能在对训练集的预测中表现的很好，但对其他的新样本来说就不一定那么好了。</p>
+</blockquote>
+<p>我们要做的实际上是用测试集来拟合参数$d$，但是这同样也意味着这并不能较为公平地预测出假设函数在遇到新样本时的表现。</p>
+<h4 id="方式">方式</h4><p>为了解决这一问题在模型选择中，如果我们要评价某个假设，我们通常采用以下的方法：</p>
+<p>给定某个数据集，这里我们要将其分为三段：训练集、<strong>交叉验证集（cross validation set）</strong>、测试集。</p>
+<p><img src="/img/16_10_24/010.png" alt=""></p>
+<p>一种典型的分割比例是：训练集60%，交叉验证集20%，测试集20%。（这个比例可稍作调整）</p>
+<p><img src="/img/16_10_24/011.png" alt=""></p>
+<blockquote>
+<p>$m$是训练集个数，$m_{cv}$是交叉验证集个数，$m_{test}$是测试集个数。</p>
+</blockquote>
+<p>我们可以得到 训练集/交叉验证集/测试集 的误差：</p>
+<p><img src="/img/16_10_24/012.png" alt=""></p>
+<p>现在我们的模型选择问题是这样的：我们现在要使用交叉验证集来选择合适的模型：</p>
+<p><img src="/img/16_10_24/013.png" alt=""></p>
+<p>即通过使用<strong>训练集</strong>对每一个假设函数依次去求最小化的代价函数$minJ(\theta)$，并求得对应的参数向量$\theta^{(d)}$。</p>
+<p>然后我们要做的是在<strong>交叉验证集</strong>中测试这些假设的表现，测出$J_{cv}$来看看这些假设在交叉验证集中表现如何。</p>
+<p>然后我们要选择<strong>交叉验证集</strong>误差最小的那个假设模型，假如这个模型是$J_{cv}(\theta^{(4)})$对应的那个模型，因此我们就选择这个四次多项式模型：</p>
+<p>$$<br>\theta_{0} + \theta_{1}x^{1} + … + \theta_{4}x^{4}<br>$$</p>
+<p>我们得到了拟合出最好的系数$d=4$。</p>
+<p>这个过程中，我们没有使用<strong>测试集</strong>进行拟合，这样我们就回避了<strong>测试集</strong>的嫌疑。这样我们就可以光明正大的使用<strong>测试集</strong>来估计所选模型的泛化误差了。</p>
+<p>最后，我们可以使用<strong>测试集</strong>来评价模型的表现。</p>
+<p>但最后还是要提醒大家的一点是，在如今的机器学习应用中，确实也有很多人是像我之前介绍的那样做的（用测试集来选择模型，然后用同样的测试集来评价模型的表现，报告测试误差，看起来好像还能得到比较不错的泛化误差），我说过这并不是一个好的方法，但不幸的是，现在还有很多人这样做。如果测试集足够多的话，这也许还能行得通，但大多数的机器学习开发人员是不会这么做的，因为最佳做法还是把数据分成 训练集、验证集、测试集。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              <a class="post-title-link" href="/2016/10/16/斯坦福机器学习课程 第五周 (4)神经网络实现自动驾驶/" itemprop="url">
+                斯坦福机器学习课程 第五周 (4)神经网络实现自动驾驶
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-10-16T00:18:58+08:00" content="2016-10-16">
+            2016-10-16
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/10/16/斯坦福机器学习课程 第五周 (4)神经网络实现自动驾驶/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/16/斯坦福机器学习课程 第五周 (4)神经网络实现自动驾驶/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="使用神经网络实现自动驾驶">使用神经网络实现自动驾驶</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/zYS8T/autonomous-driving" target="_blank" rel="external">视频地址</a></p>
+<p>这一节将介绍一个具有历史意义的神经网络学习的例子，那就是使用神经网络来实现自动驾驶。也就是说汽车通过学习来自己驾驶。</p>
+<p>这是Dean Pomerleau那里得到的一段视频，Dean Pomerleau任职于美国东海岸的卡耐基梅隆大学，下面的视频中你会明白可视化技术到底是什么。</p>
+<p><img src="/img/16_10_16/001.png" alt=""></p>
+<p>在上面这张图中，左下方就是汽车所看到的前方路况图像，是汽车前方摄像头每两秒采集的并且进过压缩处理之后得到的一张30 × 32的图像。这张图片中，你依稀可以看到一条道路。</p>
+<p><img src="/img/16_10_16/002.png" alt=""></p>
+<p>左上角第一个水平的进度条显示的是驾驶员所选择的方向，就是那条白亮的区段显示的就是人类驾驶者选择的方向，白色区段偏左，就是向左转，反之，则是向右转。</p>
+<p><img src="/img/16_10_16/003.png" alt=""></p>
+<p>第二个水平的进度条则是学习算法选出的行驶方向，代表的含义和第一个条一样，白色区段偏左，就是向左转，反之，则是向右转。</p>
+<p><img src="/img/16_10_16/004.png" alt=""></p>
+<p>实际上神经网络在开始学习之前，你会看到网络的输出是一条灰色的区段，覆盖着整个区域，只有在学习算法运行足够长的时间之后，亮白色的区段才能逐渐显现。</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ilP4aPDTBPE" frameborder="0" allowfullscreen></iframe>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/10/13/斯坦福机器学习课程 第五周 (2)BP算法练习/" itemprop="url">
                 斯坦福机器学习课程 第五周 (2)BP算法练习
               </a>
@@ -2219,643 +2572,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/08/21/斯坦福机器学习课程 第三周 (1)分类和表达式/" itemprop="url">
-                斯坦福机器学习课程 第三周 (1)分类和表达式
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-08-21T18:00:00+08:00" content="2016-08-21">
-            2016-08-21
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/08/21/斯坦福机器学习课程 第三周 (1)分类和表达式/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/21/斯坦福机器学习课程 第三周 (1)分类和表达式/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="分类">分类</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/wlPeP/classification" target="_blank" rel="external">视频地址</a></p>
-<p>在接下来的几节课中，将介绍分类问题。我们将学习一种叫做<strong>逻辑回归(Logistic Regression)</strong>的算法，这也是目前最流行，使用最广泛的一种学习算法。</p>
-<p>下面是几个使用分类算法的例子：</p>
-<ul>
-<li>Email的垃圾邮件分类问题：区分邮件是否为垃圾邮件</li>
-<li>网上交易分类问题：是否为欺诈交易</li>
-<li>肿瘤分类问题：区分肿瘤是恶性还是良性</li>
-</ul>
-<p>在所有的这些问题中，我们想要预测的变量是$y$，我们可以认为它可以取两个值：<code>0</code>或者<code>1</code>。</p>
-<p>$$<br>y\in {0, 1}<br>$$</p>
-<blockquote>
-<p>0：“负类”（例如：良性肿瘤）<br>1：“正类”（例如：恶性肿瘤）</p>
-</blockquote>
-<p>现在我们要开始研究只有两类（0和1）的分类问题。之后我们也会讨论更多类别的问题：$y\in {0,1,2,3,…}$，这就是所谓的<strong>多类分类问题</strong>。但接下来，我们将开始介绍只有两种类别的分类问题，或者叫做<strong>二元分类</strong>问题。</p>
-<h3 id="二元分类">二元分类</h3><p>那么我们要怎样开发一个分类算法呢？下面是一个用来给肿瘤分类的训练集的例子(恶性或良性)。</p>
-<p><img src="/img/16_08_22/001.png" alt=""></p>
-<blockquote>
-<p>注意这里的恶性值(Malignant)只取两个值：0也就是良性，1也就是恶性。</p>
-</blockquote>
-<p>所以拿到这样的数据，我们通常的做法是用线性回归算法尝试使用一条直线来拟合这些数据：</p>
-<p>$$<br>h_{\theta}(x)=\theta^{T}x<br>$$</p>
-<p>如果你试着用一条直线去拟合这些数据，你也许会得到这样一条直线：</p>
-<p><img src="/img/16_08_22/002.png" alt=""></p>
-<p>如果你想要尝试分类，可以试着将分类器的阈值设为0.5：</p>
-<ul>
-<li>当$h_{\theta}(x)\ge0.5$时，预测$y=1$。</li>
-<li>当$h_{\theta}(x)\lt0.5$时，预测$y=0$。</li>
-</ul>
-<p>因此，如图这里就是阈值的所在点：</p>
-<p><img src="/img/16_08_22/003.png" alt=""></p>
-<p>这个点右侧的点，我们会将它们全部预测为正，因为它们的输出值在纵轴上都是大于0.5的。同理，在这一点的左侧的点，我们会将它们全部预测为负。</p>
-<p>在这个例子中，看起来好像线性回归所做的实际上是合理的，现在让我们稍做一些改动，延长一下横轴，假设在很远的右侧有一个训练样本。</p>
-<p><img src="/img/16_08_22/004.png" alt=""></p>
-<p>此时，得到的拟合数据的直线就会是上图那样，而且阈值所在的位置也会向右侧偏移。此时我们预测阈值点右侧的值都为正，左侧都为负。这看起来线性回归的效果并不好。因为我们可以很明显的看出来，新增的这个点其实并没有给我们带来什么新的信息，这里的意思是说，按照原本的预测，这一个位置出现的点就应该是正。而且我们根据这个新增的点得到的阈值所在点并没有很好的把数据进行划分。</p>
-<p>因此<strong>使用线性函数进行分类并不是一个好办法</strong>。在第一个例子中，线性函数能够正常的预测数据只不过是巧合罢了。</p>
-<p>另外一个不使用线性函数进行分类的原因是：对于分类问题，我们通常只需要取得$y=0$或$y=1$。如果使用线性回归，那么假设输出函数很有可能远大于1或者远小于0。</p>
-<p><img src="/img/16_08_22/005.png" alt=""></p>
-<p>因此我们接下来的视频中将要介<strong>逻辑回归算法(Logistic Regression)</strong>，这个算法的性质就是适用于$y$值为离散值的情况，并且它的输出值保证在0到1之间:<br>$$<br>0\le h_{\theta}(x)\le1<br>$$</p>
-<blockquote>
-<p>顺便提一句，<strong>逻辑回归算法</strong>是一个<strong>分类算法</strong>，即使它的名字里有<strong>回归</strong>，但我们也把它当成分类算法来使用。这里只是因为历史原因，才被这样称呼。</p>
-</blockquote>
-<h2 id="假设函数表达式">假设函数表达式</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/RJXfB/hypothesis-representation" target="_blank" rel="external">视频地址</a> </p>
-<p>之前我们说过，我们希望分类器的输出值的范围能控制在0和1之间：</p>
-<p>$$<br>0\le h_{\theta}(x)\le1<br>$$</p>
-<p>因此我们渴望找到一个满足这种预测值性质的函数。</p>
-<p>当我们使用线性回归时，我们用下面的式子来作为假设函数表达式：</p>
-<p>$$<br>h_{\theta}(x) = \theta^{T}x<br>$$</p>
-<p>对于逻辑回归来说，我们需要稍微改动一下：</p>
-<p>$$<br>h_{\theta}(x) = g(\theta^{T}x)<br>$$</p>
-<p>其中$g$函数的表达式为：</p>
-<p>$$<br>g(z)=\frac{1}{1+e^{-z}}<br>$$</p>
-<p>这个函数被称为<strong>S型函数(Sigmoid function)</strong>，或者<strong>逻辑函数(Logistic function)</strong>。</p>
-<blockquote>
-<p><strong>S型函数(Sigmoid function)</strong>和<strong>逻辑函数(Logistic function)</strong>基本上是同义词。因此这两个术语是可以互换的。</p>
-</blockquote>
-<p><strong>S型函数(Sigmoid function)</strong>的图形是这样的，顶部是随着$z$的增大而逐渐趋近于1，底部随着$z$的减小而逐渐趋近于0：</p>
-<p><img src="/img/16_08_22/006.png" alt=""></p>
-<p>因此我们可以得到：</p>
-<p>$$<br>\begin{align*}<br>h_{\theta}(x) &amp;= g(\theta^{T}x) \\<br>&amp;= \frac{1}{1+e^{-\theta^{T}x}}<br>\end{align*}<br>$$ </p>
-<p>接下来我们要做的就是用参数$\theta$来拟合我们的数据。</p>
-<h3 id="对假设函数的进一步理解">对假设函数的进一步理解</h3><p><strong>假设函数的解释</strong>：</p>
-<p>$h_{\theta}(x)$是对于新注入样本$x$的满足$y=1$的概率估计。</p>
-<p>举个肿瘤分类的例子来说：</p>
-<p>如果：</p>
-<p>$$<br>x=<br>\begin{bmatrix}<br>x_{0} \\<br>x_{1}<br>\end{bmatrix}<br>=<br>\begin{bmatrix}<br>1 \\<br>tumorSizs<br>\end{bmatrix}<br>$$</p>
-<p>$$<br>h_{\theta}(x) = 0.7<br>$$</p>
-<p>和之前一样，特征向量$x_{0}=1$，特征向量$x_{1}=tumorSize$代表肿瘤大小。</p>
-<p>假设有一个病人，我们已知他肿瘤的大小，将他的特征向量$x$带入到$h_{\theta}(x)$中，得到的结果是$0.7$，那么我的解释就是$y=1$的概率是$0.7$，即这个患者的肿瘤是恶性的概率是$70\%$。</p>
-<p>用更加正式的式子来表示就是：</p>
-<p>$$<br>h_{\theta}(x) = P(y=1|x;\theta)<br>$$</p>
-<blockquote>
-<p>熟悉概率的同学可能对这个式子不陌生，这个式子代表着<strong>在给定的特征$x$的情况下，$y=1$的概率，其中参数为$\theta$</strong>。<br>在这里给定的$x$就是代表我的病人的肿瘤大小的特征$x$。</p>
-</blockquote>
-<p>由于我们知道，$y$的取值不是0就是1，因此当我们得到了$y=1$的概率时，$y=0$的概率就很容易得出：</p>
-<p>$$<br>P(y=0|x;\theta) + P(y=1|x;\theta) = 1 \\<br>P(y=0|x;\theta) = 1 - P(y=1|x;\theta)<br>$$</p>
-<h2 id="决策边界">决策边界</h2><p><a href="https://www.coursera.org/learn/machine-learning/discussions/weeks/3" target="_blank" rel="external">视频地址</a></p>
-<p>这一节向大家介绍一个<strong>决策边界(Decision Boundary)</strong>的概念，这个概念能更好的帮助大家理解逻辑回归中假设函数在计算什么。</p>
-<p>在上一节中，我们说假设函数可以表示为如下形式：</p>
-<p>$$<br>h_{\theta}(x) = g(\theta^{T}x)<br>$$</p>
-<p>$$<br>g(z)=\frac{1}{1+e^{-z}}<br>$$</p>
-<p>对应的图像是这样的：</p>
-<p><img src="/img/16_08_22/007.png" alt=""></p>
-<p>更进一步来理解：</p>
-<ul>
-<li>如果$h_{\theta}(x)\ge0.5$ 我们认为$y=1$</li>
-<li>如果$h_{\theta}(x)\lt0.5$ 我们认为$y=0$</li>
-</ul>
-<p>根据图片，我们可以得出:</p>
-<ul>
-<li>当$z\ge0$时，$h_{\theta}(x)\ge0.5$，满足$y=1$；</li>
-<li>当$z\lt0$时，$h_{\theta}(x)\lt0.5$，满足$y=0$。</li>
-</ul>
-<p>即：</p>
-<ul>
-<li>当$\theta^{T}x\ge0$时，$y=1$；</li>
-<li>当$\theta^{T}x\lt0$时，$y=0$；</li>
-</ul>
-<p>通过上面这些，我们可以更好的理解如何利用逻辑回归的假设函数来进行预测。</p>
-<p>接下来我们看一个例子：</p>
-<p><img src="/img/16_08_22/008.png" alt=""></p>
-<p>假设我们有一个训练集，我们的假设函数为：</p>
-<p>$$<br>h_{\theta}(x)=g(\theta_{0} + \theta_{1}x_{1} + \theta_{2}x_{2})<br>$$</p>
-<blockquote>
-<p>目前我们还没有讲解如何拟合此模型中的参数，这个知识点将在下一节中讲解。这里我们假设数据已经是拟合好的了。</p>
-</blockquote>
-<p>假设我们已经拟合好了数据，并且得到了$\theta_{0}=-3$、$\theta_{1}=1$、$\theta_{2}=1$。这意味着：</p>
-<p>$$<br>\theta=<br>\begin{bmatrix}<br>-3 \\<br>1 \\<br>1<br>\end{bmatrix}<br>$$</p>
-<p>根据上面我们的讨论，我们可以得到：</p>
-<ul>
-<li>当$-3 + x_{1} + x_{2} \ge 0$时，满足$y=1$；</li>
-<li>当$-3 + x_{1} + x_{2} \lt 0$时，满足$y=0$。</li>
-</ul>
-<p>因此，当$x_{1} + x_{2} = 3$时，我们可以得到一条直线：</p>
-<p><img src="/img/16_08_22/009.png" alt=""></p>
-<p>在这条直线右上方的点，代表$y=1$的点，这片区域被称为$y=1$区域。于此相对的是，在这条直线左下方的点，代表$y=0$的点，这片区域被称为$y=0$区域。</p>
-<p>上面我们绘制出来的$x_{1} + x_{2} = 3$这条直线被称为<strong>决策边界(decision boundary)</strong>。</p>
-<blockquote>
-<p>值得说明的是，决策边界其实是假设函数$h_{\theta}(x)$的属性，它取决于其参数$\theta$。目前我们还没有说明如何对这些参数$\theta$进行取值，后面我们会学习如何使用训练集来确定这些参数的取值。但是，我们一旦能确定$\theta$的值时，我们就能确定出决策边界了。</p>
-</blockquote>
-<p>接下来我们来看一个更复杂的例子：</p>
-<p><img src="/img/16_08_22/010.png" alt=""></p>
-<p>和之前一样，圆圈表示负样本，红色的叉号表示正样本。那么我们怎样使用逻辑回归来拟合这些数据呢？</p>
-<p>之前我们讲过多项式回归时，我们谈论到可以通过添加额外的高阶多项式项，这里我们同样可以对逻辑回归使用相同的方法。</p>
-<p>具体的说，假设我的假设函数如下：</p>
-<p>$$<br>h_{\theta}(x) =<br>g(\theta_{0}+\theta_{1}x_{1}+\theta_{2}x_{2}+\theta_{3}x_{1}^{2}+\theta_{4}x_{2}^{2})<br>$$</p>
-<p>之前我们说到，我们将在后面的学习讨论如何得到正确的$\theta$，这里假设我们已经得到了正确的$\theta$，值如下：</p>
-<p>$$<br>\begin{align*}<br>\theta_{0} &amp;= -1 \\<br>\theta_{1} &amp;= 0 \\<br>\theta_{2} &amp;= 0 \\<br>\theta_{3} &amp;= 1 \\<br>\theta_{4} &amp;= 1<br>\end{align*}<br>$$</p>
-<p>在这个参数的选择下，我们的参数向量将是：</p>
-<p>$$<br>\theta=<br>\begin{bmatrix}<br>-1 \\<br>0 \\<br>0 \\<br>1 \\<br>1<br>\end{bmatrix}<br>$$</p>
-<p>这也说明，若我们期望$y$满足$y=1$，那么$x_{1}$,$x_{2}$需满足：</p>
-<p>$$<br>-1 + x_{1}^{2} + x_{2}^{2} \ge 0<br>$$</p>
-<p>对应的决策边界就是这样：</p>
-<p><img src="/img/16_08_22/011.png" alt=""></p>
-<hr>
-<p>其实对于更复杂的假设函数：</p>
-<p>$$<br>h_{\theta}(x) =<br>g(\theta_{0}+\theta_{1}x_{1}+\theta_{2}x_{2}+\theta_{3}x_{1}^{2}+\theta_{4}x_{1}^{2}x_{2}+\theta_{5}x_{1}^{2}x_{2}^{2}+\theta_{6}x_{1}^{3}x_{2}+…)<br>$$</p>
-<p>它的决策边界可能会是一些有趣的形状：</p>
-<p><img src="/img/16_08_22/012.png" alt=""></p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/08/13/斯坦福机器学习课程 第二周 (4)Octave:Matlab 使用说明/" itemprop="url">
-                斯坦福机器学习课程 第二周 (4)Octave/Matlab 使用说明
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-08-13T17:28:00+08:00" content="2016-08-13">
-            2016-08-13
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/08/13/斯坦福机器学习课程 第二周 (4)Octave:Matlab 使用说明/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/13/斯坦福机器学习课程 第二周 (4)Octave:Matlab 使用说明/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><blockquote>
-<p>你现在已经掌握不少机器学习知识了，在这段视频中我将教你一种编程语言：Octave语言。你能够用它来非常迅速地实现这门课中我们已经学过或者将要学的机器学习算法。</p>
-<p>过去我一直尝试用不同的编程语言来教授机器学习，包括C++、Java、 Python、Numpy 和 Octave。我发现当使用像Octave这样的高级语言时，学生能够更快、更好地学习并掌握这些算法。事实上，在硅谷我经常看到的情况是进行大规模的机器学习项目的人通常会使用的程序语言就是Octave。</p>
-<p>Octave是一种很好的原始语言(prototyping language)。使用Octave你能快速地实现你的算法，剩下的事情你只需要进行大规模的资源配置，你只用再花时间用C++或Java这些语言把算法重新实现就行了。因为我们知道，开发项目的时间或者说你的时间是很宝贵的，机器学习的时间也是很宝贵的。所以如果你能让你的学习算法在Octave上快速的实现，再用C++或者Java去改写，这样你就能节省出大量的时间。</p>
-<p>据我所见人们使用最多的用于机器学习的原始语言是Octave、MATLAB、Python、NumPy和R。Octave很好因为它是开源的，当然 MATLAB也很好，但它不是每个人都买得起的。如果你能够使用MATLAB，Python、NumPy 或者R语言，你也可以在这门课里面使用。我也见过有人用R的，但是据我所知，这些人不得不中途放弃了，因为这些语言在开发上比较慢。而且因为Python、NumPy这些语言的语法相较于Octave来说还是更麻烦一点，正因为这样我强烈建议你不要用NumPy或者R来完整这门课的作业，我建议你在这门课中用Octave来写程序。</p>
-</blockquote>
-<h2 id="基本操作">基本操作</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/9fHfl/basic-operations" target="_blank" rel="external">视频地址</a></p>
-<p>这是Octave的命令行界面：</p>
-<p><img src="/img/16_08_13/001.png" alt=""></p>
-<h3 id="数学运算">数学运算</h3><p>首先示范一下基本的加、减、乘、除、指数运算：</p>
-<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">octave:</span><span class="number">1</span>&gt; <span class="number">5</span>+<span class="number">6</span></div><div class="line">ans =  <span class="number">11</span></div><div class="line"><span class="symbol">octave:</span><span class="number">2</span>&gt; <span class="number">3</span><span class="number">-2</span></div><div class="line">ans =  <span class="number">1</span></div><div class="line"><span class="symbol">octave:</span><span class="number">3</span>&gt; <span class="number">5</span>*<span class="number">8</span></div><div class="line">ans =  <span class="number">40</span></div><div class="line"><span class="symbol">octave:</span><span class="number">4</span>&gt; <span class="number">1</span>/<span class="number">2</span></div><div class="line">ans =  <span class="number">0.50000</span></div><div class="line"><span class="symbol">octave:</span><span class="number">5</span>&gt; <span class="number">2</span>^<span class="number">6</span></div><div class="line">ans =  <span class="number">64</span></div></pre></td></tr></table></figure>
-<h3 id="逻辑运算：">逻辑运算：</h3><figure class="highlight matlab"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">octave:<span class="number">6</span>&gt; <span class="number">1</span> == <span class="number">2</span>  <span class="comment">% false</span></div><div class="line"><span class="built_in">ans</span> = <span class="number">0</span></div><div class="line">octave:<span class="number">7</span>&gt; <span class="number">1</span> ~= <span class="number">2</span></div><div class="line"><span class="built_in">ans</span> =  <span class="number">1</span></div><div class="line">octave:<span class="number">8</span>&gt; <span class="number">1</span> &amp;&amp; <span class="number">0</span>  <span class="comment">% AND</span></div><div class="line"><span class="built_in">ans</span> = <span class="number">0</span></div><div class="line">octave:<span class="number">9</span>&gt; <span class="number">1</span> || <span class="number">0</span>  <span class="comment">% OR</span></div><div class="line"><span class="built_in">ans</span> =  <span class="number">1</span></div><div class="line">octave:<span class="number">10</span>&gt; xor(<span class="number">1</span>,<span class="number">0</span>)</div><div class="line"><span class="built_in">ans</span> =  <span class="number">1</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>值得说明的是，其中<code>%</code>代表注释符号，<code>~=</code>代表不等于，<code>xor()</code>是异或符号。</p>
-</blockquote>
-<h3 id="修改等待命令的快捷提示">修改等待命令的快捷提示</h3><p>通过<code>PS1()</code>命令来设置等待命令的快捷提示：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">octave:</span><span class="number">11</span>&gt; PS1(<span class="string">"&gt;&gt; "</span>)</div><div class="line"><span class="meta">&gt;&gt;</span> </div><div class="line"><span class="meta">&gt;&gt;</span> </div><div class="line"><span class="meta">&gt;&gt;</span></div></pre></td></tr></table></figure>
-<h3 id="赋值运算：">赋值运算：</h3><p>赋值运算</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> a = <span class="number">3</span></div><div class="line">a =  <span class="number">3</span></div><div class="line"><span class="meta">&gt;&gt;</span></div></pre></td></tr></table></figure>
-<p>如果不希望在屏幕上显示结果，只需要结尾加<code>;</code>即可抑制打印输出：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> a = <span class="number">3</span>;  % semicolon supressing output</div><div class="line"><span class="meta">&gt;&gt;</span></div></pre></td></tr></table></figure>
-<h3 id="变量的打印输出">变量的打印输出</h3><p>变量的赋值与打印：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> b = <span class="string">"hi"</span>;</div><div class="line">&gt;&gt; b</div><div class="line">b = hi</div><div class="line"><span class="meta">&gt;&gt;</span> c = (<span class="number">3</span>&gt;=<span class="number">1</span>);</div><div class="line">&gt;&gt; c</div><div class="line">c =  <span class="number">1</span></div><div class="line"><span class="meta">&gt;&gt;</span></div></pre></td></tr></table></figure>
-<p>对于一些复杂的输出，可以使用<code>disp</code>命令：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> a = pi;</div><div class="line">&gt;&gt; a</div><div class="line">a =  <span class="number">3.1416</span></div><div class="line"><span class="meta">&gt;&gt;</span> disp(a)</div><div class="line"> <span class="number">3.1416</span></div><div class="line"><span class="meta">&gt;&gt;</span> disp(sprintf(<span class="string">'2 decimals: %0.2f'</span>, a))</div><div class="line"><span class="number">2</span> <span class="symbol">decimals:</span> <span class="number">3.14</span></div><div class="line"><span class="meta">&gt;&gt;</span></div></pre></td></tr></table></figure>
-<p>控制输出长短：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> a</div><div class="line">a =  <span class="number">3.1416</span></div><div class="line"><span class="meta">&gt;&gt;</span> format long</div><div class="line"><span class="meta">&gt;&gt;</span> a</div><div class="line">a =  <span class="number">3.14159265358979</span></div><div class="line"><span class="meta">&gt;&gt;</span> format short</div><div class="line"><span class="meta">&gt;&gt;</span> a</div><div class="line">a =  <span class="number">3.1416</span></div><div class="line"><span class="meta">&gt;&gt;</span></div></pre></td></tr></table></figure>
-<h3 id="矩阵的表示">矩阵的表示</h3><p>表示一个三行两列的矩阵：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A = [<span class="number">1</span> <span class="number">2</span>; <span class="number">3</span> <span class="number">4</span>; <span class="number">5</span> <span class="number">6</span>]</div><div class="line">A =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">2</span></div><div class="line">   <span class="number">3</span>   <span class="number">4</span></div><div class="line">   <span class="number">5</span>   <span class="number">6</span></div></pre></td></tr></table></figure>
-<p>另外一种表示矩阵的方式：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A = [<span class="number">1</span> <span class="number">2</span>;</div><div class="line">&gt; <span class="number">3</span> <span class="number">4</span>;</div><div class="line">&gt; <span class="number">5</span> <span class="number">6</span>]</div><div class="line">A =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">2</span></div><div class="line">   <span class="number">3</span>   <span class="number">4</span></div><div class="line">   <span class="number">5</span>   <span class="number">6</span></div></pre></td></tr></table></figure>
-<p>分配一个一行三列的行向量：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; v = [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span>]</div><div class="line">v =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">2</span>   <span class="number">3</span></div></pre></td></tr></table></figure>
-<p>分配一个三行一列的列向量：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; v = [<span class="number">1</span>; <span class="number">2</span>; <span class="number">3</span>]</div><div class="line">v =</div><div class="line"></div><div class="line">   <span class="number">1</span></div><div class="line">   <span class="number">2</span></div><div class="line">   <span class="number">3</span></div></pre></td></tr></table></figure>
-<p>表示一个行向量，其中第一个值是起始值，中间的值是步长，最后一个值是终止值：</p>
-<figure class="highlight applescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; v = <span class="number">1</span>:<span class="number">0.1</span>:<span class="number">2</span></div><div class="line">v =</div><div class="line"></div><div class="line"> Columns <span class="number">1</span> <span class="keyword">through</span> <span class="number">8</span>:</div><div class="line"></div><div class="line">    <span class="number">1.0000</span>    <span class="number">1.1000</span>    <span class="number">1.2000</span>    <span class="number">1.3000</span>    <span class="number">1.4000</span>    <span class="number">1.5000</span>    <span class="number">1.6000</span>    <span class="number">1.7000</span></div><div class="line"></div><div class="line"> Columns <span class="number">9</span> <span class="keyword">through</span> <span class="number">11</span>:</div><div class="line"></div><div class="line">    <span class="number">1.8000</span>    <span class="number">1.9000</span>    <span class="number">2.000</span></div></pre></td></tr></table></figure>
-<p>也可以不写步长，这样默认步长是1：</p>
-<figure class="highlight tap"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; v = 1:6</div><div class="line">v =</div><div class="line"></div><div class="line">  <span class="number"> 1 </span> <span class="number"> 2 </span> <span class="number"> 3 </span> <span class="number"> 4 </span> <span class="number"> 5 </span>  6</div></pre></td></tr></table></figure>
-<h3 id="生成元素为1的矩阵">生成元素为1的矩阵</h3><p>生成一个2行3列，所有元素都为1的矩阵：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; ones(<span class="number">2</span>,<span class="number">3</span>)</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">1</span>   <span class="number">1</span></div><div class="line">   <span class="number">1</span>   <span class="number">1</span>   <span class="number">1</span></div></pre></td></tr></table></figure>
-<p>生成一个2行3列，所有元素都为2的矩阵：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; <span class="number">2</span>*ones(<span class="number">2</span>,<span class="number">3</span>)</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">2</span>   <span class="number">2</span>   <span class="number">2</span></div><div class="line">   <span class="number">2</span>   <span class="number">2</span>   <span class="number">2</span></div></pre></td></tr></table></figure>
-<h3 id="生成0矩阵">生成0矩阵</h3><p>生成一个1行3列的0矩阵：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; w = zeros(<span class="number">1</span>,<span class="number">3</span>)</div><div class="line">w =</div><div class="line"></div><div class="line">   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span></div></pre></td></tr></table></figure>
-<h3 id="生成随机数矩阵">生成随机数矩阵</h3><p>生成一个元素为介于0到1之间随机数的1行3列的矩阵：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; w = rand(<span class="number">1</span>,<span class="number">3</span>)</div><div class="line">w =</div><div class="line"></div><div class="line">   <span class="number">0.65555</span>   <span class="number">0.77468</span>   <span class="number">0.85729</span></div></pre></td></tr></table></figure>
-<p>均值为0的高斯分布：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; w = randn(<span class="number">1</span>,<span class="number">3</span>)</div><div class="line">w =</div><div class="line"></div><div class="line">   <span class="number">0.61607</span>   <span class="number">0.53219</span>   <span class="number">1.48783</span></div></pre></td></tr></table></figure>
-<p>-6加上根号10乘以一个一行10000列的正太分布的随机向量。</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; w = <span class="number">-6</span> + sqrt(<span class="number">10</span>)*(<span class="name">randn</span>(<span class="number">1</span>,<span class="number">10000</span>))<span class="comment">;</span></div></pre></td></tr></table></figure>
-<h3 id="绘制函数">绘制函数</h3><p>绘制这个直方图：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> hist(w)</div></pre></td></tr></table></figure>
-<p><img src="/img/16_08_13/002.png" alt=""></p>
-<p>绘制有50条的直方图：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> hist(w,<span class="number">50</span>)</div></pre></td></tr></table></figure>
-<p><img src="/img/16_08_13/003.png" alt=""></p>
-<h3 id="生成单位矩阵">生成单位矩阵</h3><p>生成矩阵的特殊命令：<code>eye</code>，可用来生成单位矩阵：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A = eye(<span class="number">5</span>)</div><div class="line">A =</div><div class="line"></div><div class="line">Diagonal Matrix</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span></div><div class="line">   <span class="number">0</span>   <span class="number">1</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span></div><div class="line">   <span class="number">0</span>   <span class="number">0</span>   <span class="number">1</span>   <span class="number">0</span>   <span class="number">0</span></div><div class="line">   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">1</span>   <span class="number">0</span></div><div class="line">   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">1</span></div></pre></td></tr></table></figure>
-<h3 id="help">help</h3><p><code>help</code>命令，后面跟任何其他指令，都可以查看该指令的说明文档，包括help自身：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> help eye</div></pre></td></tr></table></figure>
-<h2 id="移动数据">移动数据</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/SZJIc/moving-data-around" target="_blank" rel="external">视频地址</a></p>
-<p>这一节将介绍，如何加载外部数据到Octave中，以及存储Octave的数据到文件中的一些操作。</p>
-<p>首先，创建一个3行2列的矩阵A：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A = [<span class="number">1</span> <span class="number">2</span>; <span class="number">3</span> <span class="number">4</span>; <span class="number">5</span> <span class="number">6</span>]</div><div class="line">A =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">2</span></div><div class="line">   <span class="number">3</span>   <span class="number">4</span></div><div class="line">   <span class="number">5</span>   <span class="number">6</span></div></pre></td></tr></table></figure>
-<h3 id="查看矩阵尺寸">查看矩阵尺寸</h3><p>通过<code>size</code>命令，我们能看到这个矩阵的尺寸：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> size(A)</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">3</span>   <span class="number">2</span></div></pre></td></tr></table></figure>
-<p>实际上<code>size</code>的这个输出结果自身也是一个矩阵：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> sz = size(A)</div><div class="line">sz =</div><div class="line"></div><div class="line">   <span class="number">3</span>   <span class="number">2</span></div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;</span> size(sz)</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">2</span></div></pre></td></tr></table></figure>
-<p>分别查看A向量的size的输出结果中的两个值：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> size(A,<span class="number">1</span>)</div><div class="line">ans =  <span class="number">3</span></div><div class="line"><span class="meta">&gt;&gt;</span> size(A,<span class="number">2</span>)</div><div class="line">ans =  <span class="number">2</span></div></pre></td></tr></table></figure>
-<h3 id="查看矩阵最大维度">查看矩阵最大维度</h3><p><code>length</code>指令，来获取矩阵的最大维度，这个命令其实通常只对向量使用：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; v = [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span>]</div><div class="line">v =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">2</span>   <span class="number">3</span>   <span class="number">4</span></div><div class="line"></div><div class="line">&gt;&gt; length(v)</div><div class="line">ans =  <span class="number">4</span></div><div class="line">&gt;&gt; A</div><div class="line">A =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">2</span></div><div class="line">   <span class="number">3</span>   <span class="number">4</span></div><div class="line">   <span class="number">5</span>   <span class="number">6</span></div><div class="line"></div><div class="line">&gt;&gt; length(A)</div><div class="line">ans =  <span class="number">3</span></div></pre></td></tr></table></figure>
-<h3 id="设置Octave当前路径">设置Octave当前路径</h3><p>当我们打开Octave的时候，其实我们已经处在了一个默认路径下：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> pwd</div><div class="line">ans = <span class="regexp">/Users/lijianan</span></div></pre></td></tr></table></figure>
-<p>这个路径是Octave的安装位置。我们可以改变当前目录到桌面目录：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> cd /Users/lijianan/Desktop</div><div class="line"><span class="meta">&gt;&gt;</span> pwd</div><div class="line">ans = <span class="regexp">/Users/lijianan</span><span class="regexp">/Desktop</span></div></pre></td></tr></table></figure>
-<h3 id="加载外部文件">加载外部文件</h3><p>目前我的桌面目录下有两个存有数据的文件：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; <span class="selector-tag">ls</span></div><div class="line"><span class="selector-tag">FeaturesX</span><span class="selector-class">.dat</span> 	<span class="selector-tag">PriceY</span><span class="selector-class">.dat</span></div></pre></td></tr></table></figure>
-<p><img src="/img/16_08_13/004.gif" alt=""></p>
-<p>通过<code>load</code>命令，加载外部文件：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> load featuresX.dat</div><div class="line"><span class="meta">&gt;&gt;</span> load priceY.dat</div></pre></td></tr></table></figure>
-<p>你也可以使用<code>load()</code>的方式来加载，效果相同：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> load(<span class="string">'featuresX.dat'</span>)</div><div class="line"><span class="meta">&gt;&gt;</span> load(<span class="string">'priceY.dat'</span>)</div></pre></td></tr></table></figure>
-<h3 id="查看存储变量">查看存储变量</h3><p>我们可以使用<code>who</code>命令来查看当前Octave中存储的变量：</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; who</div><div class="line">Variables <span class="keyword">in</span> the current scope:</div><div class="line"></div><div class="line">A          ans        c          priceY     v</div><div class="line"><span class="selector-tag">a</span>          <span class="selector-tag">b</span>          featuresX  sz         w</div></pre></td></tr></table></figure>
-<p><code>whos</code>命令可以查看更详细的信息，包括尺寸，内存占用，以及类型：</p>
-<figure class="highlight fortran"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; whos</div><div class="line">Variables <span class="keyword">in</span> the current scope:</div><div class="line"></div><div class="line">   Attr <span class="keyword">Name</span>           <span class="built_in">Size</span>                     Bytes  <span class="keyword">Class</span></div><div class="line">   ==== ====           ====                     =====  ===== </div><div class="line">        A              x2                         <span class="number">48</span>  <span class="keyword">double</span></div><div class="line">        a              x1                          <span class="number">8</span>  <span class="keyword">double</span></div><div class="line">        ans            x2                         <span class="number">16</span>  <span class="keyword">double</span></div><div class="line">        b              x2                          <span class="number">2</span>  <span class="built_in">char</span></div><div class="line">        c              x1                          <span class="number">1</span>  <span class="keyword">logical</span></div><div class="line">        featuresX     7x2                        <span class="number">752</span>  <span class="keyword">double</span></div><div class="line">        priceY        7x1                        <span class="number">376</span>  <span class="keyword">double</span></div><div class="line">        sz             x2                         <span class="number">16</span>  <span class="keyword">double</span></div><div class="line">        v              x4                         <span class="number">32</span>  <span class="keyword">double</span></div><div class="line">        w              x10000                  <span class="number">80000</span>  <span class="keyword">double</span></div><div class="line"></div><div class="line">Total is <span class="number">10159</span> elements using <span class="number">81251</span> bytes</div></pre></td></tr></table></figure>
-<p>可以看到<code>featuresX</code>和<code>priceY</code>已经被成功的被作为一个变量加载进来了，我们可以直接输入<code>featuresX</code>来查看这个变量的内容：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; featuresX</div><div class="line"></div><div class="line">featuresX =</div><div class="line"></div><div class="line">   <span class="number">2104</span>      <span class="number">3</span></div><div class="line">   <span class="number">1600</span>      <span class="number">3</span></div><div class="line">   <span class="number">2400</span>      <span class="number">3</span></div><div class="line">   <span class="number">1416</span>      <span class="number">2</span></div><div class="line">   <span class="number">3000</span>      <span class="number">4</span></div><div class="line">   <span class="number">1985</span>      <span class="number">4</span></div><div class="line">   <span class="number">1534</span>      <span class="number">3</span></div><div class="line">   <span class="number">1427</span>      <span class="number">3</span></div><div class="line">   <span class="number">1380</span>      <span class="number">3</span></div><div class="line">   <span class="number">1494</span>      <span class="number">3</span></div><div class="line">   <span class="number">1940</span>      <span class="number">4</span></div><div class="line">   <span class="number">2000</span>      <span class="number">3</span></div><div class="line">   <span class="number">1890</span>      <span class="number">3</span></div><div class="line">	...</div></pre></td></tr></table></figure>
-<p>通过<code>size()</code>函数，我们可以看到<code>featuresX</code>是一个47行2列的矩阵，<code>priceY</code>是一个47行1列的矩阵：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> size(featuresX)</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">47</span>    <span class="number">2</span></div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;</span> size(priceY)</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">47</span>    <span class="number">1</span></div></pre></td></tr></table></figure>
-<h3 id="删除变量">删除变量</h3><p>可以使用<code>clear</code>命令来删除某个变量：</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; who</div><div class="line">Variables <span class="keyword">in</span> the current scope:</div><div class="line"></div><div class="line">A       <span class="selector-tag">a</span>       ans     <span class="selector-tag">b</span>       c       priceY  sz      v       w</div></pre></td></tr></table></figure>
-<h3 id="截取矩阵部分元素">截取矩阵部分元素</h3><p>将<code>priceY</code>的前10个元素存入变量<code>V</code>：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> V = priceY(<span class="number">1</span><span class="symbol">:</span><span class="number">10</span>)</div><div class="line">V =</div><div class="line"></div><div class="line">   <span class="number">3999</span></div><div class="line">   <span class="number">3299</span></div><div class="line">   <span class="number">3690</span></div><div class="line">   <span class="number">2320</span></div><div class="line">   <span class="number">5399</span></div><div class="line">   <span class="number">2999</span></div><div class="line">   <span class="number">3149</span></div><div class="line">   <span class="number">1989</span></div><div class="line">   <span class="number">2120</span></div><div class="line">   <span class="number">2425</span></div></pre></td></tr></table></figure>
-<h3 id="变量的存储">变量的存储</h3><p>将变量<code>V</code>存入<code>hello.mat</code>文件中：</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; save hello<span class="selector-class">.mat</span> V</div><div class="line">&gt;&gt; ls</div><div class="line">FeaturesX<span class="selector-class">.dat</span> 	PriceY<span class="selector-class">.dat</span>	hello.mat</div></pre></td></tr></table></figure>
-<blockquote>
-<p>这里其实是把<code>V</code>按照压缩的二进制的形式进行存储，如果说<code>V</code>的数据很大，那么压缩的幅度也很大。</p>
-<p>如果想按照一个我们可以看得懂的格式进行存储的话，可以这样输入：<code>save hello.txt V -ascii</code></p>
-</blockquote>
-<h3 id="清空所有变量">清空所有变量</h3><p>直接输入<code>clear</code>命令，会清空所有的变量：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> clear</div><div class="line"><span class="meta">&gt;&gt;</span> whos</div></pre></td></tr></table></figure>
-<h3 id="索引">索引</h3><h4 id="用索引来查询">用索引来查询</h4><p>首先创建矩阵<code>A</code>：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A = [<span class="number">1</span> <span class="number">2</span>; <span class="number">3</span> <span class="number">4</span>; <span class="number">5</span> <span class="number">6</span>]</div><div class="line">A =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">2</span></div><div class="line">   <span class="number">3</span>   <span class="number">4</span></div><div class="line">   <span class="number">5</span>   <span class="number">6</span></div></pre></td></tr></table></figure>
-<p>你可以通过<code>A(3,2)</code>来访问矩阵的第三行第二列的元素：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A(<span class="number">3</span>,<span class="number">2</span>)</div><div class="line">ans =  <span class="number">6</span></div></pre></td></tr></table></figure>
-<p>你也可以通过<code>A(2,:)</code>来访问第二行的所有元素，其中<code>:</code>代表该行/列的所有元素：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> A(<span class="number">2</span>,<span class="symbol">:</span>)</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">3</span>   <span class="number">4</span></div></pre></td></tr></table></figure>
-<p>你可以通过<code>A([1 3], :)</code>来取矩阵第1行以及第3行的所有元素：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> A([<span class="number">1</span> <span class="number">3</span>], <span class="symbol">:</span>)</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">2</span></div><div class="line">   <span class="number">5</span>   <span class="number">6</span></div></pre></td></tr></table></figure>
-<p>通过<code>A(:)</code>来将所有的元素以一个列向量的形式展示：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> A(<span class="symbol">:</span>)</div><div class="line">ans =</div><div class="line"></div><div class="line">     <span class="number">1</span></div><div class="line">     <span class="number">3</span></div><div class="line">     <span class="number">5</span></div><div class="line">    <span class="number">10</span></div><div class="line">    <span class="number">11</span></div><div class="line">    <span class="number">12</span></div></pre></td></tr></table></figure>
-<h4 id="用索引来赋值">用索引来赋值</h4><p>你也可以通过索引来进行复制操作：</p>
-<figure class="highlight tap"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A</div><div class="line">A =</div><div class="line"></div><div class="line">  <span class="number"> 1 </span>  2</div><div class="line">  <span class="number"> 3 </span>  4</div><div class="line">  <span class="number"> 5 </span>  6</div><div class="line"></div><div class="line">&gt;&gt; A(:,2) = [10; 11; 12]</div><div class="line">A =</div><div class="line"></div><div class="line">   <span class="number"> 1 </span>  10</div><div class="line">   <span class="number"> 3 </span>  11</div><div class="line">   <span class="number"> 5 </span>  12</div></pre></td></tr></table></figure>
-<p>在矩阵的右侧新增一列：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A</div><div class="line">A =</div><div class="line"></div><div class="line">    <span class="number">1</span>   <span class="number">10</span></div><div class="line">    <span class="number">3</span>   <span class="number">11</span></div><div class="line">    <span class="number">5</span>   <span class="number">12</span></div><div class="line"></div><div class="line">&gt;&gt; A = [A,[<span class="number">100</span>; <span class="number">101</span>; <span class="number">102</span>]]</div><div class="line">A =</div><div class="line"></div><div class="line">     <span class="number">1</span>    <span class="number">10</span>   <span class="number">100</span></div><div class="line">     <span class="number">3</span>    <span class="number">11</span>   <span class="number">101</span></div><div class="line">     <span class="number">5</span>    <span class="number">12</span>   <span class="number">102</span></div></pre></td></tr></table></figure>
-<p>将两个行相等的向量按照从左到右的顺序连在一起：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A = [<span class="number">1</span> <span class="number">2</span>;<span class="number">3</span> <span class="number">4</span>;<span class="number">5</span> <span class="number">6</span>]</div><div class="line">A =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">2</span></div><div class="line">   <span class="number">3</span>   <span class="number">4</span></div><div class="line">   <span class="number">5</span>   <span class="number">6</span></div><div class="line"></div><div class="line">&gt;&gt; B = [<span class="number">11</span> <span class="number">12</span>;<span class="number">13</span> <span class="number">14</span>;<span class="number">15</span> <span class="number">16</span>]</div><div class="line">B =</div><div class="line"></div><div class="line">   <span class="number">11</span>   <span class="number">12</span></div><div class="line">   <span class="number">13</span>   <span class="number">14</span></div><div class="line">   <span class="number">15</span>   <span class="number">16</span></div><div class="line"></div><div class="line">&gt;&gt; C = [A B]</div><div class="line">C =</div><div class="line"></div><div class="line">    <span class="number">1</span>    <span class="number">2</span>   <span class="number">11</span>   <span class="number">12</span></div><div class="line">    <span class="number">3</span>    <span class="number">4</span>   <span class="number">13</span>   <span class="number">14</span></div><div class="line">    <span class="number">5</span>    <span class="number">6</span>   <span class="number">15</span>   <span class="number">16</span></div></pre></td></tr></table></figure>
-<p>将两个列数相等的向量按照从上到下的顺序连在一起：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A</div><div class="line">A =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">2</span></div><div class="line">   <span class="number">3</span>   <span class="number">4</span></div><div class="line">   <span class="number">5</span>   <span class="number">6</span></div><div class="line"></div><div class="line">&gt;&gt; B</div><div class="line">B =</div><div class="line"></div><div class="line">   <span class="number">11</span>   <span class="number">12</span></div><div class="line">   <span class="number">13</span>   <span class="number">14</span></div><div class="line">   <span class="number">15</span>   <span class="number">16</span></div><div class="line"></div><div class="line">&gt;&gt; C = [A;B]</div><div class="line">C =</div><div class="line"></div><div class="line">    <span class="number">1</span>    <span class="number">2</span></div><div class="line">    <span class="number">3</span>    <span class="number">4</span></div><div class="line">    <span class="number">5</span>    <span class="number">6</span></div><div class="line">   <span class="number">11</span>   <span class="number">12</span></div><div class="line">   <span class="number">13</span>   <span class="number">14</span></div><div class="line">   <span class="number">15</span>   <span class="number">16</span></div></pre></td></tr></table></figure>
-<h2 id="对数据进行运算">对数据进行运算</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/Y6uuC/computing-on-data" target="_blank" rel="external">视频地址</a></p>
-<p>本节将介绍如何对数据进行运算。</p>
-<h3 id="矩阵乘法">矩阵乘法</h3><p>矩阵的乘法：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A = [<span class="number">1</span> <span class="number">2</span>; <span class="number">3</span> <span class="number">4</span>; <span class="number">5</span> <span class="number">6</span>]</div><div class="line">A =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">2</span></div><div class="line">   <span class="number">3</span>   <span class="number">4</span></div><div class="line">   <span class="number">5</span>   <span class="number">6</span></div><div class="line"></div><div class="line">&gt;&gt; C = [<span class="number">1</span> <span class="number">1</span>; <span class="number">2</span> <span class="number">2</span>]</div><div class="line">C =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">1</span></div><div class="line">   <span class="number">2</span>   <span class="number">2</span></div><div class="line"></div><div class="line">&gt;&gt; A*C</div><div class="line">ans =</div><div class="line"></div><div class="line">    <span class="number">5</span>    <span class="number">5</span></div><div class="line">   <span class="number">11</span>   <span class="number">11</span></div><div class="line">   <span class="number">17</span>   <span class="number">17</span></div></pre></td></tr></table></figure>
-<h3 id="点乘操作">点乘操作</h3><p>让两个矩阵中的每个对应位置的元素相乘(点乘操作)：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A = [<span class="number">1</span> <span class="number">2</span>; <span class="number">3</span> <span class="number">4</span>; <span class="number">5</span> <span class="number">6</span>]</div><div class="line">A =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">2</span></div><div class="line">   <span class="number">3</span>   <span class="number">4</span></div><div class="line">   <span class="number">5</span>   <span class="number">6</span></div><div class="line"></div><div class="line">&gt;&gt; B = [<span class="number">11</span> <span class="number">12</span>; <span class="number">13</span> <span class="number">14</span>; <span class="number">15</span> <span class="number">16</span>]</div><div class="line">B =</div><div class="line"></div><div class="line">   <span class="number">11</span>   <span class="number">12</span></div><div class="line">   <span class="number">13</span>   <span class="number">14</span></div><div class="line">   <span class="number">15</span>   <span class="number">16</span></div><div class="line">   </div><div class="line">&gt;&gt; A.*B</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">11</span>   <span class="number">24</span></div><div class="line">   <span class="number">39</span>   <span class="number">56</span></div><div class="line">   <span class="number">75</span>   <span class="number">96</span></div></pre></td></tr></table></figure>
-<h3 id="对每个元素求平方">对每个元素求平方</h3><p>对矩阵$A$中的每个元素求平方：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A .^ <span class="number">2</span></div><div class="line">ans =</div><div class="line"></div><div class="line">    <span class="number">1</span>    <span class="number">4</span></div><div class="line">    <span class="number">9</span>   <span class="number">16</span></div><div class="line">   <span class="number">25</span>   <span class="number">36</span></div></pre></td></tr></table></figure>
-<h3 id="对每个元素求倒数">对每个元素求倒数</h3><p>对矩阵中每个元素求倒数：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; v = [<span class="number">1</span>; <span class="number">2</span>; <span class="number">3</span>]</div><div class="line">v =</div><div class="line"></div><div class="line">   <span class="number">1</span></div><div class="line">   <span class="number">2</span></div><div class="line">   <span class="number">3</span></div><div class="line"></div><div class="line">&gt;&gt; <span class="number">1</span> ./ v</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">1.00000</span></div><div class="line">   <span class="number">0.50000</span></div><div class="line">   <span class="number">0.33333</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>这里的<code>.</code>符号，表示对每个元素分别进行运算</p>
-</blockquote>
-<h3 id="对每个元素求对数">对每个元素求对数</h3><p>对每个元素求对数：</p>
-<figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; log(v)</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">0.00000</span></div><div class="line">   <span class="number">0.69315</span></div><div class="line">   <span class="number">1.09861</span></div></pre></td></tr></table></figure>
-<h3 id="自然数e的幂次运算">自然数e的幂次运算</h3><p>以$e$为低，以每个元素为幂的运算：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; exp(v)</div><div class="line">ans =</div><div class="line"></div><div class="line">    <span class="number">2.7183</span></div><div class="line">    <span class="number">7.3891</span></div><div class="line">   <span class="number">20.0855</span></div></pre></td></tr></table></figure>
-<h3 id="对每个元素求绝对值">对每个元素求绝对值</h3><p>对所有元素求绝对值：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; abs([<span class="number">-1</span>; <span class="number">2</span>; <span class="number">-3</span>])</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">1</span></div><div class="line">   <span class="number">2</span></div><div class="line">   <span class="number">3</span></div></pre></td></tr></table></figure>
-<h3 id="求相反数运算">求相反数运算</h3><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; -v</div><div class="line">ans =</div><div class="line"></div><div class="line">  -<span class="ruby"><span class="number">1</span></span></div><div class="line">  -<span class="ruby"><span class="number">2</span></span></div><div class="line">  -<span class="ruby"><span class="number">3</span></span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>其实就相当于<code>-1 * v</code></p>
-</blockquote>
-<h3 id="对向量每个元素自增1">对向量每个元素自增1</h3><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; v + <span class="number">1</span></div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">2</span></div><div class="line">   <span class="number">3</span></div><div class="line">   <span class="number">4</span></div></pre></td></tr></table></figure>
-<h3 id="矩阵的转置">矩阵的转置</h3><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A</div><div class="line">A =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">2</span></div><div class="line">   <span class="number">3</span>   <span class="number">4</span></div><div class="line">   <span class="number">5</span>   <span class="number">6</span></div><div class="line"></div><div class="line">&gt;&gt; A'</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">3</span>   <span class="number">5</span></div><div class="line">   <span class="number">2</span>   <span class="number">4</span>   <span class="number">6</span></div></pre></td></tr></table></figure>
-<h3 id="获取向量中最大的元素">获取向量中最大的元素</h3><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; a = [<span class="number">1</span> <span class="number">15</span> <span class="number">2</span> <span class="number">0.5</span>]</div><div class="line">a =</div><div class="line"></div><div class="line">    <span class="number">1.00000</span>   <span class="number">15.00000</span>    <span class="number">2.00000</span>    <span class="number">0.50000</span></div><div class="line"></div><div class="line">&gt;&gt; val = max(a)</div><div class="line">val =  <span class="number">15</span></div></pre></td></tr></table></figure>
-<p>也可以获取最大元素的索引：</p>
-<figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; [val, <span class="literal">ind</span>] = <span class="built_in">max</span>(a)</div><div class="line">val =  <span class="number">15</span></div><div class="line"><span class="literal">ind</span> =  <span class="number">2</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>值得注意的是，如果这里不是向量，而是矩阵，那么将得到每一列的最大值</p>
-</blockquote>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; D = [<span class="number">1</span> <span class="number">5</span>;<span class="number">2</span> <span class="number">4</span>; <span class="number">3</span> <span class="number">3</span>]</div><div class="line">D =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">5</span></div><div class="line">   <span class="number">2</span>   <span class="number">4</span></div><div class="line">   <span class="number">3</span>   <span class="number">3</span></div><div class="line"></div><div class="line">&gt;&gt; max(D)</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">3</span>   <span class="number">5</span></div></pre></td></tr></table></figure>
-<h3 id="判断矩阵中每个元素是否满足某条件">判断矩阵中每个元素是否满足某条件</h3><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; a</div><div class="line">a =</div><div class="line"></div><div class="line">    <span class="number">1.00000</span>   <span class="number">15.00000</span>    <span class="number">2.00000</span>    <span class="number">0.50000</span></div><div class="line"></div><div class="line">&gt;&gt; a &lt; <span class="number">3</span></div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">0</span>   <span class="number">1</span>   <span class="number">1</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>这里1代表真，0代表假</p>
-</blockquote>
-<h3 id="获取魔幻方阵(magic_squares)">获取魔幻方阵(magic squares)</h3><p>魔幻方阵，指的是矩阵的<strong>所有的行、列、以及对角线元素的和，都相等</strong>的矩阵。</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A = magic(<span class="number">3</span>)</div><div class="line">A =</div><div class="line"></div><div class="line">   <span class="number">8</span>   <span class="number">1</span>   <span class="number">6</span></div><div class="line">   <span class="number">3</span>   <span class="number">5</span>   <span class="number">7</span></div><div class="line">   <span class="number">4</span>   <span class="number">9</span>   <span class="number">2</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>其实这个神奇的矩阵，在机器学习中基本用不上</p>
-</blockquote>
-<h3 id="找出矩阵中满足某条件元素的索引">找出矩阵中满足某条件元素的索引</h3><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A</div><div class="line">A =</div><div class="line"></div><div class="line">   <span class="number">8</span>   <span class="number">1</span>   <span class="number">6</span></div><div class="line">   <span class="number">3</span>   <span class="number">5</span>   <span class="number">7</span></div><div class="line">   <span class="number">4</span>   <span class="number">9</span>   <span class="number">2</span></div><div class="line"></div><div class="line">&gt;&gt; [r,c] = find(A &gt;= <span class="number">7</span>)</div><div class="line">r =</div><div class="line"></div><div class="line">   <span class="number">1</span></div><div class="line">   <span class="number">3</span></div><div class="line">   <span class="number">2</span></div><div class="line"></div><div class="line">c =</div><div class="line"></div><div class="line">   <span class="number">1</span></div><div class="line">   <span class="number">2</span></div><div class="line">   <span class="number">3</span></div></pre></td></tr></table></figure>
-<p>其中r是所在行的索引，c是所在列的索引。</p>
-<p>比如：元素<code>(1,1)</code>，<code>(3,2)</code>，<code>(2,3)</code>。</p>
-<h3 id="求和函数">求和函数</h3><p>将矩阵中所有元素求和：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; a</div><div class="line">a =</div><div class="line"></div><div class="line">    <span class="number">1.00000</span>   <span class="number">15.00000</span>    <span class="number">2.00000</span>    <span class="number">0.50000</span></div><div class="line"></div><div class="line">&gt;&gt; sum(a)</div><div class="line">ans =  <span class="number">18.500</span></div></pre></td></tr></table></figure>
-<h3 id="求积函数">求积函数</h3><p>将矩阵中所有元素求积：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; a</div><div class="line">a =</div><div class="line"></div><div class="line">    <span class="number">1.00000</span>   <span class="number">15.00000</span>    <span class="number">2.00000</span>    <span class="number">0.50000</span></div><div class="line"></div><div class="line">&gt;&gt; prod(a)</div><div class="line">ans =  <span class="number">15</span></div></pre></td></tr></table></figure>
-<h3 id="四舍五入">四舍五入</h3><p>向下四舍五入：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; a</div><div class="line">a =</div><div class="line"></div><div class="line">    <span class="number">1.00000</span>   <span class="number">15.00000</span>    <span class="number">2.00000</span>    <span class="number">0.50000</span></div><div class="line"></div><div class="line">&gt;&gt; floor(a)</div><div class="line">ans =</div><div class="line"></div><div class="line">    <span class="number">1</span>   <span class="number">15</span>    <span class="number">2</span>    <span class="number">0</span></div></pre></td></tr></table></figure>
-<p>向上四舍五入：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; ceil(a)</div><div class="line">ans =</div><div class="line"></div><div class="line">    <span class="number">1</span>   <span class="number">15</span>    <span class="number">2</span>    <span class="number">1</span></div></pre></td></tr></table></figure>
-<h3 id="max函数">max函数</h3><p>获得一个3×3的方阵，元素为在0到1之间的随机数：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; rand(<span class="number">3</span>)</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">0.315556</span>   <span class="number">0.669565</span>   <span class="number">0.192329</span></div><div class="line">   <span class="number">0.449421</span>   <span class="number">0.010167</span>   <span class="number">0.389329</span></div><div class="line">   <span class="number">0.282657</span>   <span class="number">0.761167</span>   <span class="number">0.600949</span></div></pre></td></tr></table></figure>
-<p>分别取两个矩阵中对应位置较大的一个元素，组成新矩阵：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; max(rand(<span class="number">3</span>),rand(<span class="number">3</span>))</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">0.53967</span>   <span class="number">0.79306</span>   <span class="number">0.62026</span></div><div class="line">   <span class="number">0.90069</span>   <span class="number">0.70636</span>   <span class="number">0.55156</span></div><div class="line">   <span class="number">0.98940</span>   <span class="number">0.68021</span>   <span class="number">0.85094</span></div></pre></td></tr></table></figure>
-<p>获取一个矩阵中每一列最大的元素组成的向量：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A</div><div class="line">A =</div><div class="line"></div><div class="line">   <span class="number">8</span>   <span class="number">1</span>   <span class="number">6</span></div><div class="line">   <span class="number">3</span>   <span class="number">5</span>   <span class="number">7</span></div><div class="line">   <span class="number">4</span>   <span class="number">9</span>   <span class="number">2</span></div><div class="line"></div><div class="line">&gt;&gt; max(A,[],<span class="number">1</span>)</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">8</span>   <span class="number">9</span>   <span class="number">7</span></div></pre></td></tr></table></figure>
-<p>获取矩阵每一列的最大值：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; max(A,[],<span class="number">2</span>)</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">8</span></div><div class="line">   <span class="number">7</span></div><div class="line">   <span class="number">9</span></div></pre></td></tr></table></figure>
-<p>找出矩阵$A$中最大元素的两种方法：</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; max(<span class="name">max</span>(<span class="name">A</span>))</div><div class="line">ans =  <span class="number">9</span></div><div class="line">&gt;&gt; max(<span class="name">A</span>(:))</div><div class="line">ans =  <span class="number">9</span></div></pre></td></tr></table></figure>
-<h3 id="对矩阵的每一行(列)求和">对矩阵的每一行(列)求和</h3><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A = magic(<span class="number">9</span>)</div><div class="line">A =</div><div class="line"></div><div class="line">   <span class="number">47</span>   <span class="number">58</span>   <span class="number">69</span>   <span class="number">80</span>    <span class="number">1</span>   <span class="number">12</span>   <span class="number">23</span>   <span class="number">34</span>   <span class="number">45</span></div><div class="line">   <span class="number">57</span>   <span class="number">68</span>   <span class="number">79</span>    <span class="number">9</span>   <span class="number">11</span>   <span class="number">22</span>   <span class="number">33</span>   <span class="number">44</span>   <span class="number">46</span></div><div class="line">   <span class="number">67</span>   <span class="number">78</span>    <span class="number">8</span>   <span class="number">10</span>   <span class="number">21</span>   <span class="number">32</span>   <span class="number">43</span>   <span class="number">54</span>   <span class="number">56</span></div><div class="line">   <span class="number">77</span>    <span class="number">7</span>   <span class="number">18</span>   <span class="number">20</span>   <span class="number">31</span>   <span class="number">42</span>   <span class="number">53</span>   <span class="number">55</span>   <span class="number">66</span></div><div class="line">    <span class="number">6</span>   <span class="number">17</span>   <span class="number">19</span>   <span class="number">30</span>   <span class="number">41</span>   <span class="number">52</span>   <span class="number">63</span>   <span class="number">65</span>   <span class="number">76</span></div><div class="line">   <span class="number">16</span>   <span class="number">27</span>   <span class="number">29</span>   <span class="number">40</span>   <span class="number">51</span>   <span class="number">62</span>   <span class="number">64</span>   <span class="number">75</span>    <span class="number">5</span></div><div class="line">   <span class="number">26</span>   <span class="number">28</span>   <span class="number">39</span>   <span class="number">50</span>   <span class="number">61</span>   <span class="number">72</span>   <span class="number">74</span>    <span class="number">4</span>   <span class="number">15</span></div><div class="line">   <span class="number">36</span>   <span class="number">38</span>   <span class="number">49</span>   <span class="number">60</span>   <span class="number">71</span>   <span class="number">73</span>    <span class="number">3</span>   <span class="number">14</span>   <span class="number">25</span></div><div class="line">   <span class="number">37</span>   <span class="number">48</span>   <span class="number">59</span>   <span class="number">70</span>   <span class="number">81</span>    <span class="number">2</span>   <span class="number">13</span>   <span class="number">24</span>   <span class="number">35</span></div><div class="line"></div><div class="line">&gt;&gt; sum(A,<span class="number">1</span>)</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">369</span>   <span class="number">369</span>   <span class="number">369</span>   <span class="number">369</span>   <span class="number">369</span>   <span class="number">369</span>   <span class="number">369</span>   <span class="number">369</span>   <span class="number">369</span></div><div class="line">   </div><div class="line">&gt;&gt; sum(A,<span class="number">2</span>)</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">369</span></div><div class="line">   <span class="number">369</span></div><div class="line">   <span class="number">369</span></div><div class="line">   <span class="number">369</span></div><div class="line">   <span class="number">369</span></div><div class="line">   <span class="number">369</span></div><div class="line">   <span class="number">369</span></div><div class="line">   <span class="number">369</span></div><div class="line">   <span class="number">369</span></div></pre></td></tr></table></figure>
-<p>求$A$的对角线元素的和：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A</div><div class="line">A =</div><div class="line"></div><div class="line">   <span class="number">47</span>   <span class="number">58</span>   <span class="number">69</span>   <span class="number">80</span>    <span class="number">1</span>   <span class="number">12</span>   <span class="number">23</span>   <span class="number">34</span>   <span class="number">45</span></div><div class="line">   <span class="number">57</span>   <span class="number">68</span>   <span class="number">79</span>    <span class="number">9</span>   <span class="number">11</span>   <span class="number">22</span>   <span class="number">33</span>   <span class="number">44</span>   <span class="number">46</span></div><div class="line">   <span class="number">67</span>   <span class="number">78</span>    <span class="number">8</span>   <span class="number">10</span>   <span class="number">21</span>   <span class="number">32</span>   <span class="number">43</span>   <span class="number">54</span>   <span class="number">56</span></div><div class="line">   <span class="number">77</span>    <span class="number">7</span>   <span class="number">18</span>   <span class="number">20</span>   <span class="number">31</span>   <span class="number">42</span>   <span class="number">53</span>   <span class="number">55</span>   <span class="number">66</span></div><div class="line">    <span class="number">6</span>   <span class="number">17</span>   <span class="number">19</span>   <span class="number">30</span>   <span class="number">41</span>   <span class="number">52</span>   <span class="number">63</span>   <span class="number">65</span>   <span class="number">76</span></div><div class="line">   <span class="number">16</span>   <span class="number">27</span>   <span class="number">29</span>   <span class="number">40</span>   <span class="number">51</span>   <span class="number">62</span>   <span class="number">64</span>   <span class="number">75</span>    <span class="number">5</span></div><div class="line">   <span class="number">26</span>   <span class="number">28</span>   <span class="number">39</span>   <span class="number">50</span>   <span class="number">61</span>   <span class="number">72</span>   <span class="number">74</span>    <span class="number">4</span>   <span class="number">15</span></div><div class="line">   <span class="number">36</span>   <span class="number">38</span>   <span class="number">49</span>   <span class="number">60</span>   <span class="number">71</span>   <span class="number">73</span>    <span class="number">3</span>   <span class="number">14</span>   <span class="number">25</span></div><div class="line">   <span class="number">37</span>   <span class="number">48</span>   <span class="number">59</span>   <span class="number">70</span>   <span class="number">81</span>    <span class="number">2</span>   <span class="number">13</span>   <span class="number">24</span>   <span class="number">35</span></div><div class="line"></div><div class="line">&gt;&gt; eye(<span class="number">9</span>)</div><div class="line">ans =</div><div class="line"></div><div class="line">Diagonal Matrix</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span></div><div class="line">   <span class="number">0</span>   <span class="number">1</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span></div><div class="line">   <span class="number">0</span>   <span class="number">0</span>   <span class="number">1</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span></div><div class="line">   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">1</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span></div><div class="line">   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">1</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span></div><div class="line">   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">1</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span></div><div class="line">   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">1</span>   <span class="number">0</span>   <span class="number">0</span></div><div class="line">   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">1</span>   <span class="number">0</span></div><div class="line">   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">0</span>   <span class="number">1</span></div><div class="line"></div><div class="line">&gt;&gt; A.*eye(<span class="number">9</span>)</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">47</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span></div><div class="line">    <span class="number">0</span>   <span class="number">68</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span></div><div class="line">    <span class="number">0</span>    <span class="number">0</span>    <span class="number">8</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span></div><div class="line">    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>   <span class="number">20</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span></div><div class="line">    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>   <span class="number">41</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span></div><div class="line">    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>   <span class="number">62</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span></div><div class="line">    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>   <span class="number">74</span>    <span class="number">0</span>    <span class="number">0</span></div><div class="line">    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>   <span class="number">14</span>    <span class="number">0</span></div><div class="line">    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">0</span>   <span class="number">35</span></div><div class="line">    </div><div class="line">&gt;&gt; sum(sum(A.*eye(<span class="number">9</span>)))</div><div class="line">ans =  <span class="number">369</span></div></pre></td></tr></table></figure>
-<h3 id="将矩阵上下翻转">将矩阵上下翻转</h3><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; magic(<span class="number">3</span>)</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">8</span>   <span class="number">1</span>   <span class="number">6</span></div><div class="line">   <span class="number">3</span>   <span class="number">5</span>   <span class="number">7</span></div><div class="line">   <span class="number">4</span>   <span class="number">9</span>   <span class="number">2</span></div><div class="line">   </div><div class="line">&gt;&gt; flipud(magic(<span class="number">3</span>))</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">4</span>   <span class="number">9</span>   <span class="number">2</span></div><div class="line">   <span class="number">3</span>   <span class="number">5</span>   <span class="number">7</span></div><div class="line">   <span class="number">8</span>   <span class="number">1</span>   <span class="number">6</span></div></pre></td></tr></table></figure>
-<h3 id="求逆矩阵">求逆矩阵</h3><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A = magic(<span class="number">3</span>)</div><div class="line">A =</div><div class="line"></div><div class="line">   <span class="number">8</span>   <span class="number">1</span>   <span class="number">6</span></div><div class="line">   <span class="number">3</span>   <span class="number">5</span>   <span class="number">7</span></div><div class="line">   <span class="number">4</span>   <span class="number">9</span>   <span class="number">2</span></div><div class="line"></div><div class="line">&gt;&gt; temp = pinv(A)</div><div class="line">temp =</div><div class="line"></div><div class="line">   <span class="number">0.147222</span>  <span class="number">-0.144444</span>   <span class="number">0.063889</span></div><div class="line">  <span class="number">-0.061111</span>   <span class="number">0.022222</span>   <span class="number">0.105556</span></div><div class="line">  <span class="number">-0.019444</span>   <span class="number">0.188889</span>  <span class="number">-0.102778</span></div><div class="line"></div><div class="line">&gt;&gt; temp * A</div><div class="line">ans =</div><div class="line"></div><div class="line">   <span class="number">1.00000</span>   <span class="number">0.00000</span>  <span class="number">-0.00000</span></div><div class="line">  <span class="number">-0.00000</span>   <span class="number">1.00000</span>   <span class="number">0.00000</span></div><div class="line">   <span class="number">0.00000</span>   <span class="number">0.00000</span>   <span class="number">1.00000</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>实际上，这里的<code>pinv()</code>函数求得的是伪逆矩阵。</p>
-</blockquote>
-<h2 id="数据可视化">数据可视化</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/I7gx3/plotting-data" target="_blank" rel="external">视频地址</a></p>
-<p>这段视频中，将介绍通过Octave来绘制数据。</p>
-<h3 id="绘制正弦余弦函数">绘制正弦余弦函数</h3><p>绘制一个正弦函数：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> t=[<span class="number">0</span><span class="symbol">:</span><span class="number">0</span>.<span class="number">01</span><span class="symbol">:</span><span class="number">0</span>.<span class="number">98</span>];	% 生成一个<span class="number">0</span>到<span class="number">0</span>.<span class="number">98</span>的等差数列，差值为<span class="number">0</span>.<span class="number">01</span></div><div class="line"><span class="meta">&gt;&gt;</span> y1 = sin(<span class="number">8</span>*pi*t)</div><div class="line"><span class="meta">&gt;&gt;</span> plot(t,y1);</div></pre></td></tr></table></figure>
-<p><img src="/img/16_08_13/005.png" alt=""></p>
-<p>同理，可以绘制余弦图：</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; y2 = cos(<span class="number">8</span>*pi*<span class="literal">t</span>)<span class="comment">;</span></div><div class="line">&gt;&gt; plot(<span class="name">t</span>,y2)</div></pre></td></tr></table></figure>
-<p>这样会覆盖掉之前的图，得到新的图：</p>
-<p><img src="/img/16_08_13/006.png" alt=""></p>
-<p>如果我们想将两个图重叠在一起绘制，可以使用<code>hold on</code>命令：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> plot(t,y1);</div><div class="line">&gt;&gt; hold on</div><div class="line"><span class="meta">&gt;&gt;</span> plot(t,y2,<span class="string">'r'</span>);	%  这里第三个参数<span class="string">'r'</span>代表颜色为红色</div></pre></td></tr></table></figure>
-<p><img src="/img/16_08_13/007.png" alt=""></p>
-<h3 id="图的标记">图的标记</h3><p>可以用以下命令来对图进行标记：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> xlabel(<span class="string">'time'</span>)	%	标记x坐标</div><div class="line"><span class="meta">&gt;&gt;</span> ylabel(<span class="string">'value'</span>)	%	标记y坐标</div><div class="line"><span class="meta">&gt;&gt;</span> legend(<span class="string">'sin'</span>,<span class="string">'cos'</span>)	%	标记图例</div><div class="line"><span class="meta">&gt;&gt;</span> title(<span class="string">'my plot'</span>)	%	标记标题</div></pre></td></tr></table></figure>
-<p><img src="/img/16_08_13/008.png" alt=""></p>
-<h3 id="图片的保存与删除">图片的保存与删除</h3><p>将图片保存在Octave所在目录。可能会花费一些时间</p>
-<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; <span class="built_in">print</span> -dpng <span class="string">'myPlot.png'</span></div><div class="line">warning: <span class="built_in">print</span>.m: fig2dev binary <span class="keyword">is</span> <span class="keyword">not</span> available.</div><div class="line">Some output formats are <span class="keyword">not</span> available.</div></pre></td></tr></table></figure>
-<p>这里其实可以保存多种格式，可以查看<code>help</code>来了解。</p>
-<p>如果想删除这个文件，直接输入<code>close</code>即可。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> close</div></pre></td></tr></table></figure>
-<p>这样就会关闭视图窗口，并且删除刚才生成的文件。</p>
-<h3 id="为图像标号">为图像标号</h3><p>可以通过<code>figure</code>函数对图像进行标号：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> figure(<span class="number">1</span>);plot(t,y1);</div></pre></td></tr></table></figure>
-<p><img src="/img/16_08_13/009.png" alt=""></p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> figure(<span class="number">2</span>);plot(t,y2);</div></pre></td></tr></table></figure>
-<p><img src="/img/16_08_13/010.png" alt=""></p>
-<p>这个时候界面上其实可以看到有两个图片：</p>
-<p><img src="/img/16_08_13/011.png" alt=""></p>
-<h3 id="使用subplot将图像分割显示">使用subplot将图像分割显示</h3><p><code>subplot</code>函数接受三个参数，前两个参数代表获取一个a × b格子，第三个参数代表当前使用的格子的索引。</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; subplot(<span class="number">1</span>,<span class="number">2</span>,<span class="number">1</span>); % 将图像划分成<span class="number">1</span>×<span class="number">2</span>的格子，并且使用第一个格子</div></pre></td></tr></table></figure>
-<p><img src="/img/16_08_13/012.png" alt=""></p>
-<p>如果这个时候输入:</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> plot(t,y1);</div></pre></td></tr></table></figure>
-<p>那么将会绘制在第一个格子里：</p>
-<p><img src="/img/16_08_13/013.png" alt=""></p>
-<p>同理，我们可以通过以下命令，将<code>y2</code>绘制在第二个格子里：</p>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; <span class="selector-tag">subplot</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">2</span>);</div><div class="line">&gt;&gt; <span class="selector-tag">plot</span>(t,y2);</div></pre></td></tr></table></figure>
-<p><img src="/img/16_08_13/014.png" alt=""></p>
-<p>另外，你可以使用<code>axis</code>函数，来改变当前图像的刻度：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; axis([<span class="number">0.5</span> <span class="number">1</span> <span class="number">-1</span> <span class="number">1</span>])	% 将x轴的范围调整到<span class="number">0.5</span>到<span class="number">1</span>之间，y轴的范围调整到<span class="number">-1</span>到<span class="number">1</span>之间</div></pre></td></tr></table></figure>
-<p>可以看到<code>y2</code>对应的图刻度发生了改变：</p>
-<p><img src="/img/16_08_13/015.png" alt=""></p>
-<p>如果想清空图像，可以使用<code>clf</code></p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> clf;</div></pre></td></tr></table></figure>
-<p>可以看到图像被清空了：</p>
-<p><img src="/img/16_08_13/016.png" alt=""></p>
-<h3 id="矩阵的可视化">矩阵的可视化</h3><p>通过<code>imagesc</code>函数，将矩阵绘制出来，其中一种颜色代表一种数值。</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; A = magic(<span class="number">5</span>)</div><div class="line">A =</div><div class="line"></div><div class="line">   <span class="number">17</span>   <span class="number">24</span>    <span class="number">1</span>    <span class="number">8</span>   <span class="number">15</span></div><div class="line">   <span class="number">23</span>    <span class="number">5</span>    <span class="number">7</span>   <span class="number">14</span>   <span class="number">16</span></div><div class="line">    <span class="number">4</span>    <span class="number">6</span>   <span class="number">13</span>   <span class="number">20</span>   <span class="number">22</span></div><div class="line">   <span class="number">10</span>   <span class="number">12</span>   <span class="number">19</span>   <span class="number">21</span>    <span class="number">3</span></div><div class="line">   <span class="number">11</span>   <span class="number">18</span>   <span class="number">25</span>    <span class="number">2</span>    <span class="number">9</span></div><div class="line"></div><div class="line">&gt;&gt; imagesc(A)</div></pre></td></tr></table></figure>
-<p><img src="/img/16_08_13/017.png" alt=""></p>
-<p>设置用来显示的颜色：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> imagesc(A), colorbar, colormap gray;</div></pre></td></tr></table></figure>
-<blockquote>
-<p>这里其实相当于连续输入了三条命令。</p>
-</blockquote>
-<p>可以看到，颜色变为了灰色，并且颜色对应的数值范围也在右侧列出：</p>
-<p><img src="/img/16_08_13/018.png" alt=""></p>
-<h2 id="控制语句：for,_while,_if符号的使用">控制语句：for, while, if符号的使用</h2><h3 id="for语句的使用">for语句的使用</h3><figure class="highlight matlab"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; v = <span class="built_in">zeros</span>(<span class="number">10</span>,<span class="number">1</span>)</div><div class="line">v =</div><div class="line"></div><div class="line">   <span class="number">0</span></div><div class="line">   <span class="number">0</span></div><div class="line">   <span class="number">0</span></div><div class="line">   <span class="number">0</span></div><div class="line">   <span class="number">0</span></div><div class="line">   <span class="number">0</span></div><div class="line">   <span class="number">0</span></div><div class="line">   <span class="number">0</span></div><div class="line">   <span class="number">0</span></div><div class="line">   <span class="number">0</span></div><div class="line"></div><div class="line">&gt;&gt; <span class="keyword">for</span> <span class="built_in">i</span>=<span class="number">1</span>:<span class="number">10</span>,</div><div class="line">&gt;    v(<span class="built_in">i</span>) = <span class="number">2</span>^<span class="built_in">i</span>;</div><div class="line">&gt;  <span class="keyword">end</span>;</div><div class="line">&gt;&gt; v</div><div class="line">v =</div><div class="line"></div><div class="line">      <span class="number">2</span></div><div class="line">      <span class="number">4</span></div><div class="line">      <span class="number">8</span></div><div class="line">     <span class="number">16</span></div><div class="line">     <span class="number">32</span></div><div class="line">     <span class="number">64</span></div><div class="line">    <span class="number">128</span></div><div class="line">    <span class="number">256</span></div><div class="line">    <span class="number">512</span></div><div class="line">   <span class="number">1024</span></div></pre></td></tr></table></figure>
-<p>也可以通过<code>for</code>来访问一个索引序列：</p>
-<figure class="highlight tap"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; indices=1:10;</div><div class="line">&gt;&gt; indices</div><div class="line">indices =</div><div class="line"></div><div class="line">   <span class="number"> 1 </span>  <span class="number"> 2 </span>  <span class="number"> 3 </span>  <span class="number"> 4 </span>  <span class="number"> 5 </span>  <span class="number"> 6 </span>  <span class="number"> 7 </span>  <span class="number"> 8 </span>  <span class="number"> 9 </span>  10</div><div class="line"></div><div class="line">&gt;&gt; for i=indices,</div><div class="line">&gt;    disp(i);</div><div class="line">&gt;  end;</div><div class="line"> 1</div><div class="line"> 2</div><div class="line"> 3</div><div class="line"> 4</div><div class="line"> 5</div><div class="line"> 6</div><div class="line"> 7</div><div class="line"> 8</div><div class="line"> 9</div><div class="line"> 10</div></pre></td></tr></table></figure>
-<h3 id="while的使用：">while的使用：</h3><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; v</div><div class="line">v =</div><div class="line"></div><div class="line">      <span class="number">2</span></div><div class="line">      <span class="number">4</span></div><div class="line">      <span class="number">8</span></div><div class="line">     <span class="number">16</span></div><div class="line">     <span class="number">32</span></div><div class="line">     <span class="number">64</span></div><div class="line">    <span class="number">128</span></div><div class="line">    <span class="number">256</span></div><div class="line">    <span class="number">512</span></div><div class="line">   <span class="number">1024</span></div><div class="line"></div><div class="line">&gt;&gt; i = <span class="number">1</span>;</div><div class="line">&gt;&gt; while i &lt;= <span class="number">5</span>,</div><div class="line">&gt;    v(i) = <span class="number">100</span>;</div><div class="line">&gt;    i = i+<span class="number">1</span>;</div><div class="line">&gt;  end;</div><div class="line">&gt;&gt; v</div><div class="line">v =</div><div class="line"></div><div class="line">    <span class="number">100</span></div><div class="line">    <span class="number">100</span></div><div class="line">    <span class="number">100</span></div><div class="line">    <span class="number">100</span></div><div class="line">    <span class="number">100</span></div><div class="line">     <span class="number">64</span></div><div class="line">    <span class="number">128</span></div><div class="line">    <span class="number">256</span></div><div class="line">    <span class="number">512</span></div><div class="line">   <span class="number">1024</span></div></pre></td></tr></table></figure>
-<h3 id="if_以及_break_的使用">if 以及 break 的使用</h3><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; v</div><div class="line">v =</div><div class="line"></div><div class="line">    <span class="number">100</span></div><div class="line">    <span class="number">100</span></div><div class="line">    <span class="number">100</span></div><div class="line">    <span class="number">100</span></div><div class="line">    <span class="number">100</span></div><div class="line">     <span class="number">64</span></div><div class="line">    <span class="number">128</span></div><div class="line">    <span class="number">256</span></div><div class="line">    <span class="number">512</span></div><div class="line">   <span class="number">1024</span></div><div class="line"></div><div class="line">&gt;&gt; i=<span class="number">1</span>;</div><div class="line">&gt;&gt; while true,</div><div class="line">&gt;    v(i) = <span class="number">999</span>;</div><div class="line">&gt;    i = i+<span class="number">1</span>;</div><div class="line">&gt;    if i == <span class="number">6</span>,</div><div class="line">&gt;      break;</div><div class="line">&gt;    end;</div><div class="line">&gt;  end;</div><div class="line">&gt;&gt; v</div><div class="line">v =</div><div class="line"></div><div class="line">    <span class="number">999</span></div><div class="line">    <span class="number">999</span></div><div class="line">    <span class="number">999</span></div><div class="line">    <span class="number">999</span></div><div class="line">    <span class="number">999</span></div><div class="line">     <span class="number">64</span></div><div class="line">    <span class="number">128</span></div><div class="line">    <span class="number">256</span></div><div class="line">    <span class="number">512</span></div><div class="line">   <span class="number">1024</span></div></pre></td></tr></table></figure>
-<h3 id="else_的使用">else 的使用</h3><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; v(<span class="number">1</span>)</div><div class="line">ans =  <span class="number">2</span></div><div class="line">&gt;&gt; v(<span class="number">1</span>)=<span class="number">2</span>;</div><div class="line">&gt;&gt; <span class="keyword">if</span> v(<span class="number">1</span>)==<span class="number">1</span>,</div><div class="line">&gt;    disp(<span class="symbol">'The</span> value <span class="keyword">is</span> one');</div><div class="line">&gt;  elseif v(<span class="number">1</span>) == <span class="number">2</span>,</div><div class="line">&gt;    disp(<span class="symbol">'The</span> value <span class="keyword">is</span> two');</div><div class="line">&gt;  <span class="keyword">else</span></div><div class="line">&gt;    disp(<span class="symbol">'The</span> value <span class="keyword">is</span> <span class="keyword">not</span> one <span class="keyword">or</span> two.');</div><div class="line">&gt;  <span class="keyword">end</span>;</div><div class="line">The value <span class="keyword">is</span> two</div></pre></td></tr></table></figure>
-<h3 id="退出Octave">退出Octave</h3><p>退出Octave只需输入：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> exit</div></pre></td></tr></table></figure>
-<p>或者</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> quit</div></pre></td></tr></table></figure>
-<h3 id="函数">函数</h3><h4 id="函数的定义以及调用">函数的定义以及调用</h4><p>在当前Octave的目录下创建一个文件<code>squareThisNumber.m</code></p>
-<p>内容如下：</p>
-<figure class="highlight delphi"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">y</span> = <span class="title">squareThisNumber</span><span class="params">(x)</span></span></div><div class="line"><span class="title">y</span> = <span class="title">x</span>^2;</div></pre></td></tr></table></figure>
-<p>在当前目录下就可以直接使用这个函数了：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> squareThisNumber(<span class="number">5</span>)</div><div class="line">ans =  <span class="number">25</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>这里<code>y</code>是函数<code>squareThisNumber</code>的返回值，函数体是<code>y = x^2;</code>，参数是<code>x</code>。<br>如果想要正常使用这个函数，必须把这个函数所在的文件放到当前目录下。</p>
-</blockquote>
-<h4 id="添加搜索路径">添加搜索路径</h4><p>如果你想在其他目录下也正常的使用这个函数，那么你需要将这个文件路径添加到Octave的搜索路径下(<code>addpath</code>)：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> addpath(<span class="string">'/Users/lijianan/Desktop'</span>)</div><div class="line"><span class="meta">&gt;&gt;</span> cd ~</div><div class="line">&gt;&gt; pwd</div><div class="line">ans = <span class="regexp">/Users/lijianan</span></div><div class="line"><span class="meta">&gt;&gt;</span> squareThisNumber(<span class="number">5</span>)</div><div class="line">ans =  <span class="number">25</span></div></pre></td></tr></table></figure>
-<h4 id="多个返回值">多个返回值</h4><p>Octave的函数有一个其他大多数语言不具备的一个特性，就是允许返回多个参数。</p>
-<p>例如：</p>
-<figure class="highlight matlab"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="params">[y1,y2]</span> = <span class="title">squareAndCubeThisNumber</span><span class="params">(x)</span></span></div><div class="line"></div><div class="line">y1 = x^<span class="number">2</span>;</div><div class="line">y2 = x^<span class="number">3</span>;</div></pre></td></tr></table></figure>
-<p>可以看到函数<code>squareAndCubeThisNumber</code>返回两个值，分别为<code>y1</code>和<code>y2</code>。</p>
-<p>使用这个函数：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> [a,b] = squareAndCubeThisNumber(<span class="number">5</span>);</div><div class="line">&gt;&gt; a</div><div class="line">a =  <span class="number">25</span></div><div class="line"><span class="meta">&gt;&gt;</span> b</div><div class="line">b =  <span class="number">125</span></div></pre></td></tr></table></figure>
-<h3 id="使用函数求解代价函数值：">使用函数求解代价函数值：</h3><p><img src="/img/16_08_13/019.png" alt=""></p>
-<p>定义函数<code>costFunctionJ.m</code>，入参分别为<code>X</code>,<code>y</code>以及$\theta$：</p>
-<figure class="highlight matlab"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">J</span> = <span class="title">costFunctionJ</span><span class="params">(X, y, theta)</span></span></div><div class="line"></div><div class="line"><span class="comment">% X is the "design matrix" containing our training examples.</span></div><div class="line"><span class="comment">% y is the class labels</span></div><div class="line"></div><div class="line">m = <span class="built_in">size</span>(X,<span class="number">1</span>); 		<span class="comment">% number of training examples</span></div><div class="line">predictions = X*theta; 	<span class="comment">% predictions of hypothesis on all m examples</span></div><div class="line">sqrErrors = (predictions-y).^<span class="number">2</span>;	<span class="comment">% squaed errors</span></div><div class="line"></div><div class="line">J = <span class="number">1</span>/(<span class="number">2</span>*m) * sum(sqrErrors);</div></pre></td></tr></table></figure>
-<p>使用这个方法求解代价函数$J(\theta)$值：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; X = [<span class="number">1</span> <span class="number">1</span>; <span class="number">1</span> <span class="number">2</span>; <span class="number">1</span> <span class="number">3</span>]</div><div class="line">X =</div><div class="line"></div><div class="line">   <span class="number">1</span>   <span class="number">1</span></div><div class="line">   <span class="number">1</span>   <span class="number">2</span></div><div class="line">   <span class="number">1</span>   <span class="number">3</span></div><div class="line"></div><div class="line">&gt;&gt; y = [<span class="number">1</span>; <span class="number">2</span>; <span class="number">3</span>]</div><div class="line">y =</div><div class="line"></div><div class="line">   <span class="number">1</span></div><div class="line">   <span class="number">2</span></div><div class="line">   <span class="number">3</span></div><div class="line"></div><div class="line">&gt;&gt; theta = [<span class="number">0</span>; <span class="number">1</span>];</div><div class="line">&gt;&gt;  j = costFunctionJ(X,y,theta)</div><div class="line">j = <span class="number">0</span></div></pre></td></tr></table></figure>
-<p>其中<code>X</code>矩阵第一列代表$x_{0}$项，第二列代表$x_{1}$项。<br><code>y</code>矩阵代表$y$的值。<code>theta</code>的两个值分别代表$\theta_{0}$和$\theta_{1}$。</p>
-<p>可以看到<code>X</code>和<code>y</code>对应的值能够被所给的$\theta$值完全拟合，所以得到$J(\theta)=0$</p>
-<p>如果我们换一组$\theta$值，就会得到不一样的结果了：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt; theta = [<span class="number">0</span>;<span class="number">0</span>];</div><div class="line">&gt;&gt;  j = costFunctionJ(X,y,theta)</div><div class="line">j =  <span class="number">2.3333</span></div></pre></td></tr></table></figure>
-<p>我们也可以算一下来验证这个结果是否正确：</p>
-<p>$$<br>((1 - 0)^{2} + (2 - 0)^{2} + (3 - 0)^{2}) / (2*3) = 2.3333<br>$$</p>
-<p>结果正确。</p>
-<h2 id="向量化">向量化</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/WnQWH/vectorization" target="_blank" rel="external">视频地址</a></p>
-<blockquote>
-<p>无论你使用Octave还是别的语言，比如matlab或者你正在使用python Numpy或者Java、C 、C++所有这些语言都具有线性代数的库。这些库已经经过高度优化，通常是数值计算方面的博士或者专业人士开发的，而当你实现机器学习算法时，如果你能好好利用这些线性代数库，并联合调用它们，而不是自己去实现这些库可以实现的功能，那么通常情况下，运行速度会更快一些。出错的概率也更小一些。</p>
-</blockquote>
-<p>为了能使用库函数提供的矩阵乘法之类的API，我们通常情况下解决问题的思路应该是向着把参数<strong>向量化</strong>的方向努力。这样你就会有一个简单得多，也有效得多的代码。</p>
-<p>例如：</p>
-<p>$$<br>h_{\theta}(x) = \sum_{j=0}^{n}\theta_{j}x_{j}<br>$$</p>
-<p>这个式子如果我们自己来计算，可能会从0到n去遍历$\theta x$的和。但如果向量化处理之后，我们可以得到$h_{\theta}(x)$的另外一种表示方式：</p>
-<p>$$<br>h_{\theta}(x) = \theta^{T}x<br>$$</p>
-<p>我们可以看一下向量化处理前后的Octave代码对比：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">非向量化的实现</th>
-<th style="text-align:center">向量化的实现</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center"><img src="/img/16_08_13/020.png" alt=""></td>
-<td style="text-align:center"><img src="/img/16_08_13/021.png" alt=""></td>
-</tr>
-</tbody>
-</table>
-<p>接下来看一个更为复杂的例子：</p>
-<p>下面是线性回归算法梯度下降的更新规则：</p>
-<p><img src="/img/16_08_13/022.png" alt=""></p>
-<p>当我们更新对象有$\theta_{0}$、$\theta_{1}$、$\theta_{2}$时：</p>
-<p><img src="/img/16_08_13/023.png" alt=""></p>
-<blockquote>
-<p>这里你可能已经忘了 在之前提到的<strong>同步更新</strong>，就是我们需要同时更新$\theta_{0}$、$\theta_{1}$、$\theta_{2}$。</p>
-</blockquote>
-<p>这里我们可以通过向量化的代码实现<strong>同步更新</strong>:</p>
-<p>首先，上面的三行式子可以压缩为下面这种形式：</p>
-<p>$$<br>\theta := \theta - αδ<br>$$</p>
-<p>其中：</p>
-<p>$$<br>δ =<br>\frac{1}{m}<br>\sum_{i=1}^{m}<br>(h_{θ}(x^{(i)}) - y^{(i)})x^{(i)}<br>$$</p>
-<p>好了，接下来我们来解释一下上面的这两个式子：</p>
-<p>我们把$\theta$看做一个$n+1$维的向量，$α$是一个常量，$δ$也是一个$n+1$维的向量。所以$\theta := \theta - αδ$这个式子，其实是一个向量减法的运算。</p>
-<p>$δ$向量其实是这样的：</p>
-<p>$$<br>δ =<br>\begin{bmatrix}<br>δ_{0} \\<br>δ_{1} \\<br>δ_{2}<br>\end{bmatrix}<br>$$</p>
-<p>其中$δ_{0}$代表着：</p>
-<p>$$<br>δ_{0} =<br>\frac{1}{m}<br>\sum_{i=1}^{m}<br>(h_{θ}(x^{(i)}) - y^{(i)})x^{(i)}_{0}<br>$$</p>
-<p>因此在这个式子中：</p>
-<p>$$<br>δ =<br>\frac{1}{m}<br>\sum_{i=1}^{m}<br>(h_{θ}(x^{(i)}) - y^{(i)})x^{(i)}<br>$$</p>
-<p>其实$(h_{θ}(x^{(i)}) - y^{(i)})$部分可以看做是常量，而$x^{(i)}$则代表着下面的向量:</p>
-<p>$$<br>x^{(i)} =<br>\begin{bmatrix}<br>x^{(i)}_{0} \\<br>x^{(i)}_{1} \\<br>x^{(i)}_{2}<br>\end{bmatrix}<br>$$</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2894,7 +2610,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">92</span>
+              <span class="site-state-item-count">94</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
