@@ -199,6 +199,253 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2017/03/03/【Tensorflow r1.0 文档翻译】Tensorflow原理导论/" itemprop="url">
+                【Tensorflow r1.0 文档翻译】Tensorflow原理导论
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-03-03T21:19:58+08:00" content="2017-03-03">
+            2017-03-03
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+                ， 
+              
+
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/Tensorflow/" itemprop="url" rel="index">
+                  <span itemprop="name">Tensorflow</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/03/03/【Tensorflow r1.0 文档翻译】Tensorflow原理导论/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/03/【Tensorflow r1.0 文档翻译】Tensorflow原理导论/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p>代码：<a href="https://www.tensorflow.org/code/tensorflow/examples/tutorials/mnist/" target="_blank" rel="external">tensorflow/examples/tutorials/mnist/</a></p>
+<p>这篇教程的目的是为了展示如何使用TensorFlow来训练并评估一个简单的<strong>前馈神经网络(feed-forward neural network)</strong>用来识别MNIST手写数字数据集。本教程的目标读者是有兴趣使用TensorFlow的有经验的机器学习用户。</p>
+<p>这部分教程不是为了教授普通的机器学习。</p>
+<p>请确保您已按照说明<a href="https://www.tensorflow.org/install/index" target="_blank" rel="external">安装了TensorFlow</a>。</p>
+<h2 id="教程文件">教程文件</h2><p>本教程引用以下文件：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">文件</th>
+<th style="text-align:left">目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><a href="https://www.tensorflow.org/code/tensorflow/examples/tutorials/mnist/mnist.py" target="_blank" rel="external"><code>mnist.py</code></a></td>
+<td style="text-align:left">构建一个完全连接的MNIST模型的代码。</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="https://www.tensorflow.org/code/tensorflow/examples/tutorials/mnist/fully_connected_feed.py" target="_blank" rel="external"><code>fully_connected_feed.py</code></a></td>
+<td style="text-align:left">利用下载的数据集训练构建好的MNIST模型的主要代码，以数据反馈字典（feed dictionary）的形式作为输入模型。</td>
+</tr>
+</tbody>
+</table>
+<p>只需要运行<code>fully_connected_feed.py</code>文件，就可以开启训练：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">python</span> fully_connected_feed.<span class="keyword">py</span></div></pre></td></tr></table></figure>
+<h2 id="准备数据">准备数据</h2><p>MNIST是机器学习中的经典问题。这个问题是查看28x28像素的手写数字灰度图像，并确定图像表示的数字，数字范围是0到9。</p>
+<p><img src="/img/17_03_03/001.png" alt=""></p>
+<p>更多的信息，参加<a href="http://yann.lecun.com/exdb/mnist/" target="_blank" rel="external">Yann LeCun’s MNIST page</a>或者<a href="http://colah.github.io/posts/2014-10-Visualizing-MNIST/" target="_blank" rel="external">Chris Olah’s visualizations of MNIST</a>。</p>
+<h3 id="下载">下载</h3><p>在<code>run_training()</code>方法的开始部分，<code>input_data.read_data_sets()</code>方法会确保你的本地训练文件夹中，已经下载了正确的数据，然后将这些数据解压并返回一个含有<code>DataSet</code>实例的字典。</p>
+<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">dat<span class="built_in">a_sets</span> = input_data.read_dat<span class="built_in">a_sets</span>(FLAGS.train_dir, FLAGS.fake_data)</div></pre></td></tr></table></figure>
+<p><strong>注意：</strong><code>fake_data</code>标记是用于单元测试的，读者可以不必理会。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">数据集</th>
+<th style="text-align:left">目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>data_sets.train</code></td>
+<td style="text-align:left">55000图像和标签，用于初级训练。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>data_sets.validation</code></td>
+<td style="text-align:left">5000图像和标签，用于迭代验证训练准确性。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>data_sets.test</code></td>
+<td style="text-align:left">10000图像和标签，用于最终测试训练的准确性。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="输入和占位符">输入和占位符</h3><p><code>placeholder_inputs()</code>方法创建了两个<code>tf.placeholder</code>操作，用于定义输入的形状。形状参数中包含<code>batch_size</code>值，后续还会将实际的训练样本传入图中。</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="attr">images_placeholder</span> = tf.placeholder(tf.float32, <span class="attr">shape=(batch_size,</span></div><div class="line">                                                       mnist.IMAGE_PIXELS))</div><div class="line"><span class="attr">labels_placeholder</span> = tf.placeholder(tf.int32, <span class="attr">shape=(batch_size))</span></div></pre></td></tr></table></figure>
+<p>在训练的循环代码的下方，传入的整个图像和标签数据集会被切片，以符合每一个操作所设置的<code>batch_size</code>值，占位符操作将会填补以符合这个<code>batch_size</code>值。然后使用<code>feed_dict</code>参数，将数据传入<code>sess.run()</code>函数。</p>
+<h2 id="构建图">构建图</h2><p>在为数据创建占位符之后，就可以运行<code>mnist.py</code>文件，经过三阶段的模式函数操作：<code>inference()</code>， <code>loss()</code>，和<code>training()</code>。图表就构建完成了。</p>
+<ul>
+<li>1.<code>inference()</code>-尽可能地构建好图表，满足促使神经网络向前反馈并做出预测的要求。</li>
+<li>2.<code>loss()</code>-往inference图表中添加生成损失（loss）所需要的操作（ops）。</li>
+<li>3.<code>training()</code>-往损失图表中添加计算并应用梯度（gradients）所需的操作。</li>
+</ul>
+<p><img src="/img/17_03_03/002.png" alt=""></p>
+<h3 id="推理(Inference)">推理(Inference)</h3><p><code>inference()</code>函数会尽可能地构建图表，做到返回包含了预测结果（output prediction）的Tensor。</p>
+<p>它采用图像占位符作为输入，并在其上借助<a href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks" target="_blank" rel="external">ReLU</a>)激活函数构建一对完全连接层，以及一个有着十个节点、指明了输出logtis模型的线性层。</p>
+<p>每个图层都在唯一的<a href="https://www.tensorflow.org/api_docs/python/tf/name_scope" target="_blank" rel="external"><code>tf.name_scope</code></a>下创建，创建于该作用域之下的所有元素都将带有其前缀。</p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">with</span> tf.name_scope(<span class="string">'hidden1'</span>):</div></pre></td></tr></table></figure>
+<p>在定义的范围内，由这些层中的每一个使用的权重和偏差被生成为<a href="https://www.tensorflow.org/api_docs/python/tf/Variable" target="_blank" rel="external"><code>tf.Variable</code></a>实例，具有它们期望的形状：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">weights = <span class="keyword">tf</span>.Variable(</div><div class="line">    <span class="keyword">tf</span>.truncated_normal([IMAGE_PIXELS, hidden1_units],</div><div class="line">                        stddev=<span class="number">1.0</span> / math.<span class="built_in">sqrt</span>(float(IMAGE_PIXELS))),</div><div class="line">    name=<span class="string">'weights'</span>)</div><div class="line">biases = <span class="keyword">tf</span>.Variable(<span class="keyword">tf</span>.zeros([hidden1_units]),</div><div class="line">                     name=<span class="string">'biases'</span>)</div></pre></td></tr></table></figure>
+<p>例如，当在<code>hidden1</code>范围下创建这些时，赋予权重变量的唯一名称将是“<code>hidden1 / weights</code>”。</p>
+<p>每个变量在构建时，都会执行初始化操作。</p>
+<p>在大多数情况下，通过<a href="https://www.tensorflow.org/api_docs/python/tf/truncated_normal" target="_blank" rel="external"><code>tf.truncated_normal</code></a>函数初始化权重变量，给赋予的shape则是一个二维tensor，其中第一个维度代表该层中权重变量所连接（connect from）的单元数量，第二个维度代表该层中权重变量所连接到的（connect to）单元数量。第一层，名字为<code>hidden1</code>，它的尺寸是<code>[IMAGE_PIXELS, hidden1_units]</code>，因为权重变量将图像输入连接到了<code>hidden1</code>层。<code>tf.truncated_normal</code>初始函数将根据所得到的均值和标准差，生成一个随机分布。</p>
+<p>然后，通过<a href="https://www.tensorflow.org/api_docs/python/tf/zeros" target="_blank" rel="external"><code>tf.zeros</code></a>函数初始化偏差变量（biases），确保所有偏差的起始值都是0，而它们的形状则是其在该层中所接到的（connect to）单元数量。</p>
+<p>图表的三个主要操作，分别是两个<code>tf.nn.relu</code>操作，它们中嵌入了隐藏层所需的<a href="https://www.tensorflow.org/api_docs/python/tf/matmul" target="_blank" rel="external"><code>tf.matmul</code></a>；以及logits模型所需的另外一个<code>tf.matmul</code>。三者依次生成，各自的<code>tf.Variable</code>实例则与输入占位符或下一层的输出tensor所连接。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hidden1 = tf<span class="selector-class">.nn</span><span class="selector-class">.relu</span>(tf.matmul(images, weights) + biases)</div></pre></td></tr></table></figure>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hidden2 = tf<span class="selector-class">.nn</span><span class="selector-class">.relu</span>(tf.matmul(hidden1, weights) + biases)</div></pre></td></tr></table></figure>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">logits</span> = tf.matmul(hidden2, weights) + biases</div></pre></td></tr></table></figure>
+<p>最终，程序会返回包含了输出结果的<code>logits</code>Tensor。</p>
+<h3 id="损失">损失</h3><p><code>loss()</code>函数通过添加所需的损失操作，进一步构建图表。</p>
+<p>首先，来自<code>labels_placeholder</code>的值将转换为64位整数。然后，添加一个<a href="https://www.tensorflow.org/api_docs/python/tf/nn/sparse_softmax_cross_entropy_with_logits" target="_blank" rel="external">tf.nn.sparse_softmax_cross_entropy_with_logits</a>操作，以从<code>labels_placeholder</code>自动生成1-hot标签，并且与<code>inference()</code>函数的输出logits与那些1-hot标签进行比较。</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="attr">labels</span> = tf.to_int64(labels)</div><div class="line"><span class="attr">cross_entropy</span> = tf.nn.sparse_softmax_cross_entropy_with_logits(</div><div class="line">    <span class="attr">labels=labels,</span> <span class="attr">logits=logits,</span> <span class="attr">name='xentropy')</span></div></pre></td></tr></table></figure>
+<p>然后使用<a href="https://www.tensorflow.org/api_docs/python/tf/reduce_mean" target="_blank" rel="external"><code>tf.reduce_mean</code></a>来求在批量维度（第一维度）上的交叉熵的平均值，作为总损失。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">loss</span> = tf.reduce_mean(cross_entropy, name=<span class="string">'xentropy_mean'</span>)</div></pre></td></tr></table></figure>
+<p>然后将包含损失值的张量返回。</p>
+<blockquote>
+<p><strong>注意：</strong>交叉熵是信息论中的一种理论，它用于描述神经网络的预测结果相对于实际所给定的真实结果的偏差程度。更多的信息，请参阅博文<a href="http://colah.github.io/posts/2015-09-Visual-Information/" target="_blank" rel="external">《可视化信息理论》</a>。</p>
+</blockquote>
+<h3 id="训练">训练</h3><p><code>training()</code>方法通过添加<a href="https://en.wikipedia.org/wiki/Gradient_descent" target="_blank" rel="external">梯度下降</a>的操作来最小化损失。</p>
+<p>首先，它通过<code>loss()</code>方法接受损失tensor，然后传递到<a href="https://www.tensorflow.org/api_docs/python/tf/summary/scalar" target="_blank" rel="external"><code>tf.summary.scalar</code></a>，用于在与<code>SummaryWriter</code>（见下文）一起使用时生成事件文件中的摘要值的操作。在这里，它将在每次写出摘要时发出损失的快照值。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tf<span class="selector-class">.summary</span><span class="selector-class">.scalar</span>(<span class="string">'loss'</span>, loss)</div></pre></td></tr></table></figure>
+<p>接下来，我们实例化一个<a href="https://www.tensorflow.org/api_docs/python/tf/train/GradientDescentOptimizer" target="_blank" rel="external"><code>tf.train.GradientDescentOptimizer</code></a>，负责按照所要求的学习效率（learning rate）应用梯度下降法（gradients）。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">optimizer = tf<span class="selector-class">.train</span><span class="selector-class">.GradientDescentOptimizer</span>(learning_rate)</div></pre></td></tr></table></figure>
+<p>之后，我们生成一个单个的变量用于统计全局训练的次数，<a href="https://www.tensorflow.org/api_docs/python/tf/train/Optimizer#minimize" target="_blank" rel="external"><code>tf.train.Optimizer.minimize</code></a>操作被同时用作在系统中更新可训练的权值，以及增加全局步长（global step）。按照惯例，这个操作被称为<code>train_op</code>，TensorFlow会话必须运行的，以便引入一个完整的训练步骤（见下文）。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="attr">global_step</span> = tf.Variable(<span class="number">0</span>, name=<span class="string">'global_step'</span>, trainable=<span class="literal">False</span>)</div><div class="line"><span class="attr">train_op</span> = optimizer.minimize(loss, global_step=global_step)</div></pre></td></tr></table></figure>
+<h2 id="训练模型">训练模型</h2><p>一旦图被构建，它就可以在由<code>fully_connected_feed.py</code>中的用户代码控制的循环中迭代地训练和求值。</p>
+<h3 id="图">图</h3><p>在<code>run_training()</code>方法的一开始的部分，是一个python的<code>with</code>命令，这表示所有构建的操作将与默认全局<a href="https://www.tensorflow.org/api_docs/python/tf/Graph" target="_blank" rel="external"><code>tf.Graph</code></a>实例相关联。</p>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">with</span> tf.<span class="keyword">Graph</span>().as_default():</div></pre></td></tr></table></figure>
+<p><code>tf.Graph</code>实例是一系列可以作为整体执行的操作。TensorFlow的大部分场景只需要依赖默认图表一个实例即可。</p>
+<p>利用多个图表的更加复杂的使用场景也是可能的，但是超出了本教程的范围。</p>
+<h3 id="会话">会话</h3><p>完成全部的构建准备、生成全部所需的操作之后，我们就可以创建一个<a href="https://www.tensorflow.org/api_docs/python/tf/Session" target="_blank" rel="external">tf.Session</a>，用于运行图表。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">sess</span> = tf.Session()</div></pre></td></tr></table></figure>
+<p>另外，也可以利用<code>with</code>代码块生成<code>Session</code>，限制作用域：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">with <span class="keyword">tf</span>.Session() <span class="keyword">as</span> ses<span class="variable">s:</span></div></pre></td></tr></table></figure>
+<p><code>Session</code>函数中没有传入参数，表明该代码将会依附于（如果还没有创建会话，则会创建新的会话）默认的本地会话。</p>
+<p>生成会话之后，所有<code>tf.Variable</code>实例都会立即通过调用各自初始化操作中的<a href="https://www.tensorflow.org/api_docs/python/tf/Session#run" target="_blank" rel="external"><code>tf.Session.run</code></a>函数进行初始化。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">init</span> = tf.global_variables_initializer()</div><div class="line">sess.run(<span class="keyword">init</span>)</div></pre></td></tr></table></figure>
+<p><a href="https://www.tensorflow.org/api_docs/python/tf/Session#run" target="_blank" rel="external"><code>tf.Session.run</code></a>方法将会运行图表中与作为参数传入的操作相对应的完整子集。在初次调用时，<code>init</code>操作只包含了变量初始化程序<a href="https://www.tensorflow.org/api_docs/python/tf/group" target="_blank" rel="external"><code>tf.group</code></a>。图表的其他部分不会在这里，而是在下面的训练循环运行。</p>
+<h3 id="训练循环">训练循环</h3><p>在通过会话来初始化变量后，就可以开始训练了。</p>
+<p>训练的每一步都是通过用户代码控制，而能实现有效训练的最简单循环就是：</p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> <span class="keyword">step</span> <span class="keyword">in</span> xrange(FLAGS.max_steps):</div><div class="line">    sess.<span class="built_in">run</span>(train_op)</div></pre></td></tr></table></figure>
+<p>但是，本教程中的例子要更为复杂一点，原因是我们必须把输入的数据根据每一步的情况进行切分，以匹配之前生成的占位符。</p>
+<h3 id="向图表提供反馈">向图表提供反馈</h3><p>执行每一步时，我们的代码会生成一个反馈字典（feed dictionary），其中包含对应步骤中训练所要使用的样本，这些样本的key就是其所代表的占位符操作。</p>
+<p><code>fill_feed_dict</code>函数会查询给定的<code>DataSet</code>，索要下一批次`batch_size的图像和标签，与占位符相匹配的Tensor则会包含下一批次的图像和标签。</p>
+<figure class="highlight oxygene"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">images_feed, labels_feed = data_set.next_batch(<span class="keyword">FLAGS</span>.batch_size,</div><div class="line">                                               <span class="keyword">FLAGS</span>.fake_data)</div></pre></td></tr></table></figure>
+<p>然后，以占位符作为键，创建一个Python字典对象，值则是其代表的反馈Tensor。</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">feed_dict = &#123;</div><div class="line"><span class="symbol">    images_placeholder:</span> images_feed,</div><div class="line"><span class="symbol">    labels_placeholder:</span> labels_feed,</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个字典随后作为<code>feed_dict</code>参数，传入<code>sess.run()</code>函数中，为这一步的训练提供输入样本。</p>
+<h3 id="检查状态">检查状态</h3><p>在运行<code>sess.run</code>时，要在代码中明确其需要获取的两个值：<code>[train_op, loss]</code>。</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> <span class="keyword">step</span> <span class="keyword">in</span> <span class="built_in">xrange</span>(FLAGS.max_steps):</div><div class="line">    feed_dict = fill_feed_dict(data_sets.train,</div><div class="line">                               images_placeholder,</div><div class="line">                               labels_placeholder)</div><div class="line">    <span class="symbol">_</span>, loss_value = sess.run([train_op, loss],</div><div class="line">                             feed_dict=feed_dict)</div></pre></td></tr></table></figure>
+<p>因为要获取这两个值，<code>sess.run()</code>会返回一个有两个元素的元组。其中每一个<code>Tensor</code>对象，对应了返回的元组中的numpy数组，而这些数组中包含了当前这步训练中对应Tensor的值。由于<code>train_op</code>并不会产生输出，其在返回的元祖中的对应元素就是<code>None</code>，所以会被抛弃。但是，如果模型在训练中出现偏差，<code>loss</code> Tensor的值可能会变成NaN，所以我们要获取它的值，并记录下来。</p>
+<p>假设训练一切正常，没有出现NaN，训练循环会每隔100个训练步骤，就打印一行简单的状态文本，告知用户当前的训练状态。</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">if</span> <span class="built_in">step</span> % <span class="number">100</span> == <span class="number">0</span>:</div><div class="line">    <span class="built_in">print</span> <span class="string">'Step %d: loss = %.2f (%.3f sec)'</span> % (<span class="built_in">step</span>, loss_value, duration)</div></pre></td></tr></table></figure>
+<h3 id="状态可视化">状态可视化</h3><p>为了发出<a href="https://www.tensorflow.org/get_started/summaries_and_tensorboard" target="_blank" rel="external">TensorBoard</a>所使用的事件文件（events file），所有的摘要（在这里只有一个）都要在图构建阶段合并至一个Tensor中。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">summary</span> = tf<span class="selector-class">.summary</span><span class="selector-class">.merge_all</span>()</div></pre></td></tr></table></figure>
+<p>在创建好会话（session）之后，可以实例化一个<a href="https://www.tensorflow.org/api_docs/python/tf/summary/FileWriter" target="_blank" rel="external"><code>tf.summary.FileWriter</code></a>，用于写入包含了图表本身和即时数据具体值的事件文件。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">summary_writer = tf<span class="selector-class">.summary</span><span class="selector-class">.FileWriter</span>(FLAGS<span class="selector-class">.train_dir</span>, sess.graph)</div></pre></td></tr></table></figure>
+<p>最后，每次评估<code>summary</code>(摘要)并将输出传递给<code>add_summary()</code>函数时，事件文件将被新的摘要值更新。</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">summary_str = sess.<span class="built_in">run</span>(summary, feed_dict=feed_dict)</div><div class="line">summary_writer.add_summary(summary_str, <span class="built_in">step</span>)</div></pre></td></tr></table></figure>
+<p>事件文件写入完毕之后，可以就训练文件夹打开一个TensorBoard，查看即时数据的情况。</p>
+<p><img src="/img/17_03_03/003.png" alt=""></p>
+<blockquote>
+<p><strong>注意：</strong>了解更多如何构建并运行TensorBoard的信息，请查看相关教程<a href="https://www.tensorflow.org/get_started/summaries_and_tensorboard" target="_blank" rel="external">Tensorboard：训练过程可视化</a>。</p>
+</blockquote>
+<h3 id="保存检查点">保存检查点</h3><p>为了得到可以用来后续恢复模型以进一步训练或评估的检查点文件（checkpoint file），我们实例化一个<a href="https://www.tensorflow.org/api_docs/python/tf/train/Saver" target="_blank" rel="external"><code>tf.train.Saver</code></a>。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">saver = tf<span class="selector-class">.train</span><span class="selector-class">.Saver</span>()</div></pre></td></tr></table></figure>
+<p>在训练循环中，将定期调用<a href="https://www.tensorflow.org/api_docs/python/tf/train/Saver#save" target="_blank" rel="external"><code>tf.train.Saver.save</code></a>方法，使用所有可训练变量的当前值将检查点文件写入训练目录。</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">saver.<span class="built_in">save</span>(sess, FLAGS.train_dir, global_step=<span class="keyword">step</span>)</div></pre></td></tr></table></figure>
+<p>在将来的某个时间点，可以通过使用<a href="https://www.tensorflow.org/api_docs/python/tf/train/Saver#restore" target="_blank" rel="external"><code>tf.train.Saver.restore</code></a>方法重新加载模型参数来恢复训练。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">saver</span><span class="selector-class">.restore</span>(<span class="selector-tag">sess</span>, <span class="selector-tag">FLAGS</span><span class="selector-class">.train_dir</span>)</div></pre></td></tr></table></figure>
+<h2 id="评估模型">评估模型</h2><p>每隔一千个训练步骤，我们的代码会尝试使用训练数据集与测试数据集，对模型进行评估。<code>do_eval</code>函数会被调用三次，分别使用训练数据集、验证数据集合测试数据集。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">print</span> <span class="string">'Training Data Eval:'</span></div><div class="line"><span class="keyword">do</span>_<span class="built_in">eval</span>(sess,</div><div class="line">        <span class="built_in">eval</span>_correct,</div><div class="line">        images_placeholder,</div><div class="line">        labels_placeholder,</div><div class="line">        data_sets.train)</div><div class="line"><span class="built_in">print</span> <span class="string">'Validation Data Eval:'</span></div><div class="line"><span class="keyword">do</span>_<span class="built_in">eval</span>(sess,</div><div class="line">        <span class="built_in">eval</span>_correct,</div><div class="line">        images_placeholder,</div><div class="line">        labels_placeholder,</div><div class="line">        data_sets.validation)</div><div class="line"><span class="built_in">print</span> <span class="string">'Test Data Eval:'</span></div><div class="line"><span class="keyword">do</span>_<span class="built_in">eval</span>(sess,</div><div class="line">        <span class="built_in">eval</span>_correct,</div><div class="line">        images_placeholder,</div><div class="line">        labels_placeholder,</div><div class="line">        data_sets.test)</div></pre></td></tr></table></figure>
+<blockquote>
+<p>注意，更复杂的使用场景通常是，先隔绝<code>data_sets.test</code>测试数据集，只有在大量的超参数优化调整（hyperparameter tuning）之后才进行检查。但是，由于MNIST问题比较简单，我们在这里一次性评估所有的数据。</p>
+</blockquote>
+<h3 id="构建评估图(Eval_Graph)">构建评估图(Eval Graph)</h3><p>在打开默认图表（Graph）之前，我们应该先调用get_data(train=False)函数，抓取测试数据集。</p>
+<p>在进入训练循环之前，评估操作应该通过<code>mnist.py</code>中的<code>evaluate()</code>函数来构建。<code>evaluate()</code>传入的<code>logist</code>和标签参数与<code>loss()</code>函数相同。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">eval_correct</span> = mnist.evaluation(logits, labels_placeholder)</div></pre></td></tr></table></figure>
+<p><code>evaluation()</code>函数会生成<a href="https://www.tensorflow.org/api_docs/python/tf/nn/in_top_k" target="_blank" rel="external"><code>tf.nn.in_top_k</code></a>操作，如果在K个最有可能的预测中可以发现真的标签，那么这个操作就会将模型输出标记为正确。在本文中，我们把K的值设置为1，也就是只有在预测是真的标签时，才判定它是正确的。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">eval_correct = tf<span class="selector-class">.nn</span><span class="selector-class">.in_top_k</span>(logits, labels, <span class="number">1</span>)</div></pre></td></tr></table></figure>
+<h3 id="评估输出">评估输出</h3><p>之后，我们可以创建一个循环，往其中添加<code>feed_dict</code>，并在调用<code>sess.run()</code>函数时传入<code>eval_correct</code>操作，目的就是用给定的数据集评估模型。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> step <span class="keyword">in</span> xrange(steps_per_epoch):</div><div class="line">    feed_dict = fill_feed_dict(data_<span class="built_in">set</span>,</div><div class="line">                               images_placeholder,</div><div class="line">                               labels_placeholder)</div><div class="line">    <span class="literal">true</span>_count += sess.run(<span class="built_in">eval</span>_correct, feed_dict=feed_dict)</div></pre></td></tr></table></figure>
+<p><code>true_count</code>变量会累加所有<code>in_top_k</code>操作判定为正确的预测之和。接下来，只需要将正确测试的总数，除以例子总数，就可以得出准确率了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">precision = <span class="literal">true</span>_count / num_examples</div><div class="line"><span class="built_in">print</span>(<span class="string">'  Num examples: %d  Num correct: %d  Precision @ 1: %0.04f'</span> %</div><div class="line">      (num_examples, <span class="literal">true</span>_count, precision))</div></pre></td></tr></table></figure></span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2017/02/26/【Tensorflow r1.0 文档翻译】深入MNIST--专家级/" itemprop="url">
                 【Tensorflow r1.0 文档翻译】深入MNIST--专家级
               </a>
@@ -838,7 +1085,7 @@ var _hmt = _hmt || [];
 <li><a href="/2017/02/20/【Tensorflow%20r1.0%20文档翻译】TensorFlow入门/">【TensorFlow入门】</a></li>
 <li><a href="/2017/02/22/【Tensorflow%20r1.0%20文档翻译】机器学习的HelloWorld%20--%20MNIST手写数字识别/">【机器学习的HelloWorld – MNIST手写数字识别】</a></li>
 <li><a href="/2017/02/26/【Tensorflow%20r1.0%20文档翻译】深入MNIST--专家级/">【深入MNIST – 专家级】</a></li>
-<li><a href="">【TensorFlow运作方式】</a></li>
+<li><a href="/2017/03/03/【Tensorflow%20r1.0%20文档翻译】Tensorflow原理导论/">【TensorFlow原理导论】</a></li>
 <li><a href="">【tf.contrib.learn快速入门】</a></li>
 <li><a href="">【通过tf.contrib.learn来构建输入方法】</a></li>
 <li><a href="">【TensorBoard:可视化学习】</a></li>
@@ -1981,400 +2228,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2017/01/17/【Python3教程 第2章】控制结构/" itemprop="url">
-                【Python3教程 第2章】控制结构
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2017-01-17T00:28:58+08:00" content="2017-01-17">
-            2017-01-17
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/python/" itemprop="url" rel="index">
-                  <span itemprop="name">python</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2017/01/17/【Python3教程 第2章】控制结构/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/17/【Python3教程 第2章】控制结构/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="布尔与比较">布尔与比较</h2><h3 id="布尔">布尔</h3><p>Python中的另一种类型是布尔类型(Boolean)。布尔类型有两种值：<strong>True</strong>和<strong>False</strong>。它们可以通过比较值来创建，例如通过等号操作符<code>==</code>。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>my_boolean = <span class="keyword">True</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>my_boolean</div><div class="line"><span class="keyword">True</span></div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">2</span> == <span class="number">3</span></div><div class="line"><span class="keyword">False</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">"hello"</span> == <span class="string">"hello"</span></div><div class="line"><span class="keyword">True</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>注意不要混淆<strong>赋值</strong>（一个等号）和<strong>比较</strong>（两个等号）操作符。</p>
-</blockquote>
-<h3 id="比较">比较</h3><p>另外一个比较操作符是不等于(<strong>!=</strong>)，如果两者相比不相等，则结果为<strong>False</strong>否则为<strong>True</strong>。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">1</span> != <span class="number">1</span></div><div class="line"><span class="keyword">False</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">"eleven"</span> != <span class="string">"seven"</span></div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">2</span> != <span class="number">10</span></div><div class="line"><span class="keyword">True</span></div></pre></td></tr></table></figure>
-<p>Python也有比较两个数值（浮点数或整数）是否大于或小于另一个数值的运算。操作符分别是<code>&gt;</code>和<code>&lt;</code>。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">7</span> &gt; <span class="number">5</span></div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">10</span> &lt; <span class="number">10</span></div><div class="line"><span class="keyword">False</span></div></pre></td></tr></table></figure>
-<p>大于或等于的运算符是<code>&gt;=</code>，小于或等于的运算符是<code>&lt;=</code>。</p>
-<p>与大于小于操作符类似，除了当两者相等的时候也返回<strong>True</strong>。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">7</span> &lt;= <span class="number">8</span></div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">9</span> &gt;= <span class="number">9.0</span></div><div class="line"><span class="keyword">True</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>大于等于和小于等于操作符也可以用于按字典排序模式比较字符串操作（字的字母顺序是基于它们的组成字母的字母顺序排序的）。</p>
-</blockquote>
-<h2 id="if语句">if语句</h2><p>你可以使用<strong>if</strong>语句来运行满足某个条件的语句。</p>
-<p>如果表达式的结果是<strong>True</strong>，某些语句会执行。否则，它们不会被执行。</p>
-<p>一个if语句看起来像是这样的：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> expression:</div><div class="line">   statements</div></pre></td></tr></table></figure>
-<blockquote>
-<p>Python使用缩进(在行首的空白)的方式来限制代码块。其他语言，例如C语言，使用花括号来表示代码块，但在Python中缩进是强制性的，程序没有缩进就不会正常工作。正如你看到的<strong>if</strong>里的语句应该被缩进。</p>
-</blockquote>
-<p>下面是一个<strong>if</strong>语句的例子：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> <span class="number">10</span> &gt; <span class="number">5</span>:</div><div class="line">   print(<span class="string">"10 greater than 5"</span>)</div><div class="line"></div><div class="line">print(<span class="string">"Program ended"</span>)</div></pre></td></tr></table></figure>
-<p>判断表达式10是否大于5，如果是，则执行缩进的语句，输出<code>10 greater than 5</code>，然后执行后面没有缩进的语句。</p>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="number">10</span> greater than <span class="number">5</span></div><div class="line">Program ended</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<p>注意<strong>冒号</strong>在<strong>if</strong>语句的末尾处。</p>
-<blockquote>
-<p>由于程序包含多行代码，因此应将其创建为单独的代码文件来运行。</p>
-</blockquote>
-<h3 id="if的嵌套">if的嵌套</h3><p>为了执行更严格的条件检查，<strong>if</strong>语句可以嵌套使用，嵌套在另一个if语句中。这意味着内部的<strong>if</strong>语句是外部的<strong>if</strong>语句的一部分，这是一种查看是否满足多个条件的方法。</p>
-<p>例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">num = <span class="number">12</span></div><div class="line"><span class="keyword">if</span> num &gt; <span class="number">5</span>:</div><div class="line">   print(<span class="string">"Bigger than 5"</span>)</div><div class="line">   <span class="keyword">if</span> num &lt;=<span class="number">47</span>:</div><div class="line">      print(<span class="string">"Between 5 and 47"</span>)</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line">Bigger than <span class="number">5</span></div><div class="line">Between <span class="number">5</span> <span class="keyword">and</span> <span class="number">47</span></div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<h2 id="else语句">else语句</h2><p>一个<strong>else</strong>语句跟在一个<strong>if</strong>语句后面，并且包含当<strong>if</strong>条件语句执行结果为<strong>False</strong>时执行的代码。</p>
-<p>与<strong>if</strong>语句一样，内部的代码块也应该缩进。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">x = <span class="number">4</span></div><div class="line"><span class="keyword">if</span> x == <span class="number">5</span>:</div><div class="line">   print(<span class="string">"Yes"</span>)</div><div class="line"><span class="keyword">else</span>:</div><div class="line">   print(<span class="string">"No"</span>)</div></pre></td></tr></table></figure>
-<p>执行结果:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; </div><div class="line">No</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<h3 id="if和else嵌套使用">if和else嵌套使用</h3><p>你可以将<strong>if</strong>和<strong>else</strong>连接起来，来判断一系列的对错情况，例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">num = <span class="number">7</span></div><div class="line"><span class="keyword">if</span> num == <span class="number">5</span>:</div><div class="line">  print(<span class="string">"Number is 5"</span>)</div><div class="line"><span class="keyword">else</span>: </div><div class="line">  <span class="keyword">if</span> num == <span class="number">11</span>:</div><div class="line">    print(<span class="string">"Number is 11"</span>)</div><div class="line">  <span class="keyword">else</span>:</div><div class="line">    <span class="keyword">if</span> num == <span class="number">7</span>:</div><div class="line">      print(<span class="string">"Number is 7"</span>)</div><div class="line">    <span class="keyword">else</span>: </div><div class="line">      print(<span class="string">"Number isn't 5, 11 or 7"</span>)</div></pre></td></tr></table></figure>
-<p>执行结果:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line">Number <span class="keyword">is</span> <span class="number">7</span></div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<h3 id="elif语句">elif语句</h3><p><strong>elif</strong>(<code>else if</code>的缩写)语句是<code>if</code>和<code>else</code>连起来使用的一个缩写形式。一系列的<strong>elif</strong>判断需要用一个<strong>else</strong>来收尾，用于判断<strong>if</strong>或<strong>elif</strong>以外的情况。</p>
-<p>例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">num = <span class="number">7</span></div><div class="line"><span class="keyword">if</span> num == <span class="number">5</span>:</div><div class="line">   print(<span class="string">"Number is 5"</span>)</div><div class="line"><span class="keyword">elif</span> num == <span class="number">11</span>:</div><div class="line">   print(<span class="string">"Number is 11"</span>)</div><div class="line"><span class="keyword">elif</span> num == <span class="number">7</span>:</div><div class="line">   print(<span class="string">"Number is 7"</span>)</div><div class="line"><span class="keyword">else</span>:</div><div class="line">   print(<span class="string">"Number isn't 5, 11 or 7"</span>)</div></pre></td></tr></table></figure>
-<p>执行结果:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line">Number <span class="keyword">is</span> <span class="number">7</span></div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<blockquote>
-<p>在其他的编程语言中，<strong>elif</strong>语句有多种名称，包括<strong>else if</strong>,<strong>elseif</strong>或者<strong>elsif</strong>。</p>
-</blockquote>
-<h2 id="布尔逻辑">布尔逻辑</h2><p>当<strong>if</strong>语句依赖多个条件时，使用<strong>布尔(Boolean)逻辑</strong>可以用来生成更复杂的条件。</p>
-<p>Python的布尔操作符是<strong>and</strong>，<strong>or</strong>和<strong>not</strong>。</p>
-<h3 id="布尔逻辑_and">布尔逻辑 and</h3><p><strong>and</strong>操作符接受两个参数，并且当且仅当两个参数都为<strong>True</strong>时，计算结果才为<strong>True</strong>。否则，计算结果是<strong>False</strong>。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">1</span> == <span class="number">1</span> <span class="keyword">and</span> <span class="number">2</span> == <span class="number">2</span></div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">1</span> == <span class="number">1</span> <span class="keyword">and</span> <span class="number">2</span> == <span class="number">3</span></div><div class="line"><span class="keyword">False</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">1</span> != <span class="number">1</span> <span class="keyword">and</span> <span class="number">2</span> == <span class="number">2</span></div><div class="line"><span class="keyword">False</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">2</span> &lt; <span class="number">1</span> <span class="keyword">and</span> <span class="number">3</span> &gt;  <span class="number">6</span></div><div class="line"><span class="keyword">False</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>Python用直白的单词来表示布尔逻辑，而其他大多数编程语言使用<code>&amp;&amp;</code>、<code>||</code>、<code>!</code>这些符号来表示。</p>
-</blockquote>
-<h3 id="布尔逻辑_or">布尔逻辑 or</h3><p><strong>or</strong>操作符也接受两个参数，当两个参数至少有一个为<strong>True</strong>时，计算结果就为<strong>True</strong>；否则，当两个参数都为<strong>False</strong>时，计算结果为<strong>False</strong>。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">1</span> == <span class="number">1</span> <span class="keyword">or</span> <span class="number">2</span> == <span class="number">2</span></div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">1</span> == <span class="number">1</span> <span class="keyword">or</span> <span class="number">2</span> == <span class="number">3</span></div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">1</span> != <span class="number">1</span> <span class="keyword">or</span> <span class="number">2</span> == <span class="number">2</span></div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">2</span> &lt; <span class="number">1</span> <span class="keyword">or</span> <span class="number">3</span> &gt;  <span class="number">6</span></div><div class="line"><span class="keyword">False</span></div></pre></td></tr></table></figure>
-<h3 id="布尔逻辑_not">布尔逻辑 not</h3><p>不像其他我们已经看到的操作符那样，<strong>not</strong>操作符只接受一个参数，并且计算结果是取反。<strong>True</strong>的<strong>not</strong>结果是<strong>False</strong>，而且<strong>not False</strong>的计算结果是<strong>True</strong>。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">not</span> <span class="number">1</span> == <span class="number">1</span></div><div class="line"><span class="keyword">False</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">not</span> <span class="number">1</span> &gt; <span class="number">7</span></div><div class="line"><span class="keyword">True</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>通过布尔逻辑，你可以在if的条件语句中连接多个条件。</p>
-</blockquote>
-<h2 id="运算符优先级">运算符优先级</h2><p><strong>运算符优先级</strong>是编程中非常重要的概念。这个概念是数学中运算顺序的一种延伸（例如前面提到的乘法操作），用于包含多个其他的操作符，例如布尔逻辑。</p>
-<p>下面的代码展示了<code>==</code>运算符拥有比<code>or</code>更高的优先级：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">False</span> == <span class="keyword">False</span> <span class="keyword">or</span> <span class="keyword">True</span></div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">False</span> == (<span class="keyword">False</span> <span class="keyword">or</span> <span class="keyword">True</span>)</div><div class="line"><span class="keyword">False</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>(<span class="keyword">False</span> == <span class="keyword">False</span>) <span class="keyword">or</span> <span class="keyword">True</span></div><div class="line"><span class="keyword">True</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>Python的运算符顺序与数学中的运算顺序是一致的：括号优先，然后是幂运算，然后是乘/除法运算，然后是加/减法运算。</p>
-</blockquote>
-<p>下面的表按照优先级从高到低展示了Python中所有的运算符。</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">运算符</th>
-<th style="text-align:left">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><code>**</code></td>
-<td style="text-align:left">指数 (最高优先级)</td>
-</tr>
-<tr>
-<td style="text-align:left"><code>~</code> <code>+</code> <code>-</code></td>
-<td style="text-align:left">按位翻转, 一元加号和减号 (最后两个的方法名为 +@ 和 -@)</td>
-</tr>
-<tr>
-<td style="text-align:left"><code>*</code> <code>/</code> <code>%</code> <code>//</code></td>
-<td style="text-align:left">乘，除，取模和取整除</td>
-</tr>
-<tr>
-<td style="text-align:left"><code>+</code> <code>-</code></td>
-<td style="text-align:left">加法减法</td>
-</tr>
-<tr>
-<td style="text-align:left"><code>&gt;&gt;</code> <code>&lt;&lt;</code></td>
-<td style="text-align:left">右移，左移运算符</td>
-</tr>
-<tr>
-<td style="text-align:left"><code>&amp;</code></td>
-<td style="text-align:left">位 ‘AND’</td>
-</tr>
-<tr>
-<td style="text-align:left"><code>^</code> &#124;</td>
-<td style="text-align:left">位运算符</td>
-</tr>
-<tr>
-<td style="text-align:left"><code>&lt;=</code> <code>&lt;</code> <code>&gt;</code> <code>&gt;=</code></td>
-<td style="text-align:left">比较运算符</td>
-</tr>
-<tr>
-<td style="text-align:left"><code>&lt;&gt;</code> <code>==</code> <code>!=</code></td>
-<td style="text-align:left">等于运算符</td>
-</tr>
-<tr>
-<td style="text-align:left"><code>=</code> <code>%=</code> <code>/=</code> <code>//=</code> <code>-=</code> <code>+=</code> <code>*=</code> <code>**=</code></td>
-<td style="text-align:left">赋值运算符</td>
-</tr>
-<tr>
-<td style="text-align:left"><code>is</code> <code>is not</code></td>
-<td style="text-align:left">身份运算符</td>
-</tr>
-<tr>
-<td style="text-align:left"><code>in</code> <code>not in</code></td>
-<td style="text-align:left">成员运算符</td>
-</tr>
-<tr>
-<td style="text-align:left"><code>not</code> <code>or</code> <code>and</code></td>
-<td style="text-align:left">逻辑运算符</td>
-</tr>
-</tbody>
-</table>
-<h2 id="while循环">while循环</h2><p>一个<strong>if</strong>语句在条件为<strong>True</strong>时会执行一次，如果为<strong>False</strong>则不执行。<strong>while</strong>语句会在条件满足时执行多次。只要条件为<strong>True</strong>，while内部的语句就会重复的执行下去。一旦条件为<strong>False</strong>，就会跳出循环，继续执行后面的代码。</p>
-<p>下面是一个<strong>while</strong>循环，包含一个从1到5自增长用来计数的变量，直到i的值达到了循环的终点就会跳出循环。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">i = <span class="number">1</span></div><div class="line"><span class="keyword">while</span> i &lt;=<span class="number">5</span>:</div><div class="line">   print(i)</div><div class="line">   i = i + <span class="number">1</span></div><div class="line"></div><div class="line">print(<span class="string">"Finished!"</span>)</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="number">1</span></div><div class="line"><span class="number">2</span></div><div class="line"><span class="number">3</span></div><div class="line"><span class="number">4</span></div><div class="line"><span class="number">5</span></div><div class="line">Finished!</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<blockquote>
-<p><strong>while</strong>内部循环执行的的代码被称为<strong>迭代(iteration)</strong>。</p>
-</blockquote>
-<h3 id="无限循环">无限循环</h3><p><strong>无限循环</strong>是一种特殊的while循环；它永远都不会停止运行。它的判断条件一直是<strong>True</strong>    。</p>
-<p>下面是一个无限循环的例子：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span> <span class="number">1</span>==<span class="number">1</span>:</div><div class="line">  print(<span class="string">"In the loop"</span>)</div></pre></td></tr></table></figure>
-<p>这个程序会无限的打印<code>In the loop</code>。</p>
-<blockquote>
-<p>你可以通过按下快捷键<strong>Ctrl-C</strong>来终止程序的执行，从而中断这个无限循环。</p>
-</blockquote>
-<h3 id="break">break</h3><p>通过使用<strong>break</strong>语句，可以提前跳出<strong>while</strong>循环的执行。<strong>break</strong>可以立刻中断<strong>while</strong>内部的循环。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">i = <span class="number">0</span></div><div class="line"><span class="keyword">while</span> <span class="number">1</span>==<span class="number">1</span>:</div><div class="line">  print(i)</div><div class="line">  i = i + <span class="number">1</span></div><div class="line">  <span class="keyword">if</span> i &gt;= <span class="number">5</span>:</div><div class="line">    print(<span class="string">"Breaking"</span>)</div><div class="line">    <span class="keyword">break</span></div><div class="line"></div><div class="line">print(<span class="string">"Finished"</span>)</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="number">0</span></div><div class="line"><span class="number">1</span></div><div class="line"><span class="number">2</span></div><div class="line"><span class="number">3</span></div><div class="line"><span class="number">4</span></div><div class="line">Breaking</div><div class="line">Finished</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<blockquote>
-<p>在循环外使用<strong>break</strong>会产生错误。</p>
-</blockquote>
-<h3 id="continue">continue</h3><p>另一个可以用在循环内的语句是<strong>continue</strong>。</p>
-<p>不同于<strong>break</strong>，<strong>continue</strong>会跳回到循环的顶部而不是停止循环的执行。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">i = <span class="number">0</span></div><div class="line"><span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">   i = i +<span class="number">1</span></div><div class="line">   <span class="keyword">if</span> i == <span class="number">2</span>:</div><div class="line">      print(<span class="string">"Skipping 2"</span>)</div><div class="line">      <span class="keyword">continue</span></div><div class="line">   <span class="keyword">if</span> i == <span class="number">5</span>:</div><div class="line">      print(<span class="string">"Breaking"</span>)</div><div class="line">      <span class="keyword">break</span></div><div class="line">   print(i)</div><div class="line"></div><div class="line">print(<span class="string">"Finished"</span>)</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="number">1</span></div><div class="line">Skipping <span class="number">2</span></div><div class="line"><span class="number">3</span></div><div class="line"><span class="number">4</span></div><div class="line">Breaking</div><div class="line">Finished</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<p><strong>continue</strong>语句会停止当前这一次的迭代项，并且继续执行下一次项。</p>
-<blockquote>
-<p>在循环外使用<strong>continue</strong>会产生错误。</p>
-</blockquote>
-<h2 id="列表(List)">列表(List)</h2><p><strong>列表(List)</strong>是另一个Python对象，它可以用于存储条目的索引列表。<br>列表可以通过一个<strong>方括号(<code>[]</code>)</strong>来构建，内部的条目用<strong>逗号(<code>,</code>)</strong>隔开。</p>
-<p>可以通过使用其在方括号中的索引来访问列表中的特定项。</p>
-<p>例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">words = [<span class="string">"Hello"</span>, <span class="string">"world"</span>, <span class="string">"!"</span>]</div><div class="line">print(words[<span class="number">0</span>])</div><div class="line">print(words[<span class="number">1</span>])</div><div class="line">print(words[<span class="number">2</span>])</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span>&gt;python</div><div class="line">Hello</div><div class="line">world</div><div class="line">!</div><div class="line"><span class="meta">&gt;&gt;</span>&gt;</div></pre></td></tr></table></figure>
-<blockquote>
-<p>第一个列表项的索引值是<strong>0</strong>，而不是<strong>1</strong>。</p>
-</blockquote>
-<p>一个空的列表可以通过一对方括号来实现：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">empty_list = []</div><div class="line">print(empty_list)</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line">[]</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<blockquote>
-<p>大多数情况下，列表的最后一个条目后是不用添加逗号的。但是如果你添加了逗号，那就表明在最后占了一个位置，在某些情况下这种做法也是被推荐的。</p>
-</blockquote>
-<p>列表通常包含着同一种类型的数据，但你也完全可以添加不同类型的数据到列表中。列表本身也可以嵌套在其他列表中。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">number = <span class="number">3</span></div><div class="line">things = [<span class="string">"string"</span>, <span class="number">0</span>, [<span class="number">1</span>, <span class="number">2</span>, number], <span class="number">4.56</span>]</div><div class="line">print(things[<span class="number">1</span>])</div><div class="line">print(things[<span class="number">2</span>])</div><div class="line">print(things[<span class="number">2</span>][<span class="number">2</span>])</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="number">0</span></div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line"><span class="number">3</span></div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<blockquote>
-<p>列表嵌套列表是通常用于表示二维网格，Python缺少像其他语言中的<strong>多维数组</strong>的结构，可以通过嵌套列表来实现。</p>
-</blockquote>
-<p>索引超出列表长度的边界会导致<strong>IndexError</strong>。</p>
-<p>有些类型，如<strong>字符串(strings)</strong>，可以像<strong>列表(List)</strong>一样被索引。索引字符串的行为就好像你在索引一个包含了每个字符的列表所组成的字符串。</p>
-<p>对于其他类型，例如<strong>整数(integers)</strong>，它们是不可以被索引的，如果对它使用索引会导致TypeError。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">str = <span class="string">"Hello world!"</span></div><div class="line">print(str[<span class="number">6</span>])</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line">w</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<h2 id="列表操作(List_Operations)">列表操作(List Operations)</h2><p>列表中的某个位置的条目可以重新赋值。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">nums = [<span class="number">7</span>, <span class="number">7</span>, <span class="number">7</span>, <span class="number">7</span>, <span class="number">7</span>]</div><div class="line">nums[<span class="number">2</span>] = <span class="number">5</span></div><div class="line">print(nums)</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line">[<span class="number">7</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">7</span>]</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<p>列表可以像字符串一样执行<strong>加法</strong>和<strong>乘法</strong>操作：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">nums = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line">print(nums + [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>])</div><div class="line">print(nums * <span class="number">3</span>)</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<blockquote>
-<p>列表和字符串在很多情况下是相似的，字符串可以想象成是字符组成的不可变列表。</p>
-</blockquote>
-<hr>
-<p>可以通过<strong>in</strong>操作符来检测某个条目是否存在于某个列表中。如果当前条目在列表中存在一份或多份时，返回<strong>True</strong>，否则返回<strong>False</strong>。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">words = [<span class="string">"spam"</span>, <span class="string">"egg"</span>, <span class="string">"spam"</span>, <span class="string">"sausage"</span>]</div><div class="line">print(<span class="string">"spam"</span> <span class="keyword">in</span> words)</div><div class="line">print(<span class="string">"egg"</span> <span class="keyword">in</span> words)</div><div class="line">print(<span class="string">"tomato"</span> <span class="keyword">in</span> words)</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="keyword">False</span></div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<blockquote>
-<p><strong>in</strong>操作符也可以用来判断某个字符串是否是另一个字符串的子字符串。</p>
-</blockquote>
-<hr>
-<p>可以通过<strong>not</strong>操作符来判断某个条目是否不在列表中：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">nums = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line">print(<span class="keyword">not</span> <span class="number">4</span> <span class="keyword">in</span> nums)</div><div class="line">print(<span class="number">4</span> <span class="keyword">not</span> <span class="keyword">in</span> nums)</div><div class="line">print(<span class="keyword">not</span> <span class="number">3</span> <span class="keyword">in</span> nums)</div><div class="line">print(<span class="number">3</span> <span class="keyword">not</span> <span class="keyword">in</span> nums)</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="keyword">True</span></div><div class="line"><span class="keyword">False</span></div><div class="line"><span class="keyword">False</span></div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<hr>
-<h2 id="列表方法(List_Functions)">列表方法(List Functions)</h2><p>另外一种改变列表的方式是通过<strong>append</strong>函数。这个函数会添加一个元素到列表的末尾。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">nums = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</div><div class="line">nums.append(<span class="number">4</span>)</div><div class="line">print(nums)</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<hr>
-<p>可以通过<strong>len</strong>函数来获取列表中元素的个数。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">nums = [<span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">2</span>, <span class="number">4</span>]</div><div class="line">print(len(nums))</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="number">5</span></div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<hr>
-<p><strong>insert</strong>方法和<strong>append</strong>类似，不同的是，它可以在列表的任何位置插入指定的元素，而不是仅仅跟在列表最后。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">words = [<span class="string">"Python"</span>, <span class="string">"fun"</span>]</div><div class="line">index = <span class="number">1</span></div><div class="line">words.insert(index, <span class="string">"is"</span>)</div><div class="line">print(words)</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line">[<span class="string">'Python'</span>, <span class="string">'is'</span>, <span class="string">'fun'</span>]</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<hr>
-<p><strong>index</strong>方法会找到元素第一次出现的所在位置索引值，如果元素不在列表中，会抛出一个ValueError。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">letters = [<span class="string">'p'</span>, <span class="string">'q'</span>, <span class="string">'r'</span>, <span class="string">'s'</span>, <span class="string">'p'</span>, <span class="string">'u'</span>]</div><div class="line">print(letters.index(<span class="string">'r'</span>))</div><div class="line">print(letters.index(<span class="string">'p'</span>))</div><div class="line">print(letters.index(<span class="string">'z'</span>))</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line"><span class="number">2</span></div><div class="line"><span class="number">0</span></div><div class="line">ValueError: <span class="string">'z'</span> <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">in</span> list</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<blockquote>
-<p>下面有几个列表的更有用的方法：</p>
-<ul>
-<li><strong>max</strong>(list): 返回列表中最大的元素。</li>
-<li><strong>min</strong>(list): 返回列表中最小的元素。</li>
-<li>list.<strong>count</strong>(obj): 返回列表中指定元素的出现次数。</li>
-<li>list.<strong>remove</strong>(obj): 移除列表中的一个指定元素。</li>
-<li>list.<strong>reverse</strong>(): 将列表中的元素顺序翻转。</li>
-</ul>
-</blockquote>
-<hr>
-<h2 id="Range">Range</h2><p><strong>range</strong>方法会创建一个包含数字序列的列表。下面的代码会生成一组0到10之间(包含0不包含10)的整数的序列：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">numbers = list(range(<span class="number">10</span>))</div><div class="line">print(numbers)</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line">[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<hr>
-<p>如果<strong>range</strong>方法传入一个参数，那么它将产生一组包含0到那个参数的数字序列。</p>
-<p>如果包含两个参数，那么它将产生第一个参数到第二个参数之间的数字序列。</p>
-<p>例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">numbers = list(range(<span class="number">3</span>, <span class="number">8</span>))</div><div class="line">print(numbers)</div><div class="line"></div><div class="line">print(range(<span class="number">20</span>) == range(<span class="number">0</span>, <span class="number">20</span>))</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line">[<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>]</div><div class="line"></div><div class="line"><span class="keyword">True</span></div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<hr>
-<p><strong>range</strong>可以拥有第三个用来决定步数的参数。这个参数必须是一个<strong>整形(integer)</strong>。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">numbers = list(range(<span class="number">5</span>, <span class="number">20</span>, <span class="number">2</span>))</div><div class="line">print(numbers)</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line">[<span class="number">5</span>, <span class="number">7</span>, <span class="number">9</span>, <span class="number">11</span>, <span class="number">13</span>, <span class="number">15</span>, <span class="number">17</span>, <span class="number">19</span>]</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<hr>
-<h2 id="for循环">for循环</h2><h3 id="循环">循环</h3><p>有时，你需要对列表中的元素依次执行运算，这种操作叫做<strong>迭代(iteration)</strong>。迭代可以通过<strong>while</strong>循环以及一个条件变量来实现。</p>
-<p>例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">words = [<span class="string">"hello"</span>, <span class="string">"world"</span>, <span class="string">"spam"</span>, <span class="string">"eggs"</span>]</div><div class="line">counter = <span class="number">0</span></div><div class="line">max_index = len(words) - <span class="number">1</span></div><div class="line"></div><div class="line"><span class="keyword">while</span> counter &lt;= max_index:</div><div class="line">   word = words[counter]</div><div class="line">   print(word + <span class="string">"!"</span>)</div><div class="line">   counter = counter + <span class="number">1</span></div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line">hello!</div><div class="line">world!</div><div class="line">spam!</div><div class="line">eggs!</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<hr>
-<h3 id="for循环-1">for循环</h3><p>使用<strong>while</strong>来对列表进行迭代操作需要写的代码有点多，所以Python提供了一种<strong>for</strong>循环的方式来更简便的实现这一操作。</p>
-<p>同样的代码用<strong>for</strong>循环来实现：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">words = [<span class="string">"hello"</span>, <span class="string">"world"</span>, <span class="string">"spam"</span>, <span class="string">"eggs"</span>]</div><div class="line"><span class="keyword">for</span> word <span class="keyword">in</span> words:</div><div class="line">  print(word + <span class="string">"!"</span>)</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line">hello!</div><div class="line">world!</div><div class="line">spam!</div><div class="line">eggs!</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<blockquote>
-<p>Python中的<strong>for</strong>循环，就像其他语言中的<strong>foreach</strong>循环一样。</p>
-</blockquote>
-<hr>
-<p><strong>for</strong>循环通常用于重复某一代码执行一定次数。这种操作可以通过与<strong>range</strong>对象结合使用来完成：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">5</span>):</div><div class="line">  print(<span class="string">"hello!"</span>)</div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;</div><div class="line">hello!</div><div class="line">hello!</div><div class="line">hello!</div><div class="line">hello!</div><div class="line">hello!</div><div class="line">&gt;&gt;&gt;</div></pre></td></tr></table></figure>
-<hr>
-<h2 id="一个简单的计算器">一个简单的计算器</h2><h3 id="创建一个计算器">创建一个计算器</h3><p>这节课介绍一个Python程序的示例：一个简单的计算器。</p>
-<p>第一部分是整体菜单部分。它将持续接受用户的输入，直到用户输入了“quit”为止，因此用到了一个<strong>while</strong>循环。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">   print(<span class="string">"Options:"</span>)</div><div class="line">   print(<span class="string">"Enter 'add' to add two numbers"</span>)</div><div class="line">   print(<span class="string">"Enter 'subtract' to subtract two numbers"</span>)</div><div class="line">   print(<span class="string">"Enter 'multiply' to multiply two numbers"</span>)</div><div class="line">   print(<span class="string">"Enter 'divide' to divide two numbers"</span>)</div><div class="line">   print(<span class="string">"Enter 'quit' to end the program"</span>)</div><div class="line">   user_input = input(<span class="string">": "</span>)</div><div class="line"></div><div class="line">   <span class="keyword">if</span> user_input == <span class="string">"quit"</span>:</div><div class="line">      <span class="keyword">break</span></div><div class="line">   <span class="keyword">elif</span> user_input == <span class="string">"add"</span>:</div><div class="line">      ...</div><div class="line">   <span class="keyword">elif</span> user_input == <span class="string">"subtract"</span>:</div><div class="line">      ...</div><div class="line">   <span class="keyword">elif</span> user_input == <span class="string">"multiply"</span>:</div><div class="line">      ...</div><div class="line">   <span class="keyword">elif</span> user_input == <span class="string">"divide"</span>:</div><div class="line">      ...</div><div class="line">   <span class="keyword">else</span>:</div><div class="line">      print(<span class="string">"Unknown input"</span>)</div></pre></td></tr></table></figure>
-<blockquote>
-<p>这部分代码是程序的开始部分。它将接受用户的输入，并且比较<strong>if/elif</strong>的条件语句。</p>
-<p>当用户输入了“quit”时，<strong>break</strong>语句用来终止while循环的执行。</p>
-</blockquote>
-<hr>
-<p>接下来一部分的代码是获取用户输入的数字。下面的代码展示了加法部分的逻辑。其他操作的代码也与此类似。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">elif</span> user_input == <span class="string">"add"</span>:</div><div class="line">  num1 = float(input(<span class="string">"Enter a number: "</span>))</div><div class="line">  num2 = float(input(<span class="string">"Enter another number: "</span>))</div></pre></td></tr></table></figure>
-<p>现在，当用户输入了“add”时，程序提示输入两个数字，并且存储到相应的变量中。</p>
-<blockquote>
-<p>当提示输入数字时，如果用户输入了一个非数字的字符，那么会产生一个崩溃。我们会在后面的章节来修复这个类似的问题。</p>
-</blockquote>
-<hr>
-<p>最后一部分是处理用户输入，并且展示结果。</p>
-<p>加法部分的逻辑如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">elif</span> user_input == <span class="string">"add"</span>:</div><div class="line">  num1 = float(input(<span class="string">"Enter a number: "</span>))</div><div class="line">  num2 = float(input(<span class="string">"Enter another number: "</span>))</div><div class="line">  result = str(num1 + num2)</div><div class="line">  print(<span class="string">"The answer is "</span> + result)</div></pre></td></tr></table></figure>
-<p>我们现在有了一个可以正常工作程序：提示用户输入，然后计算和打印输入的和。</p>
-<blockquote>
-<p>其他分支(减法，乘法，除法)的代码结构类似，可以自行补全。</p>
-<p>输出行可以放在<strong>if</strong>语句之外，以省略重复的代码。</p>
-</blockquote>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2413,7 +2266,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">94</span>
+              <span class="site-state-item-count">95</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
