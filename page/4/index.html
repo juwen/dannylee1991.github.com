@@ -199,6 +199,299 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2016/12/03/发布aar到jcenter的正确姿势/" itemprop="url">
+                发布aar到jcenter的正确姿势
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-12-03T07:21:58+08:00" content="2016-12-03">
+            2016-12-03
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/Android/" itemprop="url" rel="index">
+                  <span itemprop="name">Android</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/12/03/发布aar到jcenter的正确姿势/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/03/发布aar到jcenter的正确姿势/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p>前段时间开发了一个android测试小插件<a href="https://github.com/DannyLee1991/ATestKit" target="_blank" rel="external">ATestKit</a>，准备发布到jcenter库中，可期间碰壁无数，折腾了两天最终终于上传成功。</p>
+<p>下面是我的最终整理：</p>
+<h2 id="上传aar到jcenter的正确姿势">上传aar到jcenter的正确姿势</h2><p>打开<a href="https://bintray.com" target="_blank" rel="external">https://bintray.com</a>。</p>
+<h3 id="第一坑：你需要一个vpn。">第一坑：你需要一个vpn。</h3><p>注册时国内的qq邮箱，163邮箱通通用不了，gmail可用。</p>
+<p>天朝国情，访问google需要翻墙，不解释。</p>
+<h3 id="第二坑：注意注册入口">第二坑：注意注册入口</h3><p>首页有一个<strong>START YOUR FREE TRIAL</strong>:</p>
+<p><img src="/img/16_12_03/001.png" alt=""></p>
+<p>如果你按照网上搜到排名很靠前的的其他教程来进行，比如说这几篇：</p>
+<ul>
+<li><a href="http://blog.csdn.net/wwj_748/article/details/51913280" target="_blank" rel="external">Android Library上传到JCenter仓库实践</a></li>
+<li><a href="http://blog.csdn.net/lmj623565791/article/details/51148825" target="_blank" rel="external">Android 快速发布开源项目到jcenter</a></li>
+<li><a href="http://www.cnblogs.com/qianxudetianxia/p/4322331.html" target="_blank" rel="external">使用Gradle发布aar项目到JCenter仓库</a></li>
+<li><a href="http://www.jianshu.com/p/31410d71eaba" target="_blank" rel="external">Android Studio提交库至Bintray jCenter从入门到放弃</a></li>
+</ul>
+<p>那么恭喜你，你成功的入坑了，你会发现按照他们的配置一步步进行，但到最后就是不成功，而且错误的提示也很不明确，让你找不到一点头绪。</p>
+<p>仔细看看，你看到的jcenter的个人主页似乎和他们的不太一样。</p>
+<p>原因可能是因为bintray.com这个网站改版了，导致注册流程和以前不一样了，如果你点击上图的那个注册入口，会引导你创建一个组织，然后你只能在组织下新建自己的仓库，而上面的几篇文章根本就没有组织这一说啊。</p>
+<p>在这里有一个关于网站首页的说明：</p>
+<p><a href="https://bintray.com/docs/usermanual/starting/starting_gettingstarted.html#_the_bintray_homepage" target="_blank" rel="external">https://bintray.com/docs/usermanual/starting/starting_gettingstarted.html#_the_bintray_homepage</a></p>
+<p>注意看这里：</p>
+<p><img src="/img/16_12_03/003.png" alt=""></p>
+<p>好吧，难道说明我们还有另外一个针对于open source plan的注册入口吗？这个入口听起来有点像上面几篇文章描述的那样啊。</p>
+<p>果然有！</p>
+<p>继续回到首页，拉到页面最底端，有另外一个入口：</p>
+<p><img src="/img/16_12_03/004.png" alt=""></p>
+<p>从这里注册进入，你就可以不用创建组织了。</p>
+<h3 id="第三坑：收费？！">第三坑：收费？！</h3><p>如果你不幸点击了首页的<strong>START YOUR FREE TRIAL</strong>，那么你的首页上会有这么一个奇怪的标识：</p>
+<p><img src="/img/16_12_03/007.png" alt=""></p>
+<p>点进来看一看，虽然没有明确说免费版到期后会怎样，但手动终止免费版后会删掉你库里所有的东东：</p>
+<p><img src="/img/16_12_03/008.png" alt=""></p>
+<p>如果想继续使用，那么150刀一月。</p>
+<p><strong>没想到jcenter如此恶毒的把免费试用入口放在最显眼的位置，而且不明确告诉你试用账号到期后的后果，并且把免费使用的社区版入口藏的那么深。</strong></p>
+<h3 id="正常配置流程">正常配置流程</h3><p>通过社区版注册入口进入之后，就没有了奇怪的标识，我们可以创建一个个人仓库了：</p>
+<p><img src="/img/16_12_03/009.png" alt=""></p>
+<p>配置选择public，类型选择Maven：</p>
+<p><img src="/img/16_12_03/010.png" alt=""></p>
+<p>然后创建新的Package：</p>
+<p><img src="/img/16_12_03/011.png" alt=""></p>
+<p>填写相关信息：</p>
+<p><img src="/img/16_12_03/012.png" alt=""></p>
+<p>在你的编辑你android项目根目录下的<code>build.gradle</code></p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">buildscript</span> &#123;</div><div class="line">    <span class="keyword">repositories</span> &#123;</div><div class="line">        jcenter()</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">dependencies</span> &#123;</div><div class="line">        <span class="keyword">classpath</span> <span class="string">'com.android.tools.build:gradle:2.2.0'</span></div><div class="line">        <span class="comment">// 添加上传到jcenter所需的插件</span></div><div class="line">        <span class="keyword">classpath</span> <span class="string">'com.github.dcendents:android-maven-gradle-plugin:1.5'</span></div><div class="line">        <span class="keyword">classpath</span> <span class="string">'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.1'</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">allprojects</span> &#123;</div><div class="line">    <span class="keyword">repositories</span> &#123;</div><div class="line">        jcenter()</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">task</span> clean(type: <span class="keyword">Delete</span>) &#123;</div><div class="line">    <span class="keyword">delete</span> rootProject.buildDir</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>编辑library下的<code>build.gradle</code>:</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div></pre></td><td class="code"><pre><div class="line">apply plugin: <span class="string">'com.android.library'</span></div><div class="line">apply plugin: <span class="string">'com.github.dcendents.android-maven'</span></div><div class="line">apply plugin: <span class="string">'com.jfrog.bintray'</span></div><div class="line"></div><div class="line">version = <span class="string">"0.2"</span>	<span class="comment">//aar的版本号</span></div><div class="line"></div><div class="line">android &#123;</div><div class="line">    compileSdkVersion <span class="number">23</span></div><div class="line">    buildToolsVersion <span class="string">"23.0.3"</span></div><div class="line"></div><div class="line">    defaultConfig &#123;</div><div class="line">        minSdkVersion <span class="number">14</span></div><div class="line">        targetSdkVersion <span class="number">23</span></div><div class="line">        versionCode <span class="number">1</span></div><div class="line">        versionName <span class="string">"1.0"</span></div><div class="line"></div><div class="line">        testInstrumentationRunner <span class="string">"android.support.test.runner.AndroidJUnitRunner"</span></div><div class="line"></div><div class="line">    &#125;</div><div class="line">    buildTypes &#123;</div><div class="line">        release &#123;</div><div class="line">            minifyEnabled <span class="keyword">false</span></div><div class="line">            proguardFiles getDefaultProguardFile(<span class="string">'proguard-android.txt'</span>), <span class="string">'proguard-rules.pro'</span></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    lintOptions &#123;</div><div class="line">        abortOnError <span class="keyword">false</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">dependencies</span> &#123;</div><div class="line">    <span class="keyword">compile</span> <span class="keyword">fileTree</span>(dir: <span class="string">'libs'</span>, <span class="keyword">include</span>: [<span class="string">'*.jar'</span>])</div><div class="line">    <span class="keyword">compile</span> <span class="string">'com.android.support:appcompat-v7:23.4.0'</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">def</span> siteUrl = <span class="string">'https://github.com/DannyLee1991/ATestKit'</span>    <span class="comment">// 项目主页</span></div><div class="line"><span class="keyword">def</span> gitUrl = <span class="string">'https://github.com/DannyLee1991/ATestKit.git'</span> <span class="comment">// 项目的git地址</span></div><div class="line"><span class="keyword">def</span> module_name = <span class="string">'ATestKit'</span>	<span class="comment">// 项目的名称</span></div><div class="line"><span class="keyword">group</span> = <span class="string">'com.dannylee'</span>	<span class="comment">// 所在组</span></div><div class="line"></div><div class="line">install &#123;</div><div class="line">    <span class="keyword">repositories</span>.mavenInstaller &#123;</div><div class="line">        <span class="comment">// This generates POM.xml with proper parameters</span></div><div class="line">        pom &#123;</div><div class="line">            <span class="keyword">project</span> &#123;</div><div class="line">                packaging <span class="string">'aar'</span></div><div class="line">                name <span class="string">'ATestKit'</span> <span class="comment">// 名称</span></div><div class="line">                url siteUrl</div><div class="line">                licenses &#123;</div><div class="line">                    license &#123;</div><div class="line">                        name <span class="string">'The Apache Software License, Version 2.0'</span> <span class="comment">// 开源协议名称</span></div><div class="line">                        url <span class="string">'http://www.apache.org/licenses/LICENSE-2.0.txt'</span> <span class="comment">// 协议地址</span></div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">                developers &#123;</div><div class="line">                    developer &#123;</div><div class="line">                        id <span class="string">'dannylee'</span>	<span class="comment">// 账号</span></div><div class="line">                        name <span class="string">'dannylee'</span>	<span class="comment">// 名称</span></div><div class="line">                        email <span class="string">'leejianan1@gmail.com'</span> <span class="comment">// 邮箱地址</span></div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">                scm &#123;</div><div class="line">                    connection gitUrl</div><div class="line">                    developerConnection gitUrl</div><div class="line">                    url siteUrl</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">task</span> sourcesJar(type: Jar) &#123;</div><div class="line">    <span class="keyword">from</span> android.<span class="keyword">sourceSets</span>.main.java.srcDirs</div><div class="line">    classifier = <span class="string">'sources'</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">task</span> javadoc(type: Javadoc) &#123;</div><div class="line">    <span class="keyword">source</span> = android.<span class="keyword">sourceSets</span>.main.java.srcDirs</div><div class="line">    <span class="keyword">classpath</span> += <span class="keyword">project</span>.files(android.getBootClasspath().<span class="keyword">join</span>(<span class="keyword">File</span>.pathSeparator))</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">task</span> javadocJar(type: Jar, dependsOn: javadoc) &#123;</div><div class="line">    classifier = <span class="string">'javadoc'</span></div><div class="line">    <span class="keyword">from</span> javadoc.<span class="keyword">destinationDir</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">artifacts</span> &#123;</div><div class="line">    archives sourcesJar</div><div class="line">&#125;</div><div class="line"></div><div class="line">Properties properties = <span class="keyword">new</span> Properties()</div><div class="line">properties.load(<span class="keyword">project</span>.rootProject.<span class="keyword">file</span>(<span class="string">'local.properties'</span>).newDataInputStream())</div><div class="line">bintray &#123;</div><div class="line">	 <span class="comment">// 读取配置文件中的用户名和key</span></div><div class="line">    user = properties.getProperty(<span class="string">"bintray.user"</span>)</div><div class="line">    key = properties.getProperty(<span class="string">"bintray.apikey"</span>)</div><div class="line">    <span class="keyword">configurations</span> = [<span class="string">'archives'</span>]</div><div class="line">    pkg &#123;</div><div class="line">        repo = <span class="string">"maven"</span>		<span class="comment">// 你在bintray上创建的库的名称</span></div><div class="line">        name = module_name               <span class="comment">// 在jcenter中的项目名称</span></div><div class="line">        websiteUrl = siteUrl</div><div class="line">        vcsUrl = gitUrl</div><div class="line">        licenses = [<span class="string">"Apache-2.0"</span>]</div><div class="line">        publish = <span class="keyword">true</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>回到bintray，在你的个人信息配置页中，查看APK Key：</p>
+<p><img src="/img/16_12_03/013.png" alt=""></p>
+<p><img src="/img/16_12_03/014.png" alt=""></p>
+<p>在项目根目录下创建<code>local.properties</code>配置文件（如果有就直接打开），写入账号信息：</p>
+<p><img src="/img/16_12_03/015.png" alt=""></p>
+<p>由于key是比较重要的信息，不能泄露出去，所以需要编辑<code>.gitignore</code>添加过滤规则来把它过滤掉：</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># <span class="keyword">Local</span> configuration <span class="keyword">file</span> (sdk path, etc)</div><div class="line"><span class="keyword">local</span>.properties</div></pre></td></tr></table></figure>
+<p>然后命令行进入到你的library项目中执行：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">gradle</span> build</div></pre></td></tr></table></figure>
+<p>比较坑的是有的时候可能会失败，多试几次就会成功。</p>
+<p>成功之后执行:</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">gradle</span> bintrayUpload</div></pre></td></tr></table></figure>
+<p>如果不出意外的话，会成功上传，如果失败了，很有可能是你的网络问题，换个vpn试试说不定可以成功。如果是其他原因的失败，请自行google。</p>
+<p>回到jcenter中项目的管理页面，就可以看到上传的版本信息了，点击<strong>Add to JCenter</strong>就可以正式上传到jcenter中了：</p>
+<p><img src="/img/16_12_03/016.png" alt=""></p>
+<p>上传后，需要系统审核大概半小时，之后就可以在你的项目中使用这个aar了：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">dependencies</span> &#123;</div><div class="line">    ...</div><div class="line">    <span class="keyword">compile</span> <span class="string">'com.dannylee:atestkit:0.2'</span></div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<hr>
+<p>如果你选择的是第一个注册入口，流程也是一样的，唯一不同的就是在library中的<code>build.gradle</code>中要填写组织名称，否则也找不到:</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">install &#123;</div><div class="line">    <span class="keyword">repositories</span>.mavenInstaller &#123;</div><div class="line">        <span class="comment">// This generates POM.xml with proper parameters</span></div><div class="line">        pom &#123;</div><div class="line">            <span class="keyword">project</span> &#123;</div><div class="line">            	   userOrg <span class="string">'your organisation name'</span> <span class="comment">// 填写组织名称</span></div><div class="line">                ...</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">                ...</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              <a class="post-title-link" href="/2016/11/30/房价预测（1）-搜房网数据爬取/" itemprop="url">
+                房价预测（1）-搜房网数据爬取
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-11-30T22:21:58+08:00" content="2016-11-30">
+            2016-11-30
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/11/30/房价预测（1）-搜房网数据爬取/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/30/房价预测（1）-搜房网数据爬取/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="搜房网数据爬取">搜房网数据爬取</h2><blockquote>
+<p>如今<strong>房事</strong>牵动着每家每户的心，所以以搜房网数据为例，用程序员的角度去客观分析一下房价走势，并对房价数据进行预测，也顺便对学到的<strong>机器学习</strong>相关知识练练手。</p>
+</blockquote>
+<h3 id="爬虫Scrapy">爬虫Scrapy</h3><p>数据分析的第一步，当然是数据的采集。这里我使用的是<a href="http://scrapy-chs.readthedocs.io/zh_CN/latest/" target="_blank" rel="external">Scrpy</a>。这是一个开源的python爬虫框架，可以很方便的处理很多爬虫方面的工作，而且中文的文档写的也比较明确。</p>
+<p>安装好python环境后，通过pip即可安装：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pip <span class="keyword">install</span> Scrapy</div></pre></td></tr></table></figure>
+<p>具体使用方式，可以看一下这个<a href="http://scrapy-chs.readthedocs.io/zh_CN/latest/intro/tutorial.html" target="_blank" rel="external">Scrapy入门教程</a>，也不难，这里就不做过多的介绍了。</p>
+<h3 id="fang-com从何处入手呢？">fang.com从何处入手呢？</h3><p>大致了解了Scrapy的用法之后，我们就可以实际操作一把了。那么我们面对搜房网这个庞然大物到底要从何处开始爬呢？</p>
+<p>首先，先声明一下我的目的：目的是分析房价数据，所以要爬取的数据主要是每个房源信息的数据咯。</p>
+<p>想要拿到每条房源信息的url，通常我们是拿到每个列表页的数据。</p>
+<p>那么我们第一个要爬取的数据就是房源列表信息了。</p>
+<h4 id="列表爬取">列表爬取</h4><p>所谓列表页，就是这个页面：<a href="http://esf.sh.fang.com/housing/" target="_blank" rel="external">上海二手房</a>，下面“全部小区”部分的列表信息就是我们想要的。</p>
+<p>通过观察搜房网，我发现还有另外一个列表页入口，看起来似乎更容易爬取一些，就是：<a href="http://esf.sh.fang.com/map/" target="_blank" rel="external">地图页</a>。</p>
+<p>在这个页面左侧有个列表：</p>
+<p><img src="/img/16_11_30/001.png" alt=""></p>
+<p>进一步点击这个列表，最后我们可以得到这个页面：</p>
+<p><img src="/img/16_11_30/002.png" alt=""></p>
+<p>通过抓包工具，我们可以看到这个列表通过Ajax发送get请求，得到一段json数据：</p>
+<p><img src="/img/16_11_30/003.png" alt=""></p>
+<p>我们真正想要的数据在这段json中最后的<code>item</code>中：</p>
+<p><img src="/img/16_11_30/004.png" alt=""></p>
+<p>这里藏的就是这个列表的html代码。</p>
+<p>回过头来，再来看看我们请求的地址：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://esf.<span class="keyword">sh</span>.fang.<span class="keyword">com</span>/<span class="keyword">map</span>/?mapmode=<span class="keyword">y</span>&amp;district=<span class="number">996</span>&amp;subwayline=&amp;subwaystation=&amp;price=&amp;room=&amp;area=&amp;towards=&amp;<span class="built_in">floor</span>=&amp;hage=&amp;equipment=&amp;keyword=&amp;comarea=<span class="number">21929</span>&amp;orderby=<span class="number">30</span>&amp;isyouhui=&amp;x1=<span class="number">120.798</span>&amp;y1=<span class="number">30.926054</span>&amp;x2=<span class="number">122.177798</span>&amp;y2=<span class="number">31.571157</span>&amp;newCode=&amp;houseNum=&amp;schoolDist=&amp;schoolid=&amp;ecshop=ecshophouse&amp;PageNo=<span class="number">1</span>&amp;zoom=<span class="number">16</span>&amp;<span class="keyword">a</span>=ajaxSearch&amp;city=<span class="keyword">sh</span>&amp;searchtype=loupan</div></pre></td></tr></table></figure>
+<p>这里需要凭借直觉来剔除掉一些多余的参数的，至少满足请求到的数据不是局限于<strong>崇明区</strong>的，而是全上海的。</p>
+<p>经过一些尝试之后，我发现下面这个url可以请求到全部的列表数据，其中<code>PageNo</code>参数是页数：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://esf.<span class="keyword">sh</span>.fang.<span class="keyword">com</span>/<span class="keyword">map</span>/?mapmode=<span class="keyword">y</span>&amp;orderby=<span class="number">30</span>&amp;ecshop=ecshophouse&amp;PageNo=<span class="number">2</span>&amp;<span class="keyword">a</span>=ajaxSearch&amp;city=<span class="keyword">sh</span>&amp;searchtype=loupan</div></pre></td></tr></table></figure>
+<p>我们可以先通过</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">scrapy </span><span class="keyword">shell </span><span class="string">"http://esf.sh.fang.com/map/?mapmode=y&amp;orderby=30&amp;ecshop=ecshophouse&amp;PageNo=2&amp;a=ajaxSearch&amp;city=sh&amp;searchtype=loupan"</span></div></pre></td></tr></table></figure>
+<p>来找出房源详情页的url。</p>
+<p>最终，我发现通过<code>response.xpath(&quot;//a/@href&quot;).extract()</code>可以提取出所有的链接地址，其中如果url中包含<code>&quot;esf&quot;</code>字符串，是二手房房源的url地址。所以<code>parse()</code>的代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(self, response)</span>:</span></div><div class="line"></div><div class="line">        infos = response.xpath(<span class="string">"//a/@href"</span>).extract()</div><div class="line"></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> infos:</div><div class="line">            i_str = str(i).encode(<span class="string">"utf-8"</span>)</div><div class="line">            <span class="keyword">if</span> <span class="string">"esf"</span> <span class="keyword">in</span> i_str:</div><div class="line">                url = i_str.replace(<span class="string">'\\'</span>, <span class="string">''</span>).strip()</div></pre></td></tr></table></figure>
+<p>这样我们就得到了所有二手房房源详情页面的url了。</p>
+<blockquote>
+<p>这里有一个小坑：</p>
+<p>这一行代码<code>i_str = str(i).encode(&quot;utf-8&quot;)</code>中，由于i默认没有解码成utf-8的格式，所以不能直接和字符串<code>&quot;esf&quot;</code>进行运算，所以需要一部encode操作。</p>
+</blockquote>
+<h4 id="详情页爬取">详情页爬取</h4><p>对于详情页，我主要想爬取的数据如下：</p>
+<p><img src="/img/16_11_30/005.png" alt=""></p>
+<p>这个页面似乎没有什么取巧的方式了，只能硬着头皮去看他的源码，一层层的抽取了。下面是详情页解析的代码：</p>
+<figure class="highlight sqf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div></pre></td><td class="code"><pre><div class="line">def parse_details(self, response):</div><div class="line"></div><div class="line">        <span class="meta"># path</span></div><div class="line">        xpath = <span class="string">"//body/div[@class='wrap']/div[@class='main clearfix']/div[@class='mainBoxL']"</span></div><div class="line">        div_title = <span class="string">"/div[@class='title']"</span></div><div class="line">        p_gray9 = <span class="string">"/p[@class='gray9']"</span></div><div class="line">        h1 = <span class="string">"/h1"</span></div><div class="line">        span_mr10 = <span class="string">"/span[@class='mr10']"</span></div><div class="line">        div_houseInfor_clearfix = <span class="string">"/div[@class='houseInfor clearfix']"</span></div><div class="line">        div_inforTxt = <span class="string">"/div[@class='inforTxt']"</span></div><div class="line">        dl = <span class="string">"/dl"</span></div><div class="line">        dt_gray6_zongjia1 = <span class="string">"/dt[@class='gray6 zongjia1']"</span></div><div class="line">        span_red20b = <span class="string">"/span[@class='red20b']"</span></div><div class="line">        dd_gray6 = <span class="string">"/dd[@class='gray6']"</span></div><div class="line">        dd = <span class="string">"/dd"</span></div><div class="line">        dt = <span class="string">"/dt"</span></div><div class="line"></div><div class="line">        item = ESFItem()</div><div class="line">        item[<span class="string">'id'</span>] = response.xpath(xpath +</div><div class="line">                                    div_title +</div><div class="line">                                    p_gray9 +</div><div class="line">                                    span_mr10).extract_first().strip()</div><div class="line"></div><div class="line">        item[<span class="string">'publish_time'</span>] = response.xpath(xpath +</div><div class="line">                                              div_title +</div><div class="line">                                              p_gray9).extract_first().strip()</div><div class="line"></div><div class="line">        item[<span class="string">'title'</span>] = response.xpath(xpath +</div><div class="line">                                       div_title +</div><div class="line">                                       h1).extract_first().strip()</div><div class="line"></div><div class="line">        item[<span class="string">'total_price'</span>] = response.xpath(xpath +</div><div class="line">                                             div_houseInfor_clearfix +</div><div class="line">                                             div_inforTxt +</div><div class="line">                                             dl +</div><div class="line">                                             dt_gray6_zongjia1 +</div><div class="line">                                             span_red20b).extract_first().strip()</div><div class="line"></div><div class="line">        dd_infos = response.xpath(xpath + div_houseInfor_clearfix + div_inforTxt + dl + dd).extract()</div><div class="line">        huxing_str = <span class="string">"&lt;span class=\"</span>gray6\<span class="string">"&gt;户&lt;span class=\"</span>padl27\<span class="string">"&gt;&lt;/span&gt;型："</span></div><div class="line">        jzmj_str = <span class="string">"&lt;dd class=\"</span>gray6\<span class="string">"&gt;建筑面积：&lt;span class=\"</span>black \<span class="string">"&gt;"</span></div><div class="line">        symj_str = <span class="string">"&lt;dd class=\"</span>gray6\<span class="string">"&gt;使用面积：&lt;span class=\"</span>black \<span class="string">"&gt;"</span></div><div class="line">        nd_str = <span class="string">"&lt;span class=\"</span>gray6\<span class="string">"&gt;年&lt;span class=\"</span>padl27\<span class="string">"&gt;&lt;/span&gt;代：&lt;/span&gt;"</span></div><div class="line">        cx_str = <span class="string">"&lt;span class=\"</span>gray6\<span class="string">"&gt;朝&lt;span class=\"</span>padl27\<span class="string">"&gt;&lt;/span&gt;向：&lt;/span&gt;"</span></div><div class="line">        lc_str = <span class="string">"&lt;span class=\"</span>gray6\<span class="string">"&gt;楼&lt;span class=\"</span>padl27\<span class="string">"&gt;&lt;/span&gt;层：&lt;/span&gt;"</span></div><div class="line">        jg_str = <span class="string">"&lt;span class=\"</span>gray6 \<span class="string">"&gt;结&lt;span class=\"</span>padl27\<span class="string">"&gt;&lt;/span&gt;构：&lt;/span&gt;"</span></div><div class="line">        zx_str = <span class="string">"&lt;span class=\"</span>gray6\<span class="string">"&gt;装&lt;span class=\"</span>padl27\<span class="string">"&gt;&lt;/span&gt;修：&lt;/span&gt;"</span></div><div class="line">        zzlb_str = <span class="string">"&lt;span class=\"</span>gray6\<span class="string">"&gt;住宅类别：&lt;/span&gt;"</span></div><div class="line">        jzlb_str = <span class="string">"&lt;span class=\"</span>gray6\<span class="string">"&gt;建筑类别：&lt;/span&gt;"</span></div><div class="line">        cqxz_str = <span class="string">"&lt;span class=\"</span>gray6 \<span class="string">"&gt;产权性质：&lt;/span&gt;"</span></div><div class="line"></div><div class="line">        <span class="keyword">for</span> i <span class="built_in">in</span> dd_infos:</div><div class="line">            <span class="keyword">if</span> huxing_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_type'</span>] = i.strip()</div><div class="line"></div><div class="line">            elif jzmj_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_build_area'</span>] = i.strip()</div><div class="line"></div><div class="line">            elif symj_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_use_area'</span>] = i.strip()</div><div class="line"></div><div class="line">            elif nd_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_age'</span>] = i.strip()</div><div class="line">               </div><div class="line">            elif cx_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'orientation'</span>] = i.strip()</div><div class="line">                </div><div class="line">            elif lc_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'floor'</span>] = i.strip()</div><div class="line">                </div><div class="line">            elif jg_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'structure'</span>] = i.strip()</div><div class="line">                </div><div class="line">            elif zx_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'decoration'</span>] = i</div><div class="line">                </div><div class="line">            elif zzlb_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'residential_category'</span>] = i.strip()</div><div class="line">                </div><div class="line">            elif jzlb_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'building_class'</span>] = i.strip()</div><div class="line">                </div><div class="line">            elif cqxz_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'property_right'</span>] = i.strip()</div><div class="line">               </div><div class="line"></div><div class="line">        dt_infos = response.xpath(xpath + div_houseInfor_clearfix + div_inforTxt + dl + dt + <span class="string">"/a"</span>).extract()</div><div class="line">        <span class="keyword">for</span> i <span class="built_in">in</span> dt_infos:</div><div class="line">            <span class="keyword">if</span> <span class="string">"查看此楼盘的更多二手房房源"</span> <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'property_name'</span>] = i.strip()</div><div class="line">                </div><div class="line">            elif <span class="string">"&lt;span class=\"</span>gray6 floatl\<span class="string">"&gt;学&lt;span class=\"</span>padl27\<span class="string">"&gt;&lt;/span&gt;校：&lt;/span&gt;"</span> <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'school'</span>] = i.strip()</div></pre></td></tr></table></figure>
+<p>这样我们就可以得到详情页的信息了。</p>
+<p>接下来，把上面两个爬取的操作链接在一起：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(self, response)</span>:</span></div><div class="line">       infos = response.xpath(<span class="string">"//a/@href"</span>).extract()</div><div class="line"></div><div class="line">       <span class="keyword">for</span> i <span class="keyword">in</span> infos:</div><div class="line">           i_str = str(i).encode(<span class="string">"utf-8"</span>)</div><div class="line">           <span class="keyword">if</span> <span class="string">"esf"</span> <span class="keyword">in</span> i_str:</div><div class="line">               url = i_str.replace(<span class="string">'\\'</span>, <span class="string">''</span>).strip()</div><div class="line">               </div><div class="line">               <span class="comment"># 执行下一个request，回去自动调用callback函数，去解析详情页</span></div><div class="line">               <span class="keyword">yield</span> scrapy.Request(url=url.replace(<span class="string">"\""</span>, <span class="string">""</span>), callback=self.parse_details)</div></pre></td></tr></table></figure>
+<h4 id="设置起始url">设置起始url</h4><p>由于要爬取的不仅仅是一页数据，所以我们的<code>start_urls</code>列表不能只有一个url，我们需要有一个<code>PageNo</code>自增长的url的list。</p>
+<p>直接上代码：</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">base_url = <span class="string">"http://esf.sh.fang.com/map/?mapmode=y&amp;orderby=30&amp;ecshop=ecshophouse&amp;PageNo=$&amp;a=ajaxSearch&amp;city=sh&amp;searchtype=loupan"</span></div><div class="line">    start_urls = []</div><div class="line">    # 可以把10设置成一个比较大的数字，由于测试使用，所以写死一个较小的数</div><div class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="keyword">range</span>(2, 10):</div><div class="line">        start_urls.<span class="keyword">append</span>(str(base_url).<span class="keyword">replace</span>(<span class="string">"$"</span>, str(i)))</div></pre></td></tr></table></figure>
+<h4 id="可以开始了吗？">可以开始了吗？</h4><p>列表爬取和详情爬取，以及起始url都设置ok了，那么我们是不是可以让我们的蜘蛛行动起来了呢？</p>
+<p>且慢，这里也有坑。</p>
+<p>这里我将页面数设置了200页，开始爬取，结果悲剧就发生了，由于短时间内访问量过大，搜房网的二手房页面似乎把我的ip屏蔽了：</p>
+<p><img src="/img/16_11_30/006.png" alt=""></p>
+<p>这里我参考了<a href="http://www.tuicool.com/articles/VRfQR3U" target="_blank" rel="external">这篇文章</a>，通过</p>
+<ul>
+<li>设置随机UserAgent</li>
+<li>添加代理IP</li>
+<li>禁用cookies</li>
+<li>设置加载延迟</li>
+</ul>
+<p>这些方式来防止被屏蔽。</p>
+<p>设置完毕后，就可以愉快的开始爬取了~</p>
+<h4 id="蜘蛛代码">蜘蛛代码</h4><p>最终蜘蛛的代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># coding=utf-8</span></div><div class="line"><span class="keyword">import</span> random</div><div class="line"></div><div class="line"><span class="keyword">import</span> scrapy</div><div class="line"><span class="keyword">from</span> ..items <span class="keyword">import</span> ESFItem</div><div class="line"></div><div class="line"><span class="keyword">import</span> sys</div><div class="line"></div><div class="line">reload(sys)</div><div class="line">sys.setdefaultencoding(<span class="string">'utf-8'</span>)</div><div class="line"></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ESFListSpider</span><span class="params">(scrapy.Spider)</span>:</span></div><div class="line">    name = <span class="string">"esflist"</span></div><div class="line"></div><div class="line">    <span class="comment"># allowed_domains = ["fang.com"]</span></div><div class="line"></div><div class="line">    base_url = <span class="string">"http://esf.sh.fang.com/map/?mapmode=y&amp;orderby=30&amp;ecshop=ecshophouse&amp;PageNo=$&amp;a=ajaxSearch&amp;city=sh&amp;searchtype=loupan"</span></div><div class="line">    start_urls = []</div><div class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, <span class="number">4</span>):</div><div class="line">        start_urls.append(str(base_url).replace(<span class="string">"$"</span>, str(i)))</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, user_agent=<span class="string">''</span>)</span>:</span></div><div class="line">        self.user_agent = user_agent</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_request</span><span class="params">(self, request, spider)</span>:</span></div><div class="line">        <span class="comment"># 这句话用于随机选择user-agent</span></div><div class="line">        ua = random.choice(self.user_agent_list)</div><div class="line">        <span class="keyword">if</span> ua:</div><div class="line">            request.headers.setdefault(<span class="string">'User-Agent'</span>, ua)</div><div class="line"></div><div class="line">    user_agent_list = [</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1"</span> \</div><div class="line">        <span class="string">"Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.6 (KHTML, like Gecko) Chrome/20.0.1092.0 Safari/536.6"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.6 (KHTML, like Gecko) Chrome/20.0.1090.0 Safari/536.6"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/19.77.34.5 Safari/537.1"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.9 Safari/536.5"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.0) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.36 Safari/536.5"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 5.1) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_0) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1062.0 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1062.0 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1061.0 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"</span></div><div class="line">    ]</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(self, response)</span>:</span></div><div class="line"></div><div class="line">        infos = response.xpath(<span class="string">"//a/@href"</span>).extract()</div><div class="line"></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> infos:</div><div class="line">            i_str = str(i).encode(<span class="string">"utf-8"</span>)</div><div class="line">            <span class="keyword">if</span> <span class="string">"esf"</span> <span class="keyword">in</span> i_str:</div><div class="line">                url = i_str.replace(<span class="string">'\\'</span>, <span class="string">''</span>).strip()</div><div class="line"></div><div class="line">                <span class="keyword">yield</span> scrapy.Request(url=url.replace(<span class="string">"\""</span>, <span class="string">""</span>), callback=self.parse_details)</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse_details</span><span class="params">(self, response)</span>:</span></div><div class="line">        <span class="keyword">print</span> <span class="string">"+++++++++++++被执行了+++++++++++++++++++"</span></div><div class="line"></div><div class="line">        <span class="comment"># path</span></div><div class="line">        xpath = <span class="string">"//body/div[@class='wrap']/div[@class='main clearfix']/div[@class='mainBoxL']"</span></div><div class="line">        div_title = <span class="string">"/div[@class='title']"</span></div><div class="line">        p_gray9 = <span class="string">"/p[@class='gray9']"</span></div><div class="line">        h1 = <span class="string">"/h1"</span></div><div class="line">        span_mr10 = <span class="string">"/span[@class='mr10']"</span></div><div class="line">        div_houseInfor_clearfix = <span class="string">"/div[@class='houseInfor clearfix']"</span></div><div class="line">        div_inforTxt = <span class="string">"/div[@class='inforTxt']"</span></div><div class="line">        dl = <span class="string">"/dl"</span></div><div class="line">        dt_gray6_zongjia1 = <span class="string">"/dt[@class='gray6 zongjia1']"</span></div><div class="line">        span_red20b = <span class="string">"/span[@class='red20b']"</span></div><div class="line">        dd_gray6 = <span class="string">"/dd[@class='gray6']"</span></div><div class="line">        dd = <span class="string">"/dd"</span></div><div class="line">        dt = <span class="string">"/dt"</span></div><div class="line"></div><div class="line">        item = ESFItem()</div><div class="line">        item[<span class="string">'id'</span>] = response.xpath(xpath +</div><div class="line">                                    div_title +</div><div class="line">                                    p_gray9 +</div><div class="line">                                    span_mr10).extract_first().strip()</div><div class="line"></div><div class="line">        item[<span class="string">'publish_time'</span>] = response.xpath(xpath +</div><div class="line">                                              div_title +</div><div class="line">                                              p_gray9).extract_first().strip()</div><div class="line"></div><div class="line">        item[<span class="string">'title'</span>] = response.xpath(xpath +</div><div class="line">                                       div_title +</div><div class="line">                                       h1).extract_first().strip()</div><div class="line"></div><div class="line">        item[<span class="string">'total_price'</span>] = response.xpath(xpath +</div><div class="line">                                             div_houseInfor_clearfix +</div><div class="line">                                             div_inforTxt +</div><div class="line">                                             dl +</div><div class="line">                                             dt_gray6_zongjia1 +</div><div class="line">                                             span_red20b).extract_first().strip()</div><div class="line"></div><div class="line">        dd_infos = response.xpath(xpath + div_houseInfor_clearfix + div_inforTxt + dl + dd).extract()</div><div class="line">        huxing_str = <span class="string">"&lt;span class=\"gray6\"&gt;户&lt;span class=\"padl27\"&gt;&lt;/span&gt;型："</span></div><div class="line">        jzmj_str = <span class="string">"&lt;dd class=\"gray6\"&gt;建筑面积：&lt;span class=\"black \"&gt;"</span></div><div class="line">        symj_str = <span class="string">"&lt;dd class=\"gray6\"&gt;使用面积：&lt;span class=\"black \"&gt;"</span></div><div class="line">        nd_str = <span class="string">"&lt;span class=\"gray6\"&gt;年&lt;span class=\"padl27\"&gt;&lt;/span&gt;代：&lt;/span&gt;"</span></div><div class="line">        cx_str = <span class="string">"&lt;span class=\"gray6\"&gt;朝&lt;span class=\"padl27\"&gt;&lt;/span&gt;向：&lt;/span&gt;"</span></div><div class="line">        lc_str = <span class="string">"&lt;span class=\"gray6\"&gt;楼&lt;span class=\"padl27\"&gt;&lt;/span&gt;层：&lt;/span&gt;"</span></div><div class="line">        jg_str = <span class="string">"&lt;span class=\"gray6 \"&gt;结&lt;span class=\"padl27\"&gt;&lt;/span&gt;构：&lt;/span&gt;"</span></div><div class="line">        zx_str = <span class="string">"&lt;span class=\"gray6\"&gt;装&lt;span class=\"padl27\"&gt;&lt;/span&gt;修：&lt;/span&gt;"</span></div><div class="line">        zzlb_str = <span class="string">"&lt;span class=\"gray6\"&gt;住宅类别：&lt;/span&gt;"</span></div><div class="line">        jzlb_str = <span class="string">"&lt;span class=\"gray6\"&gt;建筑类别：&lt;/span&gt;"</span></div><div class="line">        cqxz_str = <span class="string">"&lt;span class=\"gray6 \"&gt;产权性质：&lt;/span&gt;"</span></div><div class="line"></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> dd_infos:</div><div class="line">            <span class="keyword">if</span> huxing_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_type'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> jzmj_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_build_area'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> symj_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_use_area'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> nd_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_age'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> cx_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'orientation'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> lc_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'floor'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> jg_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'structure'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> zx_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'decoration'</span>] = i</div><div class="line">            <span class="keyword">elif</span> zzlb_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'residential_category'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> jzlb_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'building_class'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> cqxz_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'property_right'</span>] = i.strip()</div><div class="line"></div><div class="line">        dt_infos = response.xpath(xpath + div_houseInfor_clearfix + div_inforTxt + dl + dt + <span class="string">"/a"</span>).extract()</div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> dt_infos:</div><div class="line">            <span class="keyword">if</span> <span class="string">"查看此楼盘的更多二手房房源"</span> <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'property_name'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> <span class="string">"&lt;span class=\"gray6 floatl\"&gt;学&lt;span class=\"padl27\"&gt;&lt;/span&gt;校：&lt;/span&gt;"</span> <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'school'</span>] = i.strip()</div></pre></td></tr></table></figure>
+<h3 id="what`s_next?">what`s next?</h3><p>接下来我会将爬取到的数据进行加工后持久化到本地，不过今天就先到这里吧~</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/10/24/斯坦福机器学习课程 第六周 (1)评价一个学习算法/" itemprop="url">
                 斯坦福机器学习课程 第六周 (1)评价一个学习算法
               </a>
@@ -2245,408 +2538,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/09/04/斯坦福机器学习课程 第三周 (4)正则化：解决过拟合问题/" itemprop="url">
-                斯坦福机器学习课程 第三周 (4)正则化：解决过拟合问题
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-09-04T23:10:00+08:00" content="2016-09-04">
-            2016-09-04
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/09/04/斯坦福机器学习课程 第三周 (4)正则化：解决过拟合问题/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/04/斯坦福机器学习课程 第三周 (4)正则化：解决过拟合问题/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><blockquote>
-<p>机器学习模型需要拥有很好地泛化能力来适应训练集中没有出现过的新样本。</p>
-<p>在这个节中，我们将介绍正则化方面的知识，这有助于预防过拟合的问题的产生。</p>
-</blockquote>
-<h2 id="解决过拟合问题">解决过拟合问题</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/ACpTQ/the-problem-of-overfitting" target="_blank" rel="external">视频地址</a></p>
-<blockquote>
-<p>到现在为止，你已经见识了几种不同的学习算法。包括线性回归和逻辑回归，它们能够有效地解决许多问题，但是当将它们应用到某些特定的机器学习应用时，会遇到<strong>过度拟合(over-fitting)</strong>的问题，可能会导致它们效果很差。</p>
-<p>在这一节中，我将为你解释什么是过度拟合问题，并且在此之后接下来的几节中，我们将谈论一种称为<strong>正则化(regularization)</strong>的技术，它可以改善或者减少过度拟合问题，以使学习算法更好实现。</p>
-</blockquote>
-<h3 id="梯度下降中的过拟合问题">梯度下降中的过拟合问题</h3><p>让我们继续使用那个线性回归来预测房价的例子。</p>
-<h4 id="欠拟合">欠拟合</h4><p>我们通过建立以住房面积为自变量的函数来预测房价，我们可以对该数据做线性回归：</p>
-<p><img src="/img/16_09_04/028.png" width="300" height="200" align="center"></p>
-<p>但是这不是一个很好的模型，我们来看看这些数据，很明显，随着房子面积增大，住房价格的变化趋势趋于稳定，或者往右越平缓。因此这个算法没有很好地拟合训练数据。</p>
-<p>我们把这个问题称为<strong>欠拟合(under fitting)</strong>，这个问题的另一个术语叫做<strong>高偏差(High bias)</strong>。</p>
-<p>这两种说法大致相似，意思是它只是没有很好地拟合训练数据。</p>
-<blockquote>
-<p><strong>bias</strong>这个词是过去传下来的一个专业名词，它的意思是如果拟合一条直线，到训练数据，就好像算法有一个很强的偏见，或者说非常大的偏差。</p>
-<p>因为该算法认为房子价格与面积仅仅线性相关，尽管与该数据的事实相反，它还是接近于拟合一条直线，而此法最终导致拟合数据效果很差。</p>
-</blockquote>
-<h4 id="刚好合适">刚好合适</h4><p>当我们加入一个二次项，在这组数据中，我们用二次函数来拟合它：</p>
-<p><img src="/img/16_09_04/029.png" width="300" height="200" align="center"></p>
-<p>事实证明这个拟合效果很好。</p>
-<h4 id="过拟合">过拟合</h4><p>另一个极端情况是，如果我们拟合一个四次多项式，因此在这里我们用五个参数来拟合这五个训练样本，你可以得到看上去像这样的一条曲线：</p>
-<p><img src="/img/16_09_04/030.png" width="300" height="200" align="center"></p>
-<p>一方面似乎对训练数据做了一个很好的拟合，因为这条曲线通过了所有的训练实例。但是，这任然是一条扭曲的曲线。它不停上下波动，因此事实上，我们并不认为它是一个预测房价的好模型。</p>
-<p>这个问题我们把他叫做<strong>过度拟合(over fitting)</strong>，另一个描述该问题的术语是<strong>高方差(variance)</strong>。</p>
-<p>介于<strong>高偏差</strong>和<strong>高方差</strong>这两者之间的情况叫做<strong>“刚好合适”</strong>。</p>
-<p>概括地说，过拟合的问题将会在变量过多的时候发生，这种时候训练出的方程总能很好的拟合训练数据，所以你的代价函数实际上可能非常接近于0，甚至就是0。但是这会导致这种模型无法<strong>泛化</strong>到新的数据样本中，以至于无法预测新样本价格。</p>
-<p>在这里术语<strong>“泛化(generalize)”</strong>指的是一个假设模型能够应用到新样本的能力。</p>
-<h3 id="逻辑回归中的过拟合问题">逻辑回归中的过拟合问题</h3><p>类似的方法同样可以应用到<strong>逻辑回归</strong>。</p>
-<p>这里是一个以$x_{1}$，$x_{2}$为变量的逻辑回归。</p>
-<p><img src="/img/16_09_04/031.png" width="300" height="200" align="center"></p>
-<h4 id="欠拟合-1">欠拟合</h4><p>我们先用下面这个假设函数来拟合：</p>
-<p>$$<br>h_{\theta}(x) = g(\theta_{0} + \theta_{1}x_{1} + \theta_{2}x_{2})<br>$$</p>
-<p>$$<br>(g=sigmoid\ function)<br>$$</p>
-<p>拟合的结果如下：</p>
-<p><img src="/img/16_09_04/032.png" width="300" height="200" align="center"></p>
-<p>它直接分开了正样本和负样本，但这个模型并不能够很好地拟合数据。因此这是一个<strong>欠拟合</strong>的例子。或者说假设模型具有高偏差。</p>
-<h4 id="刚好适合">刚好适合</h4><p>相比之下，如果我们再加入一些变量，改用这样一个多项式：</p>
-<p>$$<br>h_{\theta}(x) = g(\theta_{0} + \theta_{1}x_{1} + \theta_{2}x_{2} + \theta_{3}x_{1}^{2} + \theta_{4}x_{2}^{2} + \theta_{5}x_{1}x_{2})<br>$$</p>
-<p>那么你可以得到一个能比较好的拟合数据的判定边界：</p>
-<p><img src="/img/16_09_04/033.png" width="300" height="200" align="center"></p>
-<h4 id="过拟合-1">过拟合</h4><p>在另一种极端情况下，如果你用高阶多项式来拟合数据：</p>
-<p>$$<br>h_{\theta}(x) = g(\theta_{0} + \theta_{1}x_{1} + \theta_{2}x_{1}^{2} + \theta_{3}x_{1}^{2}x_{2} + \theta_{4}x_{1}^{2}x_{2}^{2} + \theta_{5}x_{1}^{2} x_{2}^{3} + \theta_{6}x_{1}^{3}x_{2} + …)<br>$$</p>
-<p>那么逻辑回归可能发生自身扭曲：</p>
-<p><img src="/img/16_09_04/034.png" width="300" height="200" align="center"></p>
-<p>它会千方百计的来形成扭曲以至于成为一条能尽量拟合每一个样本的拟合曲线。</p>
-<p>这是一个<strong>过拟合</strong>的例子，是一个高方差假设模型，它不能够很好泛化到新样本。</p>
-<h4 id="解决过拟合问题-1">解决过拟合问题</h4><p>当我们使用一维或二维数据时，我们可以通过绘制出假设模型的图像来研究问题所在，再选择合适的多项式来拟合数据。因此在以之前的房屋价格为例，我们可以绘制假设模型的图像就能看到模型的曲线非常扭曲，并通过所有的样本房价：</p>
-<p><img src="/img/16_09_04/035.png" width="300" height="200" align="center"></p>
-<p>我们可以通过绘制这样的图形来选择合适的多项式阶次，但当我们遇到有很多变量的假设模型时，我们就无法绘制出图像了：</p>
-<p><img src="/img/16_09_04/036.png" width="300" height="200" align="center"></p>
-<p>当我们有过多变量，同时只有非常少的训练数据时，就会出现过度拟合的问题。</p>
-<p>为了解决过度拟合问题，有两种方法：</p>
-<ul>
-<li><p>1.要尽量减少选取的变量的数量。</p>
-<ul>
-<li>具体而言我们可以人工检测变量的条目，保留重要的特征，舍弃无用的特征</li>
-<li>模型选择算法（后面的课程会提到）</li>
-</ul>
-</li>
-<li><p>2.正则化</p>
-<ul>
-<li>保留所有的特征变量，但是通过减少参数$\theta_{j}$的数量级或值的大小。</li>
-</ul>
-</li>
-</ul>
-<p><strong>正则化</strong>相关的知识点将在接下来的内容中介绍。</p>
-<h2 id="代价函数">代价函数</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/B1MnL/cost-function" target="_blank" rel="external">视频地址</a></p>
-<blockquote>
-<p>在这一节中，我将传达给你一个关于正则化的直观的感受，并且我们还要写出使用正则化时需要使用的代价函数。</p>
-</blockquote>
-<p>在上一节中，我们看到了如果说我们要用一个二次函数来拟合这些数据，拟合的效果会很好。</p>
-<p><img src="/img/16_09_04/037.png" width="300" height="200" align="center"></p>
-<p>然而我们用一个更高次的多项式去拟合，我们最终可能得到一个曲线，能非常好的拟合训练集，但是这真的不是一个好的结果。</p>
-<p><img src="/img/16_09_04/038.png" width="300" height="200" align="center"></p>
-<p>它过度拟合了数据，因此泛化性并不是很好。</p>
-<p>让我们考虑下面的假设：</p>
-<p>我们想要加上惩罚项，从而使参数$\theta_{3}$和$\theta_{4}$足够的小。这里我的意思就是，尽量减少代价函数的均方误差。</p>
-<p><img src="/img/16_09_04/039.png" width="300" height="200" align="center"></p>
-<p>对于上面这个函数，我们对它添加一些项：</p>
-<p><img src="/img/16_09_04/040.png" width="300" height="200" align="center"></p>
-<p>现在，如果想最小化这个函数，我们需要尽量减少$\theta_{3}$和$\theta_{4}$的值。</p>
-<p>如果我们减少了这两项的值，就像是在上面的式子中忽略了后面的两项：</p>
-<p><img src="/img/16_09_04/041.png" width="300" height="200" align="center"></p>
-<p>最终得到一个近似的二次函数，从而达到恰当地拟合数据的表达式。</p>
-<hr>
-<p>在这个具体的例子中，我们看到了，惩罚$\theta_{3}$和$\theta_{4}$这两个大的参数值的效果。</p>
-<p>所以推广到更通用的情况下，这里给出了正规化背后的思路。这种思路就是如果我们的参数值对应一个较小的值的话，那么往往我们会得到一个形式更简单的假设函数。</p>
-<blockquote>
-<p>所以我们最后一个例子中我们惩罚的只是$\theta_{3}$和$\theta_{4}$，使这两个数值均接近于零。我们从而得到了一个更简单的假设。</p>
-<p>通常情况下来讲，参数值减少的越多，函数越光滑，因此就不易发生过拟合的问题。</p>
-</blockquote>
-<hr>
-<h3 id="具体例子">具体例子</h3><p>来让我们看看具体的例子：</p>
-<p>对于房屋价格预测，我们可能有上百种特征，我们谈到了一些可能的特征，比如说:</p>
-<ul>
-<li>$x_{1}$是房屋的尺寸</li>
-<li>$x_{2}$是卧室的数目</li>
-<li>$x_{3}$是房屋的层数</li>
-<li>…</li>
-</ul>
-<p>我们可能有一百个特征。</p>
-<p>跟前面的多项式例子不同，我们是不知道$\theta_{3}$,$\theta_{4}$是高阶多项式的项，即如果我们有一百个特征，我们是很难提前选出那些关联度更小的特征的。我们不知道如何选择参数来缩小参数的数目。</p>
-<p>因此在正规化中，我们要做的事情，就是通过修改我们的代价函数（这里就是线性回归的代价函数）</p>
-<p><img src="/img/16_09_04/042.png" width="300" height="200" align="center"></p>
-<p>从而缩小我所有的参数值，修改方式就是在这后面添加一项：</p>
-<p><img src="/img/16_09_04/043.png" width="300" height="200" align="center"></p>
-<p>当我在最后添加一个额外的正则化项的时候，我们收缩了每个参数，并且因此 我们会使我们所有的参数$\theta_{1}.\theta_{2}.\theta_{3}.\theta_{4}…\theta_{100}$的值变小。</p>
-<p>顺便说一下，按照惯例来讲，我们是从$\theta_{1}$开始的：</p>
-<p><img src="/img/16_09_04/044.png" width="300" height="200" align="center"></p>
-<p>所以我实际上没有去惩罚$\theta_{0}$，因此$\theta_{0}$的值是大的。</p>
-<blockquote>
-<p>在实际情况中，是否包含$\theta_{0}$只会有非常小的差异。</p>
-</blockquote>
-<h3 id="正规化优化的目标">正规化优化的目标</h3><p>我们正规化之后的代价函数如下：</p>
-<p><img src="/img/16_09_04/045.png" width="300" height="200" align="center"></p>
-<p>在后面的正规化项中的$λ$我们称为<strong>正规化参数</strong>。</p>
-<p>$λ$要做的就是控制在两个不同的目标中的一个平衡关系：</p>
-<ul>
-<li>第一个目标就是：我们想要训练使假设函数更好的拟合训练数据。</li>
-<li>第二个目标就是：我们想要保持参数值较小。</li>
-</ul>
-<p>参数$λ$就是用来控制这两者之间的平衡，目标就是平衡<strong>拟合训练</strong>的目的和<strong>保持参数值较小</strong>的目的。（即欠拟合和过拟合的平衡）</p>
-<p>对于我们房屋价格预测的例子来说，尽管我们之前已经用非常高的高阶多项式来拟合，我们将会得到一个非常弯曲和复杂的曲线函数，就像下面这样：</p>
-<p><img src="/img/16_09_04/046.png" width="300" height="200" align="center"></p>
-<p>但现在我们不这样了，你只需要确保使用了正规化目标的方法，那么你就可以得到一个类似于二次函数但并不是真正的二次函数的一条曲线：</p>
-<p><img src="/img/16_09_04/047.png" width="300" height="200" align="center"></p>
-<p>这样我们就得到了对于这个数据来说更好的假设函数。</p>
-<hr>
-<p>在正规化线性回归中，如果正规化参数值被设定为非常大，那么会发生什么呢？</p>
-<p>我们将会非常大地惩罚我们的参数，会使得所有的参数接近于0。如果我们这么做，那么就相当于我们从假设函数中去掉了这些项，并且使得我们只是留下了一个简单的假设：</p>
-<p><img src="/img/16_09_04/048.png" width="300" height="200" align="center"></p>
-<p>$$<br>h_{\theta}(x) = \theta_{0}<br>$$</p>
-<p>那就是类似于拟合了一条水平直线：</p>
-<p><img src="/img/16_09_04/049.png" width="300" height="200" align="center"></p>
-<p>对于数据来说这就是<strong>欠拟合(underfitting)</strong>。</p>
-<p>换句话说，就是这种假设有过于强烈的“偏见”或者过高的偏差（bais），认为预测的价格只是等于$\theta_{0}$。</p>
-<p>因此为了使正则化运作的良好，我们应该去选择一个不错的正则化参数$λ$，并且当我们讲到多重选择时，我们将会介绍一种方法来<strong>自动选择正则化参数$λ$</strong>。这就是高度正则化的思路。</p>
-<h2 id="正则化线性回归">正则化线性回归</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/QrMXd/regularized-linear-regression" target="_blank" rel="external">视频地址</a></p>
-<p>对于线性回归的求解，我们之前推导了两种学习算法：一种基于梯度下降、一种基于正规方程。</p>
-<p>在这段视频中，我们将继续学习这两个算法，并把它们推广到正则化线性回归中去。</p>
-<h3 id="基于梯度下降">基于梯度下降</h3><p>这是我们上节课推导出的正则化线性回归的优化目标：</p>
-<p><img src="/img/16_09_04/050.png" width="300" height="200" align="center"></p>
-<p>前面第一部分是一般线性回归的目标函数，后半部分是正则化项。其中$\lambda$是正则化参数。我们想找到能最小化代价函数的参数$\theta$。</p>
-<p>之前，我们使用梯度下降求解原来没有正则项的代价函数：</p>
-<p><img src="/img/16_09_04/051.png" width="300" height="200" align="center"></p>
-<p>我们会反复更新参数$\theta_{j}$，其中$j=0,1,2,3,…,n$。</p>
-<p>让我们把$j=0$的情况单独写出来：</p>
-<p><img src="/img/16_09_04/052.png" width="300" height="200" align="center"></p>
-<blockquote>
-<p>我只是把$\theta_{0}$的更新分离出来，剩下的这些参数($\theta_{j}$其中$j=1,2,3,…,n$)更新作为另一部分，所以这样做其实没有什么变化。仅仅是把$\theta_{0}$的更新从其他参数中分离出来。</p>
-<p>我这样做的原因是因为上节课提到的，对于正则化的线性回归，我们惩罚参数从$\theta_{1}$开始，我们不惩罚$\theta_{0}$。所以当我们修改这个正则化线性回归的算法时，我们将对$\theta_{0}$有所不同。</p>
-</blockquote>
-<p>具体地说，如果我们要对这个算法进行修改，并用它求解正则化的目标函数，我们需要做的是把下面的这一项加上正则化项：</p>
-<p><img src="/img/16_09_04/053.png" width="500" height="200" align="center"></p>
-<p>如果这样做的话，那么你就有了用于最小化正则化代价函数$J(\theta)$的梯度下降算法。</p>
-<p>对于上面式子中第二项：</p>
-<p><img src="/img/16_09_04/054.png" width="500" height="200" align="center"></p>
-<p>可以改写为这种形式：</p>
-<p><img src="/img/16_09_04/055.png" width="500" height="200" align="center"></p>
-<p>具体来讲，这一项的值:</p>
-<p><img src="/img/16_09_04/056.png" width="100" height="200" align="center"></p>
-<p>通常是一个<strong>小于1的具体的实数</strong>（通常情况下是一个比1小一点点的值），所以我们可以把它想成一个像$0.99$一样的数字。</p>
-<p>所以对$\theta_{j}$更新的结果我们可以看作是被替换为$\theta_{j}$的0.99倍（把$\theta_{j}$向0压缩了一点点）。</p>
-<p>另外后面的这一项：</p>
-<p><img src="/img/16_09_04/057.png" width="300" height="200" align="center"></p>
-<p>实际上与我们原来的梯度下降更新完全一样。</p>
-<hr>
-<p>当我们使用正则化线性回归时，我们需要做的就是在每一个被正则化的参数$\theta_{j}$上乘以了一个比1小一点点的数字，然后，我们执行跟以前一样的更新。</p>
-<h3 id="基于正规方程">基于正规方程</h3><p>梯度下降只是拟合线性回归模型的两种算法之一，另一种算法是基于正规方程。</p>
-<p>我们的做法是建立这个设计矩阵X:</p>
-<p><img src="/img/16_09_04/058.png" width="300" height="200" align="center"></p>
-<p>其中每一行对应于一个单独的训练样本。</p>
-<p>然后创建一个m维度的向量y，包含了所有训练集里的标签：</p>
-<p><img src="/img/16_09_04/059.png" width="300" height="200" align="center"></p>
-<p>所以X是一个$m \times (n+1)$维矩阵。</p>
-<p>为了最小化代价函数$J$:</p>
-<p><img src="/img/16_09_04/060.png" width="150" height="200" align="center"></p>
-<p>我们发现一个办法就是让$\theta$等于这个式子：</p>
-<p>$$<br>\theta=(X^{T}X)^{-1}X^{T}y<br>$$</p>
-<p>这是没有使用正则化的表达式。</p>
-<p>如果我们使用了正则化，我们想要得到最小值，那么我们的推导方式如下：</p>
-<p>取$J$关于各个参数的偏导数，并令他们等于0：</p>
-<p><img src="/img/16_09_04/061.png" width="150" height="200" align="center"></p>
-<p>然后通过一些数学推导，你可以得到这样的式子：</p>
-<p>$$<br>\theta=(X^{T}X + \lambda<br>\begin{bmatrix}<br>     0 &amp; 0 &amp; … &amp; 0 \\<br>     0 &amp; 1 \\<br>     … &amp; … &amp; … \\<br>     0 &amp; 0 &amp; … &amp; 1 \\<br>\end{bmatrix}<br> )^{-1}X^{T}y<br>$$</p>
-<p>其中正则化矩阵左上角的元素是0，其余对角线元素都是1，剩下的元素也都是0。矩阵的维度是$(n+1)\times(n+1)$。</p>
-<h4 id="举个具体的例子来说明：">举个具体的例子来说明：</h4><p>假设$m=2$，那么这里我们的矩阵是一个$3\times3$维的矩阵。这个矩阵看起来就是下面这种形式：</p>
-<p>$$<br>\begin{bmatrix}<br>     0 &amp; 0 &amp; 0 \\<br>     0 &amp; 1 &amp; 0 \\<br>     0 &amp; 0 &amp; 1 \\<br>\end{bmatrix}<br>$$</p>
-<p>如果你采用新定义包含正则项的$J(\theta)$，那么这个计算$\theta$的式子，能使你的$J(\theta)$达到全局最小值。</p>
-<h3 id="不可逆问题(*选学)">不可逆问题(*选学)</h3><p>最后，我想快速地谈一下不可逆性的问题，这部分是比较高阶的内容，所以这一部分还是作为选学。</p>
-<p>之前当我讲正规方程的时候，我们也有一段讲不可逆问题的选学视频，这节视频是作为那一节的补充。</p>
-<p>现在考虑m（即样本总数）小于等于特征数量n：</p>
-<p>$$<br>m \le n<br>$$ </p>
-<p>如果你的样本数量比特征数量小的话，那么这个矩阵$X^{T}X$将是<strong>不可逆</strong>的或<strong>奇异(singluar)</strong>的。</p>
-<p>幸运的是，正规化也为我们解决了这个问题，具体地说，只要正则参数是严格大于0的：</p>
-<p>$$<br>\lambda \gt 0<br>$$</p>
-<p>实际上是可以证明：</p>
-<p>$$<br>\theta=(X^{T}X + \lambda<br>\begin{bmatrix}<br>     0 &amp; 0 &amp; … &amp; 0 \\<br>     0 &amp; 1 \\<br>     … &amp; … &amp; … \\<br>     0 &amp; 0 &amp; … &amp; 1 \\<br>\end{bmatrix}<br> )^{-1}X^{T}y<br>$$</p>
-<p>中</p>
-<p>$$<br>X^{T}X + \lambda<br>\begin{bmatrix}<br>     0 &amp; 0 &amp; … &amp; 0 \\<br>     0 &amp; 1 \\<br>     … &amp; … &amp; … \\<br>     0 &amp; 0 &amp; … &amp; 1 \\<br>\end{bmatrix}<br>$$</p>
-<p>这个矩阵是可逆的。</p>
-<p>因此，使用正则化还可以照顾一些$X^{T}X$不可逆的问题</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/09/04/斯坦福机器学习课程 第三周 (3)多类别分类问题：一对多/" itemprop="url">
-                斯坦福机器学习课程 第三周 (3)多类别分类问题：一对多
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-09-04T23:00:00+08:00" content="2016-09-04">
-            2016-09-04
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/09/04/斯坦福机器学习课程 第三周 (3)多类别分类问题：一对多/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/04/斯坦福机器学习课程 第三周 (3)多类别分类问题：一对多/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="一对多分类问题">一对多分类问题</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/68Pol/multiclass-classification-one-vs-all" target="_blank" rel="external">视频地址</a></p>
-<blockquote>
-<p>在本节视频中，我们将谈到如何使用<strong>逻辑回归来解决多类别分类问题</strong>。具体来说，我想通过一个叫做<strong>“一对多”(one-vs-all)</strong>的分类算法，让你了解什么是多类别分类问题。</p>
-</blockquote>
-<p>先看这样一些例子：</p>
-<ul>
-<li>邮件分类器自动将邮件按照以下标签分类：工作，朋友，家庭，兴趣</li>
-<li>医学根据病人的得病类型分类：没有病，感冒，流感</li>
-<li>天气预报根据天气类型分类：晴天，多云，雨天，雪天</li>
-</ul>
-<p>我们可以分别对这些类别打上数值标签，比如天气分类中：晴天代表<code>y=1</code>，多云代表<code>y=2</code>，雨天代表<code>y=3</code>，雪天代表<code>y=4</code>。</p>
-<p>以上这些例子都属于多类别分类问题。</p>
-<hr>
-<p>二元分类问题和多类别分类问题的比较：</p>
-<p><img src="/img/16_09_04/001.png" alt=""></p>
-<p>二元分类问题中，我们只有两个类别需要处理，而在多类别分类问题中，我们有多种类别需要处理。这里我们用三种不同的符号代表三种类别。</p>
-<p>在二元分类中，我们知道我们可以使用逻辑回归来将两种类别的数据集一分为二：</p>
-<p><img src="/img/16_09_04/002.png" alt=""></p>
-<p>对于一对多的分类问题，我们也可以借鉴二元分类的思想。下面就来介绍一些如何进行一对多分类工作(有时也被称为“一对余”方法)。</p>
-<p><img src="/img/16_09_04/003.png" alt=""></p>
-<p>如图，我们现在有一组由三个类别元素组成的训练集。接下来我们要做的就是使用一个训练集将其分成三个二元分类问题。我们先从三角形开始，将其他两种类型视为同一种类型：</p>
-<p><img src="/img/16_09_04/004.png" alt=""></p>
-<p>实际上这是一个新的“伪类型集”，类型2和类型3被定义为负类(值为0)，类型1定义为正类(值为1)。我们要拟合出一个合适的分类器，来区分正类和负类。我们称这个分类器为$h_{\theta}^{(1)}(x)$</p>
-<p><img src="/img/16_09_04/005.png" alt=""></p>
-<p>同理，对类型2也做同样的处理，得到分类器$h_{\theta}^{(2)}(x)$：</p>
-<p><img src="/img/16_09_04/006.png" alt=""></p>
-<p>最后，对类型三也做同样处理，得到分类器$h_{\theta}^{(3)}(x)$：</p>
-<p><img src="/img/16_09_04/007.png" alt=""></p>
-<p>这样我们就得到了三个分类器，通过这些分类器来估算出给出$x$和先验$\theta$时，$y=i$的概率：</p>
-<p>$$<br>h_{\theta}^{(i)}(x) = P(y=i|x;\theta)    \qquad  (i=1,2,3)<br>$$</p>
-<p>总之，现在我们要做的就是训练这个逻辑回归分类器$h_{\theta}^{(i)}(x)$，其中$i$对应每一个可能的$y=i$。</p>
-<p>最后，为了做出预测，我们给定一个新的输入值$x$，用来做预测，我们要做的就是在我们的三个分类器里输入$x$，然后我们选择一个让$h_{\theta}^{(i)}(x)$最大的$i$，这就是预测出的类别。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2685,7 +2576,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">95</span>
+              <span class="site-state-item-count">97</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

@@ -199,6 +199,420 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2016/07/22/gradle学习笔记-使用gradle图形界面/" itemprop="url">
+                gradle学习笔记-使用gradle图形界面
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-07-22T15:06:55+08:00" content="2016-07-22">
+            2016-07-22
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/gradle/" itemprop="url" rel="index">
+                  <span itemprop="name">gradle</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/07/22/gradle学习笔记-使用gradle图形界面/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/22/gradle学习笔记-使用gradle图形界面/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><blockquote>
+<p>除了支持传统的命令行界面，Gradle提供了一个图形用户界面。可以通过<code>--gui</code>选项来开启。</p>
+</blockquote>
+<p><strong>Example 10.1. Launching the GUI</strong></p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gradle <span class="comment">--gui</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>请注意这条命令会阻塞进程直到关闭GUI，在*nix下，使用<code>gradle --gui&amp;</code>这条命令，使得它运行在一个后台任务中是一个更好的选择。</p>
+</blockquote>
+<p>如果你在你的gradle工作目录下运行了这个命令，你将看到一个task树。</p>
+<p><strong>Figure 10.1. GUI Task Tree</strong></p>
+<p><img src="/img/gradle/guiTaskTree.png" alt=""></p>
+<p>最好在你的gradle项目下运行这条命令，以便于用户界面的设置将存储在您的项目目录中。你也可以运行这条命令后通过用户界面中的“设置”选项卡更改工作目录。</p>
+<p>用户界面顶部有4个tab，底部有一个输出窗口。</p>
+<h2 id="10-1-_Task_Tree">10.1. Task Tree</h2><p>任务树显示了所有项目和它们的任务的分层显示。双击一个任务可以执行它</p>
+<p>顶部有一个过滤器按钮，您可以通过过滤器按钮切换过滤器。编辑筛选器允许您配置任务和项目所显示的项目。隐藏的task出现在红色区域中。注意：新创建的task将默认出现（相对的默认被隐藏）。</p>
+<p>任务树上下文菜单提供以下选项：</p>
+<ul>
+<li>执行忽略依赖关系。不需要依赖的项目被重建（类似于<code>-a</code> 选项）。</li>
+<li>将task添加到favorites中（见favorites tab）</li>
+<li>隐藏选择的task。</li>
+<li>编辑build.gradle文件。注意：这需要你的java版本&gt;= 1.6，并且你有和系统相匹配的.gradle文件。</li>
+</ul>
+<h2 id="10-2-_Favorites">10.2. Favorites</h2><p>Favorites tab是一个很好的用来存储经常被使用命令的地方。这里可以是一些很复杂的命令（只要是符合gradle规范的），并且你可以为他们提供一个显示名称。这可以用于：创建、说、自定义一个明确跳过测试的构建命令，文档，和样品，你可以称之为“快速构建”。</p>
+<p>你可以对你列出的favorites进行重新排序，并且导出到磁盘上，并且被其他人引用。</p>
+<h2 id="10-3-_Command_Line">10.3. Command Line</h2><p>命令行界面你可以直接输入一条gradle命令。在你将命令添加到Favorites中，这也是一个让你尝试gradle命令的好地方。</p>
+<h2 id="10-4-_Setup">10.4. Setup</h2><p>设置选项卡允许一些一般设置的配置。</p>
+<p><strong>Figure 10.2. GUI Setup</strong></p>
+<p><img src="/img/gradle/guiSetup.png" alt=""></p>
+<ul>
+<li><p>当前目录</p>
+<p>  设置你的gradle项目的根目录（通常是build.gradle文件的所在位置）</p>
+</li>
+<li><p>堆栈跟踪输出</p>
+<p>  取决于当你的错误发生时，有多少信息被写入。提示：如果在命令行或“Favorites”选项卡上指定了堆栈跟踪级别，则将覆盖该堆栈跟踪级别。</p>
+</li>
+<li><p>只有当错误发生时才显示输出</p>
+<p>  启用此选项隐藏任务执行时的任何输出，除非生成失败。</p>
+</li>
+<li><p>使用自定义gradle执行器 - 高级功能</p>
+<p>  这为你提供了另一种方式推出Gradle的命令。如果你的项目需要一些额外的设置，这将会很有用，这是在一个批处理文件或脚本（如指定init脚本）内完成的。</p>
+</li>
+</ul>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              <a class="post-title-link" href="/2016/07/22/斯坦福机器学习课程 第一周 (4)一元线性回归/" itemprop="url">
+                斯坦福机器学习课程 第一周 (4)一元线性回归
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-07-22T12:07:00+08:00" content="2016-07-22">
+            2016-07-22
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/07/22/斯坦福机器学习课程 第一周 (4)一元线性回归/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/22/斯坦福机器学习课程 第一周 (4)一元线性回归/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><blockquote>
+<p>线性回归预测一个输入值的一个真值输出。我们讨论了线性回归在住房价格预测中的应用，提出了成本函数的概念，并介绍了学习的梯度下降法。</p>
+</blockquote>
+<h2 id="模型与成本函数(Model_and_Cost_Function)">模型与成本函数(Model and Cost Function)</h2><h3 id="模型表示">模型表示</h3><p><a href="https://www.coursera.org/learn/machine-learning/lecture/db3jS/model-representation" target="_blank" rel="external">视频地址</a></p>
+<p>我们的第一个学习算法是<strong>线性回归算法</strong>，在这段视频中，你会看到这个算法的概况。更重要的是你将会了解监督学习过程完整的流程，让我们通过一个例子来开始。</p>
+<p>这个例子是预测住房价格的，我们要使用一个数据集，数据集包含俄勒冈州波特兰市的住房价格。</p>
+<p><img src="/img/16_07_22/001.png" alt=""></p>
+<p>在这里我要根据不同房屋尺寸所售出的价格 画出我的数据集，比方说，我们来看这个数据集，你有一个朋友正想出售自己的房子。如果你朋友的房子是1250平方尺大小，你要告诉他们这房子能卖多少钱，那么你可以做的一件事就是，构建一个模型，也许是条直线，从这个数据模型上来看。也许你可以告诉你的朋友，他能以大约220000(美元)左右的价格卖掉这个房子。</p>
+<p><img src="/img/16_07_22/002.png" alt=""></p>
+<p>那么这就是监督学习算法的一个例子，<strong>它被称作监督学习是因为对于每个数据来说，我们给出了“正确的答案”</strong>，即告诉我们根据我们的数据来说，房子实际的价格是多少，而且更具体来说，这是一个<strong>回归问题</strong>。回归一词指的是我们根据之前的数据预测出一个准确的输出值。对于这个例子就是价格。</p>
+<p>同时，还有另一种最常见的监督学习方式，叫做<strong>分类问题</strong>。当我们想要预测离散的输出值，例如，如果我们正在寻找癌症肿瘤并想要确定肿瘤是良性的还是恶性的，这就是0/1离散输出的问题。</p>
+<p>更进一步来说，在监督学习中我们有一个数据集，这个数据集被称训练集，因此对于房价的例子，我们有一个训练集，包含不同的房屋价格。我们的任务就是从这个数据中学习预测房屋价格。</p>
+<p><img src="/img/16_07_22/003.png" alt=""></p>
+<p>现在我们给出这门课中经常使用的一些符号定义，我们要定义颇多符号，不过没关系，现在你记不住所有的符号也没关系，随着课程的进展，你会发现记住这些符号会很有用。我将在整个课程中<strong>用小写的m来表示训练样本的数目</strong>。</p>
+<p><img src="/img/16_07_22/004.png" alt=""></p>
+<p>因此 在这个数据集中，如果表中有47行，那么我们就有47组训练样本，$m$就等于47。让我用小写字母$x$来表示输入变量，往往也被称为<strong>特征量</strong>，这就是用$x$表示输入的特征，并且我们将用$y$来表示输出变量或者目标变量，也就是我的预测结果。那么这就是第二列，在这里我要使用$(x,y)$来表示一个训练样本，所以在这个表格中的单独的一行对应于一个训​​练样本，为了表示某个训练样本，我将使用$x^{(i)}$与$y^{(i)}$来表示。并且用这个表示第$i$个训练样本，所以这个上标$i$不是求幂运算，这个$(x^{(i)},y^{(i)})$括号里的上标$i$只是一个索引，表示我的训练集里的第i行。这里不是x的i和y的i次方，仅仅是指$(x^{(i)},y^{(i)})$是在此表中的第$i$行。</p>
+<p>举个例子$x^{(1)}$指的是第一个训练集里值为2104的输入值，这个就是第一行里的$x$，$x^{(2)}$ 等于1416吧?这是第二个$x$，$y^{(1)}$等于460，这是我第一个训练集样本的$y$值，这就是$^{(1)}$所代表的含义。</p>
+<p><img src="/img/16_07_22/005.png" alt=""></p>
+<p>像之前一样，我会问你一个问题，需要几秒的时间检查一下你的理解程度，在这个视频片段中，有时会有视频选择题弹出,当它弹出的时候,请使用鼠标来选择你认为正确的答案。这就是一个监督学习算法的工作方式。我们可以看到这里有我们的训练集里房屋价格，我们把它喂给我们的学习算法，这就是学习算法的工作了。然后输出一个函数，按照惯例，通常表示为小写h，<strong>$h$代表hypothesis(假设)</strong>，$h$表示一个函数，输入是房屋尺寸大小。就像你朋友想出售的房屋。因此 h 根据输入的$x$值来得出$y$值，$y$值对应房子的价格，因此，$h$是一个从$x$到$y$的函数映射。</p>
+<p><img src="/img/16_07_22/006.png" alt=""></p>
+<p>人们经常问我为什么这个函数被称作假设(hypothesis)，你们中有些人可能知道hypothesis的意思，从字典或者其它什么方式可以查到。其实在机器学习中这是一个在早期被用于机器学习的名称，它有点绕口。对这类函数来说，这可能不是一个很恰当的名字，对表示从房屋的大小到价格的函数映射，我认为这个词“hypothesis”可能不是最好的名称，但是这是人们在机器学习中使用的标准术语。所以不用太纠结人们为什么这么叫它。</p>
+<p>当设计学习算法的时候，我们接下来需要去思考的是怎样得到这个假设$h$，对于这一点在接下来的几个视频中我将选择最初的使用规则，$h$代表hypothesis。我们将会这么写：</p>
+<p>$$<br>h_{θ}(x) = θ_0 + θ_1 * x<br>$$</p>
+<p>为了方便有时非书面形式也可以这么写：$h_{θ}(x)$，我就写成$h(x)$，这是缩写方式。但一般来说我会保留这个下标$θ$。所以这就是数据集和函数的作用：用来预测。有时候我们会有更复杂的函数，也许是非线性函数，但是由于线性方程是简单的形式，我们将先从线性方程的例子入手。当然最终我们将会建立更复杂的模型，以及更复杂的学习算法。好吧，让我们也给这模型起一个名字，这个模型被称为线性回归<strong>(linear regression)</strong>模型。另外，这实际上是关于单个变量的线性回归，这个变量就是x。根据x来预测所有的价格函数，同时 对于这种模型有另外一个名称，称作<strong>单变量线性回归</strong>，单变量是对一个变量的一种特别的表述方式，总而言之这就是线性回归，在接下来的视频中我们将开始讨论如何去实现这种模型。</p>
+<h3 id="代价函数">代价函数</h3><p><a href="https://www.coursera.org/learn/machine-learning/lecture/rkTp3/cost-function" target="_blank" rel="external">视频地址</a></p>
+<p>在这段视频中我们将定义<strong>代价函数</strong>的概念，这有助于我们弄清楚如何把最有可能的直线与我们的数据相拟合。在线性回归中我们有一个像这样的训练集，记住，$M$代表了训练样本的数量。所以，比如$M = 47$。而我们的假设函数，也就是用来进行预测的函数，是这样的线性函数形式。</p>
+<p><img src="/img/16_07_22/007.png" alt=""></p>
+<p>接下来我们会引入一些术语，这些$θ_{0}$和$θ_{1}$，这些$θ_{i}$我把它们称为<strong>模型参数</strong>。在这个视频中，我们要做的就是谈谈如何选择这两个参数值$θ_{0}$和$θ_{1}$。选择不同的参数$θ_{0}$和$θ_{1}$，我们会得到不同的假设，不同的假设函数，我知道你们中的有些人可能已经知道我在这张幻灯片上要讲的，但我们还是用这几个例子来复习回顾一下。如果$θ_{0}=1.5$，$θ_{1}=0$ 那么假设函数会看起来是这样:</p>
+<p><img src="/img/16_07_22/008.png" alt=""></p>
+<p>因为你的假设函数是$h(x) = 1.5 + 0 * x$是这样一个常数函数 <code>恒等于1.5</code>。 </p>
+<p>如果$θ_{0} = 0$并且$θ_{1} = 0.5$， 那么假设会看起来像这样:</p>
+<p><img src="/img/16_07_22/009.png" alt=""></p>
+<p>它会通过点$(2,1)$。这样你又得到了$h(x)$或者$h_{θ}(x)$。但是有时我们为了简洁会省略$θ$。因此$h(x)$将等于$0.5$倍的$x$。就像这样。</p>
+<p>最后，如果$θ_{0} = 1$并且$θ_{1} = 0.5$。我们最后得到的假设会看起来像这样:</p>
+<p><img src="/img/16_07_22/010.png" alt=""></p>
+<p>让我们来看看它应该通过点$(2,2)$，这是我的新的$h(x)$或者写作$h_{θ}(x)$。你还记得之前我们提到过$h_{θ}(x)$的。但作为简写，我们通常只把它写作$h(x)$。</p>
+<p>在线性回归中，我们有一个训练集，可能就像我在这里绘制的。我们要做的就是得出$θ_{0}$、$θ_{1}$这两个参数的值，来让假设函数表示的直线尽量地与这些数据点很好的拟合。也许就像这里的这条线一样：</p>
+<p><img src="/img/16_07_22/011.png" alt=""></p>
+<p>那么我们如何得出$θ_{0}$、$θ_{1}$的值来使它很好地拟合数据的呢？我们的想法是我们要选择能使$h(x)$，也就是输入$x$时我们预测的值，最接近该样本对应的$y$值的参数$θ_{0}$、$θ_{1}$。所以，在我们的训练集中我们会得到一定数量的样本。我们知道$x$表示卖出哪所房子,并且知道这所房子的实际价格。所以我们要尽量选择合适的参数值，使得在训练集中给出的$x$值，我们能合理准确地预测$y$的值。</p>
+<blockquote>
+<p>Idea: Choose $θ_{0}$、$θ_{1}$ so that $h_{θ}(x)$ is close to $y$ for our training examples $(x,y)$.</p>
+</blockquote>
+<p>让我们给出标准的定义:在线性回归中我们要解决的是一个最小化问题。所以我要写出关于$θ_{0}$、$θ_{1}$的最小化，而且我希望这个式子极其小，我想要$h(x)$和$y$之间的差异要小。我要做的事情是尽量减少假设的输出与房子真实价格之间的差的平方。</p>
+<p>$$<br>\mathop{minimze}\limits_{θ_{0}θ_{1}}<br>(h_{θ}(x) - y)^{2}<br>$$</p>
+<p>接下来我会详细的阐述。</p>
+<p>别忘了，我用符号$(x^{(i)},y^{(i)})$代表第i个样本，所以我想要做的是对所有训练样本进行一个求和，对$i = 1$到$i = m$的样本将对假设进行预测得到的结果，此时的$x^{i}$输入是第$i$号房子的面积。将第$i$号对应的预测结果减去第$i$号房子的实际价格，所得的差的平方相加得到总和而我希望尽量减小这个值，也就是预测值和实际值的差的平方误差和，或者说预测价格和实际卖出价格的差的平方。</p>
+<p>$$<br>\mathop{minimze}\limits_{θ_{0}θ_{1}}<br>\sum_{i=1}^{m}<br>(h_{θ}(x^{(i)}) - y^{(i)})^{2}<br>$$</p>
+<p>我说了这里的$m$指的是训练集的样本容量。而为了让表达式的数学意义变得容易理解一点，我们实际上考虑的是这个数的$1/m$。因此我们要尝试尽量减少我们的平均误差，也就是尽量减少其$1/2m$。通常是这个数的一半。</p>
+<p>$$<br>\mathop{minimze}\limits_{θ_{0}θ_{1}}<br>\frac{1}{2m}<br>\sum_{i=1}^{m}<br>(h_{θ}(x^{(i)}) - y^{(i)})^{2}<br>$$</p>
+<p>前面的这些只是为了使数学更直白一点，因此对这个求和值的二分之一求最小值应该得出相同的$θ_{0}$值和相同的$θ_{1}$值来，在这里</p>
+<p>$$h_{θ}(x^{(i)})=θ_{0} + θ_{1} * x^{(i)}$$</p>
+<p>而这个表达式</p>
+<p>$$<br>\mathop{minimze}\limits_{θ_{0}θ_{1}}<br>$$</p>
+<p>意味着我们要找到$θ_{0}$和$θ_{1}$的值来使这个表达式的值最小。这个表达式因$θ_{0}$和$θ_{1}$的变化而变化。</p>
+<p>因此，简单地说，我们正在把这个问题变成：找到能使我的训练集中预测值和真实值的差的平方的和的$1/2m$最小的$θ_{0}$和$θ_{1}$的值。因此，这将是我的线性回归的整体目标函数。为了使它更明确一点，我们要改写这个函数。</p>
+<p>按照惯例我要定义一个代价函数：</p>
+<p>$$<br>J(θ_{0},θ_{1}) =<br>\frac{1}{2m}<br>\sum_{i=1}^{m}<br>(h_{θ}(x^{(i)}) - y^{(i)})^{2}<br>$$</p>
+<p>正如屏幕中所示，这里的这个公式我们想要做的就是关于$θ_{0}$和$θ_{1}$对函数$J(θ_{0}$,$θ_{1})$求最小值。这就是我的代价函数。代价函数也被称作<strong>平方误差函数</strong>，有时也被称为<strong>平方误差代价函数</strong>。事实上我们之所以要求出误差的平方和，是因为误差平方代价函数对于大多数问题，特别是回归问题，都是一个合理的选择。还有其他的代价函数也能很好地发挥作用，但是平方误差代价函数可能是解决回归问题最常用的手段了。</p>
+<p>在后续课程中，我们还会谈论其他的代价函数。但我们刚刚讲的选择是对于大多数线性回归问题非常合理的。好吧，所以这是代价函数，到目前为止我们已经介绍了代价函数的数学定义，也许这个函数$J(θ_{0}$,$θ_{1})$有点抽象，可能你仍然不知道它的内涵，在接下来的几个视频里我们要更进一步解释代价函数$J$的工作原理，并尝试更直观地解释它在计算什么，以及我们使用它的目的。</p>
+<h3 id="代价函数_实例1">代价函数 实例1</h3><p><a href="https://www.coursera.org/learn/machine-learning/lecture/N09c6/cost-function-intuition-i" target="_blank" rel="external">视频地址</a></p>
+<p>在上一个视频中我们给了代价函数一个数学上的定义，在这个视频里 让我们通过一些例子来获取一些直观的感受，看看代价函数到底是在干什么。</p>
+<p>回顾一下，这是我们上次所讲过的内容：我们想找一条直线来拟合我们的数据，所以我们用θ0，θ1等参数得到了这个假设，而且通过选择不同的参数，我们会得到不同的直线拟合。然后我们还有一个代价函数，这就是我们的优化目标。</p>
+<p><strong>假设(Hypothesis):</strong></p>
+<p>$$<br>h_{θ}(x) = θ_0 + θ_1 * x<br>$$</p>
+<p><strong>参数(Parameters):</strong></p>
+<p>$$<br>θ_0 , θ_1<br>$$</p>
+<p><strong>代价函数(Cost Function):</strong></p>
+<p>$$<br>J(θ_{0},θ_{1}) =<br>\frac{1}{2m}<br>\sum_{i=1}^{m}<br>(h_{θ}(x^{(i)}) - y^{(i)})^{2}<br>$$</p>
+<p><strong>目标(Goal):</strong></p>
+<p>$$<br>\mathop{minimze}\limits_{θ_{0}θ_{1}}<br>J(θ_{0},θ_{1})<br>$$</p>
+<p>在这个视频里，为了更好地将代价函数可视化，我将使用一个简化表示方法来表示假设函数、参数、代价函数以及目标：</p>
+<p><strong>简化的假设函数(Hypothesis):</strong></p>
+<p>$$<br>h_{θ}(x) = θ_1 * x<br>$$</p>
+<p><strong>简化的参数(Parameters):</strong></p>
+<p>$$<br>θ_1<br>$$</p>
+<p><strong>简化的代价函数(Cost Function):</strong></p>
+<p>$$<br>J(θ_{1}) =<br>\frac{1}{2m}<br>\sum_{i=1}^{m}<br>(h_{θ}(x^{(i)}) - y^{(i)})^{2}<br>$$</p>
+<p><strong>简化的目标(Goal):</strong></p>
+<p>$$<br>\mathop{minimze}\limits_{θ_{1}}<br>J(θ_{1})<br>$$</p>
+<p>我们可以将这个假设函数看成是把$θ_{0}$设为0，所以我只有一个参数，也就是$θ_{1}$。代价函数看起来与之前的很像，唯一的区别是现在$h(x) = θ_{1} * x$，只有一个参数$θ_{1}$，所以我的优化目标是将$J(θ_{1})$最小化。用图形来表示就是，如果$θ_{0}$等于零，也就意味这我们选择的假设函数会经过原点，也就是经过坐标$(0,0)$。通过利用简化的假设得到的代价函数 我们可以试着更好地理解代价函数这个概念。</p>
+<p>我们要理解的是这两个重要的函数：第一个是假设函数，第二个是代价函数。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$h_{θ}(x)$ :假设函数</th>
+<th style="text-align:center">$J(θ_{1})$ :代价函数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">(for fixed $θ_{1}$,this is a function of x)</td>
+<td style="text-align:center">(function of the parameter $θ_{1}$)</td>
+</tr>
+<tr>
+<td style="text-align:center"><img src="/img/16_07_22/012.png" alt=""></td>
+<td style="text-align:center"><img src="/img/16_07_22/013.png" alt=""></td>
+</tr>
+</tbody>
+</table>
+<p>注意这个假设函数$h_{θ}(x)$对于一个固定的$θ_{1}$是一个关于$x$的函数。所以这个假设函数就是一个关于$x$这个房子大小的函数。与此不同的是，代价函数$J$是一个关于参数$θ_{1}$的函数，而$θ_{1}$控制着这条直线的斜率。通过上图我们可以很好的理解，比如说这里是我的训练样本，它包含了三个点$(1,1)$，$(2,2)$和$(3,3)$。现在我们选择一个值$θ_{1}$，所以当$θ_{1} = 1$，如果这是我选择的$θ_{1}$，那么我的假设函数看起来就会像是这条直线。我将要指出的是，X轴是表示房子大小的量。现在暂时把$θ_{1}$定为1，我想要做的就是算出在$θ_{1} = 1$的时候$J(θ_{1})$等于多少。所以我们按照这个思路来计算代价函数的大小，和之前一样，代价函数定义如下:</p>
+<p>$$<br>\begin{align*}<br>J(θ_{1}) &amp;=<br>\frac{1}{2m}<br>\sum_{i=1}^{m}<br>(h_{θ}(x^{(i)}) - y^{(i)})^{2}\\<br> &amp;=<br>\frac{1}{2m}<br>\sum_{i=1}^{m}<br>(θ_1x^{(i)} - y^{(i)})^{2}\\<br> &amp;=<br>\frac{1}{2m}<br>(0^2 + 0^2 + 0^2)\\<br> &amp;= 0<br>\end{align*}<br>$$</p>
+<p>对这个误差平方项进行求和，这就等于这样一个形式，简化以后就等于三个0的平方和，当然还是0。现在，在代价函数里，我们发现所有这些值都等于0。因为对于我所选定的这三个训练样本$(1,1)$，$(2,2)$和$(3,3)$，如果$θ_{1} = 1$，那么$h_{θ}(x^{(i)})$就会正好等于$y^{(i)}$。所以$h(x) - y$所有的这些值都会等于零。这也就是为什么$J(1) = 0$。所以我们现在知道了$J(1) = 0$，如下图，要注意的是，因为我的代价函数是关于参数$θ_{1}$的函数，当我描绘我的代价函数时，$X$轴就是$θ_{1}$。</p>
+<p><img src="/img/16_07_22/014.png" alt=""></p>
+<p>现在我有$J(1) = 0$，让我们继续把函数画出来，结果我们会得到这样一个点。</p>
+<p>现在我们来看其它一些样本$θ_{1}$可以被设定为某个范围内各种可能的取值，所以$θ_{1}$可以取负数、0或者正数。所以如果$θ_{1} = 0.5$会发生什么呢？继续把它画出来:</p>
+<p><img src="/img/16_07_22/015.png" alt=""></p>
+<p>这条线的斜率等于0.5，现在让我们计算$J(0.5)$。</p>
+<p>$$<br>\begin{align*}<br>J(θ_{1}) &amp;=<br>\frac{1}{2m}<br>\sum_{i=1}^{m}<br>(h_{θ}(x^{(i)}) - y^{(i)})^{2}\\<br> &amp;=<br>\frac{1}{2m}<br>\sum_{i=1}^{m}<br>(θ_1x^{(i)} - y^{(i)})^{2}\\<br> &amp;=<br>\frac{1}{2m}<br>((0.5 - 1)^2 + (1 - 2)^2 + (1.5 - 3)^2)\\<br> &amp;\approx 0.58<br>\end{align*}<br>$$</p>
+<p>让我们把点画出来：</p>
+<p><img src="/img/16_07_22/016.png" alt=""></p>
+<p>让我们试试$θ_{1}$等于0，$J(0)$会等于多少呢？如果$θ_{1} = 0$，那么$h(x)$就会等于一条水平的线。如下图：</p>
+<p><img src="/img/16_07_22/017.png" alt=""></p>
+<p>计算$J(0)$：</p>
+<p>$$<br>\begin{align*}<br>J(θ_{1}) &amp;=<br>\frac{1}{2m}<br>\sum_{i=1}^{m}<br>(h_{θ}(x^{(i)}) - y^{(i)})^{2}\\<br> &amp;=<br>\frac{1}{2m}<br>\sum_{i=1}^{m}<br>(θ_1x^{(i)} - y^{(i)})^{2}\\<br> &amp;=<br>\frac{1}{2m}<br>((0 - 1)^2 + (0 - 2)^2 + (0 - 3)^2)\\<br> &amp;\approx 2.33<br>\end{align*}<br>$$</p>
+<p>所以让我们接着把这个点也画出来，所以这个点最后是2.3：</p>
+<p><img src="/img/16_07_22/018.png" alt=""></p>
+<p>当然我们可以接着设定$θ_{1}$等于别的值进行计算，你也可以把$θ_{1}$设定成一个负数，所以如果$θ_{1}$是负数，那么h(x)将会等于，打个比方说－0.5乘以x然后$θ_{1}$就是-0.5，那么这将会对应着一个斜率为-0.5的假设函数，而且你可以 继续计算这些误差。结果你会发现对于0.5结果会是非常大的误差，最后会得到一个较大的数值，类似于5.25，等等。对于不同的$θ_{1}$，你可以计算出这些对应的值，结果你会发现，你算出来的这些值，你得到一条这样的曲线，通过计算这些值，你可以慢慢地得到这条线，这就是$J(θ)$的样子了。</p>
+<p><img src="/img/16_07_22/019.png" alt=""></p>
+<p>我们来回顾一下，任何一个$θ_{1}$的取值对应着一个不同的假设函数，或者说对应着左边一条不同的拟合直线。对于任意的$θ_{1}$你可以算出一个不同的$J(θ1)$的取值。举个例子，你知道的$θ_{1} = 1$时对应着穿过这些数据的那条直线，当$θ_{1} = 0.5$，对应着上面斜率为0.5的那条直线，然后$θ_{1} = 0$，对应着过原点的水平的线。所以对于任意一个$θ_{1}$的取值，我们会得到一个不同的$J(θ_{1})$，而且我们可以利用这些来描出上边的这条曲线。</p>
+<p><img src="/img/16_07_22/013.png" alt=""></p>
+<p>现在你还记得学习算法的优化目标，是我们想找到一个$θ_{1}$的值来将$J(θ_{1})$最小化，这是我们线性回归的目标函数。嗯，看这条曲线，让$J(θ_{1})$最小化的值 是$θ_{1} = 1$，然后你看，这个确实就对应着最佳的通过了数据点的拟合直线，这条直线就是由$θ_{1} = 1$的设定而得到的，然后，对于这个特定的训练样本，我们最后能够完美地拟合。这就是为什么最小化$J(θ_{1})$对应着寻找一个最佳拟合直线的目标。总结一下，在这个视频里我们看到了一些图形来理解代价函数，要做到这个，我们简化了算法，让这个函数只有一个参数$θ_{1}$，也就是说我们把$θ_{0}$设定为0，在下一个视频里我们将回到原来的问题的公式，然后看一些带有$θ_{0}$和$θ_{1}$的图形，也就是说不把$θ_{0}$设置为0了，希望这会让你更好地理解在原来的线性回归公式里代价函数$J$的意义。</p>
+<h3 id="代价函数_实例2">代价函数 实例2</h3><p><a href="https://www.coursera.org/learn/machine-learning/lecture/nwpe2/cost-function-intuition-ii" target="_blank" rel="external">视频地址</a></p>
+<p>这节课中，我们将更深入地学习代价函数的作用。这段视频的内容假设你已经认识轮廓图，如果你对轮廓图不太熟悉的话，这段视频中的某些内容你可能会听不懂。但不要紧，如果你跳过这段视频的话，也没什么关系。不听这节课对后续课程理解影响不大。</p>
+<p>和之前一样，这是我们的几个重要公式：</p>
+<p><strong>假设(Hypothesis):</strong></p>
+<p>$$<br>h_{θ}(x) = θ_0 + θ_1 * x<br>$$</p>
+<p><strong>参数(Parameters):</strong></p>
+<p>$$<br>θ_0 , θ_1<br>$$</p>
+<p><strong>代价函数(Cost Function):</strong></p>
+<p>$$<br>J(θ_{0},θ_{1}) =<br>\frac{1}{2m}<br>\sum_{i=1}^{m}<br>(h_{θ}(x^{(i)}) - y^{(i)})^{2}<br>$$</p>
+<p><strong>目标(Goal):</strong></p>
+<p>$$<br>\mathop{minimze}\limits_{θ_{0}θ_{1}}<br>J(θ_{0},θ_{1})<br>$$</p>
+<p>跟前一节视频不同的是 我还是把$θ$写成$θ_{0}$、$θ_{1}$的形式，便于这里我们要对代价函数进行的可视化。和上次一样，首先来理解假设$h$和代价函数$J$。</p>
+<p>这是房价数据组成的训练集数据:</p>
+<p><img src="/img/16_07_22/020.png" alt=""></p>
+<p>让我们来构建某种假设：如果我假设$θ_{0} = 50$，$θ_{1} = 0.06$的话，那么我将得到这样一个假设函数：</p>
+<p><img src="/img/16_07_22/021.png" alt=""></p>
+<p>那么现在的代价函数图像要怎么画呢？上一节我们只有一个$θ$，我们画出来的图形是一个倒过来的抛物线图，可是现在我们有了两个变量：$θ_{0}$和$θ_{1}$，我们的代价函数图就成了一个三维曲面图，水平方向的两个轴分别表示$θ_{0}$和$θ_{1}$，我们要在下面画出代价函数的图像：</p>
+<p><img src="/img/16_07_22/022.png" alt=""></p>
+<p>随着你改变$θ_{0}$和$θ_{1}$的大小，你会得到不同的代价函数 $J(θ_{0}$,$θ_{1})$对于某个特定的点$(θ_{0}$,$θ_{1})$这个曲面的高度，也就是竖直方向的高度，就表示代价函数$J(θ_{0}$,$θ_{1})$的值。</p>
+<p>不难发现这是一个弓形曲面。我们来看看三维图，旋转一下这个图你就更能理解这个弓形曲面所表示的代价函数了：</p>
+<p><img src="/img/16_07_22/023.gif" alt=""></p>
+<p>在这段视频的后半部分，为了描述方便，我将不再像这样给你用三维曲面图的方式解释代价函数$J$，而是用<strong>轮廓图(contour plot)</strong>来表示，下边就是一个轮廓图</p>
+<p><img src="/img/16_07_22/024.png" alt=""></p>
+<p>两个轴分别表示$θ_{0}$和$θ_{1}$，而这些一圈一圈的椭圆形，每一个圈就表示$J(θ_{0}$,$θ_{1})$相同的所有点的集合。如果你之前没怎么接触轮廓图的话，你就这么想：一个弓形的函数从屏幕里冒出来，因此最小值也就是这个弓形的最低点就是这个点，也就是这一系列同心椭圆的中心点。因此轮廓图是一种很方便的方法 能够直观地观察代价函数$J$。</p>
+<p>接下来让我们看几个例子：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$h_{θ}(x)$ :假设函数</th>
+<th style="text-align:center">$J(θ_{1})$ :代价函数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">(for fixed $θ_{0}$,$θ_{1}$,this is a function of x)</td>
+<td style="text-align:center">(function of the parameter $θ_{0}$,$θ_{1}$)</td>
+</tr>
+<tr>
+<td style="text-align:center"><img src="/img/16_07_22/025.png" alt=""></td>
+<td style="text-align:center"><img src="/img/16_07_22/026.png" alt=""></td>
+</tr>
+</tbody>
+</table>
+<p>在代价函数的图上这一点表示$θ_{0} = 800$，$θ_{1} = -0.15$，坐标为$(800,-0.15)$。而这个点也对应于左边这样一条线，$θ_{0} = 800$也就是跟纵轴相交于大约800，斜率大概是-0.15。当然，这条线并不能很好地拟合数据。并且你也发现了，这个代价值，距离最小值点还很远。也就是说这个代价值还是算比较大的，因此不能很好拟合数据。</p>
+<p>让我们再来看另一个假设：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$h_{θ}(x)$ :假设函数</th>
+<th style="text-align:center">$J(θ_{1})$ :代价函数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">(for fixed $θ_{0}$,$θ_{1}$,this is a function of x)</td>
+<td style="text-align:center">(function of the parameter $θ_{0}$,$θ_{1}$)</td>
+</tr>
+<tr>
+<td style="text-align:center"><img src="/img/16_07_22/027.png" alt=""></td>
+<td style="text-align:center"><img src="/img/16_07_22/028.png" alt=""></td>
+</tr>
+</tbody>
+</table>
+<p>你不难发现，这依然不是一个好的拟合，但比刚才稍微好一点。这里$θ_{0} = 360$，$θ_{1} = 0$。因此这组$θ$值对应的假设是:$h(x) = 360 + 0 × x$，这个假设同样也有某个代价值，而这个代价值就对应于这个代价函数在这一点的高度。</p>
+<p>让我们再来看另一个例子：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$h_{θ}(x)$ :假设函数</th>
+<th style="text-align:center">$J(θ_{1})$ :代价函数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">(for fixed $θ_{0}$,$θ_{1}$,this is a function of x)</td>
+<td style="text-align:center">(function of the parameter $θ_{0}$,$θ_{1}$)</td>
+</tr>
+<tr>
+<td style="text-align:center"><img src="/img/16_07_22/029.png" alt=""></td>
+<td style="text-align:center"><img src="/img/16_07_22/030.png" alt=""></td>
+</tr>
+</tbody>
+</table>
+<p>这个点其实不是最小值，但已经非常靠近最小值点了。这个点对数据的拟合就很不错。这个点虽然不在最小值点，但非常接近了。因此误差平方和，或者说训练样本和假设的距离的平方和，非常接近于最小值。尽管它还不是最小值。</p>
+<p>通过这些图形我希望你能更好地理解这些代价函数$J$所表达的值，它们是什么样的，它们对应的假设是什么样的，以及什么样的假设对应的点更接近于代价函数$J$的最小值。当然我们真正需要的是一种有效的算法，能够自动地找出这些使代价函数$J$取最小值的参数$θ_{0}$和$θ_{1}$来。我想我们也不希望编个程序，把这些点画出来，然后人工的方法来读出这些点的数值。这很明显不是一个好办法。事实上我们后面就会学到，我们会遇到更复杂、更高维度、更多参数的情况，这在我们在后面的视频中很快就会遇到。而这些情况是很难画出图的，因此更无法将其可视化。因此我们真正需要的是编写程序来找出这些最小化代价函数的$θ_{0}$和$θ_{1}$的值。在下一节视频中 我们将介绍一种算法<strong>能够自动地找出能使代价函数$J$最小化的参数$θ_{0}$和$θ_{1}$的值</strong>。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/07/20/斯坦福机器学习课程 第一周 (3)无监督学习/" itemprop="url">
                 斯坦福机器学习课程 第一周 (3)无监督学习
               </a>
@@ -1258,294 +1672,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/07/07/gradle学习笔记-使用gradle命令行/" itemprop="url">
-                gradle学习笔记-使用gradle命令行
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-07-07T13:06:55+08:00" content="2016-07-07">
-            2016-07-07
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/gradle/" itemprop="url" rel="index">
-                  <span itemprop="name">gradle</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/07/07/gradle学习笔记-使用gradle命令行/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/07/gradle学习笔记-使用gradle命令行/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="1-执行多条tasks">1.执行多条tasks</h2><p>gradle可以在一次构建中执行多条tasks。例如：命令<code>gradle compile test</code>将会执行<code>compile</code>和<code>test</code>这两条task。gradle将会按照命令行上输入的顺序去执行这些task。并且也会去执行这些task所依赖的(dependencies)task。并且保证每个task只被执行一次。</p>
-<p>例如：</p>
-<p>如下四个task</p>
-<p><img src="/img/16_07_09/commandLineTutorialTasks.png" alt=""></p>
-<p>build.gradle:</p>
-<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">task</span> <span class="keyword">compile</span> &lt;&lt; &#123;</div><div class="line">    <span class="keyword">println</span> <span class="string">'compiling source'</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">task</span> compileTest(dependsOn: <span class="keyword">compile</span>) &lt;&lt; &#123;</div><div class="line">    <span class="keyword">println</span> <span class="string">'compiling unit tests'</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">task</span> test(dependsOn: [<span class="keyword">compile</span>, compileTest]) &lt;&lt; &#123;</div><div class="line">    <span class="keyword">println</span> <span class="string">'running unit tests'</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">task</span> dist(dependsOn: [<span class="keyword">compile</span>, test]) &lt;&lt; &#123;</div><div class="line">    <span class="keyword">println</span> <span class="string">'building the distribution'</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>命令行输入<code>gradle dist test</code>的输出：</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">&gt; gradle <span class="keyword">dist </span>test</div><div class="line">:compile</div><div class="line">compiling source</div><div class="line">:compileTest</div><div class="line">compiling unit tests</div><div class="line">:test</div><div class="line">running unit tests</div><div class="line">:<span class="keyword">dist</span></div><div class="line"><span class="keyword">building </span>the <span class="keyword">distribution</span></div><div class="line"></div><div class="line"><span class="keyword">BUILD </span>SUCCESSFUL</div><div class="line"></div><div class="line">Total time: <span class="number">1</span> secs</div></pre></td></tr></table></figure>
-<p>可以看到每个task只被执行一次，因此命令<code>gradle test test</code>和<code>gradle test</code>的执行效果是一样的。</p>
-<h2 id="2-排除某个task(-x_someTask)">2.排除某个task(<code>-x someTask</code>)</h2><p>你也可以通过<code>-x</code>的命令参数来排除某个task的执行：</p>
-<p>以下是命令<code>gradle dist -x test</code>的输出：</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&gt; gradle <span class="keyword">dist </span>-x test</div><div class="line">:compile</div><div class="line">compiling source</div><div class="line">:<span class="keyword">dist</span></div><div class="line"><span class="keyword">building </span>the <span class="keyword">distribution</span></div><div class="line"></div><div class="line"><span class="keyword">BUILD </span>SUCCESSFUL</div><div class="line"></div><div class="line">Total time: <span class="number">1</span> secs</div></pre></td></tr></table></figure>
-<p>从输出结果中可以看出来，<code>test</code>的task并没有被执行，即使它是<code>dist</code>所依赖的task。</p>
-<p>有一个细节也许你已经注意到了：<code>test</code>所依赖的task例如<code>compileTest</code>并没有被执行，因为这个task并没有被其他不被排除的task所依赖，为什么<code>compile</code>这个task也是被<code>test</code>所依赖，但却被执行了呢？那是因为<code>compile</code>这个task被其他不被排除的task所依赖了。</p>
-<h2 id="3-当发生失败的时候依然继续执行构建(-continue)">3.当发生失败的时候依然继续执行构建(<code>--continue</code>)</h2><p>默认情况下，gradle会在任意一个task执行失败的时候立刻中断执行。gradle可以使得构建速度更快，但需要以隐藏发生的失败为代价。为了能够在一次构建的执行中发现尽可能多的失败，你可以使用<code>--continue</code>选项。</p>
-<p>当在命令中加入<code>--continue</code>,gradle将会执行每一个要被执行的task，以及所有的依赖task，并且无错误的完成task，而不是一旦遇到错误就立马停止。并且每一个发生的失败都会在构建结束后上报出来。</p>
-<p>如果一个task失败了，那么任何依赖于这个产生失败的task的子task也不会被执行，这样做是不安全的。例如，如果在测试代码中有一个编译失败，测试将不会运行；因为测试任务将直接或间接的取决于编译任务。</p>
-<h2 id="4-task名字的缩写">4.task名字的缩写</h2><p>当你在命令行上指定task时，你没必要指定task的全名。你只需要提供足够长的能唯一标识task的名字即可。例如：在上面的构建例子中，你可以通过命令<code>gradle d</code>来执行<code>dist</code>这条task。</p>
-<p><code>gradle di</code>的输出:</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">&gt; gradle <span class="keyword">di</span></div><div class="line">:compile</div><div class="line">compiling source</div><div class="line">:compileTest</div><div class="line">compiling unit tests</div><div class="line">:test</div><div class="line">running unit tests</div><div class="line">:<span class="keyword">dist</span></div><div class="line"><span class="keyword">building </span>the <span class="keyword">distribution</span></div><div class="line"></div><div class="line"><span class="keyword">BUILD </span>SUCCESSFUL</div><div class="line"></div><div class="line">Total time: <span class="number">1</span> secs</div></pre></td></tr></table></figure>
-<p>你也可以通过每个task名称的单词的首字母的驼峰缩写来标识一个task：你可以通过执行<code>gradle compTest</code>或者甚至是<code>gradle cT</code>来执行<code>compileTest</code>这个task。</p>
-<p><code>gradle cT</code>的输出：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&gt; <span class="selector-tag">gradle</span> <span class="selector-tag">cT</span></div><div class="line"><span class="selector-pseudo">:compile</span></div><div class="line"><span class="selector-tag">compiling</span> <span class="selector-tag">source</span></div><div class="line"><span class="selector-pseudo">:compileTest</span></div><div class="line"><span class="selector-tag">compiling</span> <span class="selector-tag">unit</span> <span class="selector-tag">tests</span></div><div class="line"></div><div class="line"><span class="selector-tag">BUILD</span> <span class="selector-tag">SUCCESSFUL</span></div><div class="line"></div><div class="line"><span class="selector-tag">Total</span> <span class="selector-tag">time</span>: 1 <span class="selector-tag">secs</span></div></pre></td></tr></table></figure>
-<p>以上规则对<code>-x</code>项(排除某个task)也是适用的。</p>
-<h2 id="5-选择某一条构建去执行">5.选择某一条构建去执行</h2><p>当你运行gradle命令时，它会在当前目录中查找一个build文件。你可以使用<code>-b</code>选项来选择其他的build文件。如果你使用了<code>-b</code>选项，那么<code>settings.gradle</code>这个文件将不起作用。</p>
-<p>举个例子：</p>
-<p>选择一个工程使用build文件：</p>
-<p>subdir/myproject.gradle</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">task</span> hello &lt;&lt; &#123;</div><div class="line">    <span class="attribute">println</span> <span class="string">"using build file '<span class="variable">$buildFile</span>.name' in '<span class="variable">$buildFile</span>.parentFile.name'."</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>执行<code>gradle -q -b subdir/myproject.gradle hello</code></p>
-<p><em>这里<code>-q</code>是“安静模式”，指过程中只会输出错误log</em></p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt; gradle -<span class="selector-tag">q</span> -<span class="selector-tag">b</span> subdir/myproject<span class="selector-class">.gradle</span> hello</div><div class="line">using build file <span class="string">'myproject.gradle'</span> <span class="keyword">in</span> <span class="string">'subdir'</span>.</div></pre></td></tr></table></figure>
-<p>另外一种方式，你可以使用<code>-p</code>选项来指定项目所在的路径。对于多项目构建，你应该使用<code>-p</code>选项来代替<code>-b</code>选项。</p>
-<p>执行<code>gradle -q -p subdir hello</code></p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt; gradle -<span class="selector-tag">q</span> -<span class="selector-tag">p</span> subdir hello</div><div class="line">using build file <span class="string">'build.gradle'</span> <span class="keyword">in</span> <span class="string">'subdir'</span>.</div></pre></td></tr></table></figure>
-<h2 id="6-强制执行task(-rerun-tasks_someTask)">6.强制执行task(<code>--rerun-tasks someTask</code>)</h2><p>许多task，尤其是gradle自身的task，都支持<strong>incremental builds(增量构建)</strong>。这种task可以决定是否需要运行，或者通过最后一次运行之后的输入输出文件是否有变动来判断是否有必要重新运行。你可以通过在执行构建时gradle列出的<code>UP-TO-DATE</code>,来很容易的认出<code>incremental tasks</code>。</p>
-<p>某些场景下，你也许希望忽略<code>up-to-date</code>的检查，来强制执行gradle所有的task。这种情况下，你只需要使用<code>--rerun-tasks</code>这条命令即可。</p>
-<p>以下是两个例子的输出，分别是执行task带有和不带有<code>--rerun-tasks</code>命令：</p>
-<p>执行<code>gradle doIt</code></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt; gradle <span class="keyword">do</span>It</div><div class="line">:<span class="keyword">do</span>It UP-TO-DATE</div></pre></td></tr></table></figure>
-<p>执行<code>gradle --rerun-tasks doIt</code></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt; gradle --rerun-tasks <span class="keyword">do</span>It</div><div class="line">:<span class="keyword">do</span>It</div></pre></td></tr></table></figure>
-<blockquote>
-<p>注意：这将会强制执行全部的task，不仅仅是你在命令行上指定的那些。这有点像在运行<code>clean</code>，但不同的是没有任何的输出会被删除掉。</p>
-</blockquote>
-<h2 id="7-获取关于你的构建的信息">7.获取关于你的构建的信息</h2><p>gradle提供了多个用来显示构建详情的内置task。这些可以被用来理解你项目构建的结构和依赖，以及用debug调试问题。</p>
-<p>除了这些内置task之外，    你也可以使用project report plugin(项目报告插件)，添加到你的项目中，就可以生成这些信息报告了。</p>
-<h3 id="7-1-展示项目列表(gradle_projects)">7.1.展示项目列表(<code>gradle projects</code>)</h3><p>运行<code>gradle projects</code>，你会得到一个你所选项目的子项目清单，并且是分层显示的哦。下面就是一个例子：</p>
-<p>输入<code>gradle -q projects</code></p>
-<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&gt; gradle -q projects</div><div class="line"></div><div class="line">------------------------------------------------------------</div><div class="line">Root <span class="keyword">project</span></div><div class="line">------------------------------------------------------------</div><div class="line"></div><div class="line">Root <span class="keyword">project</span> <span class="string">'projectReports'</span></div><div class="line">+--- <span class="keyword">Project</span> <span class="string">':api'</span> - The shared API <span class="keyword">for</span> the application</div><div class="line">\--- <span class="keyword">Project</span> <span class="string">':webapp'</span> - The Web application implementation</div><div class="line"></div><div class="line">To see a list of the tasks of a <span class="keyword">project</span>, run gradle &lt;<span class="keyword">project</span>-path&gt;:tasks</div><div class="line"><span class="keyword">For</span> example, <span class="keyword">try</span> running gradle :api:tasks</div></pre></td></tr></table></figure>
-<p>该报告展示了每个项目的描述（如果项目被设置了描述）。你也可以通过设置描述特性，来为一个项目提供一个描述。</p>
-<p>例如在<code>build.gradle</code>中添加描述：</p>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">description</span> = <span class="string">'The shared API for the application'</span></div></pre></td></tr></table></figure>
-<h3 id="7-2_展示task列表(gradle_tasks)">7.2 展示task列表(<code>gradle tasks</code>)</h3><p>运行<code>gradle tasks</code>可以得到当前项目的主task。生成的报告清单会显示所有的默认task，当然，如果有描述信息的话，也会一并显示。</p>
-<p>例如：</p>
-<p>运行<code>gradle -q tasks</code>会得到如下输出：</p>
-<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">&gt; gradle -q tasks</div><div class="line"></div><div class="line"><span class="comment">------------------------------------------------------------</span></div><div class="line">All tasks runnable <span class="built_in">from</span> root project</div><div class="line"><span class="comment">------------------------------------------------------------</span></div><div class="line"></div><div class="line">Default tasks: dists</div><div class="line"></div><div class="line">Build tasks</div><div class="line"><span class="comment">-----------</span></div><div class="line">clean - Deletes <span class="keyword">the</span> build <span class="built_in">directory</span> (build)</div><div class="line">dists - Builds <span class="keyword">the</span> distribution</div><div class="line">libs - Builds <span class="keyword">the</span> JAR</div><div class="line"></div><div class="line">Build Setup tasks</div><div class="line"><span class="comment">-----------------</span></div><div class="line">init - Initializes <span class="keyword">a</span> <span class="built_in">new</span> Gradle build. [incubating]</div><div class="line">wrapper - Generates Gradle wrapper <span class="built_in">files</span>. [incubating]</div><div class="line"></div><div class="line">Help tasks</div><div class="line"><span class="comment">----------</span></div><div class="line">buildEnvironment - Displays all buildscript dependencies declared <span class="keyword">in</span> root project <span class="string">'projectReports'</span>.</div><div class="line">components - Displays <span class="keyword">the</span> components produced <span class="keyword">by</span> root project <span class="string">'projectReports'</span>. [incubating]</div><div class="line">dependencies - Displays all dependencies declared <span class="keyword">in</span> root project <span class="string">'projectReports'</span>.</div><div class="line">dependencyInsight - Displays <span class="keyword">the</span> insight <span class="keyword">into</span> <span class="keyword">a</span> specific dependency <span class="keyword">in</span> root project <span class="string">'projectReports'</span>.</div><div class="line">help - Displays <span class="keyword">a</span> help message.</div><div class="line">model - Displays <span class="keyword">the</span> configuration model <span class="keyword">of</span> root project <span class="string">'projectReports'</span>. [incubating]</div><div class="line">projects - Displays <span class="keyword">the</span> sub-projects <span class="keyword">of</span> root project <span class="string">'projectReports'</span>.</div><div class="line">properties - Displays <span class="keyword">the</span> properties <span class="keyword">of</span> root project <span class="string">'projectReports'</span>.</div><div class="line">tasks - Displays <span class="keyword">the</span> tasks runnable <span class="built_in">from</span> root project <span class="string">'projectReports'</span> (some <span class="keyword">of</span> <span class="keyword">the</span> displayed tasks may belong <span class="built_in">to</span> subprojects).</div><div class="line"></div><div class="line">To see all tasks <span class="keyword">and</span> more detail, run gradle tasks <span class="comment">--all</span></div><div class="line"></div><div class="line">To see more detail about <span class="keyword">a</span> task, run gradle help <span class="comment">--task &lt;task&gt;</span></div></pre></td></tr></table></figure>
-<p>默认情况下，此报告只显示已被分配给一个task group的task。你可以设置task的所在组，也可以设置task的描述信息。这些设置都会在这份报告中展示。</p>
-<p>例如：</p>
-<p>build.gradle</p>
-<figure class="highlight puppet"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">dists</span> &#123;</div><div class="line">    <span class="literal">description</span> = <span class="string">'Builds the distribution'</span></div><div class="line">    <span class="literal">group</span> = <span class="string">'build'</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>你可以通过使用<code>--all</code>命令来获取更多的task列表信息。通过这个命令，task列表报告单会显示当前项目的所有的task，并且会按照主task以及每个task的依赖进行分组展示。下面是一个例子：</p>
-<p>获取有关task的更多信息</p>
-<p>执行<code>gradle -q tasks --all</code>:</p>
-<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line">&gt; gradle -q tasks <span class="comment">--all</span></div><div class="line"></div><div class="line"><span class="comment">------------------------------------------------------------</span></div><div class="line">All tasks runnable <span class="built_in">from</span> root project</div><div class="line"><span class="comment">------------------------------------------------------------</span></div><div class="line"></div><div class="line">Default tasks: dists</div><div class="line"></div><div class="line">Build tasks</div><div class="line"><span class="comment">-----------</span></div><div class="line">clean - Deletes <span class="keyword">the</span> build <span class="built_in">directory</span> (build)</div><div class="line">api:clean - Deletes <span class="keyword">the</span> build <span class="built_in">directory</span> (build)</div><div class="line">webapp:clean - Deletes <span class="keyword">the</span> build <span class="built_in">directory</span> (build)</div><div class="line">dists - Builds <span class="keyword">the</span> distribution [api:libs, webapp:libs]</div><div class="line">    docs - Builds <span class="keyword">the</span> documentation</div><div class="line">api:libs - Builds <span class="keyword">the</span> JAR</div><div class="line">    api:compile - Compiles <span class="keyword">the</span> source <span class="built_in">files</span></div><div class="line">webapp:libs - Builds <span class="keyword">the</span> JAR [api:libs]</div><div class="line">    webapp:compile - Compiles <span class="keyword">the</span> source <span class="built_in">files</span></div><div class="line"></div><div class="line">Build Setup tasks</div><div class="line"><span class="comment">-----------------</span></div><div class="line">init - Initializes <span class="keyword">a</span> <span class="built_in">new</span> Gradle build. [incubating]</div><div class="line">wrapper - Generates Gradle wrapper <span class="built_in">files</span>. [incubating]</div><div class="line"></div><div class="line">Help tasks</div><div class="line"><span class="comment">----------</span></div><div class="line">buildEnvironment - Displays all buildscript dependencies declared <span class="keyword">in</span> root project <span class="string">'projectReports'</span>.</div><div class="line">api:buildEnvironment - Displays all buildscript dependencies declared <span class="keyword">in</span> project <span class="string">':api'</span>.</div><div class="line">webapp:buildEnvironment - Displays all buildscript dependencies declared <span class="keyword">in</span> project <span class="string">':webapp'</span>.</div><div class="line">components - Displays <span class="keyword">the</span> components produced <span class="keyword">by</span> root project <span class="string">'projectReports'</span>. [incubating]</div><div class="line">api:components - Displays <span class="keyword">the</span> components produced <span class="keyword">by</span> project <span class="string">':api'</span>. [incubating]</div><div class="line">webapp:components - Displays <span class="keyword">the</span> components produced <span class="keyword">by</span> project <span class="string">':webapp'</span>. [incubating]</div><div class="line">dependencies - Displays all dependencies declared <span class="keyword">in</span> root project <span class="string">'projectReports'</span>.</div><div class="line">api:dependencies - Displays all dependencies declared <span class="keyword">in</span> project <span class="string">':api'</span>.</div><div class="line">webapp:dependencies - Displays all dependencies declared <span class="keyword">in</span> project <span class="string">':webapp'</span>.</div><div class="line">dependencyInsight - Displays <span class="keyword">the</span> insight <span class="keyword">into</span> <span class="keyword">a</span> specific dependency <span class="keyword">in</span> root project <span class="string">'projectReports'</span>.</div><div class="line">api:dependencyInsight - Displays <span class="keyword">the</span> insight <span class="keyword">into</span> <span class="keyword">a</span> specific dependency <span class="keyword">in</span> project <span class="string">':api'</span>.</div><div class="line">webapp:dependencyInsight - Displays <span class="keyword">the</span> insight <span class="keyword">into</span> <span class="keyword">a</span> specific dependency <span class="keyword">in</span> project <span class="string">':webapp'</span>.</div><div class="line">help - Displays <span class="keyword">a</span> help message.</div><div class="line">api:help - Displays <span class="keyword">a</span> help message.</div><div class="line">webapp:help - Displays <span class="keyword">a</span> help message.</div><div class="line">model - Displays <span class="keyword">the</span> configuration model <span class="keyword">of</span> root project <span class="string">'projectReports'</span>. [incubating]</div><div class="line">api:model - Displays <span class="keyword">the</span> configuration model <span class="keyword">of</span> project <span class="string">':api'</span>. [incubating]</div><div class="line">webapp:model - Displays <span class="keyword">the</span> configuration model <span class="keyword">of</span> project <span class="string">':webapp'</span>. [incubating]</div><div class="line">projects - Displays <span class="keyword">the</span> sub-projects <span class="keyword">of</span> root project <span class="string">'projectReports'</span>.</div><div class="line">api:projects - Displays <span class="keyword">the</span> sub-projects <span class="keyword">of</span> project <span class="string">':api'</span>.</div><div class="line">webapp:projects - Displays <span class="keyword">the</span> sub-projects <span class="keyword">of</span> project <span class="string">':webapp'</span>.</div><div class="line">properties - Displays <span class="keyword">the</span> properties <span class="keyword">of</span> root project <span class="string">'projectReports'</span>.</div><div class="line">api:properties - Displays <span class="keyword">the</span> properties <span class="keyword">of</span> project <span class="string">':api'</span>.</div><div class="line">webapp:properties - Displays <span class="keyword">the</span> properties <span class="keyword">of</span> project <span class="string">':webapp'</span>.</div><div class="line">tasks - Displays <span class="keyword">the</span> tasks runnable <span class="built_in">from</span> root project <span class="string">'projectReports'</span> (some <span class="keyword">of</span> <span class="keyword">the</span> displayed tasks may belong <span class="built_in">to</span> subprojects).</div><div class="line">api:tasks - Displays <span class="keyword">the</span> tasks runnable <span class="built_in">from</span> project <span class="string">':api'</span>.</div><div class="line">webapp:tasks - Displays <span class="keyword">the</span> tasks runnable <span class="built_in">from</span> project <span class="string">':webapp'</span>.</div></pre></td></tr></table></figure>
-<h3 id="7-3_显示task的使用细节(gradle_help_-task_someTask)">7.3 显示task的使用细节(<code>gradle help --task someTask</code>)</h3><p>运行<code>gradle help --task someTask</code>会得到一个关于你所选择的task或者与你输入名称相匹配的一系列task的详细信息。</p>
-<p>下面是一个例子：</p>
-<p><code>gradle -q help --task libs</code>执行的输出：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&gt; <span class="selector-tag">gradle</span> <span class="selector-tag">-q</span> <span class="selector-tag">help</span> <span class="selector-tag">--task</span> <span class="selector-tag">libs</span></div><div class="line"><span class="selector-tag">Detailed</span> <span class="selector-tag">task</span> <span class="selector-tag">information</span> <span class="selector-tag">for</span> <span class="selector-tag">libs</span></div><div class="line"></div><div class="line"><span class="selector-tag">Paths</span></div><div class="line">     <span class="selector-pseudo">:api</span><span class="selector-pseudo">:libs</span></div><div class="line">     <span class="selector-pseudo">:webapp</span><span class="selector-pseudo">:libs</span></div><div class="line"></div><div class="line"><span class="selector-tag">Type</span></div><div class="line">     <span class="selector-tag">Task</span> (<span class="selector-tag">org</span><span class="selector-class">.gradle</span><span class="selector-class">.api</span><span class="selector-class">.Task</span>)</div><div class="line"></div><div class="line"><span class="selector-tag">Description</span></div><div class="line">     <span class="selector-tag">Builds</span> <span class="selector-tag">the</span> <span class="selector-tag">JAR</span></div><div class="line"></div><div class="line"><span class="selector-tag">Group</span></div><div class="line">     <span class="selector-tag">build</span></div></pre></td></tr></table></figure>
-<p>这些信息包含全部的task路径，task的类型，可能有的命令行选项和给定的task的描述。</p>
-<h3 id="7-4_列出项目的依赖项(gradle_dependencies)">7.4 列出项目的依赖项(<code>gradle dependencies</code>)</h3><p>运行<code>gradle dependencies</code>，列出了所选项目的所有依赖，以及被配置项分解的依赖。对于每个配置，该配置的直接和传递的依赖关系都会在树中显示。下面是一个例子：</p>
-<p><strong>获取依赖关系的信息</strong></p>
-<p>运行<code>gradle -q dependencies api:dependencies webapp:dependencies</code></p>
-<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">&gt; gradle -q dependencies api:dependencies webapp:dependencies</div><div class="line"></div><div class="line"><span class="code">------------------------------------------------------------</span></div><div class="line">Root project</div><div class="line">------------------------------------------------------------</div><div class="line"></div><div class="line">No configurations</div><div class="line"></div><div class="line"><span class="code">------------------------------------------------------------</span></div><div class="line">Project :api - The shared API for the application</div><div class="line">------------------------------------------------------------</div><div class="line"></div><div class="line">compile</div><div class="line">\--- org.codehaus.groovy:groovy-all:2.4.4</div><div class="line"></div><div class="line">testCompile</div><div class="line">\--- junit:junit:4.12</div><div class="line"><span class="code">     \--- org.hamcrest:hamcrest-core:1.3</span></div><div class="line"></div><div class="line"><span class="code">------------------------------------------------------------</span></div><div class="line">Project :webapp - The Web application implementation</div><div class="line">------------------------------------------------------------</div><div class="line"></div><div class="line">compile</div><div class="line">+--- project :api</div><div class="line">|    \--- org.codehaus.groovy:groovy-all:2.4.4</div><div class="line">\--- commons-io:commons-io:1.2</div><div class="line"></div><div class="line">testCompile</div><div class="line">No dependencies</div></pre></td></tr></table></figure>
-<p>由于一个依赖报告可能会变得很大，所以有必要通过一些配置来过滤依赖报告的显示。通过命令参数<code>--configuration</code>来实现：</p>
-<p><strong>通过配置来过滤依赖项报告</strong></p>
-<p><code>gradle -q api:dependencies --configuration testCompile</code>的输出结果：</p>
-<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&gt; gradle -q api:dependencies --configuration testCompile</div><div class="line"></div><div class="line"><span class="code">------------------------------------------------------------</span></div><div class="line">Project :api - The shared API for the application</div><div class="line">------------------------------------------------------------</div><div class="line"></div><div class="line">testCompile</div><div class="line">\--- junit:junit:4.12</div><div class="line"><span class="code">     \--- org.hamcrest:hamcrest-core:1.3</span></div></pre></td></tr></table></figure>
-<h3 id="7-5_列出项目构建脚本依赖(gradle_buildEnvironment)">7.5 列出项目构建脚本依赖(<code>gradle buildEnvironment</code>)</h3><p>运行<code>gradle buildEnvironment</code>可以看见项目的依赖的构建脚本，类似于执行<code>gradle dependencies</code>列出构建的依赖项的展示。</p>
-<h3 id="7-6_观察一个特定的依赖项">7.6 观察一个特定的依赖项</h3><p>运行<code>gradle dependencyInsight</code>你将得到一个与你输入匹配的一条或多条依赖项的内部信息。下面是一个例子：</p>
-<p><strong>观察一个特定的依赖</strong></p>
-<p>运行<code>gradle -q webapp:dependencyInsight --dependency groovy --configuration compile</code>:</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt; <span class="selector-tag">gradle</span> <span class="selector-tag">-q</span> <span class="selector-tag">webapp</span><span class="selector-pseudo">:dependencyInsight</span> <span class="selector-tag">--dependency</span> <span class="selector-tag">groovy</span> <span class="selector-tag">--configuration</span> <span class="selector-tag">compile</span></div><div class="line"><span class="selector-tag">org</span><span class="selector-class">.codehaus</span><span class="selector-class">.groovy</span><span class="selector-pseudo">:groovy-all</span><span class="selector-pseudo">:2.4.4</span></div><div class="line">\<span class="selector-tag">---</span> <span class="selector-tag">project</span> <span class="selector-pseudo">:api</span></div><div class="line">     \<span class="selector-tag">---</span> <span class="selector-tag">compile</span></div></pre></td></tr></table></figure>
-<p>这个task对于解决调查一个依赖，发现一定的依赖关系是从哪里来的，某些版本的选择原因是什么，是非常有用的。更多的信息，请查阅<a href="https://docs.gradle.org/current/dsl/org.gradle.api.tasks.diagnostics.DependencyInsightReportTask.html" target="_blank" rel="external">DependencyInsightReportTask</a>类的API文档。</p>
-<p>内置的dependencyInsight task在’Help’的task组内。task需要配置依赖项和设置信息。该报告查找在指定的配置中匹配指定的依赖性规范的依赖。如果应用java相关的插件，那么dependencyInsight task就被预配置了’compile’这条配置，因为通常情况下，编译依赖是我们感兴趣的。你应该指定你感兴趣的依赖，通过命令行<code>--dependency</code>选项。如果你不喜欢的默认值，你可以通过<code>--configuration</code>选项来选择配置。更多的信息，请查阅<a href="https://docs.gradle.org/current/dsl/org.gradle.api.tasks.diagnostics.DependencyInsightReportTask.html" target="_blank" rel="external">DependencyInsightReportTask</a>类的API文档。</p>
-<h3 id="7-7_列出项目属性gradle_properties">7.7 列出项目属性<code>gradle properties</code></h3><p>运行<code>gradle properties</code>列出一个项目属性的列表。下面是一小片输出：</p>
-<p><strong>信息的属性</strong></p>
-<p><code>gradle -q api:properties</code></p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&gt; gradle -<span class="selector-tag">q</span> api:properties</div><div class="line"></div><div class="line">------------------------------------------------------------</div><div class="line">Project :api - The shared API <span class="keyword">for</span> the application</div><div class="line">------------------------------------------------------------</div><div class="line"></div><div class="line">allprojects: [project <span class="string">':api'</span>]</div><div class="line">ant: org<span class="selector-class">.gradle</span><span class="selector-class">.api</span><span class="selector-class">.internal</span><span class="selector-class">.project</span><span class="selector-class">.DefaultAntBuilder</span>@<span class="number">12345</span></div><div class="line">antBuilderFactory: org<span class="selector-class">.gradle</span><span class="selector-class">.api</span><span class="selector-class">.internal</span><span class="selector-class">.project</span><span class="selector-class">.DefaultAntBuilderFactory</span>@<span class="number">12345</span></div><div class="line">artifacts: org<span class="selector-class">.gradle</span><span class="selector-class">.api</span><span class="selector-class">.internal</span><span class="selector-class">.artifacts</span><span class="selector-class">.dsl</span><span class="selector-class">.DefaultArtifactHandler_Decorated</span>@<span class="number">12345</span></div><div class="line">asDynamicObject: DynamicObject <span class="keyword">for</span> project <span class="string">':api'</span></div><div class="line">baseClassLoaderScope: org<span class="selector-class">.gradle</span><span class="selector-class">.api</span><span class="selector-class">.internal</span><span class="selector-class">.initialization</span><span class="selector-class">.DefaultClassLoaderScope</span>@<span class="number">12345</span></div><div class="line">buildDir: /home/user/gradle/samples/userguide/tutorial/projectReports/api/build</div><div class="line">buildFile: /home/user/gradle/samples/userguide/tutorial/projectReports/api/build.gradle</div></pre></td></tr></table></figure>
-<h3 id="7-8_分析构建(-profile)">7.8 分析构建(<code>--profile</code>)</h3><p><code>--profile</code>命令选项会在你执行构建上报出有用的定时信息，并输出在<code>build/reports/profile</code>目录下。报告被命名为构建运行的时间。</p>
-<p>这份报告列出了配置阶段和任务执行的汇总时间和详细信息。配置和任务执行的时间按照花费时间最高到最低进行排序。任务执行结果还表明，是否有任何任务被跳过（以及原因），或者如果没有跳过的任务没有工作。</p>
-<p>利用buildsrc目录的构建，将在buildSrc/build目录下会生成第二份报告。</p>
-<p><img src="/img/16_07_09/profile.png" alt=""></p>
-<h2 id="8-Dry_Run">8.Dry Run</h2><p>有时，您是希望在命令行上指定一组给定的task的执行的顺序，但你不希望task被执行。你可以使用<code>-m</code>命令项。例如<code>gradle -m clean compile</code>，你将会看见全部作为clean和compile的task的一部分的将被执行的task。这些会展示给你所依赖的可被执行的task。</p>
-<h2 id="9-总结">9.总结</h2><p>在这一节中，你看到了你可以通过gradle命令行做到的一些事情，更多命令可以查阅<a href="https://docs.gradle.org/current/userguide/gradle_command_line.html" target="_blank" rel="external">Appendix D, Gradle Command Line</a>。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/05/31/UML类图基本关系/" itemprop="url">
-                UML类图基本关系
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-05-31T14:06:55+08:00" content="2016-05-31">
-            2016-05-31
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/工具学习/" itemprop="url" rel="index">
-                  <span itemprop="name">工具学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/05/31/UML类图基本关系/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/31/UML类图基本关系/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="关系汇总">关系汇总</h2><p>uml的类图是用来描述类与类之间的基本关系一种图。常见的有以下几种关系: </p>
-<h3 id="继承关系">继承关系</h3><ul>
-<li><strong>泛化(Generalization)</strong></li>
-<li><strong>实现(Realization)</strong></li>
-</ul>
-<h3 id="拥有关系">拥有关系</h3><ul>
-<li><strong>关联(Association)</strong></li>
-<li><strong>聚合(Aggregation)</strong></li>
-<li><strong>组合(Composition)</strong></li>
-</ul>
-<h3 id="使用关系">使用关系</h3><ul>
-<li><strong>依赖(Dependency)</strong></li>
-</ul>
-<hr>
-<h2 id="继承关系-1">继承关系</h2><h3 id="泛化(Generalization)">泛化(Generalization)</h3><p>是一种继承关系, 表示一般与特殊的关系, 它指定了子类如何特化父类的所有特征和行为。</p>
-<p><img src="/img/16_05_31/01.png" alt="泛化"></p>
-<h3 id="实现（Realization）">实现（Realization）</h3><p>是一种类与接口的关系，表示类是接口所有特征和行为的实现。</p>
-<p><img src="/img/16_05_31/02.png" alt="实现"></p>
-<h2 id="拥有关系-1">拥有关系</h2><h3 id="关联(Association)">关联(Association)</h3><p>是一种拥有的关系，它使一个类知道另一个类的属性和方法；具体代码体现是：成员变量。双向的关联可以有两个箭头或者没有箭头，单向的关联有一个箭头。</p>
-<p><img src="/img/16_05_31/03.png" alt="实现"></p>
-<h3 id="聚合(Aggregation)">聚合(Aggregation)</h3><p>是整体与部分的关系，且部分可以离开整体而单独存在。如车和轮胎是整体和部分的关系，轮胎离开车仍然可以存在。具体的代码体现也是成员变量，但突出强调整体和部分的关系。</p>
-<p><img src="/img/16_05_31/04.png" alt="实现"></p>
-<h3 id="组合(Composition)">组合(Composition)</h3><p>是整体与部分的关系，但部分不能离开整体而单独存在。如公司和部门是整体和部分的关系，没有公司就不存在部门。</p>
-<p>组合关系是关联关系的一种，是比聚合关系还要强的关系，它要求普通的聚合关系中代表整体的对象负责代表部分的对象的生命周期。</p>
-<p><img src="/img/16_05_31/05.png" alt="组合"></p>
-<h2 id="使用关系-1">使用关系</h2><h3 id="依赖(Dependency)">依赖(Dependency)</h3><p>是一种使用的关系，即一个类的实现需要另一个类的协助。具体代码实现为：局部变量、方法的参数或者对静态方法的调用。</p>
-<p><img src="/img/16_05_31/06.png" alt="组合"></p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1584,7 +1710,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">95</span>
+              <span class="site-state-item-count">97</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
