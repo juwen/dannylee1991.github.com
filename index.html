@@ -593,8 +593,66 @@ var _hmt = _hmt || [];
 </ul>
 <p>在这里，target（你训练模型预测的值）是花种，它是一个从0-2的整数，所以对应的适当的<code>numpy</code>数据类型是<code>np.int</code>：</p>
 <figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Data sets</span></div><div class="line"><span class="attr">IRIS_TRAINING</span> = <span class="string">"iris_training.csv"</span></div><div class="line"><span class="attr">IRIS_TEST</span> = <span class="string">"iris_test.csv"</span></div><div class="line"></div><div class="line"><span class="comment"># Load datasets.</span></div><div class="line"><span class="attr">training_set</span> = tf.contrib.learn.datasets.base.load_csv_with_header(</div><div class="line">    <span class="attr">filename=IRIS_TRAINING,</span></div><div class="line">    <span class="attr">target_dtype=np.int,</span></div><div class="line">    <span class="attr">features_dtype=np.float32)</span></div><div class="line"><span class="attr">test_set</span> = tf.contrib.learn.datasets.base.load_csv_with_header(</div><div class="line">    <span class="attr">filename=IRIS_TEST,</span></div><div class="line">    <span class="attr">target_dtype=np.int,</span></div><div class="line">    <span class="attr">features_dtype=np.float32)</span></div></pre></td></tr></table></figure>
-<p>tf.contrib.learn中的<code>Dataset</code>是<a href="https://docs.python.org/2/library/collections.html#collections.namedtuple" target="_blank" rel="external">命名元组</a>；</p>
-<h2 id="构建一个深度神经网络分类器">构建一个深度神经网络分类器</h2><h2 id="将DNNC分类器用于Iris训练数据">将DNNC分类器用于Iris训练数据</h2><h2 id="评估模型精度">评估模型精度</h2><h2 id="分类新样品">分类新样品</h2><h2 id="其他资源">其他资源</h2></span>
+<p>tf.contrib.learn中的<code>Dataset</code>是<a href="https://docs.python.org/2/library/collections.html#collections.namedtuple" target="_blank" rel="external">命名元组</a>；您可以通过<code>data</code>和<code>target</code>字段访问特征数据和目标值。这里<code>training_set.data</code>和<code>training_set.target</code>分别包含训练集的特征数据和目标值；<code>test_set.data</code>和<code>test_set.target</code>分别包含测试集的特征数据和目标值。</p>
+<p>在后面的<a href="#将DNN分类器用于Iris训练数据">“将DNN分类器用于Iris训练数据”</a>中，你将使用到<code>training_set.data</code>和<code>training_set.target</code>来训练你的模型，在<a href="#评估模型精度">“评估模型精度”</a>中，你将使用<code>test_set.data</code>和<code>test_set.target</code>。但首先，你需要在下一节中构建你的模型。</p>
+<h2 id="构建一个深度神经网络分类器">构建一个深度神经网络分类器</h2><p>tf.contrib.learn提供了一系列预定义的模型，叫做<a href="https://www.tensorflow.org/api_guides/python/contrib.learn#estimators" target="_blank" rel="external">Estimator</a>s。通过Estimator，您可以对您的数据很方便的进行训练和评估操作，达到“开箱即用”的效果。在这里，您将配置一个深层神经网络分类器模型以适应Iris数据。通过使用tf.contrib.learn，你可以仅仅使用一行代码就实例化一个<a href="https://www.tensorflow.org/api_docs/python/tf/contrib/learn/DNNClassifier" target="_blank" rel="external"><code>tf.contrib.learn.DNNClassifier</code></a>。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"># Specify that all features have real-value data</div><div class="line">feature_columns = [tf.contrib.layers.real_valued_column(<span class="string">""</span>, dimension=<span class="number">4</span>)]</div><div class="line"></div><div class="line"># Build <span class="number">3</span> layer DNN with <span class="number">10</span>, <span class="number">20</span>, <span class="number">10</span> units respectively.</div><div class="line">classifier = tf.contrib.learn.DNNClassifier(feature_columns=feature_columns,</div><div class="line">                                            hidden_units=[<span class="number">10</span>, <span class="number">20</span>, <span class="number">10</span>],</div><div class="line">                                            n_classes=<span class="number">3</span>,</div><div class="line">                                            model_dir=<span class="string">"/tmp/iris_model"</span>)</div></pre></td></tr></table></figure>
+<p>上面的代码首先定义了模型的特征列，它指定了数据集中特征的数据类型。所有的特征数据都是连续的，因此<code>tf.contrib.layers.real_valued_column</code>是用于构造特征列的适当函数。数据集中有四个特征（萼片宽度，萼片高度，花瓣宽度和花瓣高度），因此相应的尺寸必须设置为4以保存所有数据。</p>
+<p>然后，代码使用以下参数创建<code>DNNClassifier</code>模型：</p>
+<ul>
+<li><code>feature_columns=feature_columns</code>。上面定义的一组特征</li>
+<li><code>hidden_units=[10, 20, 10]</code>。三个<a href="http://stats.stackexchange.com/questions/181/how-to-choose-the-number-of-hidden-layers-and-nodes-in-a-feedforward-neural-netw" target="_blank" rel="external">隐藏层</a>分别包含10，20，10个神经元。</li>
+<li><code>n_classes=3</code>。三个目标类，代表三个鸢尾物种。</li>
+<li><code>model_dir=/tmp/iris_model</code>。TensorFlow在模型训练期间将保存检查点数据的目录。有关使用TensorFlow进行日志记录和监视的更多信息，请见<a href="">使用tf.contrib.learn记录和监视的基本知识</a>。</li>
+</ul>
+<h2 id="将DNN分类器用于Iris训练数据">将DNN分类器用于Iris训练数据</h2><p>现在，你已经配置好了你的DNN<code>classifier</code>模型，你可以使用<a href="https://www.tensorflow.org/api_docs/python/tf/contrib/learn/BaseEstimator#fit" target="_blank" rel="external"><code>fit</code></a>方法来将Iris训练数据应用到分类器上。将特征数据（<code>training_set.data</code>），目标值（<code>training_set.target</code>）和要训练的步数（这里是<code>2000</code>）作为参数传递：</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Fit model</span></div><div class="line">classifier.fit(<span class="attr">x=training_set.data,</span> <span class="attr">y=training_set.target,</span> <span class="attr">steps=2000)</span></div></pre></td></tr></table></figure>
+<p>模型的状态保存在<code>classifier</code>(分类器)中，这意味着如果你喜欢，你可以迭代地训练。上面的代码执行效果等同于下面这两行代码：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">classifier.fit(x=training_set<span class="selector-class">.data</span>, y=training_set<span class="selector-class">.target</span>, steps=<span class="number">1000</span>)</div><div class="line">classifier.fit(x=training_set<span class="selector-class">.data</span>, y=training_set<span class="selector-class">.target</span>, steps=<span class="number">1000</span>)</div></pre></td></tr></table></figure>
+<p>但是，如果您希望在训练时跟踪模型，则可能需要使用TensorFlow<a href="https://www.tensorflow.org/api_docs/python/tf/contrib/learn/monitors" target="_blank" rel="external">monitor</a>(监视器)来执行日志操作。关于这个主题更多的内容，请见教程<a href="">使用tf.contrib.learn记录和监视的基本知识</a>。</p>
+<h2 id="评估模型精度">评估模型精度</h2><p>你已经将Iris的训练数据适配到了<code>DNNClassifier</code>模型上；现在，您可以使用<a href="https://www.tensorflow.org/api_docs/python/tf/contrib/learn/BaseEstimator#evaluate" target="_blank" rel="external"><code>evaluate</code></a>方法在Iris测试数据上检查其准确性。像<code>fit</code>（拟合）一样，<code>evaluate</code>（评估操作）将特征数据和目标值作为参数，并返回带有评估结果的<code>dict</code>（字典）。以下代码通过了Iris测试数据-<code>test_set.data</code>和<code>test_set.target</code>来评估和打印结果的准确性：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">accuracy_score = classifier.evaluate(x=test_set<span class="selector-class">.data</span>, y=test_set.target)[<span class="string">"accuracy"</span>]</div><div class="line"><span class="function"><span class="title">print</span><span class="params">(<span class="string">'Accuracy: &#123;0:f&#125;'</span>.format(accuracy_score)</span></span>)</div></pre></td></tr></table></figure>
+<p>运行全部的脚本，并检查结果的准确度：</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">Accuracy:</span> <span class="number">0.966667</span></div></pre></td></tr></table></figure>
+<p>您的准确度结果可能有所不同，但应该是高于90％的。这对于相对较小的数据集是一个不错的结果了！</p>
+<h2 id="分类新样品">分类新样品</h2><p>使用评估器的<code>predict()</code>方法来分类一个新的样本。例如，说你有这两个新的花样本：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">萼片长度(Sepal Length)</th>
+<th style="text-align:left">萼片宽度(Sepal Width)</th>
+<th style="text-align:left">花瓣长度(Petal Length)</th>
+<th style="text-align:left">花瓣宽度(Petal Width)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">6.4</td>
+<td style="text-align:left">3.2</td>
+<td style="text-align:left">4.5</td>
+<td style="text-align:left">1.5</td>
+</tr>
+<tr>
+<td style="text-align:left">5.8</td>
+<td style="text-align:left">3.1</td>
+<td style="text-align:left">5.0</td>
+<td style="text-align:left">1.7</td>
+</tr>
+</tbody>
+</table>
+<p>你可以用以下代码预测他们的物种：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"># Classify two new flower samples.</div><div class="line">new_samples = np.array(</div><div class="line">    <span class="string">[[6.4, 3.2, 4.5, 1.5], [5.8, 3.1, 5.0, 1.7]]</span>, dtype=float)</div><div class="line">y = list(classifier.predict(new_samples, as_iterable=True))</div><div class="line"><span class="built_in">print</span>(<span class="string">'Predictions: &#123;&#125;'</span>.format(str(y)))</div></pre></td></tr></table></figure>
+<p><code>predict()</code>方法返回了一个预测数组，每个样本对应其中的一个结果：</p>
+<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Prediction: <span class="string">[1 2]</span></div></pre></td></tr></table></figure>
+<p>该模型预测的结果为：第一个样本是杂色鸢尾，第二个样本是维吉尼亚鸢尾。</p>
+<h2 id="其他资源">其他资源</h2><ul>
+<li>有关tf.contrib.learn的更多参考资料，请参阅<a href="https://www.tensorflow.org/api_guides/python/contrib.learn" target="_blank" rel="external">官方API文档</a>。</li>
+<li>要了解有关使用tf.contrib.learn创建线性模型的更多信息，请参阅<a href="https://www.tensorflow.org/tutorials/linear" target="_blank" rel="external">使用TensorFlow的大型线性模型</a>。</li>
+<li>要使用tf.contrib.learn API构建自己的评估器，请查看<a href="http://terrytangyuan.github.io/2016/07/08/understand-and-build-tensorflow-estimator/" target="_blank" rel="external">TensorFlow中的Building Machine Learning Estimator</a>。</li>
+<li>要在浏览器中尝试神经网络建模和可视化，请查看<a href="http://playground.tensorflow.org/" target="_blank" rel="external">Deep Playground</a>。</li>
+<li>有关神经网络的更高级教程，请参阅<a href="https://www.tensorflow.org/tutorials/deep_cnn" target="_blank" rel="external">卷积神经网络</a>和<a href="https://www.tensorflow.org/tutorials/recurrent" target="_blank" rel="external">循环神经网络</a>。</li>
+</ul>
+</span>
         
       
     </div>
