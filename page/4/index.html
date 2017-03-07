@@ -199,6 +199,140 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2016/12/08/房价预测（2）-数据清洗与持久化/" itemprop="url">
+                房价预测（2）-数据清洗与持久化
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-12-08T23:05:58+08:00" content="2016-12-08">
+            2016-12-08
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/12/08/房价预测（2）-数据清洗与持久化/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/08/房价预测（2）-数据清洗与持久化/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><blockquote>
+<p>在<a href="/2016/11/30/房价预测（1）-搜房网数据爬取/">房价预测（1）-搜房网数据爬取</a>中，已经介绍了爬虫的核心代码，但是爬取到的数据是没有经过加工且带有html标签的，很不利于阅读和使用，并且我们没有把数据持久化到本地，那么这篇文章主要介绍的就是这两步工作。</p>
+</blockquote>
+<h2 id="Item_Pipeline介绍">Item Pipeline介绍</h2><p>Scrapy中有个很好用的工具<a href="http://scrapy-chs.readthedocs.io/zh_CN/latest/topics/item-pipeline.html" target="_blank" rel="external">Item Pipeline</a>。</p>
+<p>通过阅读文档我们可以看到它的作用是：</p>
+<ul>
+<li>清理HTML数据</li>
+<li>验证爬取的数据(检查item包含某些字段)</li>
+<li>查重(并丢弃)</li>
+<li>将爬取结果保存到数据库中</li>
+</ul>
+<p>真是完全符合我们的要求。</p>
+<blockquote>
+<p><strong>Pipeline</strong>的意思是<strong>管道</strong>,如果你玩过Linux的话，对这个名称一定不会陌生。管道是计算机中一个非常常见且重要的概念，大致的作用就是<strong>将管道前一部分的输出结果作为它后一部分的输入</strong>。类似这种设计都可以称为<strong>管道</strong>。</p>
+</blockquote>
+<p>还记得我们之前写的蜘蛛吗？在<code>ESFListSpider</code>这个蜘蛛中，开始爬取数据时会走到这个方法中:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 爬取房源列表信息</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(self, response)</span>:</span></div><div class="line">        self.log(<span class="string">'A response from %s just arrived!'</span> % response.url)</div><div class="line">        infos = response.xpath(<span class="string">"//a/@href"</span>).extract()</div><div class="line"></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> infos:</div><div class="line">            i_str = str(i).encode(<span class="string">"utf-8"</span>)</div><div class="line">            <span class="keyword">if</span> <span class="string">"esf"</span> <span class="keyword">in</span> i_str:</div><div class="line">                url = i_str.replace(<span class="string">'\\'</span>, <span class="string">''</span>).strip()</div><div class="line">                <span class="keyword">yield</span> scrapy.Request(url=url.replace(<span class="string">"\""</span>, <span class="string">""</span>), callback=self.parse_details)</div></pre></td></tr></table></figure>
+<p>在这个方法的内部的循环中会遍历链接地址，再次发起request，之后会自动调用回调函数<code>self.parse_details</code>，自动执行<code>parse_details</code>:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 爬取房源详情信息</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse_details</span><span class="params">(self, response)</span>:</span></div><div class="line">	...</div><div class="line">	<span class="comment"># 顺便爬取一下详情页 url</span></div><div class="line">	item = ESFItem()</div><div class="line">    item[<span class="string">'url'</span>] = response.url</div><div class="line">    </div><div class="line">    <span class="comment"># 详情页对应的 城市-一级区域-二级区域 信息</span></div><div class="line">	bread_list = response.xpath(<span class="string">"//body/div[@class='wrap']/div[@class='bread']/p[@class='floatl']/a"</span>).extract()</div><div class="line">    <span class="keyword">for</span> index,bread <span class="keyword">in</span> enumerate(bread_list[<span class="number">1</span>:]):</div><div class="line">        <span class="keyword">if</span> index == <span class="number">0</span>:</div><div class="line">            item[<span class="string">"bread_city"</span>] = bread</div><div class="line">        <span class="keyword">elif</span> index == <span class="number">1</span>:</div><div class="line">            item[<span class="string">"bread_area"</span>] = bread</div><div class="line">        <span class="keyword">elif</span> index == <span class="number">2</span>:</div><div class="line">            item[<span class="string">"bread_positon"</span>] = bread</div><div class="line">	...</div><div class="line">	<span class="comment"># 这句很重要，保证item可以传递到后面的Pipeline中</span></div><div class="line">	<span class="keyword">yield</span> item</div></pre></td></tr></table></figure>
+<p>以上是我们蜘蛛的部分核心代码，如果我们配置了Pipeline，蜘蛛会把塞满信息的item传递到我们定义的Pipeline中。</p>
+<h3 id="创建Pipeline">创建Pipeline</h3><p>为了满足<strong>清洗数据</strong>和<strong>存储数据</strong>的功能，我们创建两个Pipeline来分别处理这两类逻辑：</p>
+<p>在<code>pipelines.py</code>中添加：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ExtractDataPipeline</span><span class="params">(object)</span>:</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">process_item</span><span class="params">(self, item, spider)</span>:</span></div><div class="line">		...</div><div class="line">		<span class="keyword">return</span> item</div></pre></td></tr></table></figure>
+<p>和</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SaveDataPipline</span><span class="params">(object)</span>:</span></div><div class="line">	<span class="function"><span class="keyword">def</span> <span class="title">process_item</span><span class="params">(self, item, spider)</span>:</span></div><div class="line">		...</div><div class="line">		<span class="keyword">return</span> item</div></pre></td></tr></table></figure>
+<p>并在<code>settings.py</code>中进行注册：</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="attr">...</span></div><div class="line">ITEM_PIPELINES = &#123;</div><div class="line">   <span class="string">'soufang.pipelines.ExtractDataPipeline'</span>: <span class="number">300</span>,</div><div class="line">   <span class="string">'soufang.pipelines.SaveDataPipline'</span>:<span class="number">500</span>,</div><div class="line">&#125;</div><div class="line"><span class="attr">...</span></div></pre></td></tr></table></figure>
+<p>后面的数字范围是0-1000之内的任意整数，代表的是优先级。可以看出来我们是优先清洗数据，然后保存数据。</p>
+<h2 id="清洗数据">清洗数据</h2><p>清洗数据的代码如下，就是将每一个字段的信息的html标签进行剥离，并且截取掉冗余的字符串：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 剔除html代码</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">take_out_html</span><span class="params">(str)</span>:</span></div><div class="line">    dr = re.compile(<span class="string">r'&lt;[^&gt;]+&gt;'</span>, re.S)</div><div class="line">    <span class="keyword">return</span> dr.sub(<span class="string">''</span>, str)</div><div class="line"></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ExtractDataPipeline</span><span class="params">(object)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_item</span><span class="params">(self, item, spider)</span>:</span></div><div class="line">        <span class="keyword">print</span> <span class="string">"&gt;&gt;&gt; ExtractDataPipeline &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;"</span></div><div class="line">        self.extract_data(item, <span class="string">"url"</span>)</div><div class="line">        self.extract_data(item, <span class="string">"id"</span>, f=<span class="number">5</span>)</div><div class="line">        self.extract_data(item, <span class="string">"publish_time"</span>, f=<span class="number">-10</span>)</div><div class="line">        self.extract_data(item, <span class="string">"title"</span>)</div><div class="line">        self.extract_data(item, <span class="string">"total_price"</span>)</div><div class="line">        self.extract_data(item, <span class="string">"house_type"</span>, f=<span class="number">3</span>)</div><div class="line">        self.extract_data(item, <span class="string">"house_build_area"</span>, f=<span class="number">5</span>)</div><div class="line">        self.extract_data(item, <span class="string">"house_use_area"</span>, f=<span class="number">5</span>)</div><div class="line">        self.extract_data(item, <span class="string">"house_age"</span>, f=<span class="number">3</span>)</div><div class="line">        self.extract_data(item, <span class="string">"orientation"</span>, f=<span class="number">3</span>)</div><div class="line">        self.extract_data(item, <span class="string">"floor"</span>, f=<span class="number">3</span>)</div><div class="line">        self.extract_data(item, <span class="string">"structure"</span>, f=<span class="number">3</span>)</div><div class="line">        self.extract_data(item, <span class="string">"decoration"</span>, f=<span class="number">3</span>)</div><div class="line">        self.extract_data(item, <span class="string">"residential_category"</span>, f=<span class="number">5</span>)</div><div class="line">        self.extract_data(item, <span class="string">"building_class"</span>, f=<span class="number">5</span>)</div><div class="line">        self.extract_data(item, <span class="string">"property_right"</span>, f=<span class="number">5</span>)</div><div class="line">        self.extract_data(item, <span class="string">"property_name"</span>)</div><div class="line">        self.extract_data(item, <span class="string">"school"</span>)</div><div class="line">        self.extract_data(item, <span class="string">"supporting_facilities"</span>)</div><div class="line">        self.extract_data(item, <span class="string">"bread_city"</span>, t=<span class="number">-3</span>)</div><div class="line">        self.extract_data(item, <span class="string">"bread_area"</span>, t=<span class="number">-3</span>)</div><div class="line">        self.extract_data(item, <span class="string">"bread_positon"</span>, t=<span class="number">-3</span>)</div><div class="line">        <span class="keyword">return</span> item</div><div class="line"></div><div class="line">    <span class="comment"># 剔除数据中的多余部分</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">extract_data</span><span class="params">(self, item, key_bread_positon, f=None, t=None)</span>:</span></div><div class="line">        <span class="keyword">if</span> self.check_key_exist(item, key_bread_positon):</div><div class="line">            item[key_bread_positon] = take_out_html(item[key_bread_positon]).strip()[f:t]</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            item[key_bread_positon] = <span class="string">""</span></div><div class="line">        self.print_itme_value(item, key_bread_positon)</div><div class="line"></div><div class="line">    <span class="comment"># 检查key是否存在</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">check_key_exist</span><span class="params">(self, item, key)</span>:</span></div><div class="line">        <span class="keyword">return</span> key <span class="keyword">in</span> item.keys()</div><div class="line"></div><div class="line">    <span class="comment"># 输出数据</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">print_itme_value</span><span class="params">(self, item, key)</span>:</span></div><div class="line">        <span class="keyword">print</span> key + <span class="string">" &gt;&gt;&gt; "</span> + item[key]</div></pre></td></tr></table></figure>
+<h2 id="保存数据到MongoDB">保存数据到MongoDB</h2><p>保存数据我们使用<a href="http://www.mongodb.org/" target="_blank" rel="external">MongoDB</a>，这是一个很简单易用且功能强大的<strong>非关系型数据库</strong>，它可以把数据保存成一种类似Json的格式。</p>
+<p>使用教程网上很容易搜到，推荐一个自学网站：<a href="http://www.runoob.com/mongodb/mongodb-tutorial.html" target="_blank" rel="external">MongoDB教程</a></p>
+<p>mongo的可视化工具也有很多，我使用的是<a href="https://robomongo.org/" target="_blank" rel="external">Robomongo</a>。</p>
+<p>使用mongo我们需要在<code>settings.py</code>中增添下面的配置信息：</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">...</div><div class="line">MONGO_URI = <span class="string">"mongodb://localhost:27017"</span>;</div><div class="line">MONGO_DATABASE = <span class="string">"soufang"</span>;</div><div class="line">...</div></pre></td></tr></table></figure>
+<p>下面是<code>SaveDataPipline</code>的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SaveDataPipline</span><span class="params">(object)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, mongo_uri, mongo_db)</span>:</span></div><div class="line">        self.mongo_uri = mongo_uri</div><div class="line">        self.mongo_db = mongo_db</div><div class="line"></div><div class="line"><span class="meta">    @classmethod</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">from_crawler</span><span class="params">(cls, crawler)</span>:</span></div><div class="line">        <span class="keyword">return</span> cls(</div><div class="line">            mongo_uri=crawler.settings.get(<span class="string">'MONGO_URI'</span>),</div><div class="line">            mongo_db=crawler.settings.get(<span class="string">'MONGO_DATABASE'</span>, <span class="string">'items'</span>)</div><div class="line">        )</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">open_spider</span><span class="params">(self, spider)</span>:</span></div><div class="line">        self.client = pymongo.MongoClient(self.mongo_uri)</div><div class="line">        self.db = self.client[self.mongo_db]</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">close_spider</span><span class="params">(self, spider)</span>:</span></div><div class="line">        self.client.close()</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_item</span><span class="params">(self, item, spider)</span>:</span></div><div class="line">        <span class="keyword">print</span> <span class="string">"&gt;&gt;&gt; SaveDataPipline &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;"</span></div><div class="line">        collection_name = self.mongo_db</div><div class="line">        self.db[collection_name].insert(dict(item))</div><div class="line">        <span class="keyword">return</span> item</div></pre></td></tr></table></figure>
+<h3 id="去除重复项">去除重复项</h3><p>为了保证id重复的房源信息不再重复爬取，我们可以对数据库建立<strong>唯一索引</strong>，这样既能够提高查询效率，又能够去除重复数据。</p>
+<p>后台建立唯一索引：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">db<span class="selector-class">.soufang</span><span class="selector-class">.ensureIndex</span>(&#123;<span class="string">"id"</span>:<span class="number">1</span>&#125;,&#123;<span class="string">"unique"</span>:true&#125;,&#123;<span class="string">"background"</span>:true&#125;)</div></pre></td></tr></table></figure>
+<h2 id="开始爬取！">开始爬取！</h2><p>终于可以开心的爬取数据啦~</p>
+<p>命令行输入<code>mongod</code>开启mongo服务后，进入我们的爬虫项目，开启我们的爬虫：</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">scrapy </span>crawl esflist</div></pre></td></tr></table></figure>
+<p><img src="/img/16_12_07/001.gif" alt=""></p>
+<p>在Robomongo中我们执行一条查询语句<code>db.soufang.find()</code>就可以看到我们爬取到的全部数据：</p>
+<p><img src="/img/16_12_07/002.png" alt=""></p>
+<p>执行<code>db.soufang.findOne()</code>可以查询到一条记录：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">&gt; db<span class="selector-class">.soufang</span><span class="selector-class">.findOne</span>()</div><div class="line">&#123;</div><div class="line">	<span class="string">"_id"</span> : ObjectId(<span class="string">"58497108f26cd3d1ac97004b"</span>),</div><div class="line">	<span class="string">"orientation"</span> : <span class="string">""</span>,</div><div class="line">	<span class="string">"bread_area"</span> : <span class="string">"普陀"</span>,</div><div class="line">	<span class="string">"publish_time"</span> : <span class="string">"2016-10-20"</span>,</div><div class="line">	<span class="string">"id"</span> : <span class="string">"268151561"</span>,</div><div class="line">	<span class="string">"property_name"</span> : <span class="string">"甘泉一村"</span>,</div><div class="line">	<span class="string">"title"</span> : <span class="string">"甘泉一村 边套全明户型 黄金3楼 得房率高 配套成熟 便利"</span>,</div><div class="line">	<span class="string">"building_class"</span> : <span class="string">"板楼"</span>,</div><div class="line">	<span class="string">"bread_positon"</span> : <span class="string">"甘泉"</span>,</div><div class="line">	<span class="string">"house_build_area"</span> : <span class="string">"55.27㎡"</span>,</div><div class="line">	<span class="string">"bread_city"</span> : <span class="string">"上海"</span>,</div><div class="line">	<span class="string">"house_use_area"</span> : <span class="string">""</span>,</div><div class="line">	<span class="string">"house_type"</span> : <span class="string">"2室1厅1厨1卫"</span>,</div><div class="line">	<span class="string">"structure"</span> : <span class="string">"平层"</span>,</div><div class="line">	<span class="string">"decoration"</span> : <span class="string">"简装修"</span>,</div><div class="line">	<span class="string">"school"</span> : <span class="string">""</span>,</div><div class="line">	<span class="string">"total_price"</span> : <span class="string">"275"</span>,</div><div class="line">	<span class="string">"url"</span> : <span class="string">"http://esf.sh.fang.com/chushou/3_268151561.htm"</span>,</div><div class="line">	<span class="string">"house_age"</span> : <span class="string">"1987年"</span>,</div><div class="line">	<span class="string">"floor"</span> : <span class="string">"中层(共6层)"</span>,</div><div class="line">	<span class="string">"property_right"</span> : <span class="string">"个人产权"</span>,</div><div class="line">	<span class="string">"supporting_facilities"</span> : <span class="string">""</span>,</div><div class="line">	<span class="string">"residential_category"</span> : <span class="string">"普通住宅"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>全上海目前在售的二手房源大概有60到70万套之间，我们可以把速度缩短到1秒中爬取一条，如果24小时爬取的话，预计6天可以爬完全上海。不过我们的目的是对数据进行分析，没必要盲目的采集大量的数据，只要数据够用即可。</p>
+<p>如果数据量过大，后面进行训练机器性能也跟不上，所以我准备将总数据量控制在5万条（按照各区域房源数量占比进行组合）。</p>
+<h2 id="what`s_next?">what`s next?</h2><p>接下来我们将构建一个可视化的界面来直观的观察我们爬取到的房源数据。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/12/03/发布aar到jcenter的正确姿势/" itemprop="url">
                 发布aar到jcenter的正确姿势
               </a>
@@ -462,264 +596,6 @@ var _hmt = _hmt || [];
 <h4 id="蜘蛛代码">蜘蛛代码</h4><p>最终蜘蛛的代码如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># coding=utf-8</span></div><div class="line"><span class="keyword">import</span> random</div><div class="line"></div><div class="line"><span class="keyword">import</span> scrapy</div><div class="line"><span class="keyword">from</span> ..items <span class="keyword">import</span> ESFItem</div><div class="line"></div><div class="line"><span class="keyword">import</span> sys</div><div class="line"></div><div class="line">reload(sys)</div><div class="line">sys.setdefaultencoding(<span class="string">'utf-8'</span>)</div><div class="line"></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ESFListSpider</span><span class="params">(scrapy.Spider)</span>:</span></div><div class="line">    name = <span class="string">"esflist"</span></div><div class="line"></div><div class="line">    <span class="comment"># allowed_domains = ["fang.com"]</span></div><div class="line"></div><div class="line">    base_url = <span class="string">"http://esf.sh.fang.com/map/?mapmode=y&amp;orderby=30&amp;ecshop=ecshophouse&amp;PageNo=$&amp;a=ajaxSearch&amp;city=sh&amp;searchtype=loupan"</span></div><div class="line">    start_urls = []</div><div class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, <span class="number">4</span>):</div><div class="line">        start_urls.append(str(base_url).replace(<span class="string">"$"</span>, str(i)))</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, user_agent=<span class="string">''</span>)</span>:</span></div><div class="line">        self.user_agent = user_agent</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_request</span><span class="params">(self, request, spider)</span>:</span></div><div class="line">        <span class="comment"># 这句话用于随机选择user-agent</span></div><div class="line">        ua = random.choice(self.user_agent_list)</div><div class="line">        <span class="keyword">if</span> ua:</div><div class="line">            request.headers.setdefault(<span class="string">'User-Agent'</span>, ua)</div><div class="line"></div><div class="line">    user_agent_list = [</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1"</span> \</div><div class="line">        <span class="string">"Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.6 (KHTML, like Gecko) Chrome/20.0.1092.0 Safari/536.6"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.6 (KHTML, like Gecko) Chrome/20.0.1090.0 Safari/536.6"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/19.77.34.5 Safari/537.1"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.9 Safari/536.5"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.0) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.36 Safari/536.5"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 5.1) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_0) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1062.0 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1062.0 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1061.0 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"</span></div><div class="line">    ]</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(self, response)</span>:</span></div><div class="line"></div><div class="line">        infos = response.xpath(<span class="string">"//a/@href"</span>).extract()</div><div class="line"></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> infos:</div><div class="line">            i_str = str(i).encode(<span class="string">"utf-8"</span>)</div><div class="line">            <span class="keyword">if</span> <span class="string">"esf"</span> <span class="keyword">in</span> i_str:</div><div class="line">                url = i_str.replace(<span class="string">'\\'</span>, <span class="string">''</span>).strip()</div><div class="line"></div><div class="line">                <span class="keyword">yield</span> scrapy.Request(url=url.replace(<span class="string">"\""</span>, <span class="string">""</span>), callback=self.parse_details)</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse_details</span><span class="params">(self, response)</span>:</span></div><div class="line">        <span class="keyword">print</span> <span class="string">"+++++++++++++被执行了+++++++++++++++++++"</span></div><div class="line"></div><div class="line">        <span class="comment"># path</span></div><div class="line">        xpath = <span class="string">"//body/div[@class='wrap']/div[@class='main clearfix']/div[@class='mainBoxL']"</span></div><div class="line">        div_title = <span class="string">"/div[@class='title']"</span></div><div class="line">        p_gray9 = <span class="string">"/p[@class='gray9']"</span></div><div class="line">        h1 = <span class="string">"/h1"</span></div><div class="line">        span_mr10 = <span class="string">"/span[@class='mr10']"</span></div><div class="line">        div_houseInfor_clearfix = <span class="string">"/div[@class='houseInfor clearfix']"</span></div><div class="line">        div_inforTxt = <span class="string">"/div[@class='inforTxt']"</span></div><div class="line">        dl = <span class="string">"/dl"</span></div><div class="line">        dt_gray6_zongjia1 = <span class="string">"/dt[@class='gray6 zongjia1']"</span></div><div class="line">        span_red20b = <span class="string">"/span[@class='red20b']"</span></div><div class="line">        dd_gray6 = <span class="string">"/dd[@class='gray6']"</span></div><div class="line">        dd = <span class="string">"/dd"</span></div><div class="line">        dt = <span class="string">"/dt"</span></div><div class="line"></div><div class="line">        item = ESFItem()</div><div class="line">        item[<span class="string">'id'</span>] = response.xpath(xpath +</div><div class="line">                                    div_title +</div><div class="line">                                    p_gray9 +</div><div class="line">                                    span_mr10).extract_first().strip()</div><div class="line"></div><div class="line">        item[<span class="string">'publish_time'</span>] = response.xpath(xpath +</div><div class="line">                                              div_title +</div><div class="line">                                              p_gray9).extract_first().strip()</div><div class="line"></div><div class="line">        item[<span class="string">'title'</span>] = response.xpath(xpath +</div><div class="line">                                       div_title +</div><div class="line">                                       h1).extract_first().strip()</div><div class="line"></div><div class="line">        item[<span class="string">'total_price'</span>] = response.xpath(xpath +</div><div class="line">                                             div_houseInfor_clearfix +</div><div class="line">                                             div_inforTxt +</div><div class="line">                                             dl +</div><div class="line">                                             dt_gray6_zongjia1 +</div><div class="line">                                             span_red20b).extract_first().strip()</div><div class="line"></div><div class="line">        dd_infos = response.xpath(xpath + div_houseInfor_clearfix + div_inforTxt + dl + dd).extract()</div><div class="line">        huxing_str = <span class="string">"&lt;span class=\"gray6\"&gt;户&lt;span class=\"padl27\"&gt;&lt;/span&gt;型："</span></div><div class="line">        jzmj_str = <span class="string">"&lt;dd class=\"gray6\"&gt;建筑面积：&lt;span class=\"black \"&gt;"</span></div><div class="line">        symj_str = <span class="string">"&lt;dd class=\"gray6\"&gt;使用面积：&lt;span class=\"black \"&gt;"</span></div><div class="line">        nd_str = <span class="string">"&lt;span class=\"gray6\"&gt;年&lt;span class=\"padl27\"&gt;&lt;/span&gt;代：&lt;/span&gt;"</span></div><div class="line">        cx_str = <span class="string">"&lt;span class=\"gray6\"&gt;朝&lt;span class=\"padl27\"&gt;&lt;/span&gt;向：&lt;/span&gt;"</span></div><div class="line">        lc_str = <span class="string">"&lt;span class=\"gray6\"&gt;楼&lt;span class=\"padl27\"&gt;&lt;/span&gt;层：&lt;/span&gt;"</span></div><div class="line">        jg_str = <span class="string">"&lt;span class=\"gray6 \"&gt;结&lt;span class=\"padl27\"&gt;&lt;/span&gt;构：&lt;/span&gt;"</span></div><div class="line">        zx_str = <span class="string">"&lt;span class=\"gray6\"&gt;装&lt;span class=\"padl27\"&gt;&lt;/span&gt;修：&lt;/span&gt;"</span></div><div class="line">        zzlb_str = <span class="string">"&lt;span class=\"gray6\"&gt;住宅类别：&lt;/span&gt;"</span></div><div class="line">        jzlb_str = <span class="string">"&lt;span class=\"gray6\"&gt;建筑类别：&lt;/span&gt;"</span></div><div class="line">        cqxz_str = <span class="string">"&lt;span class=\"gray6 \"&gt;产权性质：&lt;/span&gt;"</span></div><div class="line"></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> dd_infos:</div><div class="line">            <span class="keyword">if</span> huxing_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_type'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> jzmj_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_build_area'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> symj_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_use_area'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> nd_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_age'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> cx_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'orientation'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> lc_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'floor'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> jg_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'structure'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> zx_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'decoration'</span>] = i</div><div class="line">            <span class="keyword">elif</span> zzlb_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'residential_category'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> jzlb_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'building_class'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> cqxz_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'property_right'</span>] = i.strip()</div><div class="line"></div><div class="line">        dt_infos = response.xpath(xpath + div_houseInfor_clearfix + div_inforTxt + dl + dt + <span class="string">"/a"</span>).extract()</div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> dt_infos:</div><div class="line">            <span class="keyword">if</span> <span class="string">"查看此楼盘的更多二手房房源"</span> <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'property_name'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> <span class="string">"&lt;span class=\"gray6 floatl\"&gt;学&lt;span class=\"padl27\"&gt;&lt;/span&gt;校：&lt;/span&gt;"</span> <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'school'</span>] = i.strip()</div></pre></td></tr></table></figure>
 <h3 id="what`s_next?">what`s next?</h3><p>接下来我会将爬取到的数据进行加工后持久化到本地，不过今天就先到这里吧~</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/10/24/斯坦福机器学习课程 第六周 (1)评价一个学习算法/" itemprop="url">
-                斯坦福机器学习课程 第六周 (1)评价一个学习算法
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-10-24T22:28:58+08:00" content="2016-10-24">
-            2016-10-24
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/10/24/斯坦福机器学习课程 第六周 (1)评价一个学习算法/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/24/斯坦福机器学习课程 第六周 (1)评价一个学习算法/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="如何少走弯路？">如何少走弯路？</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/OVM4M/deciding-what-to-try-next" target="_blank" rel="external">视频地址</a></p>
-<h3 id="这些坑可能会耽误你几个月">这些坑可能会耽误你几个月</h3><blockquote>
-<p>到目前为止，我们已经介绍了许多不同的学习算法。如果你一直跟着这些视频的进度学习，你会发现自己已经不知不觉地成为一个了解许多先进机器学习技术的专家了。</p>
-<p>然而，在懂机器学习的人当中，依然存在着很大的差距。一部分人确实掌握了怎样高效有力地运用这些学习算法，而另一些人他们可能对我马上要讲的东西就不那么熟悉了，他们可能没有完全理解怎样运用这些算法，因此总是把时间浪费在毫无意义的尝试上。</p>
-<p>我想做的是，确保你在设计机器学习的系统时，你能够明白怎样选择一条最合适、最正确的道路。</p>
-<p>因此，在这节视频和之后的几段视频中，我将向你介绍一些实用的建议和指导，帮助你明白怎样进行选择。</p>
-<p>具体来讲，我将重点关注的问题是：假如你在开发一个机器学习系统，或者想试着改进一个机器学习系统的性能，你应如何决定接下来应该选择哪条道路？</p>
-</blockquote>
-<p>以预测房价为例：</p>
-<p>假如在预测房价的例子中，你已经完成了正则化线性回归，也就是最小化代价函数$J$的值。</p>
-<p><img src="/img/16_10_24/001.png" alt=""></p>
-<p>假如在你得到你的学习参数以后，如果你要将你的假设函数放到一组新的房屋样本上进行测试，假如说你发现在预测房价时产生了巨大的误差，现在的问题是要想改进这个算法接下来该怎么办？</p>
-<p>实际上你可以想出很多方法来改进这个算法的性能。</p>
-<p>通常情况下我们会使用这几种方法：</p>
-<ul>
-<li>通过使用更多的训练样本</li>
-</ul>
-<blockquote>
-<p>但有的时候，更多的训练样本并不能解决问题。</p>
-</blockquote>
-<ul>
-<li>尝试选用更少的特征集</li>
-</ul>
-<blockquote>
-<p>你可以从众多的特征集中仔细挑选一小部分来防止<strong>过拟合</strong>。</p>
-</blockquote>
-<ul>
-<li>尝试选用更多的特征集</li>
-</ul>
-<blockquote>
-<p>也许目前的特征集对你来讲并不是很有帮助，你希望获取更多有用的特征数据</p>
-</blockquote>
-<ul>
-<li>也可以尝试增加多项式特征的方法($x_{1}^{2}$,$x_{2}^{2}$,$x_{1}x_{2}$,etc.)</li>
-<li>通过增大正则化参数$\lambda$</li>
-<li>通过减小正则化参数$\lambda$</li>
-</ul>
-<p>上面的这些方法，都可以扩展开来，都可能是一个花费6个月甚至更长时间的项目。</p>
-<p>遗憾的是，大多数人用来选择这些方法的标准是凭感觉的。而且很多人都会错误的选择其中一种方法花费大量的时间和精力，走上了“不归路”。</p>
-<p>幸运的是，有一系列简单的方法，能让你事半功倍，排除掉上面的那个优化清单上的至少一半的方法，留下真正有用的方法。同时也有一种很简单的方法，可以很轻松的排除掉很多选择从而为你节省大量不必要花费的时间。</p>
-<h3 id="机器学习诊断法引入">机器学习诊断法引入</h3><p>在接下来的视频中，我首先介绍<strong>怎样评估机器学习算法的性能</strong>，然后在之后的几段视频中，我们将开始讨论这些方法，它们也被称为<strong>“机器学习诊断法(Machine learning diagnostic)”</strong>。</p>
-<blockquote>
-<p>Diagnostic:A test that you can run to gain insight what is/isn’t working with a learning algorithm, and gain guidance as to how best to improve its performance.</p>
-<p>诊断法：这是一种测试法，你通过执行这种测试能够深入了解某种算法到底是否有用，并且也可以告诉你如何改进算法的效果。</p>
-</blockquote>
-<p>诊断法是一种很有用的方法，可以更有效率地利用好你的时间，但同时也会花费一些时间来实现。</p>
-<h2 id="评估假设函数">评估假设函数</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/yfbJY/evaluating-a-hypothesis" target="_blank" rel="external">视频地址</a></p>
-<p>当我们确定学习算法的参数的时候，我们考虑的是选择参量来使训练误差最小化。有人认为，得到一个非常小的训练误差一定是一件好事，但我们已经知道，仅仅是因为这个假设具有很小的训练误差并不能说明它就一定是一个好的假设函数，而且我们也学习了过拟合假设函数的例子。所以这推广到新的训练集上是不适用的。</p>
-<p>那么，你该如何判断一个假设函数是过拟合的呢？对于这个简单的例子，我们可以对假设函数$h(x)$进行画图，然后观察图形趋势：</p>
-<p><img src="/img/16_10_24/002.png" alt=""></p>
-<p>但对于特征变量不止一个的这种一般情况：</p>
-<p><img src="/img/16_10_24/003.png" alt=""></p>
-<p>想要通过画出假设函数来进行观察，就会变得很难甚至是不可能实现的。</p>
-<p>因此我们需要另一种方法来评估我们的假设函数。</p>
-<h3 id="评估假设函数的方法">评估假设函数的方法</h3><p>如下给出了一种评估假设函数的标准方法：</p>
-<p>假设我们有这样一组数据组：</p>
-<p><img src="/img/16_10_24/004.png" alt=""></p>
-<p>虽然这里只有十组数据，但通常情况下我们都有成百上千组训练样本。</p>
-<p>为了确保我们可以评估我们的假设函数，我们要做的是将这些数据进行三七分：</p>
-<p><img src="/img/16_10_24/005.png" alt=""></p>
-<p>第一部分（70%）将成为我们的<strong>训练集(Training Set)</strong></p>
-<p>第二部分（30%）将成为我们的<strong>测试集(Test Set)</strong></p>
-<blockquote>
-<p>将所有数据按照7:3的比例划分，是一种常见的划分比例</p>
-</blockquote>
-<p>现在我们有了一部分训练数据集：</p>
-<p>$$<br>(x^{(1)},y^{(1)})\\<br>(x^{(2)},y^{(2)})\\<br>……\\<br>(x^{(m)},y^{(m)})<br>$$</p>
-<blockquote>
-<p>这里的$m$依然表示训练样本的总数</p>
-</blockquote>
-<p>剩下的部分数据将被用作测试数据：</p>
-<p>$$<br>(x^{(1)}_{test},y^{(1)}_{test})\\<br>(x^{(2)}_{test},y^{(2)}_{test})\\<br>……\\<br>(x^{(m_{test})}_{test},y^{(m_{test})}_{test})<br>$$</p>
-<blockquote>
-<p>这里$m_{test}$表示测试样本的总数，$_{test}$表示这些样本是来自测试集。</p>
-<p><strong>注意</strong>：如果说我们的数据是有某种规律的话，那么我们按照7:3的比例取数据时，应该是随机选取的。</p>
-</blockquote>
-<h3 id="评估步骤详解">评估步骤详解</h3><h4 id="线性回归中">线性回归中</h4><p>在线性回归中，的训练/测试流程：</p>
-<ul>
-<li>1.需要对训练集进行学习，得到参数$\theta$。</li>
-</ul>
-<blockquote>
-<p>具体来讲就是最小化训练误差$J(\theta)$。这里的是使用那70%的数据训练得出的结果。</p>
-</blockquote>
-<ul>
-<li>2.计算出测试误差</li>
-</ul>
-<blockquote>
-<p>使用$J_{test}(\theta)$来表示测试误差，我们要做的是取出之前从训练集中学习得到的参数$\theta$带入到$J_{test}(\theta)$来计算我们的测试误差。可以写成如下形式：</p>
-</blockquote>
-<p>$$<br>\begin{align*}<br>J_{test}(\theta)= \frac{1}{2m_{test}}\sum_{i=1}^{m_{test}}(<br> h_{\theta}(x_{test}^{(i)}) - y_{test}^{(i)}<br> )^{2}<br>\end{align*}<br>$$</p>
-<blockquote>
-<p>这实际上是测试集平方误差的平均值。</p>
-</blockquote>
-<hr>
-<h4 id="分类问题中">分类问题中</h4><p>当然，这是当我们使用线性回归和平方误差标准时测试误差的定义，那么如果是分类问题，比如说使用逻辑回归的时候呢？</p>
-<p>训练和测试逻辑回归与之前所说的非常类似：</p>
-<ul>
-<li>1.首先我们要从训练数据中（前70%）学习得到参数$\theta$</li>
-<li>2.然后用下面的式子计算测试数据的误差值:</li>
-</ul>
-<p><img src="/img/16_10_24/006.png" alt=""></p>
-<p>在分类问题中的测试误差$J_{test}(\theta)$其实也被称作<strong>误分类率</strong>（也被称为<strong>0/1错分率</strong>）。表示你预测到的正确或错误样本的情况。</p>
-<p>比如说可以这样定义一次预测的误差：</p>
-<ul>
-<li><p>当$h_{\theta}\ge0.5$时$y=0$</p>
-</li>
-<li><p>或者当$h_{\theta}\lt0.5$时$y=1$</p>
-</li>
-</ul>
-<p>这两种情况下我们的假设都对样本进行另外误判，否则其他情况下假设值都能正确的对样本$y$进行分类。</p>
-<p>$$<br>err(h_{\theta}^{(x)},y)<br>=\{<br>\begin{align*}<br>&amp;= 1 \ \ if\ h_{\theta}(x)\ge0.5,\ y=0<br>        \ or\ if\ h_{\theta}(x)\le0.5,\ y=1 \\<br>&amp;= 0 \ otherwise<br>\end{align*}<br>$$</p>
-<p>然后我们就能应用错分率误差来定义测试误差，也就是：</p>
-<p>$$<br>\begin{align*}<br>Test\ error =<br> \frac{1}{m_{test}}\sum_{i=1}^{m_{test}}err(<br> h_{\theta}(x_{test}^{(i)}), y_{test}^{(i)}<br> )<br>\end{align*}<br>$$</p>
-<blockquote>
-<p>以上我们介绍了一套标准技术来评价一个已经学习过的假设，在下一段视频中，我们要应用这些方法来帮助我们进行诸如特征选择一类的问题（比如多项式次数的选择，或者正则化参数的选择）。</p>
-</blockquote>
-<h2 id="多项式模型的选择以及训练集/验证集/测试集的划分">多项式模型的选择以及训练集/验证集/测试集的划分</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/QGKbr/model-selection-and-train-validation-test-sets" target="_blank" rel="external">视频地址</a></p>
-<blockquote>
-<p>假如你想要确定对于某组数据最合适的多项式次数是几次，怎样选用正确的特征来构造学习算法，这些问题我们称之为<strong>”模型选择问题“</strong>。</p>
-<p>在我们对于这一问题的讨论中，我们还将提到如何将数据分为三组：也就是<strong>训练集、验证集和测试集</strong>，而不仅仅是前面提到的两组数据。</p>
-<p>这一节中，我们将会介绍这些内容的含义。</p>
-</blockquote>
-<h3 id="选择合适的模型解决过拟合问题">选择合适的模型解决过拟合问题</h3><p>在过拟合的情况中，学习算法在适用于训练集时表现非常完美，但这并不代表此时的假设也很完美。</p>
-<p>更一般的说，这也是为什么训练集误差通常不能正确预测出该假设是否能很好地拟合新样本的原因。</p>
-<p>具体来讲，如果你把这些参数集，比如$\theta_{0}$,$\theta_{1}$,$\theta_{2}$…调整到尽量拟合你的训练集，那么结果就是你的假设会在训练集上表现地很好，但这并不能确定当你的假设推广到训练集之外的新的样本上时，预测结果是怎样的。</p>
-<p>而更为普遍的规律是，只要你的参数非常拟合某个数据组，比如说非常拟合训练集（当然也可以是其他数据集）：</p>
-<p><img src="/img/16_10_24/007.png" alt=""></p>
-<p>那么你的假设对于相同数据组的预测误差（比如说训练误差）是不能够用来推广到一般情况的，或者说，是不能作为实际的泛化误差的（也就是说，不能说明你的假设对于新样本的效果）。</p>
-<hr>
-<p>接下来具体来说说模型选择问题：</p>
-<p>假如说你现在要选择能最好地拟合你数据的多项式次数，那么下面的式子你应该选择哪一个呢？</p>
-<p><img src="/img/16_10_24/008.png" alt=""></p>
-<p>假设$d$代表我们应该选择的多项式的次数(上面的式子次数依次为从1到10)，我们除了需要确定参数$\theta$之外，还要考虑如何确定这个多项式的次数$d$。</p>
-<p>因此，我们需要确定参数$d$最适当的取值。</p>
-<p>具体地说，比如你想要选择一个模型，那就从这10个模型中，选择一个最适当的多项式次数，并且用这个模型进行估计，预测你的假设能否很好地推广到新的样本上。</p>
-<p>那么你可以这样做：</p>
-<ul>
-<li>你可以先选择第一个模型，然后求训练误差的最小值。这样你就会得到一个参数向量$\theta$。</li>
-<li>然后你再选择第二个模型，进行同样的过程，这样你会得到另一个参数向量$\theta$。</li>
-<li>拟合三次函数模型时，同理，也能得到一个参数向量$\theta$。</li>
-<li>…</li>
-<li>用相同的方式得到第10个模型的向量$\theta$。</li>
-</ul>
-<p><img src="/img/16_10_24/009.png" alt=""></p>
-<p>如果一次模型训练后得到的参数向量为$\theta^{(1)}$,二次模型训练后得到的参数向量为$\theta^{(2)}$，依次类推，十次模型训练后得到的参数向量为$\theta^{(10)}$。</p>
-<p>接下来，我们要做的是对所有这些模型求出<strong>测试集误差</strong>。因此，我们可以算出每一个模型的$Jtest(\theta^{(1)})$、$Jtest(\theta^{(2)})$、$Jtest(\theta^{(3)})$…$Jtest(\theta^{(10)})$。</p>
-<p>接下来为了确定哪一个模型最好，我们可以找出<strong>测试集误差最小的模型</strong>。</p>
-<p>假设我们最终选择了五次多项式模型:</p>
-<p>$$<br>Choose \ \ \theta_{0} + … \theta_{5}x^{5}<br>$$</p>
-<h3 id="正确的评价某个假设函数的预测能力">正确的评价某个假设函数的预测能力</h3><blockquote>
-<p>由于我们使用的是<strong>测试结果集</strong>来衡量的代价函数，从而得到多项式次数$d$这个参数的值为5，所以这样任然不能公平地说明这个假设可以推广到一般情况。</p>
-<p>也就是说我们选择了一个能最好地拟合测试集的参数$d$的值，因此我们的参数向量$\theta^{(5)}$在拟合测试集时的结果很可能导致一个比实际泛化误差更完美的预测结果。（因为我们找到的是一个最能拟合测试集的参数$d$）。因此我们再用测试集来评价我们的假设就显得不公平了。</p>
-<p>而我们其实更关心的是对新样本的拟合效果，所以我们之前说到的如果我们用训练集来拟合参数$\theta_{0}$,$\theta_{1}$等参数时，拟合后的模型在作用于训练集上的效果是不能预测出我们将这个假设推广到新样板上时效果如何的。这是因为这些参数能够很好地拟合训练集，因此它们很有可能在对训练集的预测中表现的很好，但对其他的新样本来说就不一定那么好了。</p>
-</blockquote>
-<p>我们要做的实际上是用测试集来拟合参数$d$，但是这同样也意味着这并不能较为公平地预测出假设函数在遇到新样本时的表现。</p>
-<h4 id="方式">方式</h4><p>为了解决这一问题在模型选择中，如果我们要评价某个假设，我们通常采用以下的方法：</p>
-<p>给定某个数据集，这里我们要将其分为三段：训练集、<strong>交叉验证集（cross validation set）</strong>、测试集。</p>
-<p><img src="/img/16_10_24/010.png" alt=""></p>
-<p>一种典型的分割比例是：训练集60%，交叉验证集20%，测试集20%。（这个比例可稍作调整）</p>
-<p><img src="/img/16_10_24/011.png" alt=""></p>
-<blockquote>
-<p>$m$是训练集个数，$m_{cv}$是交叉验证集个数，$m_{test}$是测试集个数。</p>
-</blockquote>
-<p>我们可以得到 训练集/交叉验证集/测试集 的误差：</p>
-<p><img src="/img/16_10_24/012.png" alt=""></p>
-<p>现在我们的模型选择问题是这样的：我们现在要使用交叉验证集来选择合适的模型：</p>
-<p><img src="/img/16_10_24/013.png" alt=""></p>
-<p>即通过使用<strong>训练集</strong>对每一个假设函数依次去求最小化的代价函数$minJ(\theta)$，并求得对应的参数向量$\theta^{(d)}$。</p>
-<p>然后我们要做的是在<strong>交叉验证集</strong>中测试这些假设的表现，测出$J_{cv}$来看看这些假设在交叉验证集中表现如何。</p>
-<p>然后我们要选择<strong>交叉验证集</strong>误差最小的那个假设模型，假如这个模型是$J_{cv}(\theta^{(4)})$对应的那个模型，因此我们就选择这个四次多项式模型：</p>
-<p>$$<br>\theta_{0} + \theta_{1}x^{1} + … + \theta_{4}x^{4}<br>$$</p>
-<p>我们得到了拟合出最好的系数$d=4$。</p>
-<p>这个过程中，我们没有使用<strong>测试集</strong>进行拟合，这样我们就回避了<strong>测试集</strong>的嫌疑。这样我们就可以光明正大的使用<strong>测试集</strong>来估计所选模型的泛化误差了。</p>
-<p>最后，我们可以使用<strong>测试集</strong>来评价模型的表现。</p>
-<p>但最后还是要提醒大家的一点是，在如今的机器学习应用中，确实也有很多人是像我之前介绍的那样做的（用测试集来选择模型，然后用同样的测试集来评价模型的表现，报告测试误差，看起来好像还能得到比较不错的泛化误差），我说过这并不是一个好的方法，但不幸的是，现在还有很多人这样做。如果测试集足够多的话，这也许还能行得通，但大多数的机器学习开发人员是不会这么做的，因为最佳做法还是把数据分成 训练集、验证集、测试集。</p>
 </span>
         
       
@@ -1040,6 +916,264 @@ var _hmt = _hmt || [];
 <p>一般来说，使用一个大型的神经网络并使用正则化来修正过拟合问题，通常比使用一个小型的神经网络效果更好。但主要问题可能出现在计算量相对较大。</p>
 <p><strong>最后，你还要选择隐藏层的层数，你是该用一个隐藏层呢，还是用三个呢？通常来说，默认的情况是使用一个隐藏层。但是如果你确实想要选择多个隐藏层你也可以试试把数据分割为训练集、验证集和测试集，然后使用交叉验证的方法比较一个隐藏层的神经网络然后试试两个三个隐藏层以此类推，然后看看哪个神经网络在交叉验证集上表现得最理想，然后你对每一个模型都用交叉验证集数据进行测试，算出三种情况下（隐藏层分别为一层、两层、三层）的交叉验证集误差$Jcv(\theta)$，然后选出你认为最好的神经网络结构。</strong></p>
 </blockquote>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              <a class="post-title-link" href="/2016/10/24/斯坦福机器学习课程 第六周 (1)评价一个学习算法/" itemprop="url">
+                斯坦福机器学习课程 第六周 (1)评价一个学习算法
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-10-24T22:28:58+08:00" content="2016-10-24">
+            2016-10-24
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/10/24/斯坦福机器学习课程 第六周 (1)评价一个学习算法/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/24/斯坦福机器学习课程 第六周 (1)评价一个学习算法/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="如何少走弯路？">如何少走弯路？</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/OVM4M/deciding-what-to-try-next" target="_blank" rel="external">视频地址</a></p>
+<h3 id="这些坑可能会耽误你几个月">这些坑可能会耽误你几个月</h3><blockquote>
+<p>到目前为止，我们已经介绍了许多不同的学习算法。如果你一直跟着这些视频的进度学习，你会发现自己已经不知不觉地成为一个了解许多先进机器学习技术的专家了。</p>
+<p>然而，在懂机器学习的人当中，依然存在着很大的差距。一部分人确实掌握了怎样高效有力地运用这些学习算法，而另一些人他们可能对我马上要讲的东西就不那么熟悉了，他们可能没有完全理解怎样运用这些算法，因此总是把时间浪费在毫无意义的尝试上。</p>
+<p>我想做的是，确保你在设计机器学习的系统时，你能够明白怎样选择一条最合适、最正确的道路。</p>
+<p>因此，在这节视频和之后的几段视频中，我将向你介绍一些实用的建议和指导，帮助你明白怎样进行选择。</p>
+<p>具体来讲，我将重点关注的问题是：假如你在开发一个机器学习系统，或者想试着改进一个机器学习系统的性能，你应如何决定接下来应该选择哪条道路？</p>
+</blockquote>
+<p>以预测房价为例：</p>
+<p>假如在预测房价的例子中，你已经完成了正则化线性回归，也就是最小化代价函数$J$的值。</p>
+<p><img src="/img/16_10_24/001.png" alt=""></p>
+<p>假如在你得到你的学习参数以后，如果你要将你的假设函数放到一组新的房屋样本上进行测试，假如说你发现在预测房价时产生了巨大的误差，现在的问题是要想改进这个算法接下来该怎么办？</p>
+<p>实际上你可以想出很多方法来改进这个算法的性能。</p>
+<p>通常情况下我们会使用这几种方法：</p>
+<ul>
+<li>通过使用更多的训练样本</li>
+</ul>
+<blockquote>
+<p>但有的时候，更多的训练样本并不能解决问题。</p>
+</blockquote>
+<ul>
+<li>尝试选用更少的特征集</li>
+</ul>
+<blockquote>
+<p>你可以从众多的特征集中仔细挑选一小部分来防止<strong>过拟合</strong>。</p>
+</blockquote>
+<ul>
+<li>尝试选用更多的特征集</li>
+</ul>
+<blockquote>
+<p>也许目前的特征集对你来讲并不是很有帮助，你希望获取更多有用的特征数据</p>
+</blockquote>
+<ul>
+<li>也可以尝试增加多项式特征的方法($x_{1}^{2}$,$x_{2}^{2}$,$x_{1}x_{2}$,etc.)</li>
+<li>通过增大正则化参数$\lambda$</li>
+<li>通过减小正则化参数$\lambda$</li>
+</ul>
+<p>上面的这些方法，都可以扩展开来，都可能是一个花费6个月甚至更长时间的项目。</p>
+<p>遗憾的是，大多数人用来选择这些方法的标准是凭感觉的。而且很多人都会错误的选择其中一种方法花费大量的时间和精力，走上了“不归路”。</p>
+<p>幸运的是，有一系列简单的方法，能让你事半功倍，排除掉上面的那个优化清单上的至少一半的方法，留下真正有用的方法。同时也有一种很简单的方法，可以很轻松的排除掉很多选择从而为你节省大量不必要花费的时间。</p>
+<h3 id="机器学习诊断法引入">机器学习诊断法引入</h3><p>在接下来的视频中，我首先介绍<strong>怎样评估机器学习算法的性能</strong>，然后在之后的几段视频中，我们将开始讨论这些方法，它们也被称为<strong>“机器学习诊断法(Machine learning diagnostic)”</strong>。</p>
+<blockquote>
+<p>Diagnostic:A test that you can run to gain insight what is/isn’t working with a learning algorithm, and gain guidance as to how best to improve its performance.</p>
+<p>诊断法：这是一种测试法，你通过执行这种测试能够深入了解某种算法到底是否有用，并且也可以告诉你如何改进算法的效果。</p>
+</blockquote>
+<p>诊断法是一种很有用的方法，可以更有效率地利用好你的时间，但同时也会花费一些时间来实现。</p>
+<h2 id="评估假设函数">评估假设函数</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/yfbJY/evaluating-a-hypothesis" target="_blank" rel="external">视频地址</a></p>
+<p>当我们确定学习算法的参数的时候，我们考虑的是选择参量来使训练误差最小化。有人认为，得到一个非常小的训练误差一定是一件好事，但我们已经知道，仅仅是因为这个假设具有很小的训练误差并不能说明它就一定是一个好的假设函数，而且我们也学习了过拟合假设函数的例子。所以这推广到新的训练集上是不适用的。</p>
+<p>那么，你该如何判断一个假设函数是过拟合的呢？对于这个简单的例子，我们可以对假设函数$h(x)$进行画图，然后观察图形趋势：</p>
+<p><img src="/img/16_10_24/002.png" alt=""></p>
+<p>但对于特征变量不止一个的这种一般情况：</p>
+<p><img src="/img/16_10_24/003.png" alt=""></p>
+<p>想要通过画出假设函数来进行观察，就会变得很难甚至是不可能实现的。</p>
+<p>因此我们需要另一种方法来评估我们的假设函数。</p>
+<h3 id="评估假设函数的方法">评估假设函数的方法</h3><p>如下给出了一种评估假设函数的标准方法：</p>
+<p>假设我们有这样一组数据组：</p>
+<p><img src="/img/16_10_24/004.png" alt=""></p>
+<p>虽然这里只有十组数据，但通常情况下我们都有成百上千组训练样本。</p>
+<p>为了确保我们可以评估我们的假设函数，我们要做的是将这些数据进行三七分：</p>
+<p><img src="/img/16_10_24/005.png" alt=""></p>
+<p>第一部分（70%）将成为我们的<strong>训练集(Training Set)</strong></p>
+<p>第二部分（30%）将成为我们的<strong>测试集(Test Set)</strong></p>
+<blockquote>
+<p>将所有数据按照7:3的比例划分，是一种常见的划分比例</p>
+</blockquote>
+<p>现在我们有了一部分训练数据集：</p>
+<p>$$<br>(x^{(1)},y^{(1)})\\<br>(x^{(2)},y^{(2)})\\<br>……\\<br>(x^{(m)},y^{(m)})<br>$$</p>
+<blockquote>
+<p>这里的$m$依然表示训练样本的总数</p>
+</blockquote>
+<p>剩下的部分数据将被用作测试数据：</p>
+<p>$$<br>(x^{(1)}_{test},y^{(1)}_{test})\\<br>(x^{(2)}_{test},y^{(2)}_{test})\\<br>……\\<br>(x^{(m_{test})}_{test},y^{(m_{test})}_{test})<br>$$</p>
+<blockquote>
+<p>这里$m_{test}$表示测试样本的总数，$_{test}$表示这些样本是来自测试集。</p>
+<p><strong>注意</strong>：如果说我们的数据是有某种规律的话，那么我们按照7:3的比例取数据时，应该是随机选取的。</p>
+</blockquote>
+<h3 id="评估步骤详解">评估步骤详解</h3><h4 id="线性回归中">线性回归中</h4><p>在线性回归中，的训练/测试流程：</p>
+<ul>
+<li>1.需要对训练集进行学习，得到参数$\theta$。</li>
+</ul>
+<blockquote>
+<p>具体来讲就是最小化训练误差$J(\theta)$。这里的是使用那70%的数据训练得出的结果。</p>
+</blockquote>
+<ul>
+<li>2.计算出测试误差</li>
+</ul>
+<blockquote>
+<p>使用$J_{test}(\theta)$来表示测试误差，我们要做的是取出之前从训练集中学习得到的参数$\theta$带入到$J_{test}(\theta)$来计算我们的测试误差。可以写成如下形式：</p>
+</blockquote>
+<p>$$<br>\begin{align*}<br>J_{test}(\theta)= \frac{1}{2m_{test}}\sum_{i=1}^{m_{test}}(<br> h_{\theta}(x_{test}^{(i)}) - y_{test}^{(i)}<br> )^{2}<br>\end{align*}<br>$$</p>
+<blockquote>
+<p>这实际上是测试集平方误差的平均值。</p>
+</blockquote>
+<hr>
+<h4 id="分类问题中">分类问题中</h4><p>当然，这是当我们使用线性回归和平方误差标准时测试误差的定义，那么如果是分类问题，比如说使用逻辑回归的时候呢？</p>
+<p>训练和测试逻辑回归与之前所说的非常类似：</p>
+<ul>
+<li>1.首先我们要从训练数据中（前70%）学习得到参数$\theta$</li>
+<li>2.然后用下面的式子计算测试数据的误差值:</li>
+</ul>
+<p><img src="/img/16_10_24/006.png" alt=""></p>
+<p>在分类问题中的测试误差$J_{test}(\theta)$其实也被称作<strong>误分类率</strong>（也被称为<strong>0/1错分率</strong>）。表示你预测到的正确或错误样本的情况。</p>
+<p>比如说可以这样定义一次预测的误差：</p>
+<ul>
+<li><p>当$h_{\theta}\ge0.5$时$y=0$</p>
+</li>
+<li><p>或者当$h_{\theta}\lt0.5$时$y=1$</p>
+</li>
+</ul>
+<p>这两种情况下我们的假设都对样本进行另外误判，否则其他情况下假设值都能正确的对样本$y$进行分类。</p>
+<p>$$<br>err(h_{\theta}^{(x)},y)<br>=\{<br>\begin{align*}<br>&amp;= 1 \ \ if\ h_{\theta}(x)\ge0.5,\ y=0<br>        \ or\ if\ h_{\theta}(x)\le0.5,\ y=1 \\<br>&amp;= 0 \ otherwise<br>\end{align*}<br>$$</p>
+<p>然后我们就能应用错分率误差来定义测试误差，也就是：</p>
+<p>$$<br>\begin{align*}<br>Test\ error =<br> \frac{1}{m_{test}}\sum_{i=1}^{m_{test}}err(<br> h_{\theta}(x_{test}^{(i)}), y_{test}^{(i)}<br> )<br>\end{align*}<br>$$</p>
+<blockquote>
+<p>以上我们介绍了一套标准技术来评价一个已经学习过的假设，在下一段视频中，我们要应用这些方法来帮助我们进行诸如特征选择一类的问题（比如多项式次数的选择，或者正则化参数的选择）。</p>
+</blockquote>
+<h2 id="多项式模型的选择以及训练集/验证集/测试集的划分">多项式模型的选择以及训练集/验证集/测试集的划分</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/QGKbr/model-selection-and-train-validation-test-sets" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>假如你想要确定对于某组数据最合适的多项式次数是几次，怎样选用正确的特征来构造学习算法，这些问题我们称之为<strong>”模型选择问题“</strong>。</p>
+<p>在我们对于这一问题的讨论中，我们还将提到如何将数据分为三组：也就是<strong>训练集、验证集和测试集</strong>，而不仅仅是前面提到的两组数据。</p>
+<p>这一节中，我们将会介绍这些内容的含义。</p>
+</blockquote>
+<h3 id="选择合适的模型解决过拟合问题">选择合适的模型解决过拟合问题</h3><p>在过拟合的情况中，学习算法在适用于训练集时表现非常完美，但这并不代表此时的假设也很完美。</p>
+<p>更一般的说，这也是为什么训练集误差通常不能正确预测出该假设是否能很好地拟合新样本的原因。</p>
+<p>具体来讲，如果你把这些参数集，比如$\theta_{0}$,$\theta_{1}$,$\theta_{2}$…调整到尽量拟合你的训练集，那么结果就是你的假设会在训练集上表现地很好，但这并不能确定当你的假设推广到训练集之外的新的样本上时，预测结果是怎样的。</p>
+<p>而更为普遍的规律是，只要你的参数非常拟合某个数据组，比如说非常拟合训练集（当然也可以是其他数据集）：</p>
+<p><img src="/img/16_10_24/007.png" alt=""></p>
+<p>那么你的假设对于相同数据组的预测误差（比如说训练误差）是不能够用来推广到一般情况的，或者说，是不能作为实际的泛化误差的（也就是说，不能说明你的假设对于新样本的效果）。</p>
+<hr>
+<p>接下来具体来说说模型选择问题：</p>
+<p>假如说你现在要选择能最好地拟合你数据的多项式次数，那么下面的式子你应该选择哪一个呢？</p>
+<p><img src="/img/16_10_24/008.png" alt=""></p>
+<p>假设$d$代表我们应该选择的多项式的次数(上面的式子次数依次为从1到10)，我们除了需要确定参数$\theta$之外，还要考虑如何确定这个多项式的次数$d$。</p>
+<p>因此，我们需要确定参数$d$最适当的取值。</p>
+<p>具体地说，比如你想要选择一个模型，那就从这10个模型中，选择一个最适当的多项式次数，并且用这个模型进行估计，预测你的假设能否很好地推广到新的样本上。</p>
+<p>那么你可以这样做：</p>
+<ul>
+<li>你可以先选择第一个模型，然后求训练误差的最小值。这样你就会得到一个参数向量$\theta$。</li>
+<li>然后你再选择第二个模型，进行同样的过程，这样你会得到另一个参数向量$\theta$。</li>
+<li>拟合三次函数模型时，同理，也能得到一个参数向量$\theta$。</li>
+<li>…</li>
+<li>用相同的方式得到第10个模型的向量$\theta$。</li>
+</ul>
+<p><img src="/img/16_10_24/009.png" alt=""></p>
+<p>如果一次模型训练后得到的参数向量为$\theta^{(1)}$,二次模型训练后得到的参数向量为$\theta^{(2)}$，依次类推，十次模型训练后得到的参数向量为$\theta^{(10)}$。</p>
+<p>接下来，我们要做的是对所有这些模型求出<strong>测试集误差</strong>。因此，我们可以算出每一个模型的$Jtest(\theta^{(1)})$、$Jtest(\theta^{(2)})$、$Jtest(\theta^{(3)})$…$Jtest(\theta^{(10)})$。</p>
+<p>接下来为了确定哪一个模型最好，我们可以找出<strong>测试集误差最小的模型</strong>。</p>
+<p>假设我们最终选择了五次多项式模型:</p>
+<p>$$<br>Choose \ \ \theta_{0} + … \theta_{5}x^{5}<br>$$</p>
+<h3 id="正确的评价某个假设函数的预测能力">正确的评价某个假设函数的预测能力</h3><blockquote>
+<p>由于我们使用的是<strong>测试结果集</strong>来衡量的代价函数，从而得到多项式次数$d$这个参数的值为5，所以这样任然不能公平地说明这个假设可以推广到一般情况。</p>
+<p>也就是说我们选择了一个能最好地拟合测试集的参数$d$的值，因此我们的参数向量$\theta^{(5)}$在拟合测试集时的结果很可能导致一个比实际泛化误差更完美的预测结果。（因为我们找到的是一个最能拟合测试集的参数$d$）。因此我们再用测试集来评价我们的假设就显得不公平了。</p>
+<p>而我们其实更关心的是对新样本的拟合效果，所以我们之前说到的如果我们用训练集来拟合参数$\theta_{0}$,$\theta_{1}$等参数时，拟合后的模型在作用于训练集上的效果是不能预测出我们将这个假设推广到新样板上时效果如何的。这是因为这些参数能够很好地拟合训练集，因此它们很有可能在对训练集的预测中表现的很好，但对其他的新样本来说就不一定那么好了。</p>
+</blockquote>
+<p>我们要做的实际上是用测试集来拟合参数$d$，但是这同样也意味着这并不能较为公平地预测出假设函数在遇到新样本时的表现。</p>
+<h4 id="方式">方式</h4><p>为了解决这一问题在模型选择中，如果我们要评价某个假设，我们通常采用以下的方法：</p>
+<p>给定某个数据集，这里我们要将其分为三段：训练集、<strong>交叉验证集（cross validation set）</strong>、测试集。</p>
+<p><img src="/img/16_10_24/010.png" alt=""></p>
+<p>一种典型的分割比例是：训练集60%，交叉验证集20%，测试集20%。（这个比例可稍作调整）</p>
+<p><img src="/img/16_10_24/011.png" alt=""></p>
+<blockquote>
+<p>$m$是训练集个数，$m_{cv}$是交叉验证集个数，$m_{test}$是测试集个数。</p>
+</blockquote>
+<p>我们可以得到 训练集/交叉验证集/测试集 的误差：</p>
+<p><img src="/img/16_10_24/012.png" alt=""></p>
+<p>现在我们的模型选择问题是这样的：我们现在要使用交叉验证集来选择合适的模型：</p>
+<p><img src="/img/16_10_24/013.png" alt=""></p>
+<p>即通过使用<strong>训练集</strong>对每一个假设函数依次去求最小化的代价函数$minJ(\theta)$，并求得对应的参数向量$\theta^{(d)}$。</p>
+<p>然后我们要做的是在<strong>交叉验证集</strong>中测试这些假设的表现，测出$J_{cv}$来看看这些假设在交叉验证集中表现如何。</p>
+<p>然后我们要选择<strong>交叉验证集</strong>误差最小的那个假设模型，假如这个模型是$J_{cv}(\theta^{(4)})$对应的那个模型，因此我们就选择这个四次多项式模型：</p>
+<p>$$<br>\theta_{0} + \theta_{1}x^{1} + … + \theta_{4}x^{4}<br>$$</p>
+<p>我们得到了拟合出最好的系数$d=4$。</p>
+<p>这个过程中，我们没有使用<strong>测试集</strong>进行拟合，这样我们就回避了<strong>测试集</strong>的嫌疑。这样我们就可以光明正大的使用<strong>测试集</strong>来估计所选模型的泛化误差了。</p>
+<p>最后，我们可以使用<strong>测试集</strong>来评价模型的表现。</p>
+<p>但最后还是要提醒大家的一点是，在如今的机器学习应用中，确实也有很多人是像我之前介绍的那样做的（用测试集来选择模型，然后用同样的测试集来评价模型的表现，报告测试误差，看起来好像还能得到比较不错的泛化误差），我说过这并不是一个好的方法，但不幸的是，现在还有很多人这样做。如果测试集足够多的话，这也许还能行得通，但大多数的机器学习开发人员是不会这么做的，因为最佳做法还是把数据分成 训练集、验证集、测试集。</p>
 </span>
         
       
@@ -2376,168 +2510,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/09/05/斯坦福机器学习课程 第四周 (1)神经网络引入/" itemprop="url">
-                斯坦福机器学习课程 第四周 (1)神经网络引入
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-09-05T00:03:00+08:00" content="2016-09-05">
-            2016-09-05
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/09/05/斯坦福机器学习课程 第四周 (1)神经网络引入/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/05/斯坦福机器学习课程 第四周 (1)神经网络引入/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="非线性假设">非线性假设</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/OAOhO/non-linear-hypotheses" target="_blank" rel="external">视频地址</a></p>
-<blockquote>
-<p>接下来的课程中，我将为大家介绍一种叫做<strong>“神经网络”(Neural Network)</strong>的机器学习算法。我们首先来讨论神经网络的表层结构，在后来的课程中再来具体讨论学习算法。 </p>
-</blockquote>
-<p>神经网络算法实际上是一个相对古老的算法，并且沉寂了一段时间。不过到了现在，它又称为许多机器学习问题的首选技术。</p>
-<p>那么我们已经有了线性回归，和逻辑回归，为什么还需要学习<strong>神经网络</strong>这个算法呢？为了阐述研究神经网络的目的，我们首先来看几个机器学习问题作为例子。这几个例子都依赖于研究复杂的非线性分类器。</p>
-<h3 id="线性回归对于非线性假设的不可行性分析">线性回归对于非线性假设的不可行性分析</h3><p>考虑这个监督学习分类的问题：</p>
-<p><img src="/img/16_09_04/008.png" alt=""></p>
-<p>我们已经有了对应的训练集，如果利用逻辑回归算法来解决这个问题，我们首先要构造一个包含很多非线性项的逻辑回归函数：</p>
-<p>$$<br>g(\theta_{0} + \theta_{1}x_{1} + \theta_{2}x_{2} + \theta_{3}x_{1}x_{2} + \theta_{4}x_{1}^{2}x_{2} + \theta_{5}x_{1}^{3}x_{2} + \theta_{6}x_{1}x_{2}^{2} + …)<br>$$</p>
-<blockquote>
-<p>这里$g()$函数依然是一个S型函数，即Logistic函数。</p>
-</blockquote>
-<p>当多项式数足够多时，你可能可以得到一个分开正样本和负样本的分界线：</p>
-<p><img src="/img/16_09_04/009.png" alt=""></p>
-<p>当你只有两项时，这种方法确实能得到不错的结果，因为你完全可以把$x_{1}$和$x_{2}$的所有组合都包含到多项式中。但对于许多复杂的机器学习问题，涉及的项往往多于两项。</p>
-<p><img src="/img/16_09_04/010.png" alt=""></p>
-<p>我们之前讨论过房价预测的问题，假设你现在处理的是关于住房的分类问题，而不是一个回归问题。假设你对一栋房子的多方面特点都有所了解，你想预测房子在未来半年内能被卖出去的概率，这是一个分类问题。我们可以想出多达上百个特征。对于这类问题，如果要包含所有的二次项，最终的多项式也可能有很多项：</p>
-<p>$$<br>x_{1}^{2},x_{1}x_{2},x_{1}x_{3},x_{1}x_{4}…x_{1}x_{100},x_{2}^{2},x_{2}x_{3}…<br>$$</p>
-<blockquote>
-<p>对于100个特征的情况下，会有5050个二次项组合。而且随着特征数量的增加，二次项的个数大约以$O(n^{2})$的量级增长，其中$n$是原始项(特征)的个数。</p>
-</blockquote>
-<p>因此，包含所有的二次项是困难的，所以这可能不是一个好方法，而且由于项数过多，最后的结果很有可能是过拟合的。此外，这里也存在运算量过大的问题。</p>
-<blockquote>
-<p>当然，你也可以只考虑上面这些二次项的子集，比如$x_{1}^{2},x_{2}^{2},x_{3}^{2}…x_{100}^{2}$，这样就能将二次项的数量大幅减少了，但是却忽略了太多的相关项，在处理问题的时候，不可能得到理想的结果。</p>
-</blockquote>
-<p>5000多个二次项已经很多了，如果我们还要引入三次项，那么我们的项的个数将以$O(n^{3})$的量级增长，当有100个特征的情况下，大约有170000个三次项组合。所以，当特征个数增大时，这些高阶多项式项数将以几何级数递增，特征空间也随之急剧膨胀。因此，当特征数量较多时，通过这种方式来构建分类器，并不是一个好办法。</p>
-<h3 id="图像识别中使用线性回归的不可行性举例">图像识别中使用线性回归的不可行性举例</h3><p>对于许多实际的机器学习问题，特征个数$n$是很大的，举个关于计算机视觉中的一个例子：</p>
-<p>假设你想要使用机器学习算法来训练一个分类器，使它检测一个图像来判断图像是否为一辆汽车，很多人可能会很好奇，这对计算机视觉来说有什么难的？当你们看到下面这幅图时，下面是一辆车，这是一目了然的事情，你肯定会觉得很奇怪，为什么学习算法竟可能会不知道图像是什么：</p>
-<p><img src="/img/16_09_04/011.png" alt=""></p>
-<p>为了解答这个问题，我们取出图像的一小部分，将其放大，结果表明，当人眼看到一辆汽车时，计算机实际上看到的却是这样一个数据矩阵：</p>
-<p><img src="/img/16_09_04/012.png" alt=""></p>
-<p>这个矩阵中的每个元素表示了像素强度值，告诉我们图像中每个像素的亮度值。因此，对于计算机视觉来说，问题就变成了根据这个像素点亮度矩阵，来告诉我们这些数值代表一个汽车门把手。</p>
-<p><strong>具体而言，当使用机器学习算法构造一个汽车识别器时，我们要想出一个带标签的样本集，其中一些样本是各类汽车，另一部分样本是其他任何东西。将这个样本集输入给学习算法以训练出一个分类器，训练完毕后，我们输入一幅新的图片，让分类器来判定“这是什么东西？”</strong>理想情况下，分类器能识别出这是一辆汽车。</p>
-<p><img src="/img/16_09_04/013.png" alt=""></p>
-<p>为了理解引入非线性分类器的必要性，我们从学习算法的训练样本中挑出一些汽车的图片，和一些非汽车的图片，让我们从其中每幅图片中挑出一组像素点，在坐标系中标出这幅汽车的位置：</p>
-<p><img src="/img/16_09_04/014.png" alt=""></p>
-<p>汽车的位置取决于像素点1和像素点2的亮度，让我们用同样的方法标出其他图片中汽车的位置：</p>
-<p><img src="/img/16_09_04/015.png" alt=""></p>
-<p>观察这张图片两个相同的像素位置的像素亮度，这两点都有着不同的像素亮度，所以在这幅图中，它们处于不同的位置。</p>
-<p>我们继续画上两个非汽车样本，并且用”-“表示非汽车：</p>
-<p><img src="/img/16_09_04/016.png" alt=""></p>
-<p>随着样本数量的增多，我们将发现这两类数据分布在坐标系中的不同区域：</p>
-<p><img src="/img/16_09_04/017.png" alt=""></p>
-<p>因此我们现在需要一个非线性分类器，来尽量分开这两类样本：</p>
-<p><img src="/img/16_09_04/018.png" alt=""></p>
-<p>这个分类问题中，特征空间的维度是多少呢？假设我们使用$50*50$像素的图片，虽然这个图片尺寸很小，但依然有2500个像素点。因此我们的特征数量$n$是2500个，特征向量$X$包含了所有像素点的亮度值。如果存储的是每个像素点的灰度值（典型的计算机图片表示方法），那么每个元素值应该介于0到255之间。如果图片存储形式是RGB模式，每个像素点包含红、绿、蓝三个子像素，那么$n=7500$。</p>
-<p><img src="/img/16_09_04/019.png" alt=""></p>
-<p>因此，如果我们非要通过包含所有的二次项来解决这个非线性问题，那么，这个式子的所有条件的个数大约是300万个：</p>
-<p><img src="/img/16_09_04/020.png" alt=""></p>
-<p>显然，这数字大的有些离谱了，计算成本太高了。</p>
-<h2 id="神经网络和大脑">神经网络和大脑</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/IPmzw/neurons-and-the-brain" target="_blank" rel="external">视频地址</a></p>
-<p>神经网络是一种很古老的算法，它最初产生的目的是制造能模拟大脑的机器，在这门课中，我将向你们介绍神经网络。因为它能很好的解决不同的机器学习问题而不只因为它们在逻辑上行得通。这节课中，主要介绍一些神经网络的背景知识，由此我们能知道可以用它们来做什么。</p>
-<p>神经网络产生的原因是人们想尝试设计出模仿大脑的算法。从某种意义上说，想要建立学习系统，那么为什么不去模仿我们所认识的，最神奇的学习机器–人类的大脑呢？</p>
-<p>神经网络逐渐兴起于二十世纪八九十年代应用得非常广泛，但由于各种原因，在90年代的后期应用减少了，但是最近，神经网络又东山再起了，其中一个原因是，神经网络是计算量有些偏大的算法。然而，大概是由于近些年计算机的运行速度变快，才足以真正运行起大规模的神经网络，正是由于这个原因，和其他一些我们后面会讨论到的技术因素，使得如今的神经网络对于许多应用来说是最先进的技术。</p>
-<p>当你想模拟大脑时，是指想制造出与人类大脑作用效果相同的机器，对吧？大脑可以学会去以看而不是听的方式处理图像，学会处理我们的触觉，我们能学习数学，学着做微积分。而且大脑能处理各种不同的令人惊奇的事情，似乎如果你想要模仿它，你得写很多不同的软件来模拟所有大脑告诉我们的这些五花八门的奇妙的事情。不过能不能假设大脑做所有这些不同事情的方法不需要用上千个不同的程序去实现，相反的，大脑处理的方法只需要一个单一的学习算法就可以了？尽管这只是一个假设，不过我可以和你分享一些这方面的证据：</p>
-<p><img src="/img/16_09_04/021.png" alt=""></p>
-<p>大脑的这一小片红色区域，是你的听觉皮层。你现在正在听到的声音，靠的是耳朵接收到声音信号，并把声音信号传递给你的听觉皮层，正因如此你才能明白我的话。</p>
-<p>神经系统科学家做了下面这个有趣的实验：</p>
-<p><img src="/img/16_09_04/022.png" alt=""></p>
-<p>把耳朵到听觉皮层的神经切断，在这种情况下将其重新接到一个动物的大脑上，这样从眼睛到视神经的信号最终将传到听觉皮层。如果这样做了，那么结果表明听觉皮层将会学会“看”，这里“看”代表了我们所知道的每层含义。所以如果你对动物这样做，那么动物就可以完成视觉辨别任务，它们可以看图像，并根据图像做出适当的决定。它们正是通过脑组织中的这个部分完成的。</p>
-<p>来看另一个例子：</p>
-<p><img src="/img/16_09_04/023.png" alt=""></p>
-<p>这块红色的脑组织是你的躯体感觉皮层，这是你用来处理触觉的。如果你做一个和刚才类似的重接实验，那么躯体感觉皮层也能学会”看“。这个实验和其它一些类似的实验被称为<strong>神经重接实验</strong>。</p>
-<p>从这个意义上说，如果人体有同一块脑组织可以处理光、声或触觉信号，那么也许存在一种学习算法，可以同时处理视觉、听觉和触觉，而不是需要运行上千个不同的程序，或者上千个不同的算法来做这些大脑所完成的成千上万的美好事情。也许我们需要做的就是找出一些近似的，或实际的大脑学习算法，然后实现它。大脑通过自学掌握如何处理这些不同类型的数据，在很大的程度上可以猜想如果我们把几乎任何一种传感器接入到大脑的几乎任何一个部位的话，大脑就会学会处理它。</p>
-<p>下面再举几个例子：</p>
-<p><img src="/img/16_09_04/024.png" alt=""></p>
-<p>这张图是用舌头学会“看”的一个例子，这实际上是一个名为BrainPort的系统，它现在正在FDA(美国食品和药物管理局)的临床试验阶段，它能帮助失明人士看见事物。它的原理是：你在前额上带一个灰度摄像头，面朝前它就能获取你面前事物的低分辨率的灰度图像，你连一根线到舌头上安装的电极阵列上，那么每个像素都被映射到你舌头的某个位置上，可能电压值高的点对应一个暗像素，电压值低的点对应于亮像素，即使依靠它现在的功能，使用这种系统就能让你我在几十分钟里就学会用我们的舌头“看”东西。</p>
-<p>这是第二个例子：</p>
-<p><img src="/img/16_09_04/025.png" alt=""></p>
-<p>关于人体回声定位(或者说人体声纳)，你可以通过弹响指或者咂舌头来实现，现在有失明人士确实在学校里接受这样的培训，并学会解读从环境反弹回来的声波模式—这就是声纳。如果你搜索YouTube之后就会发现，有些视频讲述了一个令人称奇的孩子，他因为癌症眼球惨遭移除，虽然失去了眼球但是通过打响指，他可以四处走动而不撞到任何东西。他能滑滑板，他可以将篮球投入篮框中，注意这是一个没有眼球的孩子。</p>
-<p>第三个例子是触觉皮带：</p>
-<p><img src="/img/16_09_04/026.png" alt=""></p>
-<p>如果你把它戴在腰上，蜂鸣器会响，而且总是朝向北时发出嗡嗡声。它可以使人拥有方向感。用类似于鸟类感知方向的方式。</p>
-<p>还有一些离奇的例子：</p>
-<p><img src="/img/16_09_04/027.png" alt=""></p>
-<p>如果你在青蛙身上插入第三只眼，青蛙也能学会使用那只眼睛。</p>
-<p>因此，如果你能把几乎任何传感器接入到大脑中，大脑的学习算法就能找出学习数据的方法，并处理这些数据。</p>
-<p>从某种意义上来说，如果我们能找出大脑的学习算法，然后在计算机上执行 大脑学习算法或与之相似的算法，也许这将是我们向人工智能迈进做出的最好的尝试。<strong>人工智能的梦想就是有一天能制造出真正的智能机器</strong>，当然我不是教神经网络的，介绍它只因为它可能为我们打开一扇进入遥远的人工智能梦的窗户。对于我个人来说，它也是我研究生涯中致力于的一个项目，但我在这节课中讲授神经网络的原因，主要是对于现代机器学习应用，它是最有效的技术方法。因此在接下来的一些课程中，我们将开始深入到神经网络的技术细节。那么你就可以将它们应用到现代机器学习的应用中，并利用它们很好地解决问题。但对我来说，使我兴奋的原因之一，就是它或许能给我们一些启示，让我们知道当我们在思考未来有什么样的算法能以与人类相似的方式学习时，我们能做些什么。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2576,7 +2548,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">97</span>
+              <span class="site-state-item-count">98</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
