@@ -199,6 +199,376 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2017/01/13/【Android文档翻译】测试你的Content Provider/" itemprop="url">
+                【Android文档翻译】测试你的Content Provider
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-01-13T08:55:58+08:00" content="2017-01-13">
+            2017-01-13
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/Android/" itemprop="url" rel="index">
+                  <span itemprop="name">Android</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/01/13/【Android文档翻译】测试你的Content Provider/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/13/【Android文档翻译】测试你的Content Provider/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p><a href="https://developer.android.google.cn/training/testing/integration-testing/content-provider-testing.html" target="_blank" rel="external">https://developer.android.google.cn/training/testing/integration-testing/content-provider-testing.html</a></p>
+<p>如果要实施content provider来存储和检索数据或使数据可供其他应用程序访问，则应测试提供程序以确保其不会以意外的方式运行。本课程介绍如何测试公共content provider，并且也适用于您对自己的应用保持私有的content provider。</p>
+<h2 id="为content_provider创建集成测试">为content provider创建集成测试</h2><p>在Android中，应用程式将content provider视为提供资料表的资料API，而内部资讯提供不可见。content provider可以具有许多公共常量，但是它通常具有很少的公共方法并且没有公共变量。因此，您应该仅根据提供程序的公共成员编写测试。这样设计的content provider在其本身与其用户之间提供合同。</p>
+<p>content provider允许您访问实际的用户数据，因此确保在隔离的测试环境中测试内容提供程序很重要。这种方法允许您只运行在测试用例中明确设置的数据依赖关系。这也意味着您的测试不会修改实际的用户数据。例如，您应避免编写失败的测试，因为上一个测试中遗留了数据。同样，您的测试应避免在content provider中添加或删除实际联系人信息。</p>
+<p>要单独测试content provider程序，请使用<a href="https://developer.android.google.cn/reference/android/test/ProviderTestCase2.html" target="_blank" rel="external">ProviderTestCase2</a>类。此类允许您使用Android模拟对象类（如<a href="https://developer.android.google.cn/reference/android/test/IsolatedContext.html" target="_blank" rel="external">IsolatedContext</a>和<a href="https://developer.android.google.cn/reference/android/test/mock/MockContentResolver.html" target="_blank" rel="external">MockContentResolver</a>）访问文件和数据库信息，而不会影响实际的用户数据。</p>
+<p>您的集成测试应写为JUnit 4测试类。要了解有关创建JUnit 4测试类和使用JUnit 4断言的更多信息，请参阅<a href="/2017/01/11/【Android文档翻译】构建本地单元测试/#创建本地单元测试类">创建本地单元测试类</a>。</p>
+<p>要为内容提供商创建集成测试，您必须执行以下步骤：</p>
+<ul>
+<li>创建您的测试类作为<a href="https://developer.android.google.cn/reference/android/test/ProviderTestCase2.html" target="_blank" rel="external">ProviderTestCase2</a>的子类。</li>
+<li>在你的测试类的定义部分加入<code>@RunWith(AndroidJUnit4.class)</code>注解。</li>
+<li>指定<a href="https://developer.android.google.cn/tools/testing-support-library/index.html" target="_blank" rel="external">Android测试支持库</a>提供的<a href="https://developer.android.google.cn/reference/android/support/test/runner/AndroidJUnitRunner.html" target="_blank" rel="external">AndroidJUnitRunner</a>类作为默认测试运行程序。此步骤在<a href="/2017/01/11/【Android文档翻译】入门测试/">测试入门</a>中有更详细的描述。</li>
+<li>从<a href="https://developer.android.google.cn/reference/android/support/test/InstrumentationRegistry.html" target="_blank" rel="external">InstrumentationRegistry</a>类设置Context对象。有关示例，请参阅下面的代码段。</li>
+</ul>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">void</span> <span class="title">setUp</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">    setContext(InstrumentationRegistry.getTargetContext());</div><div class="line">    <span class="keyword">super</span>.setUp();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="ProviderTestCase2的工作原理">ProviderTestCase2的工作原理</h3><p>你通过<a href="https://developer.android.google.cn/reference/android/test/ProviderTestCase2.html" target="_blank" rel="external">ProviderTestCase2</a>测试provider。这个基类扩展了<a href="https://developer.android.google.cn/reference/android/test/AndroidTestCase.html" target="_blank" rel="external">AndroidTestCase</a>，因此它提供了JUnit测试框架以及特定于Android的测试应用程序权限的方法。这个类的最重要的特性是它的初始化，它创建隔离的测试环境。</p>
+<p>初始化在<a href="https://developer.android.google.cn/reference/android/test/ProviderTestCase2.html" target="_blank" rel="external">ProviderTestCase2</a>的构造函数中完成，它在自己的构造函数中调用子类。<a href="https://developer.android.google.cn/reference/android/test/ProviderTestCase2.html" target="_blank" rel="external">ProviderTestCase2</a>构造函数创建一个<a href="https://developer.android.google.cn/reference/android/test/IsolatedContext.html" target="_blank" rel="external">IsolatedContext</a>对象，允许文件和数据库操作，但存根与Android系统的其他交互。文件和数据库操作本身发生在设备或模拟器本地的目录中，并且具有特殊的前缀。</p>
+<p>然后，构造函数创建一个<a href="https://developer.android.google.cn/reference/android/test/mock/MockContentResolver.html" target="_blank" rel="external">MockContentResolver</a>以用作测试的解析器。</p>
+<p>最后，构造函数创建一个被测试提供者的实例。这是一个正常的<a href="https://developer.android.google.cn/reference/android/content/ContentProvider.html" target="_blank" rel="external">ContentProvider</a>对象，但它从<a href="https://developer.android.google.cn/reference/android/test/IsolatedContext.html" target="_blank" rel="external">IsolatedContext</a>获取其所有环境信息，因此它被限制在隔离的测试环境中工作。在测试用例类中执行的所有测试都针对这个孤立的对象运行。</p>
+<p>您对content provider运行集成测试的方式与仪表化单元测试相同。要对content provider运行集成测试，请按照<a href="/2017/01/11/【Android文档翻译】构建仪表化单元测试/#运行仪表单元测试">运行仪表单元测试</a>中所述的步骤操作。</p>
+<h2 id="测试什么">测试什么</h2><p>以下是测试content provider的一些具体指南。</p>
+<ul>
+<li>使用解析器方法测试：即使您可以在<a href="https://developer.android.google.cn/reference/android/test/ProviderTestCase2.html" target="_blank" rel="external">ProviderTestCase2</a>中实例化一个content provider对象，您应该始终使用适当的URI测试解析器对象。这样做可确保您通过执行常规应用程序的相同交互方式来测试content provider。</li>
+<li><p>测试公共provider作为合同：如果您打算将您的provider公开并可供其他应用程序使用，那么您应该将其作为合同进行测试。下面是一些实例：</p>
+<ul>
+<li>使用您的provider公开的常量进行测试。例如，查找在provider的数据表之一中引用列名的常量。这些名称通常都是由provider公开定义的常量。</li>
+<li>测试您的provider提供的所有URI。您的provider可能会提供多个URI，每个URI指向数据的不同方面。</li>
+<li>测试无效URI：您的单元测试应故意调用具有无效URI的provider，并查找错误。一个好的provider设计是抛出一个IllegalArgumentException无效的URI。</li>
+</ul>
+</li>
+<li>测试标准provider交互：大多数provider提供六种访问方法：<code>query(), insert()</code>,<code>delete()</code>,<code>update()</code>,<code>getType()</code>, and <code>onCreate()</code>。你的测试应该验证所有这些方法的工作情况。这些方法在topic Content Providers中有更详细的描述。</li>
+<li>测试业务逻辑：如果content provider实现业务逻辑，您应该测试它。业务逻辑包括处理无效值，财务或算术计算，消除或组合重复。</li>
+</ul>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              <a class="post-title-link" href="/2017/01/13/【Android文档翻译】测试你的Service/" itemprop="url">
+                【Android文档翻译】测试你的Service
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-01-13T08:52:58+08:00" content="2017-01-13">
+            2017-01-13
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/Android/" itemprop="url" rel="index">
+                  <span itemprop="name">Android</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/01/13/【Android文档翻译】测试你的Service/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/13/【Android文档翻译】测试你的Service/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p>如果要将本地Service实现为应用程序的组件，则应该测试Service以确保它不会以意想不到的方式运行。您可以创建<a href="https://developer.android.google.cn/training/testing/unit-testing/instrumented-unit-tests.html" target="_blank" rel="external">检测单元测试</a>以验证服务中的行为是否正确;例如，Service存储和返回有效数据值，并且正确地执行数据操作。</p>
+<p><a href="https://developer.android.google.cn/tools/testing-support-library/index.html" target="_blank" rel="external">Android测试支持库</a>提供了一个用于孤立地测试Service对象的API。<a href="https://developer.android.google.cn/reference/android/support/test/rule/ServiceTestRule.html" target="_blank" rel="external">ServiceTestRule</a>类是一个JUnit 4规则，在单元测试方法运行之前启动服务，并在测试完成后关闭服务。通过使用此测试规则，可确保在运行测试方法之前始终建立与服务的连接。要了解有关JUnit 4规则的更多信息，请参阅<a href="https://github.com/junit-team/junit/wiki/Rules" target="_blank" rel="external">JUnit文档</a>。</p>
+<p><strong>注意：</strong><a href="https://developer.android.google.cn/reference/android/support/test/rule/ServiceTestRule.html" target="_blank" rel="external">ServiceTestRule</a>类不支持<a href="https://developer.android.google.cn/reference/android/app/IntentService.html" target="_blank" rel="external">IntentService</a>对象的测试。如果您需要测试<a href="https://developer.android.google.cn/reference/android/app/IntentService.html" target="_blank" rel="external">IntentService</a>对象，您应该将逻辑封装在单独的类中，并创建相应的单元测试。</p>
+<h2 id="设置您的测试环境">设置您的测试环境</h2><p>在构建Service的集成测试之前，请确保为你用来集成测试的项目进行配置，如<a href="/2017/01/11/【Android文档翻译】入门测试/">入门测试</a>中所述。</p>
+<h2 id="为Service创建集成测试">为Service创建集成测试</h2><p>您的集成测试应写为JUnit 4测试类。要了解有关创建JUnit 4测试类和使用JUnit 4断言方法的更多信息，请参阅<a href="/2017/01/11/【Android文档翻译】构建仪表化单元测试/">构建仪表化单元测试</a>。</p>
+<p>要为您的服务创建集成测试，请在测试类定义的开头添加<code>@RunWith（AndroidJUnit4.class）</code>注解。您还需要指定Android测试支持库提供的<a href="https://developer.android.google.cn/reference/android/support/test/runner/AndroidJUnitRunner.html" target="_blank" rel="external">AndroidJUnitRunner</a>类作为默认测试运行器。</p>
+<p>接下来，使用<code>@Rule</code>注解在测试中创建一个<a href="https://developer.android.google.cn/reference/android/support/test/rule/ServiceTestRule.html" target="_blank" rel="external">ServiceTestRule</a>实例。</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Rule</span></div><div class="line"><span class="keyword">public</span> <span class="keyword">final</span> ServiceTestRule mServiceRule = <span class="keyword">new</span> ServiceTestRule();</div></pre></td></tr></table></figure>
+<p>以下示例显示如何为Service实现集成测试。测试方法<code>testWithBoundService</code>验证应用程序是否成功绑定到本地Service，并且服务接口行为正确。</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="variable">@Test</span></div><div class="line">public void testWithBoundService() throws TimeoutException &#123;</div><div class="line">    <span class="comment">// Create the service Intent.</span></div><div class="line">    Intent serviceIntent =</div><div class="line">            new Intent(InstrumentationRegistry<span class="selector-class">.getTargetContext</span>(),</div><div class="line">                <span class="selector-tag">LocalService</span><span class="selector-class">.class</span>);</div><div class="line"></div><div class="line">    <span class="comment">// Data can be passed to the service via the Intent.</span></div><div class="line">    serviceIntent<span class="selector-class">.putExtra</span>(LocalService.SEED_KEY, <span class="number">42</span>L);</div><div class="line"></div><div class="line">    <span class="comment">// Bind the service and grab a reference to the binder.</span></div><div class="line">    IBinder binder = mServiceRule<span class="selector-class">.bindService</span>(serviceIntent);</div><div class="line"></div><div class="line">    <span class="comment">// Get the reference to the service, or you can call</span></div><div class="line">    <span class="comment">// public methods on the binder directly.</span></div><div class="line">    LocalService service =</div><div class="line">            ((LocalService<span class="selector-class">.LocalBinder</span>) <span class="selector-tag">binder</span>)<span class="selector-class">.getService</span>();</div><div class="line"></div><div class="line">    <span class="comment">// Verify that the service is working correctly.</span></div><div class="line">    assertThat(service<span class="selector-class">.getRandomInt</span>(), <span class="selector-tag">is</span>(any(Integer.class)));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="运行服务的集成测试">运行服务的集成测试</h2><p>您可以从Android Studio或从命令行运行集成测试。确保指定<a href="https://developer.android.google.cn/reference/android/support/test/runner/AndroidJUnitRunner.html" target="_blank" rel="external">AndroidJUnitRunner</a>作为项目中的默认instrumentation runner。</p>
+<p>要为Service运行集成测试，请按照<a href="/2017/01/11/【Android文档翻译】入门测试/">入门测试</a>中描述的运行测试测试的步骤操作。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              <a class="post-title-link" href="/2017/01/13/【Android文档翻译】测试多个应用程序的UI/" itemprop="url">
+                【Android文档翻译】测试多个应用程序的UI
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-01-13T08:45:58+08:00" content="2017-01-13">
+            2017-01-13
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/Android/" itemprop="url" rel="index">
+                  <span itemprop="name">Android</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/01/13/【Android文档翻译】测试多个应用程序的UI/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/13/【Android文档翻译】测试多个应用程序的UI/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p><a href="https://developer.android.google.cn/training/testing/ui-testing/uiautomator-testing.html" target="_blank" rel="external">https://developer.android.google.cn/training/testing/ui-testing/uiautomator-testing.html</a></p>
+<p>涉及多个应用程序的用户交互的用户界面（UI）测试允许您在用户流跨越其他应用程序或系统UI时验证您的应用程序行为正确。这样的用户流的示例是消息应用，其允许用户输入文本消息，启动Android联系人选择器，以便用户可以选择要向其发送消息的收件人，然后将控制权返回给原始应用程序，以供用户提交邮件。</p>
+<p>本课包括如何使用<a href="https://developer.android.google.cn/tools/testing-support-library/index.html" target="_blank" rel="external">Android测试支持库</a>提供的UI Automator测试框架编写此类UI测试。UI Automator API可让您与设备上的可见元素进行交互，无论哪个<a href="https://developer.android.google.cn/reference/android/app/Activity.html" target="_blank" rel="external">Activity</a>正在获取焦点。您的测试可以通过使用方便的描述符（例如该组件中显示的文本或其内容描述）来查找UI组件。UI Automator测试可以在运行Android 4.3（API级别18）或更高版本的设备上运行。</p>
+<p>UI Automator测试框架是一种基于工具的API，可与<a href="https://developer.android.google.cn/reference/android/support/test/runner/AndroidJUnitRunner.html" target="_blank" rel="external">AndroidJUnitRunner</a>测试运行程序配合使用。</p>
+<h2 id="设置UI_Automator">设置UI Automator</h2><p>在使用UI Automator构建UI测试之前，请确保按照<a href="/2017/01/11/【Android文档翻译】入门测试/">测试入门</a>中所述配置测试源代码位置和项目依赖关系。</p>
+<p>在Android应用程序模块的<code>build.gradle</code>文件中，您必须为UI Automator库设置依赖性引用:</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">dependencies</span> &#123;</div><div class="line">    ...</div><div class="line">    androidTestCompile <span class="string">'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>要优化UI Automator测试，您应该首先检查目标应用程序的UI组件，并确保它们可访问。这些优化提示将在接下来的两部分中介绍。</p>
+<h3 id="在设备上检查UI">在设备上检查UI</h3><p>在设计测试之前，请检查设备上可见的UI组件。为了确保您的UI Automator测试可以访问这些组件，请检查这些组件是否有可见的文本标签，<code>android：contentDescription</code>值或两者都有。</p>
+<p><code>uiautomatorviewer</code>工具提供了一个方便的可视界面来检查布局层次结构，并查看在设备前台可见的UI组件的属性。此信息允许您使用UI Automator创建更细粒度的测试。例如，您可以创建与特定可见属性匹配的UI选择器。</p>
+<p>启动uiautomatorviewer工具：</p>
+<ul>
+<li>1.在物理设备上启动目标应用程序。</li>
+<li>2.将设备连接到开发机器。</li>
+<li>3.打开终端窗口并导航到<code>&lt;android-sdk&gt;/tools/</code>目录。</li>
+<li>4.使用此命令运行工具：</li>
+</ul>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>uiautomatorviewer</div></pre></td></tr></table></figure>
+<p>查看应用程序的UI属性：</p>
+<ul>
+<li>1.在<code>uiautomatorviewer</code>界面中，单击设备截图按钮。</li>
+<li>2.将鼠标悬停在左侧面板中的快照上，以查看由<code>uiautomatorviewer</code>工具标识的UI组件。属性列在右下方面板的右下方面板和右上方面板中的布局层次结构中。</li>
+<li>3.或者，单击<strong>Toggle NAF Nodes</strong>按钮可查看UI Automator无法访问的UI组件。只有有限的信息可用于这些组件。</li>
+</ul>
+<p>要了解Android提供的常见类型的UI组件，请参阅<a href="https://developer.android.google.cn/guide/topics/ui/index.html" target="_blank" rel="external">用户界面</a>。</p>
+<h3 id="确保您的Activity可访问">确保您的Activity可访问</h3><p>UI Automator测试框架对已实现Android辅助功能的应用的效果更好。当您使用View类型的UI元素或来自SDK或支持库的View子类时，您不需要实现辅助功能支持，因为这些类已经为您完成了。</p>
+<p>但是，有些应用使用自定义UI元素来提供更丰富的用户体验。这些元素将不提供自动可访问性支持。如果您的应用程式包含不是来自SDK或支援库的View子类别的执行个体，请务必按照下列步骤为这些元素加入无障碍功能：</p>
+<ul>
+<li>1.创建一个继承自<strong><a href="https://developer.android.google.cn/reference/android/support/v4/widget/ExploreByTouchHelper.html" target="_blank" rel="external">ExploreByTouchHelper</a></strong>的类。</li>
+<li>2.通过调用<a href="https://developer.android.google.cn/reference/android/support/v4/view/ViewCompat.html#setAccessibilityDelegate(android.view.View, android.support.v4.view.AccessibilityDelegateCompat" target="_blank" rel="external">setAccessibilityDelegate()</a>将新类的实例与特定自定义UI元素相关联。</li>
+</ul>
+<p>有关向自定义视图元素添加辅助功能的其他指南，请参阅<a href="https://developer.android.google.cn/guide/topics/ui/accessibility/custom-views.html" target="_blank" rel="external">构建可访问的自定义视图</a>。要了解更多有关在Android的可访问性一般的最佳实践，请参阅<a href="https://developer.android.google.cn/guide/topics/ui/accessibility/apps.html" target="_blank" rel="external">使应用程序更容易访问</a>。</p>
+<h3 id="创建UI_Automator测试类">创建UI Automator测试类</h3><p>您的UI Automator测试类应以与JUnit 4测试类相同的方式编写。要了解有关创建JUnit 4测试类和使用JUnit 4断言和注释的更多信息，请参阅<a href="/2017/01/11/【Android文档翻译】构建仪表化单元测试/#创建测试单元测试类">构建测试单元测试类</a>。</p>
+<p>在测试类定义的开头添加<code>@RunWith(AndroidJUnit4.class)</code>注解。您还需要指定Android测试支持库中提供的<a href="https://developer.android.google.cn/reference/android/support/test/runner/AndroidJUnitRunner.html" target="_blank" rel="external">AndroidJUnitRunner</a>类作为默认测试运行器。此步骤<a href="#在设备或模拟器上运行UI Automator测试">在设备或模拟器上的运行UI自动程序测试</a>中有更详细的描述。</p>
+<p>在您的UI Automator测试类中实现以下编程模型：</p>
+<ul>
+<li>1.通过调用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiDevice.html#getInstance(android.app.Instrumentation" target="_blank" rel="external"><code>getInstance()</code></a>方法并传递一个<a href="https://developer.android.google.cn/reference/android/app/Instrumentation.html" target="_blank" rel="external"><code>Instrumentation</code></a>对象作为参数，获取<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiDevice.html" target="_blank" rel="external"><code>UiDevice</code></a>对象以访问要测试的设备。</li>
+<li>2.通过调用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiDevice.html#findObject(android.support.test.uiautomator.UiSelector" target="_blank" rel="external"><code>findObject()</code></a>方法，获取<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html" target="_blank" rel="external"><code>UiObject</code></a>对象以访问设备上显示的UI组件（例如，前台中的当前视图）</li>
+<li>3.通过调用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html" target="_blank" rel="external"><code>UiObject</code></a>的方法模拟要在该UI组件上执行的特定用户交互;例如，调用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html#performMultiPointerGesture(android.view.MotionEvent.PointerCoords[]..." target="_blank" rel="external"><code>performMultiPointerGesture()</code></a>来模拟多点触摸手势，并使用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html#setText(java.lang.String" target="_blank" rel="external"><code>setText()</code></a>来编辑文本字段。</li>
+<li>4.在执行这些用户交互操作后，检查UI是否反映了预期的状态或行为。</li>
+</ul>
+<p>这些步骤在下面的部分中有更详细地描述。</p>
+<h3 id="访问UI组件">访问UI组件</h3><p><a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiDevice.html" target="_blank" rel="external">UiDevice</a>对象是访问和操纵设备状态的主要方式。在测试中，可以调用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiDevice.html" target="_blank" rel="external">UiDevice</a>的方法来检查各种属性的状态，例如当前方向或显示大小。您的测试可以使用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiDevice.html" target="_blank" rel="external">UiDevice</a>对象执行设备级操作，例如强制设备进行特定旋转，D-pad硬件按键事件，以及Home和Menu按键的事件。</p>
+<p>最好从设备的主屏幕开始测试。从主屏幕（或您在设备中选择的其他某个起始位置），您可以调用UI Automator API提供的方法来选择特定的UI元素并与其进行交互。</p>
+<p>以下代码段显示您的测试如何获取<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiDevice.html" target="_blank" rel="external">UiDevice</a>的实例，并模拟Home按钮：</p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="meta"><span class="meta-keyword">import</span> org.junit.Before;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> android.support.test.runner.AndroidJUnit4;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> android.support.test.uiautomator.UiDevice;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> android.support.test.uiautomator.By;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> android.support.test.uiautomator.Until;</span></div><div class="line">...</div><div class="line"></div><div class="line">@RunWith(AndroidJUnit4.class)</div><div class="line">@SdkSuppress(minSdkVersion = <span class="number">18</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ChangeTextBehaviorTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String BASIC_SAMPLE_PACKAGE</div><div class="line">            = <span class="string">"com.example.android.testing.uiautomator.BasicSample"</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> int LAUNCH_TIMEOUT = <span class="number">5000</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String STRING_TO_BE_TYPED = <span class="string">"UiAutomator"</span>;</div><div class="line">    <span class="keyword">private</span> UiDevice mDevice;</div><div class="line"></div><div class="line">    @Before</div><div class="line">    <span class="keyword">public</span> <span class="keyword">void</span> startMainActivityFromHomeScreen() &#123;</div><div class="line">        <span class="comment">// Initialize UiDevice instance</span></div><div class="line">        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());</div><div class="line"></div><div class="line">        <span class="comment">// Start from the home screen</span></div><div class="line">        mDevice.pressHome();</div><div class="line"></div><div class="line">        <span class="comment">// Wait for launcher</span></div><div class="line">        <span class="keyword">final</span> String launcherPackage = mDevice.getLauncherPackageName();</div><div class="line">        assertThat(launcherPackage, notNullValue());</div><div class="line">        mDevice.wait(Until.hasObject(By.pkg(launcherPackage).depth(<span class="number">0</span>)),</div><div class="line">                LAUNCH_TIMEOUT);</div><div class="line"></div><div class="line">        <span class="comment">// Launch the app</span></div><div class="line">        Context context = InstrumentationRegistry.getContext();</div><div class="line">        <span class="keyword">final</span> Intent intent = context.getPackageManager()</div><div class="line">                .getLaunchIntentForPackage(BASIC_SAMPLE_PACKAGE);</div><div class="line">        <span class="comment">// Clear out any previous instances</span></div><div class="line">        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);</div><div class="line">        context.startActivity(intent);</div><div class="line"></div><div class="line">        <span class="comment">// Wait for the app to appear</span></div><div class="line">        mDevice.wait(Until.hasObject(By.pkg(BASIC_SAMPLE_PACKAGE).depth(<span class="number">0</span>)),</div><div class="line">                LAUNCH_TIMEOUT);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在示例中，<code>@SdkSuppress(minSdkVersion = 18)</code>语句有助于确保测试仅在UI自动化框架要求的Android 4.3（API级别18）或更高版本的设备上运行。</p>
+<p>使用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiDevice.html#findObject(android.support.test.uiautomator.UiSelector" target="_blank" rel="external"><code>findObject()</code></a>方法来检索一个代表与给定选择器标准匹配的视图的<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html" target="_blank" rel="external"><code>UiObject</code></a>。请注意，每当您的测试使用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html" target="_blank" rel="external">UiObject</a>实例来单击UI元素或查询属性时，UI Automator测试框架会在当前显示中搜索匹配项。</p>
+<p>以下代码段显示了您的测试如何构建表示应用程序中的“取消”按钮和“确定”按钮的<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html" target="_blank" rel="external">UiObject</a>实例。</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">UiObject cancelButton = mDevice.findObject(<span class="keyword">new</span> UiSelector()</div><div class="line">        .<span class="built_in">text</span>(<span class="string">"Cancel"</span>))</div><div class="line">        .className(<span class="string">"android.widget.Button"</span>));</div><div class="line">UiObject okButton = mDevice.findObject(<span class="keyword">new</span> UiSelector()</div><div class="line">        .<span class="built_in">text</span>(<span class="string">"OK"</span>))</div><div class="line">        .className(<span class="string">"android.widget.Button"</span>));</div><div class="line"></div><div class="line"><span class="comment">// Simulate a user-click on the OK button, if found.</span></div><div class="line"><span class="built_in">if</span>(okButton.<span class="built_in">exists</span>() &amp;&amp; okButton.isEnabled()) &#123;</div><div class="line">    okButton.<span class="built_in">click</span>();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="指定选择器">指定选择器</h4><p>如果要在应用程序中访问特定的UI组件，请使用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiSelector.html" target="_blank" rel="external"><code>UiSelector</code></a>类。此类表示对当前显示的UI中的特定元素的查询。</p>
+<p>如果找到多个匹配元素，则布局层次结构中的第一个匹配元素将作为目标<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html" target="_blank" rel="external"><code>UiObject</code></a>返回。构建<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiSelector.html" target="_blank" rel="external"><code>UiSelector</code></a>时，可以将多个属性链接在一起以优化搜索。如果没有找到匹配的UI元素，则抛出<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObjectNotFoundException.html" target="_blank" rel="external"><code>UiAutomatorObjectNotFoundException</code></a>。</p>
+<p>您可以使用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiSelector.html#childSelector(android.support.test.uiautomator.UiSelector" target="_blank" rel="external"><code>childSelector()</code></a>方法嵌套多个<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiSelector.html" target="_blank" rel="external"><code>UiSelector</code></a>实例。例如，以下代码示例显示您的测试如何指定搜索以在当前显示的UI中查找第一个ListView，然后在该ListView中搜索以查找具有文本属性Apps的UI元素。</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">UiObject appItem = new UiObject(<span class="name">new</span> UiSelector()</div><div class="line">        .className(<span class="string">"android.widget.ListView"</span>)</div><div class="line">        .instance(<span class="number">1</span>)</div><div class="line">        .childSelector(<span class="name">new</span> UiSelector()</div><div class="line">        .text(<span class="string">"Apps"</span>)))<span class="comment">;</span></div></pre></td></tr></table></figure>
+<p>作为最佳实践，在指定选择器时，应该使用资源ID（如果已分配给UI元素）而不是文本元素或内容描述符。并非所有元素都具有文本元素（例如，工具栏中的图标）。文本选择器很脆弱，如果UI有轻微更改，则可能导致测试失败。它们也可能不跨越不同的语言扩展;您的文本选择器可能不匹配已被翻译的字符串。</p>
+<p>在选择器标准中指定对象状态可能很有用。例如，如果要选择所有已选元素的列表，以便可以取消选中它们，请调用参数设置为true的<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/By.html#checked(boolean" target="_blank" rel="external"><code>checked()</code></a>方法。</p>
+<h3 id="执行操作">执行操作</h3><p>一旦你的测试获得了一个<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html" target="_blank" rel="external"><code>UiObject</code></a>对象，你可以调用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html" target="_blank" rel="external"><code>UiObject</code></a>类中的方法在该对象所表示的UI组件上执行用户交互。您可以指定以下操作：</p>
+<ul>
+<li><a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html#click(" target="_blank" rel="external"><code>click()</code></a>:单击UI元素的可见边界的中心。</li>
+<li><a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html#dragTo(int, int, int" target="_blank" rel="external"><code>dragTo()</code></a>:将此对象拖放到任意坐标。</li>
+<li><a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html#setText(java.lang.String" target="_blank" rel="external"><code>setText()</code></a>:在清除字段的内容后，在可编辑字段中设置文本。相反，<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html#clearTextField(" target="_blank" rel="external"><code>clearTextField()</code></a>方法清除可编辑字段中的现有文本。</li>
+<li><a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html#swipeUp(int" target="_blank" rel="external"><code>swipeUp()</code></a>):对<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html" target="_blank" rel="external"><code>UiObject</code></a>执行向上滑动操作。类似地，<code>swipeDown()</code>，<code>swipeLeft()</code>和<code>swipeRight()</code>方法执行相应的操作。</li>
+</ul>
+<p>UI Automator测试框架允许您通过<code>getContext()</code>获取<code>Context</code>对象来发送<code>Intent</code>或启动<code>Activity</code>，而不使用shell命令。</p>
+<p>以下代码段显示了您的测试如何使用<code>Intent</code>启动正在测试的应用程序。当您只想测试计算器应用程序，而不关心启动器时，此方法很有用。</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> void setUp() &#123;</div><div class="line">    ...</div><div class="line"></div><div class="line">    // Launch a simple calculator app</div><div class="line">    Context context = getInstrumentation().getContext();</div><div class="line">    <span class="keyword">Intent</span> <span class="keyword">intent</span> = context.getPackageManager()</div><div class="line">            .getLaunchIntentForPackage(CALC_PACKAGE);</div><div class="line">    <span class="keyword">intent</span>.addFlags(<span class="keyword">Intent</span>.FLAG_ACTIVITY_CLEAR_TASK);</div><div class="line">            // Clear <span class="keyword">out</span> <span class="built_in">any</span> previous instances</div><div class="line">    context.startActivity(<span class="keyword">intent</span>);</div><div class="line">    mDevice.<span class="keyword">wait</span>(Until.hasObject(By.pkg(CALC_PACKAGE).depth(<span class="number">0</span>)), TIMEOUT);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="对集合执行操作">对集合执行操作</h4><p>如果您要模拟项目集合（例如，音乐专辑中的歌曲或收件箱中的电子邮件列表）中的用户互动，请使用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiCollection.html" target="_blank" rel="external"><code>UiCollection</code></a>类。要创建<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiCollection.html" target="_blank" rel="external"><code>UiCollection</code></a>对象，请指定用于搜索UI容器或其他子UI用户界面元素（例如包含子UI用户界面元素的布局视图）的包装器的<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiSelector.html" target="_blank" rel="external"><code>UiSelector</code></a>。</p>
+<p>以下代码段显示了您的测试可能如何构造一个<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiCollection.html" target="_blank" rel="external"><code>UiCollection</code></a>来表示在<code>FrameLayout</code>中显示的视频专辑：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">UiCollection videos = <span class="keyword">new</span> UiCollection(<span class="keyword">new</span> UiSelector()</div><div class="line">        .className(<span class="string">"android.widget.FrameLayout"</span>));</div><div class="line"></div><div class="line"><span class="comment">// Retrieve the number of videos in this collection:</span></div><div class="line"><span class="keyword">int</span> count = videos.getChildCount(<span class="keyword">new</span> UiSelector()</div><div class="line">        .className(<span class="string">"android.widget.LinearLayout"</span>));</div><div class="line"></div><div class="line"><span class="comment">// Find a specific video and simulate a user-click on it</span></div><div class="line">UiObject video = videos.getChildByText(<span class="keyword">new</span> UiSelector()</div><div class="line">        .className(<span class="string">"android.widget.LinearLayout"</span>), <span class="string">"Cute Baby Laughing"</span>);</div><div class="line">video.<span class="built_in">click</span>();</div><div class="line"></div><div class="line"><span class="comment">// Simulate selecting a checkbox that is associated with the video</span></div><div class="line">UiObject checkBox = video.getChild(<span class="keyword">new</span> UiSelector()</div><div class="line">        .className(<span class="string">"android.widget.Checkbox"</span>));</div><div class="line"><span class="built_in">if</span>(!checkBox.isSelected()) checkbox.<span class="built_in">click</span>();</div></pre></td></tr></table></figure>
+<h4 id="对可滚动视图执行操作">对可滚动视图执行操作</h4><p>使用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiScrollable.html" target="_blank" rel="external"><code>UiScrollable</code></a>类来模拟跨显示的垂直或水平滚动。当UI元素位于屏幕外并且您需要滚动以将其置于视图中时，此技术非常有用。</p>
+<p>以下代码段显示了如何模拟向下滚动设置菜单并点击关于平板电脑选项：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">UiScrollable settingsItem = <span class="keyword">new</span> UiScrollable(<span class="keyword">new</span> UiSelector()</div><div class="line">        .className(<span class="string">"android.widget.ListView"</span>));</div><div class="line">UiObject about = settingsItem.getChildByText(<span class="keyword">new</span> UiSelector()</div><div class="line">        .className(<span class="string">"android.widget.LinearLayout"</span>), <span class="string">"About tablet"</span>);</div><div class="line">about.<span class="built_in">click</span>();</div></pre></td></tr></table></figure>
+<h3 id="验证结果">验证结果</h3><p><a href="https://developer.android.google.cn/reference/android/test/InstrumentationTestCase.html" target="_blank" rel="external"><code>InstrumentationTestCase</code></a>扩展了<a href="https://developer.android.google.cn/reference/junit/framework/TestCase.html" target="_blank" rel="external"><code>TestCase</code></a>，因此您可以使用标准的JUnit Assert方法来测试应用程序中的UI组件是否返回预期结果。</p>
+<p>以下代码段显示您的测试如何在计算器应用程序中找到多个按钮，按顺序点击它们，然后验证是否显示正确的结果。</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> final <span class="keyword">String</span> CALC_PACKAGE = <span class="string">"com.myexample.calc"</span>;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="keyword">void</span> testTwoPlusThreeEqualsFive() &#123;</div><div class="line">    <span class="comment">// Enter an equation: 2 + 3 = ?</span></div><div class="line">    mDevice.findObject(<span class="keyword">new</span> UiSelector()</div><div class="line">            .packageName(CALC_PACKAGE).resourceId(<span class="string">"two"</span>)).<span class="built_in">click</span>();</div><div class="line">    mDevice.findObject(<span class="keyword">new</span> UiSelector()</div><div class="line">            .packageName(CALC_PACKAGE).resourceId(<span class="string">"plus"</span>)).<span class="built_in">click</span>();</div><div class="line">    mDevice.findObject(<span class="keyword">new</span> UiSelector()</div><div class="line">            .packageName(CALC_PACKAGE).resourceId(<span class="string">"three"</span>)).<span class="built_in">click</span>();</div><div class="line">    mDevice.findObject(<span class="keyword">new</span> UiSelector()</div><div class="line">            .packageName(CALC_PACKAGE).resourceId(<span class="string">"equals"</span>)).<span class="built_in">click</span>();</div><div class="line"></div><div class="line">    <span class="comment">// Verify the result = 5</span></div><div class="line">    UiObject result = mDevice.findObject(By.res(CALC_PACKAGE, <span class="string">"result"</span>));</div><div class="line">    assertEquals(<span class="string">"5"</span>, result.getText());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="在设备或模拟器上运行UI_Automator测试">在设备或模拟器上运行UI Automator测试</h2><p>您可以从Android Studio或从命令行运行UI Automator测试。确保指定<a href="https://developer.android.google.cn/reference/android/support/test/runner/AndroidJUnitRunner.html" target="_blank" rel="external">AndroidJUnitRunner</a>作为项目中的默认instrumentation runner。</p>
+<p>要运行UI Automator测试，请按照<a href="/2017/01/11/【Android文档翻译】入门测试/">测试入门</a>中所述的运行测试测试的步骤操作。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2017/01/13/【Android文档翻译】测试单个应用程序的UI/" itemprop="url">
                 【Android文档翻译】测试单个应用程序的UI
               </a>
@@ -1152,512 +1522,11 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2017/01/09/部署Django到Apach/" itemprop="url">
-                部署Django到Apach
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2017-01-09T14:21:58+08:00" content="2017-01-09">
-            2017-01-09
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/django/" itemprop="url" rel="index">
-                  <span itemprop="name">django</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2017/01/09/部署Django到Apach/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/09/部署Django到Apach/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><p>以ubuntu为例，部署Django到Apache上</p>
-<h2 id="1-安装apache2">1.安装apache2</h2><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="keyword">get</span> install apache2</div></pre></td></tr></table></figure>
-<h2 id="2-安装mod_wsgi">2.安装mod_wsgi</h2><p>Python2：</p>
-<figure class="highlight applescript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="keyword">get</span> install libapache2-<span class="keyword">mod</span>-wsgi</div></pre></td></tr></table></figure>
-<p>Python3:</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="built_in">get</span> install libapache2-<span class="keyword">mod</span>-wsgi-<span class="keyword">py3</span></div></pre></td></tr></table></figure>
-<h2 id="3-准备一个新网站的配置文件">3.准备一个新网站的配置文件</h2><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo vi <span class="meta-keyword">/etc/</span>apache2<span class="meta-keyword">/sites-available/</span>sitename.conf</div></pre></td></tr></table></figure>
-<p>内容如下：</p>
-<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="params">&lt;VirtualHost *:<span class="number">8888</span>&gt;</span></div><div class="line">    ServerName www.yourdomain.com</div><div class="line">    ServerAlias otherdomain.com</div><div class="line">    ServerAdmin tuweizhong@<span class="number">163.</span>com</div><div class="line">  </div><div class="line">    Alias <span class="meta-keyword">/media/</span> <span class="meta-keyword">/home/</span>tu<span class="meta-keyword">/blog/</span>media/</div><div class="line">    Alias <span class="meta-keyword">/static/</span> <span class="meta-keyword">/home/</span>tu<span class="meta-keyword">/blog/</span>static/</div><div class="line">  </div><div class="line">    <span class="params">&lt;Directory /home/tu/blog/media&gt;</span></div><div class="line">        Require all granted</div><div class="line">    <span class="params">&lt;/Directory&gt;</span></div><div class="line">  </div><div class="line">    <span class="params">&lt;Directory /home/tu/blog/static&gt;</span></div><div class="line">        Require all granted</div><div class="line">    <span class="params">&lt;/Directory&gt;</span></div><div class="line">  </div><div class="line">    WSGIScriptAlias / <span class="meta-keyword">/home/</span>tu<span class="meta-keyword">/blog/</span>blog/wsgi.py</div><div class="line">  </div><div class="line">    <span class="params">&lt;Directory /home/tu/blog/blog&gt;</span></div><div class="line">    <span class="params">&lt;Files wsgi.py&gt;</span></div><div class="line">        Require all granted</div><div class="line">    <span class="params">&lt;/Files&gt;</span></div><div class="line">    <span class="params">&lt;/Directory&gt;</span></div><div class="line"><span class="params">&lt;/VirtualHost&gt;</span></div></pre></td></tr></table></figure>
-<h2 id="4-修改Django项目中wsgi-py文件">4.修改Django项目中wsgi.py文件</h2><p>上面的配置中写的 WSGIScriptAlias / /home/tu/blog/blog/wsgi.py</p>
-<p>就是把apache2和你的网站project联系起来了</p>
-<figure class="highlight capnproto"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> os</div><div class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join,dirname,abspath</div><div class="line"> </div><div class="line">PROJECT_DIR = dirname(dirname(abspath(__file__)))<span class="comment">#3</span></div><div class="line"><span class="keyword">import</span> sys <span class="comment"># 4</span></div><div class="line">sys.path.insert(<span class="number">0</span>,PROJECT_DIR) <span class="comment"># 5</span></div><div class="line"> </div><div class="line">os.environ[<span class="string">"DJANGO_SETTINGS_MODULE"</span>] = <span class="string">"blog.settings"</span> <span class="comment"># 7</span></div><div class="line"> </div><div class="line"><span class="keyword">from</span> django.core.wsgi <span class="keyword">import</span> get_wsgi_application</div><div class="line">application = get_wsgi_application()</div></pre></td></tr></table></figure>
-<blockquote>
-<p>第 3，4，5 行为新加的内容，作用是让脚本找到django项目的位置，也可以在sitename.conf中做，用WSGIPythonPath,想了解的自行搜索, 第 7 行如果一台服务器有多个django project时一定要修改成上面那样，否则访问的时候会发生网站互相串的情况，即访问A网站到了B网站，一会儿正常，一会儿又不正常（当然也可以使用 mod_wsgi daemon 模式,点击这里查看）</p>
-</blockquote>
-<h2 id="5-监听端口">5.监听端口</h2><figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo <span class="keyword">vim</span> /etc/apache2/ports.<span class="keyword">conf</span></div></pre></td></tr></table></figure>
-<p>将网站的端口加入监听列表：</p>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="attribute"><span class="nomarkup">Listen</span></span> 80</div><div class="line"><span class="attribute"><span class="nomarkup">Listen</span></span> 8888</div><div class="line"></div><div class="line"><span class="section">&lt;IfModule ssl_module&gt;</span></div><div class="line">	<span class="attribute"><span class="nomarkup">Listen</span></span> 443</div><div class="line"><span class="section">&lt;/IfModule&gt;</span></div><div class="line"></div><div class="line"><span class="section">&lt;IfModule mod_gnutls.c&gt;</span></div><div class="line">	<span class="attribute"><span class="nomarkup">Listen</span></span> 443</div><div class="line"><span class="section">&lt;/IfModule&gt;</span></div><div class="line"></div><div class="line"><span class="comment"># vim: syntax=apache ts=4 sw=4 sts=4 sr noet</span></div></pre></td></tr></table></figure>
-<h2 id="6-设置目录和文件权限">6.设置目录和文件权限</h2><p>一般目录权限设置为 755，文件权限设置为 644 </p>
-<p>假如项目位置在 /home/tu/zqxt （在zqxt 下面有一个 manage.py，zqxt 是项目名称）</p>
-<figure class="highlight dos"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">cd</span> /home/tu/</div><div class="line">sudo chmod -R <span class="number">644</span> zqxt</div><div class="line">sudo <span class="built_in">find</span> zqxt -<span class="built_in">type</span> d -exec chmod <span class="number">755</span> \&#123;\&#125; \;</div></pre></td></tr></table></figure>
-<p><strong>apache 服务器运行用户可以在 /etc/apache2/envvars 文件里面改，这里使用的是默认值，当然也可以更改成自己的当前用户，这样的话权限问题就简单很多，但在服务器上推荐有 www-data 用户，更安全。以下是默认设置：</strong></p>
-<figure class="highlight gams"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># Since there is <span class="keyword">no</span> sane way to get the parsed apache2 config in scripts, some</div><div class="line"># settings are defined via environment <span class="keyword">variables</span> and <span class="comment">then used in apache2ctl,</span></div><div class="line"># /etc/init.d/apache2, /etc/logrotate.d/apache2, etc.</div><div class="line"> </div><div class="line">export <span class="comment">APACHE_RUN_USER=www-data</span></div><div class="line">export <span class="comment">APACHE_RUN_GROUP=www-data</span></div></pre></td></tr></table></figure>
-<h3 id="上传文件夹权限">上传文件夹权限</h3><p>media 文件夹一般用来存放用户上传文件，static 一般用来放自己网站的js，css，图片等，在settings.py中的相关设置</p>
-<p>STATIC_URL 为静态文件的网址 STATIC_ROOT 为静态文件的根目录，</p>
-<p>MEDIA_URL 为用户上传文件夹的根目录，MEDIA_URL为对应的访问网址</p>
-<p>在settings.py中设置：</p>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Static files (CSS, JavaScript, Images)</span></div><div class="line"><span class="comment"># https://docs.djangoproject.com/en/dev/howto/static-files/</span></div><div class="line"><span class="attr">STATIC_URL</span> = <span class="string">'/static/'</span></div><div class="line"><span class="attr">STATIC_ROOT</span> = os.path.join(BASE_DIR,<span class="string">'static'</span>)</div><div class="line"> </div><div class="line"><span class="comment"># upload folder</span></div><div class="line"><span class="attr">MEDIA_URL</span> = <span class="string">'/media/'</span></div><div class="line"><span class="attr">MEDIA_ROOT</span> = os.path.join(BASE_DIR,<span class="string">'media'</span>)</div></pre></td></tr></table></figure>
-<p>在 Linux 服务器上，用户上传目录还要设置给 www-data 用户的写权限，下面的方法比较好，不影响原来的用户的编辑。</p>
-<p>假如上传目录为 zqxt/media/uploads 文件夹,进入media文件夹，将 uploads 用户组改为www-data，并且赋予该组写权限:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">cd</span> media/ <span class="comment"># 进入media文件夹</span></div><div class="line">sudo chgrp -R www-data uploads</div><div class="line">sudo chmod -R g+w uploads</div></pre></td></tr></table></figure>
-<blockquote>
-<p><strong>备注</strong>：这两条命令，比直接用sudo chown -R www-data:www-data uploads 好，因为下面的命令不影响文件原来所属用户编辑文件，fedora系统应该不用设置上面的权限，但是个人强烈推荐用ubuntu,除非你对linux非常熟悉，你自己选择。</p>
-</blockquote>
-<p>如果你使用的是sqlite3数据库，还会提示 Attempt to write a readonly database,同样要给www-data写数据库的权限</p>
-<p>进入项目目录的上一级，比如project目录为 /home/tu/blog 那就进入 /home/tu 执行下面的命令（和修改上传文件夹类似）</p>
-<figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">sudo</span> chgrp www-<span class="meta">data</span> <span class="keyword">blog</span></div><div class="line"><span class="symbol">sudo</span> chmod g+w <span class="keyword">blog</span></div><div class="line"><span class="symbol">sudo</span> chgrp www-<span class="meta">data</span> <span class="keyword">blog/db.sqlite3 </span> # 更改为你的数据库名称</div><div class="line"><span class="symbol">sudo</span> chmod g+w <span class="keyword">blog/db.sqlite3</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p><strong>备注</strong>：上面的不要加 -R ,-R是更改包括所有的子文件夹和文件，这样不安全。个人建议可以专门弄一个文件夹,用它来放sqlite3数据库，给该文件夹www-data写权限，而不是整个项目给写权限，有些文件只要读的权限就够了，给写权限会造成不安全。</p>
-</blockquote>
-<h2 id="7-激活新网站">7.激活新网站</h2><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">sudo</span> <span class="selector-tag">a2ensite</span> <span class="selector-tag">sitename</span> 或 <span class="selector-tag">sudo</span> <span class="selector-tag">a2ensite</span> <span class="selector-tag">sitename</span><span class="selector-class">.conf</span></div></pre></td></tr></table></figure>
-<h3 id="8-如果遇到了错误">8.如果遇到了错误</h3><p>如果你重启apache时遇到了以下错误：</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Job <span class="keyword">for</span> apache2<span class="selector-class">.service</span> failed. See <span class="string">"systemctl status apache2.service"</span> and <span class="string">"journalctl -xe"</span> <span class="keyword">for</span> <span class="selector-tag">details</span>.</div></pre></td></tr></table></figure>
-<p>尝试运行</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">systemctl</span> <span class="selector-tag">status</span> <span class="selector-tag">apache2</span><span class="selector-class">.service</span></div></pre></td></tr></table></figure>
-<p>得到如下结果时：</p>
-<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">apache2.service - (null)</div><div class="line"><span class="symbol">   Loaded:</span> loaded (<span class="meta-keyword">/etc/</span>init.d/apache2)</div><div class="line"><span class="symbol">   Active:</span> failed (Result: exit-code) since Sat <span class="number">2015</span><span class="number">-05</span><span class="number">-30</span> <span class="number">02</span>:<span class="number">22</span>:<span class="number">41</span> IST; <span class="number">12</span>s ago</div><div class="line"><span class="symbol">     Docs:</span> man:systemd-sysv-generator(<span class="number">8</span>)</div><div class="line"><span class="symbol">  Process:</span> <span class="number">4866</span> ExecStart=<span class="meta-keyword">/etc/</span>init.d/apache2 start (code=exited, status=<span class="number">1</span>/FAILURE)</div></pre></td></tr></table></figure>
-<p>你可以考虑完全卸载apache，并清空配置，重新再来配置一次：</p>
-<p>重装APACHE2：</p>
-<p>替换已经删除的配置文件，而不重新安装:</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="built_in">get</span> -<span class="keyword">o</span> DPk<span class="variable">g:</span>:Option<span class="variable">s:</span>:=<span class="string">"--force-confmiss"</span> --reinstall install apache2</div></pre></td></tr></table></figure>
-<p>完全移除apache2</p>
-<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="keyword">get</span> purge apache2</div></pre></td></tr></table></figure>
-<p>安装apache2</p>
-<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="keyword">get</span> install apache2</div></pre></td></tr></table></figure>
-<p>参考文章：</p>
-<ul>
-<li><a href="http://www.ziqiangxuetang.com/django/django-deploy.html" target="_blank" rel="external">Django 部署(Apache)</a></li>
-<li><a href="http://askubuntu.com/questions/629995/apache-not-able-to-restart" target="_blank" rel="external">Apache not able to restart</a></li>
-</ul>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/12/18/斯坦福机器学习课程 第六周 (3)机器学习系统设计/" itemprop="url">
-                斯坦福机器学习课程 第六周 (3)机器学习系统设计-[构建垃圾邮件分类器][误差分析]
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-12-18T17:51:58+08:00" content="2016-12-18">
-            2016-12-18
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/12/18/斯坦福机器学习课程 第六周 (3)机器学习系统设计/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/18/斯坦福机器学习课程 第六周 (3)机器学习系统设计/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="构建垃圾邮件分类器">构建垃圾邮件分类器</h2><blockquote>
-<p>在接下来的视频中，我将谈到机器学习的系统设计。</p>
-<p>这些视频将谈及在设计复杂的机器学习系统时，你将遇到的主要问题。同时我们会试着给出一些关于如何巧妙构建一个复杂的机器学习系统的建议。</p>
-<p>接下来的视频可能看起来有点不连贯，因为这些视频会涉及一些你在设计机器学习系统时可能会遇到的不同问题。虽然下面的课程数学性可能不是那么的强，但是我认为我们将要讲到的这些东西是非常有用的。可能在构建大型机器学习系统时节省大量的时间。</p>
-</blockquote>
-<h3 id="先想想第一步做什么">先想想第一步做什么</h3><p><a href="https://www.coursera.org/learn/machine-learning/lecture/4h5X4/prioritizing-what-to-work-on" target="_blank" rel="external">视频地址</a></p>
-<p>具体的说，我们首先要讲的是当我们在进行机器学习时，着重要考虑什么问题。首先我要举一个垃圾邮件分类的例子。</p>
-<p>假如你想建立一个垃圾邮件分类器，看这些垃圾邮件与非垃圾邮件的例子（左侧是垃圾邮件，右侧是非垃圾邮件）：</p>
-<p><img src="/img/16_12_18/001.png" alt=""></p>
-<h4 id="建立特征向量">建立特征向量</h4><p>左侧这封邮件想要向你推销某个商品。注意这封垃圾邮件有意的拼错一些单词，例如<code>w4tchs</code>,<code>Med1cine</code>。右边的邮件显然不是一个垃圾邮件。假设我们已经有一些加过标签的训练集，包括标注的垃圾邮件（<code>y=1</code>）和非垃圾邮件(<code>y=0</code>)。我们如何以监督学习的方法来构造一个分类器来区分垃圾邮件和非垃圾邮件呢？</p>
-<p>为了应用监督学习，我们首先必须确定的是如何用邮件的特征构造向量$x$。给出训练集中的特征$x$和标签$y$，我们就能够训练出某种分类器，比如用逻辑回归的方法。</p>
-<ul>
-<li>$x = features\ of\ email\ (邮件的特征)$</li>
-<li>$y = spam(1)\ or\ not\ spam(0)\ (是否为垃圾邮件：1是、0否)$</li>
-</ul>
-<p>这里有一种选择邮件的一些特征变量的方法，比如说我们可能会想出一系列单词，我们可以认为这些单词能够用来区分垃圾邮件或非垃圾邮件。</p>
-<p>比如说，如果有封邮件，包含单词<code>deal</code>，那么它就很有可能是一封垃圾邮件，同时包含单词<code>buy</code>的邮件也很有可能是一封垃圾邮件，包含<code>discount</code>的邮件也很有可能是垃圾邮件。</p>
-<p>如果一封邮件中包含了我的名字，这有可能是一个知道我的人写的，说明这封邮件不太可能是垃圾邮件。因为某些原因，我认为<code>now</code>这个单词表明了这封邮件可能并不是垃圾邮件，因为我经常收到一些很紧急的邮件，当然还有别的单词。我们可以选出这样成百上千的单词。</p>
-<p>给出一封这样的邮件：</p>
-<p><img src="/img/16_12_18/002.png" alt=""></p>
-<p>我们可以将这封邮件用一个特征向量来表示，方法如下：</p>
-<p>首先根据字母顺序排序列出我之前选好的单词：</p>
-<p><code>andrew</code>,<code>buy</code>,<code>deal</code>,<code>discount</code>,…,<code>now</code>,…</p>
-<p>然后对当前这封邮件检查一下这些词汇是否出现在这封邮件中。</p>
-<p>我用一个特征向量x来表示这些词汇是否出现在了邮件中：</p>
-<p>$$<br>x=<br>\begin{bmatrix}<br>   0(andrew) \\<br>   1(buy) \\<br>   1(deal) \\<br>   0(discont) \\<br>   … \\<br>   1(now) \\<br>   …<br>\end{bmatrix}<br>$$</p>
-<p>在这个例子中，我选择了100个词用于表示是否可能为垃圾邮件，所以这个特征向量的维度是100。</p>
-<p>并且:</p>
-<p>$$<br>x_{j} =<br>\begin{matrix}<br>   1\ 如果单词出现在email中 \\<br>   0\ 如果单词没出现在email中<br>\end{matrix}<br>$$</p>
-<p>这样我们就可以用特征向量来表示这封邮件。</p>
-<p>顺便说一句，虽然我所描述的这个过程是我自己选取的100个词，但是在实际工作中最普遍的做法是遍历整个训练集，然后在训练集中选出出现次数最多的n个单词，n一般介于10000到50000之间。然后把这些词作为你要用的特征，因此不同于手动选取，我们只用遍历训练样本，然后选出出现频率最高的词语。这些单词会构成特征，这样你就可以使用它们来做垃圾邮件分类了。</p>
-<h4 id="从何处入手来提高分类准确度？">从何处入手来提高分类准确度？</h4><p>如果你正在构造一个垃圾邮件分类器，你应该会面对这样一个问题，那就是：</p>
-<p><strong>你最该去使用哪一种改进你的方法，从而使得你的垃圾邮件分类器具有较高的准确度？</strong></p>
-<h5 id="积累大量数据">积累大量数据</h5><p>从直觉上讲，是要收集大量的数据。事实上确实好多人这么做，很多人认为收集越多的数据，算法就会表现的越好。事实上就垃圾邮件分类而言，有一个叫做<strong>“Honey  Pot”</strong>的项目，它可以建立一个假的邮箱地址，故意将这些地址泄露给发垃圾邮件的人，这样就能收集到大量的垃圾邮件了。这样的话我们就能得到非常多的垃圾邮件来训练学习算法了。</p>
-<h5 id="从email的header中提取路径等信息">从email的header中提取路径等信息</h5><p>但是在前面的课程中我们知道，大量的数据可能会有帮助，但也可能没有。对于大部分的机器学习问题，还有很多办法用来提升机器学习效果。比如对于垃圾邮件来说，也许你会想到用更复杂的特征变量，像是邮件的路径信息（这种信息通常会出现在邮件的标题中）。因此，垃圾邮件发送方在发送垃圾邮件时，他们总会试图让这个邮件的来源变得模糊一些，或者是用假的邮件标题，或者通过不常见的服务器来发送邮件，用不常用的路由来发送邮件。</p>
-<p>因此我们可以通过邮件的标题部分来构造更加复杂的特征，来获得一系列的邮件路由信息，进而判定是不是一封垃圾邮件。</p>
-<h5 id="从email的正文中提取特征">从email的正文中提取特征</h5><p>你可能还会想到别的方法，比如从邮件的正文出发，寻找一些复杂点的特征，例如单词<code>discount</code>是否和单词<code>discounts</code>是一样的，又比如单词<code>deal</code>和<code>dealer</code>是否也应视为等同？甚至像这个例子中有的单词小写，有的单词大写。或者我们是否应该用标点符号来构造复杂的特征变量，因为垃圾邮件可能更多的使用感叹号。</p>
-<h5 id="构建错词识别算法，来区分邮件中恶意拼写错误的单词">构建错词识别算法，来区分邮件中恶意拼写错误的单词</h5><p>同样的，我们也可能构造更加复杂的算法来检测或者纠正那些故意的拼写错误 ，例如<code>m0rtgage</code>,<code>med1cine</code>,<code>w4tches</code>。因为垃圾邮件发送方确实这么做了，因为如果你将4放到<code>w4tches</code>中,那么用我们之前提到的简单的方法，垃圾邮件分类器不会把<code>w4tches</code>和<code>watches</code>看成一样的，这样我们就很难区分这些故意拼错的垃圾邮件。发垃圾邮件的也很机智，他们这么做就逃避了一些过滤。</p>
-<hr>
-<p>当我们使用机器学习时，总是可以“头脑风暴”一下，想出一堆方法来试试，就像这样。顺带一提，我有一段时间研究过垃圾邮件分类的问题，尽管我能够理解垃圾邮件分类的问题，我确实懂一些这方面的东西，但是我还是很难告诉你，这四种方法中，你最该去使用哪一种。</p>
-<p>事实上，坦白地说，最常见的情况是：一个研究小组，可能会随机确定其中的一个方法，但是有时候，这种方法并不是最有成效的。你知道，你只是随机选择了其中的一种方法。<strong>实际上，当你需要通过头脑风暴来想出不同方法来尝试去提高精度的时候，你可能已经超越了很多人了。令人难过的是，大部分人他们并不尝试着列出可能的方法。</strong>他们做的只是某天早上醒来，因为某些原因，有了一个突发奇想：”让我们来试试 用Honey Pot项目 收集大量的数据吧”。不管出于什么奇怪的原因，早上的灵机一动，还是随机选一个，然后干上大半年。</p>
-<p>但是我觉得我们有更好的方法，是的，我们将在随后的课程中讲到这个，那就是<strong>误差分析</strong>。</p>
-<p>我会告诉你，<strong>怎样用一个更加系统性的方法从一堆不同的方法中选取合适的那一个。</strong>因此，你更有可能选择一个真正的好方法，能让你花上几天几周甚至是几个月去进行深入的研究。</p>
-<h2 id="误差分析，几个小窍门">误差分析，几个小窍门</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/x62iE/error-analysis" target="_blank" rel="external">视频地址</a></p>
-<p>在上一节课中，我讲到应当怎样面对机器学习问题，有很多提高算法表现的方法，在本次课程中，我们将会讲到<strong>误差分析(error analysis)</strong>的概念。这会帮助你更系统地做出决定。</p>
-<h3 id="推荐方法："><strong>推荐方法：</strong></h3><ul>
-<li>1.以一个你可以快速实现的简单的算法作为开始。实现它并且在交叉验证数据集上进行测试。</li>
-</ul>
-<blockquote>
-<p>如果你准备研究机器学习的东西，或者构造机器学习应用程序，最好的实践方法不是建立一个非常复杂的系统，拥有那么多复杂的变量，而是构建一个简单的算法，这样你可以很快地实现它。</p>
-</blockquote>
-<ul>
-<li><p>2.绘制出学习曲线来进而决定是否需要更多的数据，或者更多的特征，等等。</p>
-</li>
-<li><p>3.误差分析：主要检查出在你的算法下，有误差的（在交叉验证集中的）样本数据。</p>
-</li>
-</ul>
-<h3 id="错误分析："><strong>错误分析：</strong></h3><p>$m_{cv}=500$个在交叉验证集中的样本。</p>
-<p>算法错误的分类了100封邮件。</p>
-<p>手工的检查这100个错误邮件，然后基于下面两个条件重新进行分类：</p>
-<ul>
-<li>(i) 它们是什么类别的邮件<blockquote>
-<p>如果你发现算法对于某个类别的分类区分的很差（比如说大部分的错误分类的邮件其实都属于<strong>钓鱼邮件</strong>这种类别，就证明算法对钓鱼邮件的识别很差）这说明，你应该花更多时间来研究这种类型的邮件。然后看看你是否能通过构造更好的特征变量来正确区分这种类型的邮件。</p>
-</blockquote>
-</li>
-<li>(ii) 看看哪些特征变量可能会帮助算法正确地分类邮件<blockquote>
-<p>比如说查看邮件分别属于<strong>故意拼写错误</strong>、<strong>不正常的来源</strong>、<strong>有垃圾邮件特有的标点符号</strong>，如果你发现在错误分类的邮件中，很少有<strong>故意拼写错误</strong>的情况，那么你就可以不用花太多时间在这一类别上了。如果你发现<strong>有垃圾邮件特有的标点符号</strong>这种类别的邮件很多，那么这就是一个很强的特征，说明你应该花费时间在这种类别的分类上。</p>
-</blockquote>
-</li>
-</ul>
-<p>这种类型的误差分析是一种手动检测的过程，检测算法可能会犯的错误，这通常能够帮你找到更为有效的手段。这也解释了为什么我总是推荐先实践一种快速但不完美的算法。</p>
-<p>我们真正想要的是找出什么类型的邮件，是这种算法最难分类出来的，对于不同的机器学习算法，它们所遇到的问题一般总是相同的。通过实现一些快速即便不完美的算法，你能够更快地找到错误的所在，并且快速找出算法难以处理的例子。这样你就能集中精力在这些真正的问题上。</p>
-<h3 id="数值计算的方式来评估你的机器学习算法："><strong>数值计算的方式来评估你的机器学习算法：</strong></h3><p>如果你在构造一个学习算法，如果你能有一种评估你算法的方法，这将是非常有用的。</p>
-<p>假设我们试图决定是否把像”discount”,”discounts”,”discounter”,”discountring”这样的单词都视为等同。</p>
-<p>一种方法是检查这些单词的开头几个字母，比如检查”discoun”这几个字母，认为以这几个字母开头的单词大概可能有着相同的意思。</p>
-<blockquote>
-<p>在自然语言处理中，这种方法是通过一种叫做<strong>词干提取</strong>的软件实现的。如果你想自己来试试，你可以在网上搜索<strong>“Porter<br> Stemmer(波特词干提取法)”</strong>，这是在词干提取方面一个比较不错的软件。这个软件会将单词”discount”、”discounts”等词视为同一个单词。</p>
-<p>但是这类词干提取软件只会检查单词的开头几个字母，这虽然有用，但也可能会造成一些问题。举个例子，这个软件会把单词”universe(宇宙)”和”university(大学)”也视为同一个单词，因为他们的开头是一样的。</p>
-</blockquote>
-<p>因此，当你在决定是否应该使用词干提取软件来分类时，这总是很难说清楚到底是好还是坏。特别地，<strong>误差分析</strong>也并不能帮助你决定词干提取是不是一个好的方法。</p>
-<p>与之相对地最好的方法来发现词干提取软件对你的分类器到底有没有用，是迅速的着手试一试，来看看它表现到底怎么样。</p>
-<p>为了这么做，通过数值来评估你的算法是非常有用的，具体的说，自然而然地你应该通过<strong>交叉验证</strong>来验证不用词干提取与用词干提取的算法的错误率。</p>
-<p>因此，如果你不在你的算法中使用词干提取，然后你得到比如5%的分类错误率，然后你再使用词干提取来运行你的算法，你得到比如3%的分类错误率，那么这很大的减少了错误的发生，于是你决定词干提取是一个好方法。</p>
-<p>就这个特定的问题而言，这里有一个数量的评估数字，即<strong>交叉验证错误率</strong>。我们以后会发现这个例子中的评估数字还需要一些处理，但是我们可以在今后的课程中看到这么做还是会让你能更快地做出决定，比如是否使用词干提取。</p>
-<hr>
-<h3 id="总结一下">总结一下</h3><p>当你在研究一个新的机器学习问题时，我总是推荐你实现一个较为简单快速即便不是那么完美的算法，我几乎从未见过人们是这样做。大家经常干的事情是花费大量的时间在构造算法上，构造他们以为的简单的方法，因此，不要担心你的算法太简单，或者太不完美，而是尽可能快地实现你的算法，当你有了初始的实现之后，它会变成一个非常有力的工具，来帮助你决定下一步的做法。因为我们可以先看看算法造成的错误，通过误差分析来看看它犯了什么错，然后来决定优化的方式。</p>
-<p>另一件事，假设你有了一个快速而不完美的算法实现，又有一个数值的评估数据，这会帮助你尝试新的想法快速地发现你尝试的这些想法是否能够提高算法的表现。从而你会更快地做出决定，在算法中放弃什么，吸收什么。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/12/15/房价预测（3）-数据可视化/" itemprop="url">
-                房价预测（3）-数据可视化
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-12-15T22:05:58+08:00" content="2016-12-15">
-            2016-12-15
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/12/15/房价预测（3）-数据可视化/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/15/房价预测（3）-数据可视化/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="数据的可视化">数据的可视化</h2><p>经过前两部的处理：</p>
-<p><a href="/2016/11/30/房价预测（1）-搜房网数据爬取/">房价预测（1）-搜房网数据爬取</a></p>
-<p><a href="/2016/12/08/房价预测（2）-数据清洗与持久化/">房价预测（2）-数据清洗与持久化</a></p>
-<p>我们已经能够爬取fang.com上的数据并持久化到本地的<strong>MongoDB</strong>中，这一节主要介绍如何将数据进行可视化的展示。</p>
-<h3 id="R语言引入">R语言引入</h3><p>数据可视化的处理方式有很多种，可以用js，python。你可以选择任何你喜欢的支持可视化的库来进行操作，这里我选择<strong>R语言</strong>。</p>
-<blockquote>
-<p>R是用于统计分析、绘图的语言和操作环境。R是属于GNU系统的一个自由、免费、源代码开放的软件，它是一个用于统计计算和统计制图的优秀工具。</p>
-<p>R是一套完整的数据处理、计算和制图软件系统。其功能包括：数据存储和处理系统；数组运算工具（其向量、矩阵运算方面功能尤其强大）；完整连贯的统计分析工具；优秀的统计制图功能；简便而强大的编程语言；可操纵数据的输入和输出，可实现分支、循环，用户可自定义功能。</p>
-<p>R是一个免费的自由软件，它有UNIX、MacOS和Windows版本，都是可以免费下载和使用的。在R的安装程序中只包含了8个基础模块，其他外在模块可以通过CRAN获得。</p>
-<p>官方网站：<a href="http://www.r-project.org" target="_blank" rel="external">http://www.r-project.org</a></p>
-</blockquote>
-<p>有关<strong>R</strong>的介绍以及入门使用方式，之前整理过两篇文章：</p>
-<p><a href="/2016/02/29/R语言（01）－R快速入门/">R语言（01）－R快速入门</a></p>
-<p><a href="/2016/03/06/R语言（02）绘图/">R语言（02）－R绘图</a></p>
-<p>不熟悉R的同学可以先行了解一下~</p>
-<h3 id="RStudio">RStudio</h3><p>这里再推荐一个比较好用的R语言集成环境:</p>
-<p><strong>RStudio</strong></p>
-<p><img src="/img/16_12_14/001.png" alt=""></p>
-<h3 id="数据导入到R">数据导入到R</h3><p>安装好R的开发环境之后，如果想要导入mongo的数据，需要安装<code>mongolite</code>。</p>
-<p>打开RStudio，点击<code>Tools-&gt;Install Packages...</code>，搜索<code>mongolite</code>，点击确认安装即可。</p>
-<p>安装成功后，在R的命令行下引入<code>mongolite</code>:</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt; library(<span class="name">mongolite</span>)</div></pre></td></tr></table></figure>
-<p>导入mongo数据：</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">con</span> &lt;- mongo(<span class="string">"soufang"</span>, url = <span class="string">"mongodb://localhost:27017/soufang"</span>)</div><div class="line">mydata &lt;- <span class="keyword">con</span>$<span class="keyword">find</span>()</div></pre></td></tr></table></figure>
-<p>这样就把我们爬取到的所有数据都导入到了R中的mydata变量中。这里我暂时爬取了13198条数据：</p>
-<figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Imported <span class="number">13198</span> <span class="keyword">records</span>. Simplifying <span class="keyword">into</span> dataframe<span class="attr">...</span></div></pre></td></tr></table></figure>
-<h3 id="基本图形绘制">基本图形绘制</h3><p>接下来我们就可以绘制一些图表了：</p>
-<p>比如说:</p>
-<p>我们可以绘制出<strong>价格-数量</strong>关系的柱状图：</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt; barplot(<span class="name">table</span>(<span class="name">x&lt;-as</span>.numeric(<span class="name">mydata</span>$total_price)))</div></pre></td></tr></table></figure>
-<p><img src="/img/16_12_14/002.png" alt=""></p>
-<p>可以看到，价格区间在260万到450万之间是一个数量比较高房价范围。</p>
-<hr>
-<p><strong>面积-总价</strong>关系的散点图：</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt; plot(<span class="name">x&lt;-as</span>.numeric(<span class="name">mydata</span>$house_build_area),x&lt;-as.numeric(<span class="name">mydata</span>$total_price),xlab = <span class="string">"面积"</span>,ylab = <span class="string">"总价"</span>)</div></pre></td></tr></table></figure>
-<p><img src="/img/16_12_14/003.png" alt=""></p>
-<blockquote>
-<p>这里可能你会遇到中文无法显示的问题，如果你遇到了，需要安装以下三个包：</p>
-<ul>
-<li>showtext</li>
-<li>showtextdb</li>
-<li>sysfonts</li>
-</ul>
-<p>如果遇到无法下载，请尝试命令行输入：</p>
-<p>install.packages(‘package_name’, dependencies=TRUE, repos=’<a href="http://cran.rstudio.com/" target="_blank" rel="external">http://cran.rstudio.com/</a>‘)</p>
-<p>下载成功之后，执行以下操作即可：</p>
-<figure class="highlight markdown"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="quote">&gt; &gt; library(sysfonts)</span></div><div class="line"><span class="quote">&gt; &gt; library(showtext)</span></div><div class="line"><span class="quote">&gt; &gt; dev.new() #如果已打开图形设备，本句可以不用</span></div><div class="line"><span class="quote">&gt; &gt; showtext.begin()</span></div><div class="line">&gt;</div></pre></td></tr></table></figure>
-</blockquote>
-<hr>
-<p><strong>户型分布</strong>的饼图：</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt; pie(<span class="name">table</span>(<span class="name">mydata</span>$house_type))</div></pre></td></tr></table></figure>
-<p><img src="/img/16_12_14/004.png" alt=""></p>
-<p>可以看到在售的二手房中，最多的户型是<code>2室2厅1厨1卫</code>，其次<code>2室1厅1厨1卫</code>和<code>3室2厅1厨2卫</code>的户型数量相当，在其次是<code>1室1厅1厨1卫</code>。</p>
-<hr>
-<p><strong>区域分布</strong>的饼图：</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt; pie(<span class="name">table</span>(<span class="name">mydata</span>$bread_area))</div></pre></td></tr></table></figure>
-<p><img src="/img/16_12_14/007.png" alt=""></p>
-<p>可以看出来，在售的二手房中，浦东区的数量是最多的。</p>
-<hr>
-<p><strong>发布时间</strong>的柱状图：</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt; barplot(<span class="name">table</span>(<span class="name">mydata</span>$publish_time))</div></pre></td></tr></table></figure>
-<p><img src="/img/16_12_14/005.png" alt=""></p>
-<p>可以看出来，我们通过这个接口爬取数据的话，爬取到的数据几乎都是靠近当前日期的。</p>
-<hr>
-<p><strong>每平米价格</strong>的箱图：</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt; boxplot(<span class="name">as</span>.numeric(<span class="name">mydata</span>$total_price)/as.numeric(<span class="name">mydata</span>$house_build_area),ylim=c(<span class="number">0</span>,<span class="number">15</span>))</div></pre></td></tr></table></figure>
-<p><img src="/img/16_12_14/006.png" alt=""></p>
-<p>可以看出来，上海二手房的均价目前基本维持在5万元左右。</p>
-<hr>
-<p><strong>浦东区的每平米价格</strong>的箱图：</p>
-<p>首先导入浦东区的数据：<br><figure class="highlight cos"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt; pudongData &lt;- con<span class="built_in">$find</span>('&#123;<span class="string">"bread_area"</span>:<span class="string">"浦东"</span>&#125;')</div></pre></td></tr></table></figure></p>
-<p>绘制箱图：</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt; boxplot(<span class="name">as</span>.numeric(<span class="name">pudongData</span>$total_price)/as.numeric(<span class="name">pudongData</span>$house_build_area),ylim=c(<span class="number">0</span>,<span class="number">15</span>))</div></pre></td></tr></table></figure>
-<p><img src="/img/16_12_14/008.png" alt=""></p>
-<p>也许是由于浦东在售房数量占总体数量较多，且浦东房价与上海平均房价接近，所以浦东区的房价也是在5万出头的样子。</p>
-<p>同样的方式我们可以看看松江区：</p>
-<p><img src="/img/16_12_14/009.png" alt=""></p>
-<p>可以看出，松江区大概在4万以下的。</p>
-<hr>
-<h3 id="查询房价走势">查询房价走势</h3><p>最后我们来查一下每平米房价随发布时间的柱状图。</p>
-<p>首先，我们需要对房价数据按照发布日期进行<strong>分组（group by）</strong>操作。</p>
-<p>有两种方式：</p>
-<ul>
-<li>1.在R中进行分组处理</li>
-<li>2.在mongo中分组处理</li>
-</ul>
-<p>显然第二种方式的效率是高于第一种的，并且操作上也更方便一些。</p>
-<p>那么我们就先通过mongo的<code>group</code>操作来查询出每个发布日期的每平米均价：</p>
-<figure class="highlight applescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">db.soufang.group(</div><div class="line">   &#123;</div><div class="line">     key: &#123; publish_time: <span class="number">1</span>&#125;,</div><div class="line">     reduce: function ( curr, <span class="literal">result</span> ) &#123; </div><div class="line">     	avg_prace = curr.total_price / curr.house_build_area </div><div class="line"></div><div class="line">     	<span class="literal">result</span>.total += avg_prace;</div><div class="line">        <span class="literal">result</span>.<span class="built_in">count</span>++;</div><div class="line">     &#125;,</div><div class="line">     finalize: function(<span class="literal">result</span>) &#123;</div><div class="line">          <span class="literal">result</span>.avg = <span class="literal">result</span>.total / <span class="literal">result</span>.<span class="built_in">count</span>;</div><div class="line">      &#125;,</div><div class="line">     initial: &#123; total : <span class="number">0</span>, <span class="built_in">count</span>: <span class="number">0</span> &#125;,</div><div class="line">   &#125;</div><div class="line">)</div></pre></td></tr></table></figure>
-<p>由于坑爹的<code>mongolite</code>没有提供<code>group()</code>函数，我们可以在mongo中把group出的结果导入到一个新的表中，然后再导入R中。</p>
-<figure class="highlight applescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">db.soufang_gb_publish_time.insert( db.soufang.group(</div><div class="line">   &#123;</div><div class="line">     key: &#123; publish_time: <span class="number">1</span>&#125;,</div><div class="line">     reduce: function ( curr, <span class="literal">result</span> ) &#123; </div><div class="line">     	avg_prace = curr.total_price / curr.house_build_area </div><div class="line"></div><div class="line">     	<span class="literal">result</span>.total += avg_prace;</div><div class="line">        <span class="literal">result</span>.<span class="built_in">count</span>++;</div><div class="line">     &#125;,</div><div class="line">     finalize: function(<span class="literal">result</span>) &#123;</div><div class="line">          <span class="literal">result</span>.avg = <span class="literal">result</span>.total / <span class="literal">result</span>.<span class="built_in">count</span>;</div><div class="line">      &#125;,</div><div class="line">     initial: &#123; total : <span class="number">0</span>, <span class="built_in">count</span>: <span class="number">0</span> &#125;,</div><div class="line">   &#125;</div><div class="line">))</div></pre></td></tr></table></figure>
-<p>导入成功后，我们可以通过执行</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">db<span class="selector-class">.soufang_gb_publish_time</span><span class="selector-class">.find</span>()</div></pre></td></tr></table></figure>
-<p>来验证一下数据是否导入成功。</p>
-<p>我这里导入之后有61天的数据。</p>
-<p>再回到R中，将数据导入：</p>
-<figure class="highlight elm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt; con_gb_publis_time &lt;- mongo(<span class="string">"soufang_gb_publish_time"</span>, url = <span class="string">"mongodb://localhost:27017/soufang"</span>)</div><div class="line">&gt; myGbData &lt;- con_gb_publis_time$find(sort='&#123;<span class="string">"publish_time"</span>:<span class="number">1</span>&#125;')</div></pre></td></tr></table></figure>
-<p>我们可以通过find来验证一下是否导入成功：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&gt; myGbData</div><div class="line">   publish_time      total count      avg</div><div class="line"><span class="number">1</span>    <span class="number">2016</span><span class="number">-10</span><span class="number">-14</span>  <span class="number">199.98178</span>    <span class="number">34</span> <span class="number">5.881817</span></div><div class="line"><span class="number">2</span>    <span class="number">2016</span><span class="number">-10</span><span class="number">-15</span>  <span class="number">127.66077</span>    <span class="number">24</span> <span class="number">5.319199</span></div><div class="line"><span class="number">3</span>    <span class="number">2016</span><span class="number">-10</span><span class="number">-16</span>   <span class="number">53.00914</span>    <span class="number">13</span> <span class="number">4.077626</span></div><div class="line"><span class="number">4</span>    <span class="number">2016</span><span class="number">-10</span><span class="number">-17</span>   <span class="number">74.76187</span>    <span class="number">11</span> <span class="number">6.796534</span></div><div class="line"><span class="number">5</span>    <span class="number">2016</span><span class="number">-10</span><span class="number">-18</span>  <span class="number">172.64432</span>    <span class="number">34</span> <span class="number">5.077774</span></div><div class="line"><span class="number">6</span>    <span class="number">2016</span><span class="number">-10</span><span class="number">-19</span>  <span class="number">232.46693</span>    <span class="number">47</span> <span class="number">4.946105</span></div><div class="line"><span class="number">7</span>    <span class="number">2016</span><span class="number">-10</span><span class="number">-20</span>  <span class="number">274.33694</span>    <span class="number">50</span> <span class="number">5.486739</span></div><div class="line"><span class="number">8</span>    <span class="number">2016</span><span class="number">-10</span><span class="number">-21</span>  <span class="number">205.77986</span>    <span class="number">40</span> <span class="number">5.144496</span></div><div class="line">...</div></pre></td></tr></table></figure>
-<p>看到这样的结果，说明我们导入成功了。</p>
-<p>接下来的操作就比较easy了，我们来绘制出这个数据的柱状图即可：</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">barplot(<span class="name">height=as</span>.numeric(<span class="name">myGbData</span>$avg),table(<span class="name">myGbData</span>$publish_time))</div></pre></td></tr></table></figure>
-<p>横坐标为日期，纵坐标为均价：</p>
-<p><img src="/img/16_12_14/010.png" alt=""></p>
-<p>可以看出，由于我们远离当前日期越远的日期，数据量越少，所以会导致数据波动比较大。所以后半部分的数据比前半部分的相对准确一些。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/">&laquo;</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/4/">&raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/2/">&laquo;</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/4/">&raquo;</a>
   </nav>
 
  </div>
@@ -1691,7 +1560,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">98</span>
+              <span class="site-state-item-count">101</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1853,35 +1722,5 @@ var _hmt = _hmt || [];
       });
     });
   </script>
-<!-- mathjax config similar to math.stackexchange -->
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
 </body>
 </html>

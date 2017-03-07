@@ -199,6 +199,730 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2016/07/29/斯坦福机器学习课程 第二周 (2)多元线性回归分析/" itemprop="url">
+                斯坦福机器学习课程 第二周 (2)多元线性回归分析
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-07-29T01:26:00+08:00" content="2016-07-29">
+            2016-07-29
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/07/29/斯坦福机器学习课程 第二周 (2)多元线性回归分析/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/29/斯坦福机器学习课程 第二周 (2)多元线性回归分析/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="多特征量">多特征量</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/6Nj1q/multiple-features" target="_blank" rel="external">视频地址</a></p>
+<p>在这段视频中，我们将开始介绍一种新的更为有效的线性回归形式，这种形式适用于多个变量，或者多特征量的情况。</p>
+<p>比如说：在之前我们学习过的线性回归中，我们只有一个单一特征量：‘房屋面积x’，我们希望用这个特征量来预测房子的价格，这就是我们的假设 。</p>
+<p><img src="/img/16_07_29/001.png" alt=""></p>
+<p>但是想象一下，如果我们不仅有房屋面积作为预测房屋价格的特征量或者变量，我们还知道卧室的数量楼层的数量以及房子的使用年限，这样就给了我们更多可以用来预测房屋价格的信息:</p>
+<p><img src="/img/16_07_29/002.png" alt=""></p>
+<h3 id="多特征量的表示">多特征量的表示</h3><p>先简单介绍一下记法：</p>
+<ul>
+<li>$n$ = 来表示特征量的数目</li>
+</ul>
+<p>这个例子中有4个特征量，因此，这里n=4</p>
+<ul>
+<li>$x^{(i)}$ = 第$i$个训练样本的输入特征值</li>
+</ul>
+<p>这个例子中$x^{(2)}$就是表示第二个训练样本的特征向量：</p>
+<p>$$<br>x^{(2)}<br>=<br>\begin{bmatrix}<br>1416 \\<br>3 \\<br>2 \\<br>40<br>\end{bmatrix}<br>$$</p>
+<ul>
+<li>$x_j^{(i)}$ = 第$i$个训练样本的第$j$个特征量 </li>
+</ul>
+<p>这个例子中，$x_3^{(2)}$代表着第2个训练样本里的第3个特征量。这里值是2。</p>
+<h3 id="多特征量的假设函数">多特征量的假设函数</h3><p>这是我们之前使用的假设形式：</p>
+<p>$$<br>h_{θ}(x) = θ_0 + θ_1 * x<br>$$</p>
+<p>其中$x$就是我们唯一的特征量，但现在我们有了多个特征量我们就不能再 使用这种简单的表示方式了。取而代之的，我们将把线性回归的假设改成这样：</p>
+<p>$$<br>h_{θ}(x) = θ_{0} + θ_{1} x_{1} + θ_{2} x_{2} + … + θ_{n} x_{n}<br>$$</p>
+<p>接下来，我要来介绍简化这个等式的表示方式：</p>
+<p><strong>为了表示方便,我要将$x_{0}$的值设为1。</strong>具体而言这意味着对于第$i$个样本，都有一个向量$x^{(i)}$，并且$x^{(i)}_{0} = 1$。你可以认为我们定义了一个额外的第0个特征量。因此，我过去有$n$个特征量 因为我们有$x_{1},x_{2}…x_{n}$，由于我另外定义了第0个特征向量$x_{0}$，并且它的取值总是1，所以我现在的特征向量$x$是一个从0开始标记的$n+1$维的向量：</p>
+<p>$$<br>x<br>=<br>\begin{bmatrix}<br>x_{0} \\<br>x_{1} \\<br>x_{2} \\<br>… \\<br>x_{n}<br>\end{bmatrix}<br>\in<br>\mathbb{R}^{n+1}<br>$$</p>
+<p>但我要从0开始标记，同时我也想把我的参数都看做一个向量，所以我们的参数就是：</p>
+<p>$$<br>θ<br>=<br>\begin{bmatrix}<br>θ_{0} \\<br>θ_{1} \\<br>θ_{2} \\<br>… \\<br>θ_{n}<br>\end{bmatrix}<br>\in<br>\mathbb{R}^{n+1}<br>$$</p>
+<p>所以我的假设，现在可以写成：</p>
+<p>$$<br>h_{θ}(x) = θ_{0} x_{0} + θ_{1} x_{1} + θ_{2} x_{2} + … + θ_{n} x_{n}<br>$$</p>
+<blockquote>
+<p>请注意，这里$x_{0} = 1$</p>
+</blockquote>
+<p>下面我要把这种形式假设等式写成:</p>
+<p>$$<br>h_{θ}(x) = θ^{T} x<br>$$</p>
+<p>其中$θ^{T}$是$θ$向量的转置，是一个$(n+1)×1$维的矩阵，也被称为行向量：</p>
+<p>$$<br>\underbrace{<br>\begin{bmatrix}<br>θ_{0} θ_{1} θ_{2} … θ_{n}<br>\end{bmatrix}<br>}_{θ^{T}}<br>$$</p>
+<p>因此这个假设函数的完整推导过程如下:</p>
+<p>$$<br>\begin{align*}<br>h_{θ}(x)<br>&amp;=<br>θ_{0} x_{0} + θ_{1} x_{1} + θ_{2} x_{2} + … + θ_{n} x_{n}\\<br>&amp;=<br>\begin{bmatrix}<br>θ_{0} θ_{1} θ_{2} … θ_{n}<br>\end{bmatrix}<br>\begin{bmatrix}<br>x_{0} \\<br>x_{1} \\<br>x_{2} \\<br>… \\<br>x_{n}<br>\end{bmatrix}\\<br>&amp;=<br>θ^{T} x<br>\end{align*}<br>$$</p>
+<p>这就为我们表示假设的更加便利的形式：</p>
+<p>$$<br>h_{θ}(x) = θ^{T} x<br>$$</p>
+<p>即用参数向量$θ$以及特征向量$X$的内积来表示。</p>
+<p>这样的表示方法让我们可以以这种紧凑的形式写出假设，这就是多特征量情况下的假设形式。起另一个名字：就是<strong>所谓的多元线性回归</strong>。</p>
+<h2 id="多特征的梯度下降">多特征的梯度下降</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/Z9DKX/gradient-descent-for-multiple-variables" target="_blank" rel="external">视频地址</a></p>
+<p>在之前的视频中，我们谈到了一种线性回归的假设形式，这是一种有多特征或者是多变量的形式。在本节视频中我们将会谈到如何找到满足这一假设的参数，尤其是如何使用梯度下降法来解决多特征的线性回归问题。</p>
+<p>为尽快让你理解，假设现有多元线性回归并约定$x_{0}=1$。</p>
+<p><strong>假设函数(Hypothesis)</strong>如下：</p>
+<p>$$<br>h_{θ}(x) = θ^{T}x = θ_{0} x_{0} + θ_{1} x_{1} + θ_{2} x_{2} + … + θ_{n} x_{n}<br>$$</p>
+<p>该模型的参数是从$θ_{0}$到$θ_{n}$，不要认为这是$n+1$个单独的参数。你可以把这$n+1$个$θ$参数想象成一个$n+1$维的向量$θ$。</p>
+<p><strong>参数(Parameters)</strong>如下：</p>
+<p>$$<br>θ_{0} θ_{1} θ_{2} … θ_{n}<br>$$</p>
+<p>我们的代价函数是从$θ_{0}$到$θ_{n}$的函数$J$并给出了误差项平方的和。但同样地，不要把函数$J$想成是一个关于$n+1$个自变量的函数而是看成带有一个$n+1$维向量的函数:</p>
+<p><strong>代价函数(Cost function)</strong>如下：</p>
+<p>$$<br>J(θ_{0},θ_{1},…,θ_{n}) =<br>\frac{1}{2m}<br>\sum_{i=1}^{m}<br>(h_{θ}(x^{(i)}) - y^{(i)})^{2}<br>$$</p>
+<p><strong>梯度下降法(Gradient descent)</strong>：</p>
+<p><img src="/img/16_07_29/003.png" alt=""></p>
+<p>我们将会不停地用$θ_{j}$减去$α$倍的导数项来替代$θ_{j}$。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">当特征$n=1$时，梯度下降的情况：</th>
+<th style="text-align:center">当特征$n&gt;=1$时，梯度下降的情况：</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="/img/16_07_29/004.png" alt=""></td>
+<td style="text-align:center"><img src="/img/16_07_29/005.png" alt=""></td>
+</tr>
+</tbody>
+</table>
+<p>下图中，为了更好的理解这个梯度下降更新规则，蓝圈圈起来的部分其实是等价的：</p>
+<p><img src="/img/16_07_29/006.png" alt=""></p>
+<p>最后，我想让你明白为什么新旧两种算法实际上是一回事儿。</p>
+<p>考虑这样一个情况：有两个或以上个数的特征，同时我们有对$θ_{1}$、$θ_{2}$、$θ_{3}$的三条更新规则(当然可能还有其它参数)。如果你观察$θ_{0}$的更新规则，你会发现这跟之前$n=1$的情况相同。它们之所以是等价的，是因为在我们的标记约定里有$x^{i}_{0}=1$。</p>
+<p><img src="/img/16_07_29/007.png" alt=""></p>
+<p><img src="/img/16_07_29/008.png" alt=""></p>
+<p>从上图可以看出，对于$n &gt;= 1$的梯度下降规则，其实是一个通用规则。请务必看懂上图，确保理解之后再继续学习！</p>
+<h2 id="梯度下降实用技巧_1：特征缩放(Feature_Scaling)以及均值归一化(mean_normalization)">梯度下降实用技巧 1：特征缩放(Feature Scaling)以及均值归一化(mean normalization)</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/xx3Da/gradient-descent-in-practice-i-feature-scaling" target="_blank" rel="external">视频地址</a></p>
+<p>在这段视频以及下一段视频中，我想告诉你一些关于梯度下降运算中的实用技巧。</p>
+<p>在这段视频中我会告诉你两个称为<strong>特征缩放(feature scaling)</strong>以及<strong>均值归一化(mean normalization)</strong>的方法。</p>
+<p>这两个方法都是为了<strong>保证特征的取值在合适的范围内</strong>的。</p>
+<h3 id="特征缩放(feature_scaling)"><strong>特征缩放(feature scaling)</strong></h3><p>其中，<strong>特征缩放(feature scaling)</strong>大致的思路是这样的：<strong>梯度下降算法中，在有多个特征的情况下，如果你能确保这些不同的特征都处在一个相近的范围，这样梯度下降法就能更快地收敛。</strong></p>
+<p>举个例子来说明：</p>
+<p>$$<br>x_{1} = size(0-2000 feet^{2})\\<br>x_{2} = 卧室的数量(1-5)<br>$$</p>
+<p>假如你有一个具有两个特征的问题，其中$x_{1}$是房屋面积大小，它的取值在0到2000之间；$x_{2}$是卧室的数量，可能这个值的取值范围在1到5之间。其代价函数$J(θ)$是一个关于参数$θ_{0}$，$θ_{1}$和$θ_{2}$的函数。但这里我们暂时不考虑$θ_{0}$并假想一个函数的变量只有$θ_{1}$和$θ_{2}$。</p>
+<p>如果$x_{1}$的取值范围远远大于$x_{2}$的取值范围的话，那么最终画出来的代价函数$J(θ)$的轮廓图就会呈现出这样一种非常偏斜并且椭圆的形状:</p>
+<p><img src="/img/16_07_29/009.png" alt=""></p>
+<p>如果你用这个代价函数来运行梯度下降的话，你要得到梯度值最终可能需要花很长一段时间，并且可能会来回波动，然后会经过很长时间最终才收敛到全局最小值。</p>
+<p><img src="/img/16_07_29/010.gif" alt=""></p>
+<p>事实上如果这些轮廓再被放大一些的话，如果你画的再夸张一些把它画的更细更长，那么可能情况会更糟糕，梯度下降的过程可能更加缓慢，需要花更长的时间反复来回振荡，最终才找到一条正确通往全局最小值的路。</p>
+<p>在这样的情况下一种有效的方法是<strong>进行特征缩放(feature scaling)</strong>。</p>
+<p>具体来说把特征$x$定义为：</p>
+<p>$$<br>x_{1} = \frac{size(feet^2)}{2000}<br>$$</p>
+<p>$$<br>x_{2} = \frac{卧室的数量}{5}<br>$$</p>
+<p>通过这样的变化，表示代价函数$J(θ)$的轮廓图的形状就会变得偏移没那么严重，可能看起来更圆一些了。</p>
+<p><img src="/img/16_07_29/011.png" alt=""></p>
+<p>如果你用这样的代价函数来执行梯度下降的话，那么可以从数学上来证明梯度下降算法将会找到一条更捷径的路径通向全局最小，而不是像刚才那样  沿着一条让人摸不着头脑的路径，来找到全局最小值。</p>
+<p>因此在这个例子中，通过特征缩放，我们最终得到的两个特征$x_{1}$和 $x_{2}$都在0和1之间，这样你得到的梯度下降算法就会更快地收敛。</p>
+<p>更一般地，<strong>我们执行特征缩放时，我们通常的目的是将特征的取值约束到$-1$到$+1$的范围内</strong>。其中，特征$x_{0}$总是等于1，因此这已经是在这个范围内了，但对于其他的特征，你可能需要通过除以不同的数来让它们处于同一范围内。</p>
+<p>$-1$和$+1$这两个数字并不是太重要，所以如果你有一个特征$x_{1}$它的取值在<code>0 ~ 3</code>之间，这没问题 如果你有另外一个特征取值在<code>-2 ~ +0.5</code>之间，这也没什么关系，因为这也非常接近<code>-1 ~ +1</code>的范围。</p>
+<p>但如果你有另一个特征$x_{3}$，假如它的范围在<code>-100 ~ +100</code>之间，那么这个范围跟<code>-1 ~ +1</code>就有很大不同了。所以这可能是一个不那么好的特征。类似地，如果你的特征在一个非常非常小的范围内，比如另外一个特征$x_{4}$，它的范围在<code>-0.0001 ~ +0.0001</code>之间,那么这同样是一个比<code>-1 ~ +1</code>小得多的范围，因此我同样会认为这个特征也不太好。所以可能你认可的范围，也许可以大于或者小于<code>-1 ~ +1</code>，但是也别太大或太小，只要与<code>-1 ~ +1</code>范围偏差不多就可以接受。</p>
+<p>因此，总的来说不用过于担心你的特征是否在完全相同的范围或区间内，但是只要它们足够接近的话，梯度下降法就会正常地工作。</p>
+<h3 id="均值归一化(mean_normalization)"><strong>均值归一化(mean normalization)</strong></h3><p>除了在特征缩放中将特征除以最大值以外，有时候我们也会进行一个称为<strong>均值归一化(mean normalization)</strong>的工作。</p>
+<p>具体做法就是：如果你有一个特征$x_{i}$你就用$x_{i} - μ_{i}$来替换。这样做的目的是为了<strong>让你的特征值具有为0的平均值</strong>。很明显 我们不需要把这一步应用到$x_{0}$中，因为$x_{0}$总是等于1的，所以它不可能有为0的的平均值。</p>
+<p>但是对其他的特征来说，比如房子的大小取值介于<code>0 ~ 2000</code>，并且假如房子面积的平均值是等于1000的，那么你可以用这个公式 </p>
+<p>$$<br>x_{1} = \frac{size - 1000}{2000}<br>$$</p>
+<p>类似地，如果你的房子有五间卧室，并且平均一套房子有两间卧室，那么你可以使用这个公式来归一化你的第二个特征$x_{2}$：</p>
+<p>$$<br>x_{2} = \frac{卧室数 - 2}{5}<br>$$</p>
+<p>在这两种情况下你可以算出新的特征$x_{1}$和$x_{2}$，它们的范围可以在<code>-0.5 ~ +0.5</code>之间，当然这肯定不对，$x_{2}$的值实际上肯定会大于0.5。更一般的规律是用:</p>
+<p>$$<br>\frac{x_{n} - μ_{n}}{S_{n}}<br>$$</p>
+<p>来替换原来的特征$x_{n}$。其中定义$μ_{n}$的意思是在训练集中特征$x_{n}$的平均值。而$S_{n}$是该特征值的范围（最大值减去最小值）。</p>
+<blockquote>
+<p>最后直的一提的是：特征缩放其实并不需要太精确，其目的只是为了让梯度下降能够运行得更快一点，让梯度下降收敛所需的循环次数更少一些而已。</p>
+</blockquote>
+<h2 id="梯度下降实用技巧_2：学习速率(Learning_Rate)">梯度下降实用技巧 2：学习速率(Learning Rate)</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/3iawu/gradient-descent-in-practice-ii-learning-rate" target="_blank" rel="external">视频地址</a></p>
+<p>在本段视频中，我将集中讨论<strong>学习率$α$</strong>。具体来说这是梯度下降算法的更新规则。</p>
+<p>$$<br>θ_{j} := θ_{j} -α \frac{∂}{∂θ_{0}} J(θ)<br>$$</p>
+<p>这里我想要告诉大家两点： </p>
+<ul>
+<li>如何调试(Debugging) : 也就是我认为应该如何确定梯度下降是正常工作的。</li>
+<li>如何选择学习率$α$ : 如何选择这个参数才能保证梯度下降正常工作。</li>
+</ul>
+<h3 id="收敛的判断">收敛的判断</h3><p>梯度下降算法所做的事情就是为你找到一个$θ$值，并希望它能够最小化代价函数$J(θ)$。</p>
+<p>我通常会在梯度下降算法运行时，绘出代价函数$J(θ)$的值。这里的$x$轴是表示梯度下降算法的迭代步数：</p>
+<p><img src="/img/16_07_29/012.png" alt=""></p>
+<blockquote>
+<p><strong>注意:</strong>这里的$x$轴是迭代步数，在我们以前看到的$J(θ)$曲线中$x$轴，曾经用来表示参数$θ$但这里不是。</p>
+</blockquote>
+<p>具体来说，这一点的含义是这样的：比如，当我运行完100步的梯度下降迭代之后，我将得到一个$θ$值，根据这个$θ$值，我将算出代价函数$J(θ)$的值。而这个点的垂直高度就代表梯度下降算法100步迭代之后得到的$θ$算出的$J(θ)$值：</p>
+<p><img src="/img/16_07_29/013.png" alt=""></p>
+<p>而这个点则是梯度下降算法迭代200次之后得到的$θ$算出的$J(θ)$值：</p>
+<p><img src="/img/16_07_29/014.png" alt=""></p>
+<p>所以这条曲线显示的是梯度下降算法迭代过程中代价函数$J(θ)$的值。</p>
+<p><strong>如果梯度下降算法正常工作，那么每一步迭代之后$J(θ)$都应该下降。</strong></p>
+<p>这条曲线中，当迭代达到300步到400步之间时（如下图所示），看起来$J(θ)$并没有下降多少。也就是说在400步迭代的时候，梯度下降算法基本上已经收敛了，因为代价函数并没有继续下降：</p>
+<p><img src="/img/16_07_29/015.png" alt=""></p>
+<p>所以说，看这条曲线可以帮助你判断梯度下降算法是否已经收敛。</p>
+<blockquote>
+<p>对于每一个特定的问题，梯度下降算法所需的迭代次数可以相差很大。也许对于某一个问题，梯度下降算法只需要30步迭代就可以收敛，然而换一个问题，也许梯度下降算法就需要3000步迭代，对于另一个机器学习问题则可能需要三百万步迭代。</p>
+</blockquote>
+<p>实际上，我们很难提前判断梯度下降算法需要多少步迭代才能收敛。通常我们需要画出这类<strong>代价函数随迭代步数数增加的变化曲线</strong>，通常我会通过看这种曲线来试着判断梯度下降算法是否已经收敛。另外也可以进行一些自动的<strong>收敛测试</strong>（也就是说用一种算法来告诉你梯度下降算法是否已经收敛）。</p>
+<p>自动收敛测试一个非常典型的例子是：如果代价函数$J(θ)$的下降小于一个很小的值$ε$那么就认为已经收敛。比如可以选择$10^{-3}$作为阈值$ε$。但通常要选择一个合适的阈值$ε$是相当困难的。</p>
+<p><strong>因此，为了检查梯度下降算法是否收敛,我实际上还是通过看上边的这条曲线图，而不是依靠自动收敛测试。</strong></p>
+<h3 id="判断梯度下降算法是否正常工作">判断梯度下降算法是否正常工作</h3><p>此外这种曲线图也可以在算法没有正常工作时提前警告你。具体地说如果代价函数$J(θ)$随迭代步数的变化曲线是这个样子:</p>
+<p><img src="/img/16_07_29/016.png" alt=""></p>
+<p>很明确的表示梯度下降算法没有正常工作，而这样的曲线图通常意味着你应该使用较小的学习率$α$。如果$J(θ)$在上升，那么最常见的原因是你在最小化一个函数时，如果你的学习率太大，梯度下降算法可能将冲过最小值达到最小值另一侧的更大的一个点。下次迭代时，也可能再次冲过最小值，达到更大的一个点，然后一直这样下去。</p>
+<p><img src="/img/16_07_29/017.png" alt=""></p>
+<p>所以，如果你看到这样一个曲线图，通常的解决方法是使用较小的$α$值，当然也要确保，你的代码中没有错误。</p>
+<p>同样的，有时你可能看到这种形状的$J(θ)$曲线:</p>
+<p><img src="/img/16_07_29/018.png" alt=""></p>
+<p>它先下降，然后上升，接着又下降，然后又上升，然后再次下降，再次上升，如此往复。而解决这种情况的方法通常同样是选择较小$α$值。</p>
+<p>我不打算证明这一点，但对于我们讨论的线性回归可以很容易从数学上证明：只要学习率足够小，那么每次迭代之后，代价函数$J(θ)$都会下降。因此如果代价函数没有下降，那可能意味着学习率过大，这时你就应该尝试一个较小的学习率。当然，你也不希望学习度太小，因为如果这样，那么梯度下降算法可能收敛得很慢，你需要迭代很多次才能到达最低点。因此如果学习率$α$太小，梯度下降算法的收敛将会很缓慢。</p>
+<p><strong>总结：</strong></p>
+<ul>
+<li><strong>如果学习率$α$太小，你会遇到收敛速度慢的问题。</strong></li>
+<li><strong>如果学习率$α$太大，代价函数$J(θ)$可能不会在每次迭代都下降，甚至可能不收敛。</strong></li>
+</ul>
+<blockquote>
+<p>在某些情况下，如果学习率$α$过大，也可能出现收敛缓慢的问题。</p>
+</blockquote>
+<h3 id="如何选择$α$">如何选择$α$</h3><p>为了调试，当我运行梯度下降算法时，我通常会尝试一系列$α$值，比如0.001， 0.01， 0.1， 1 … 这里每隔10倍取一个值，然后对于这些不同的$α$值绘制$J(θ)$随迭代步数变化的曲线，然后选择看上去使得$J(θ)$快速下降的一个$α$值。</p>
+<p>事实上在为梯度下降算法选择合适的学习率时，我大致是按3的倍数来取值的。例如：0.001， 0.003， 0、01，0.03，0.1，0.3，1…</p>
+<p>所以我会尝试一系列$α$值，直到我找到不能再小了的值，同时找到另一个不能再大的值，然后我尽量挑选其中最大的那个$α$值，或者一个比最大值略小一些的合理的值。当我做了以上工作时，我通常就可以得到一个不错的学习率。</p>
+<h2 id="特征的选择和多项式回归">特征的选择和多项式回归</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/Rqgfz/features-and-polynomial-regression" target="_blank" rel="external">视频地址</a></p>
+<p>你现在了解了多变量的线性回归，在本节中我想告诉你一些用来选择特征的方法，以及如何得到不同的学习算法。当选择了合适的特征后，这些算法往往是非常有效的。另外，我也想给你们讲一讲多项式回归，它使得你们能够使用，线性回归的方法来拟合非常复杂的函数，甚至是非线性函数。</p>
+<h3 id="特征的选择">特征的选择</h3><p>以预测房价为例，假设你有两个特征，分别是房子临街的宽度和垂直宽度。这就是我们想要卖出的房子的图片：</p>
+<p><img src="/img/16_07_29/019.png" alt=""></p>
+<p>临街宽度其实就是拥有的土地的宽度，而纵向深度就是你的房子的深度。你可能会建立一个像这样的线性回归模型：</p>
+<p><strong>Housing prices prediction</strong></p>
+<p>$$<br>h_{θ}(x) = Θ_{0} + Θ_{1} × frontage + Θ_{2} × depth<br>$$</p>
+<p>其中临街宽度是你的第一个特征$frontage$，纵深是你的第二个特征$depth$。但当我们在运用线性回归时，你不一定非要直接用给出的$frontage$和$depth$作为特征，其实你可以自己创造新的特征。因此，如果我要预测房子的价格，我真正要需做的也许是确定真正能够决定我房子大小，或者说我土地大小的因素是什么。因此，我可能会创造一个新的特征，我称之为$x$。它是临街宽度与纵深的乘积：</p>
+<p>$$<br>x = frontage × depth<br>$$</p>
+<p>$$<br>h_{θ}(x) = Θ_{0} + Θ_{1}x<br>$$</p>
+<p>这得到的就是我拥有的土地的面积。然后我可以把假设选择为使其只使用一个特征，也就是我的土地的面积。</p>
+<p>由于矩形面积的计算方法是矩形长和宽相乘，因此这取决于你从什么样的角度去审视一个特定的问题，而不是直接去使用临街宽度和纵深，这两个我们只是碰巧在开始时使用的特征。有时通过定义新的特征，你确实会得到一个更好的模型。</p>
+<h3 id="多项式回归">多项式回归</h3><p>与选择特征的想法密切相关的一个概念，被称为<strong>多项式回归(polynomial regression)</strong>。</p>
+<p>比方说你有这样一个住房价格的数据集：</p>
+<p><img src="/img/16_07_29/020.png" alt=""></p>
+<p>为了拟合它，可能会有多个不同的模型供选择。其中一个你可以选择的是像这样的二次模型：</p>
+<p>$$<br>θ_{0} + θ_{1}x + θ_{2}x^{2}<br>$$</p>
+<p>因为直线似乎并不能很好地拟合这些数据，因此也许你会想到用这样的二次模型去拟合数据。</p>
+<p>但是你可能会觉得二次函数的模型并不好用，因为一个二次函数最终会降回来。而我们并不认为房子的价格在高到一定程度后会下降回来：</p>
+<p><img src="/img/16_07_29/021.png" alt=""></p>
+<p>因此也许我们会选择一个不同的多项式模型，并转而选择使用一个三次函数：</p>
+<p>$$<br>θ_{0} + θ_{1}x + θ_{2}x^{2} + θ_{3}x^{3}<br>$$</p>
+<p>我们用这个三次函数进行拟合，我们可能得到这样的模型（绿线部分）：</p>
+<p><img src="/img/16_07_29/022.png" alt=""></p>
+<p>也许这条绿色的线对这个数据集拟合得更好，因为它不会在最后下降回来。</p>
+<p>那么，我们到底应该如何将模型与我们的数据进行拟合呢？使用多元线性回归的方法，我们可以通过将我们的算法做一个非常简单的修改来实现它：</p>
+<p>$$<br>\begin{align*}<br>h_{θ}(x) &amp;= θ_{0} + θ_{1}x_{1} + θ_{2}x_{2} + θ_{3}x_{3}<br>\\&amp;=<br>θ_{0} + θ_{1}(size) + θ_{2}(size)^{2} + θ_{3}(size)^{3}<br>\end{align*}<br>$$</p>
+<p>$$<br>x_{1} = (size) \\<br>x_{2} = (size)^{2} \\<br>x_{3} = (size)^{3} \\<br>$$</p>
+<p>我还想再说一件事，如果你像这样选择特征，那么特征的归一化就变得更重要了。因此，如果房子的大小范围在<code>1</code>到<code>1000</code>之间，那么房子面积的平方的范围就是<code>1</code>到<code>10000000</code>（也就是$1000^{2}$），而你的第三个特征$x_{3}$ 它是房子面积的立方,范围会扩大到1到$10^{9}$。这三个特征的范围有很大的不同，因此，如果你使用梯度下降法，应用特征值的归一化是非常重要的，这样才能将他们的值的范围变得具有可比性。</p>
+<p>最后一个例子，除了建立一个三次模型以外，你也许有其他的选择特征的方法。这里有很多可能的选项，但是给你另外一个合理的选择的例子：</p>
+<p>$$<br>h_{θ}(x) = θ_{0} + θ_{1}(size) + θ_{2}\sqrt{(size)}<br>$$</p>
+<p>这样的一种函数曲线看起来趋势是上升的，但慢慢变得平缓一些，而且永远不会下降回来：</p>
+<p><img src="/img/16_07_29/023.png" alt=""></p>
+<p>在这段视频中，我们探讨了多项式回归。也就是如何将一个多项式如一个二次函数或一个三次函数拟合到你的数据上。除了这个方面我们还讨论了：在使用特征时的选择性。例如：我们不使用房屋的临街宽度和纵深，也许你可以把它们乘在一起从而得到房子的土地面积这个特征。实际上这似乎有点难以抉择，这里有这么多不同的特征选择，我该如何决定使用什么特征呢？</p>
+<p>在之后的课程中我们将探讨一些算法，它们能够<strong>自动选择要使用什么特征</strong>。因此你可以使用一个算法观察给出的数据，并自动为你选择到底应该选择一个二次函数，或者一个三次函数，还是别的函数。但是，在我们学到那种算法之前，现在我希望你知道，你需要选择使用什么特征并且通过设计不同的特征，你能够用更复杂的函数去拟合你的数据，而不是只用一条直线去拟合。特别是你也可以使用多项式函数，有时候通过采取适当的角度来观察 特征就可以得到一个更符合你的数据的模型。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              <a class="post-title-link" href="/2016/07/26/斯坦福机器学习课程 第二周 (1)编程环境设置-Octave:MATLAB/" itemprop="url">
+                斯坦福机器学习课程 第二周 (1)编程环境设置-Octave/MATLAB
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-07-26T12:17:00+08:00" content="2016-07-26">
+            2016-07-26
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/07/26/斯坦福机器学习课程 第二周 (1)编程环境设置-Octave:MATLAB/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/26/斯坦福机器学习课程 第二周 (1)编程环境设置-Octave:MATLAB/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="设置你的编程环境">设置你的编程环境</h2><p>这个机器学习的课程包括几个你需要完成的编程任务。这些任务需要Octave或MATLAB科学计算语言。</p>
+<ul>
+<li>Octave是一个免费、开源的应用。它拥有一个文本接口以及一个实验图形化接口。</li>
+<li>MATLAB是一个专有软件。但是针对本套课程有一个免费的受限制的版本可以使用。</li>
+</ul>
+<h3 id="FAQ">FAQ</h3><p>这些需要花钱吗？</p>
+<p>针对你当前正在学习的课程，这两个软件都是免费的。Octave是在GNU协议下被开放的，这意味着它一直是可以免费下载的。MATLAB只能用于完成本课程中的编程任务。对于其他的使用目的（例如你在完成课程之后去做的你自己的工作），MATLAB可以从Mathworks直接授权给个人或者公司。</p>
+<p>这两者（Octave和MATLAB）质量有不同吗？</p>
+<p>这两个软件有一些微妙的区别。MATLAB会提供一个更平滑的体验（尤其在Mac下），包含更多的函数，以及能够更稳健的处理失败。然而，这套课程中使用到的函数在两个软件里都有的，并且不管是哪个应用，都有很多学生用它完成了课程内容。</p>
+<h2 id="在Windows下安装Octave/MATLAB">在Windows下安装Octave/MATLAB</h2><h3 id="在Windows下安装Octave">在Windows下安装Octave</h3><p><strong>使用这个链接来在Windows安装Octave</strong>:</p>
+<p><a href="http://wiki.octave.org/Octave_for_Microsoft_Windows" target="_blank" rel="external">http://wiki.octave.org/Octave_for_Microsoft_Windows</a></p>
+<p>在Windows下Octave能用来提交本课程的编程任务，但是需要安装一个在论坛区中的补丁。查看更多你当前版本的补丁信息，参见<a href="https://www.coursera.org/learn/machine-learning/discussions/vgCyrQoMEeWv5yIAC00Eog?page=2" target="_blank" rel="external">https://www.coursera.org/learn/machine-learning/discussions/vgCyrQoMEeWv5yIAC00Eog?page=2</a>。</p>
+<h3 id="在Windows下安装MATLAB。">在Windows下安装MATLAB。</h3><p>在course中MathWorks提供了一个MATLAB的入口。不过要注意的是请在课程的有效时间内使用(12周之内)。</p>
+<p>第一步：如果你没有MathWork，请<a href="https://www.mathworks.com/licensecenter/classroom/machine_learning_od/" target="_blank" rel="external">创建一个MathWork账号</a>。</p>
+<p>第二步：再次使用<a href="https://www.mathworks.com/licensecenter/classroom/machine_learning_od/" target="_blank" rel="external">这个连接</a>去下载并安装。你需要登录在第一步中创建的账号，然后开始安装。</p>
+<h2 id="在Mac_OS_X_(10-10_Yosemite_以及_10-9_Mavericks)上安装Octave/MATLAB">在Mac OS X (10.10 Yosemite 以及 10.9 Mavericks)上安装Octave/MATLAB</h2><h3 id="在Mac_OS_X上安装Octave">在Mac OS X上安装Octave</h3><p>Mac OS X上有一个被称为<a href="http://support.apple.com/en-us/HT202491" target="_blank" rel="external">Gatekeeper</a>的功能，这个功能只允许你安装来自App store的程序。你需要设置它来允许安装Octave。打开你的系统偏好，点击安全性与隐私，然后勾选设置允许下载的应用位置为“任何来源”。你需要输入密码来解锁设置页面。</p>
+<p><img src="/img/16_07_25/002.png" alt=""><br><img src="/img/16_07_25/003.png" alt=""></p>
+<p>2.下载<a href="http://sourceforge.net/projects/octave/files/Octave%20MacOSX%20Binary/2013-12-30%20binary%20installer%20of%20Octave%203.8.0%20for%20OSX%2010.9.1%20%28beta%29/GNU_Octave_3.8.0-6.dmg/download" target="_blank" rel="external">Octave3.8.0安装包</a>，文件有点大，可能需要花费一些时间。</p>
+<p>3.打开下载好的文件，可能在你的电脑上文件名为”GNU_Octave_3.8.0-6.dmg”，然后打开里面的”Octave-3.8.0-6.mpkg”。</p>
+<p>4.根据安装程序的说明。你也许需要输入你电脑的管理员密码。</p>
+<p>5.安装成功后，你会在应用中看到<strong>Octave-cli</strong>。这是一个Octave的文本界面入口，通过它，我们可以完成机器学习的编程任务。</p>
+<p>Octave也拥有一个叫做”Octave-gui”的处于实验阶段的图形界面入口，但我们任然建议你使用Octave-cli，因为它更稳定。</p>
+<blockquote>
+<p>提示：如果你在使用一个包管理器（例如MacPorts或者Homebrew），我们建议你使用<a href="http://wiki.octave.org/Octave_for_MacOS_X#Package_Managers" target="_blank" rel="external">通过包管理器的安装方式</a>。</p>
+</blockquote>
+<h3 id="在Mac_OS_X上安装MATLAB">在Mac OS X上安装MATLAB</h3><p>在course中MathWorks提供了一个MATLAB的入口。不过要注意的是请在课程的有效时间内使用(12周之内)。</p>
+<p>第一步：如果你没有MathWork，请<a href="https://www.mathworks.com/licensecenter/classroom/machine_learning_od/" target="_blank" rel="external">创建一个MathWork账号</a>。</p>
+<p>第二步：再次使用<a href="https://www.mathworks.com/licensecenter/classroom/machine_learning_od/" target="_blank" rel="external">这个连接</a>去下载并安装。你需要登录在第一步中创建的账号，然后开始安装。</p>
+<h2 id="在GNU/Linux上安装Octave/MATLAB">在GNU/Linux上安装Octave/MATLAB</h2><h3 id="在GNU/Linux上安装Octave">在GNU/Linux上安装Octave</h3><p>我们建议你<a href="http://wiki.octave.org/Octave_for_GNU/Linux" target="_blank" rel="external">使用系统包管理器来安装Octave</a></p>
+<p>在Ubuntu上，你可以使用：</p>
+<ul>
+<li><code>sudo apt-get update &amp;&amp; sudo apt-get install octave</code></li>
+</ul>
+<p>在Fedora上，你可以使用：</p>
+<ul>
+<li><code>sudo yum install octave-forge</code></li>
+</ul>
+<p>其他GNU/Linux系统，请参见<a href="http://wiki.octave.org/Octave_for_GNU/Linux" target="_blank" rel="external">这里</a></p>
+<h3 id="在GNU/Linux上安装MATLAB">在GNU/Linux上安装MATLAB</h3><p>第一步：如果你没有MathWork，请<a href="https://www.mathworks.com/licensecenter/classroom/machine_learning_od/" target="_blank" rel="external">创建一个MathWork账号</a>。</p>
+<p>第二步：再次使用<a href="https://www.mathworks.com/licensecenter/classroom/machine_learning_od/" target="_blank" rel="external">这个连接</a>去下载并安装。你需要登录在第一步中创建的账号，然后开始安装。</p>
+<h2 id="更多Octave/MATLAB的资源">更多Octave/MATLAB的资源</h2><h3 id="Octave资源">Octave资源</h3><p>在Octave命令行下，输入<strong>help</strong>跟上一个函数名来展示这个函数的说明文档。例如:<strong>help plot</strong>将呼起一个有关测绘(plotting)的帮助信息。更多的信息，请见<a href="http://www.gnu.org/software/octave/doc/interpreter/" target="_blank" rel="external">文档页</a>。</p>
+<h3 id="MATLAB资源">MATLAB资源</h3><p>在MATLAB命令行下，输入<strong>help</strong>跟上一个函数名来展示这个函数的说明文档。例如:<strong>help plot</strong>将呼起一个有关测绘(plotting)的帮助信息。更多的信息，请见<a href="http://cn.mathworks.com/help/matlab/?requestedDomain=www.mathworks.com" target="_blank" rel="external">文档页</a>。</p>
+<p>MathWorks也有一系列有关MATLAB功能的视频：</p>
+<p>MATLAB的介绍：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">学习模块</th>
+<th style="text-align:left">学习目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/rXwTiKGlilE" target="_blank" rel="external">什么是MATLAB?</a></td>
+<td style="text-align:left">介绍MATLAB</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/iYTzJXXI9vI" target="_blank" rel="external">MATLAB的环境</a></td>
+<td style="text-align:left">命令行，工作空间，目录和编辑器介绍</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/jURDBsIPt5I" target="_blank" rel="external">MATLAB变量</a></td>
+<td style="text-align:left">使用赋值操作符来定义标量变量</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/E7KllorEWkA" target="_blank" rel="external">MATLAB作为一个计算器</a></td>
+<td style="text-align:left">通过MATLAB的语法的方法和标量以及操作顺序来执行算数运算。</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/R-kBvJ3kVVk" target="_blank" rel="external">数学函数</a></td>
+<td style="text-align:left">对方法的输入输出来使用MATLAB的变量，例如：COS，SIN，EXP，NTHROOT。</td>
+</tr>
+</tbody>
+</table>
+<p>向量：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">学习模块</th>
+<th style="text-align:left">学习目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/2VNFqxmVqw8" target="_blank" rel="external">通过级联创建向量</a></td>
+<td style="text-align:left">通过输入单个元素创建向量</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/GihLWwp8sBw" target="_blank" rel="external">访问向量的元素</a></td>
+<td style="text-align:left">访问向量的特定元素</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/t9Kla_YFdfs" target="_blank" rel="external">向量运算</a></td>
+<td style="text-align:left">通过包含智能元素操作的向量来执行计算</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/USehPX2iEa4" target="_blank" rel="external">向量的转置</a></td>
+<td style="text-align:left">使用向量的转置来实现向量的行列交换</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/L7cERR5J9XY" target="_blank" rel="external">创建均匀分布的向量(冒号运算符)</a></td>
+<td style="text-align:left">使用冒号运算符来创建指定起始值、终止值以及间隔大小的向量</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/3QM3LRnb4Tw" target="_blank" rel="external">创建均匀分布的向量(LINSPACE 函数)</a></td>
+<td style="text-align:left">使用LINSPAC函数来创建一个向量</td>
+</tr>
+</tbody>
+</table>
+<p>可视化：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">学习模块</th>
+<th style="text-align:left">学习目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/00k9A9W0cl8" target="_blank" rel="external">线图</a></td>
+<td style="text-align:left">创建一个向量的折线图并且自定义的绘图标记和颜色</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/ab3XIDdloNI" target="_blank" rel="external">图形注释</a></td>
+<td style="text-align:left">标签轴，添加一个标题，或者对于一个图添加一个描述</td>
+</tr>
+</tbody>
+</table>
+<p>矩阵和数组：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">学习模块</th>
+<th style="text-align:left">学习目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/5tm6PKaJdI8" target="_blank" rel="external">创建一个矩阵</a></td>
+<td style="text-align:left">通过直接输入标量创建矩阵</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/DDnm7vek6KY" target="_blank" rel="external">数组创建函数</a></td>
+<td style="text-align:left">通过使用MATLAB的方法，例如<code>ZEROS</code>和<code>EYE</code>，来创建一个更大的矩阵</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/qqQnFp5aiuM" target="_blank" rel="external">访问和数组元素</a></td>
+<td style="text-align:left">通过行和列的索引来访问一个数组的元素</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/SqvtT_VspKU" target="_blank" rel="external">数组的大小和长度</a></td>
+<td style="text-align:left">使用内置函数来确定数组的尺寸</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/TgopxS-_zl8" target="_blank" rel="external">串联阵列</a></td>
+<td style="text-align:left">从一个较小的数组创建一个更大的数组</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/-jgXqAYBhxI" target="_blank" rel="external">矩阵乘法</a></td>
+<td style="text-align:left">执行矩阵乘法并列出关于尺寸不匹配的错误信息</td>
+</tr>
+</tbody>
+</table>
+<p>编程：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">学习模块</th>
+<th style="text-align:left">学习目标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/TZr6GyxnI_w" target="_blank" rel="external">使用MATLAB编辑器</a></td>
+<td style="text-align:left">在MATLAB编辑器下写一个脚本，并且分块执行这些代码，并且查找方法的帮助</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/5gVKJVVmbrM" target="_blank" rel="external">逻辑运算符</a></td>
+<td style="text-align:left">通过使用关系运算符以及逻辑运算符来创建程序控制的逻辑变量</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/8wxh4LtT--g" target="_blank" rel="external">有条件的数据选择</a></td>
+<td style="text-align:left">允许更改一个满足指定标准的向量元素</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/oaK2-ZT9dls" target="_blank" rel="external">if-else控制语句</a></td>
+<td style="text-align:left">通过使用if-else条件判断语句来控制哪一行代码将被执行</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/1u3RahlWEZA" target="_blank" rel="external">for循环</a></td>
+<td style="text-align:left">重复执行一个指定次数的命令序列</td>
+</tr>
+<tr>
+<td style="text-align:left"><a href="http://youtu.be/dofj51Ovdl4" target="_blank" rel="external">while循环</a></td>
+<td style="text-align:left">当条件判断语句为true时，重复执行一个序列的命令</td>
+</tr>
+</tbody>
+</table>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              <a class="post-title-link" href="/2016/07/25/斯坦福机器学习课程 第一周 (6)线性代数复习/" itemprop="url">
+                斯坦福机器学习课程 第一周 (6)线性代数复习
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-07-25T01:51:00+08:00" content="2016-07-25">
+            2016-07-25
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/07/25/斯坦福机器学习课程 第一周 (6)线性代数复习/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/25/斯坦福机器学习课程 第一周 (6)线性代数复习/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="线性代数复习">线性代数复习</h2><blockquote>
+<p>这个可选模块提供了线性代数概念的复习。在接下来的课程中，对线性代数的基本理解是必要的，特别是当我们开始涵盖多个变量的模型时。</p>
+</blockquote>
+<h3 id="矩阵和向量">矩阵和向量</h3><p><a href="https://www.coursera.org/learn/machine-learning/lecture/38jIT/matrices-and-vectors" target="_blank" rel="external">视频地址</a></p>
+<p>我们先复习一下线性代数的知识。在这段视频中，我会向大家介绍<strong>矩阵</strong>和<strong>向量</strong>的概念。</p>
+<h4 id="矩阵">矩阵</h4><blockquote>
+<p><strong>Matrix</strong>:Rectangular array of numbers.</p>
+<p><strong>矩阵</strong>是指由数字组成的矩形阵列并写在方括号中间。</p>
+</blockquote>
+<p>例如下面就是一个矩阵：</p>
+<p>$$<br>\begin{bmatrix}<br>1902 &amp; 191 \\<br>1371 &amp; 821 \\<br>949 &amp; 1437 \\<br>147 &amp; 1448<br>\end{bmatrix}<br>$$</p>
+<p>这些数字可能是机器学习问题的特征值，也可能表示其他意思。</p>
+<p>接下来看一下其他矩阵的例子：</p>
+<p>$$<br>\begin{bmatrix}<br>1 &amp; 2 &amp; 3 \\<br>4 &amp; 5 &amp; 6<br>\end{bmatrix}<br>$$</p>
+<p>这里我们还需要知道的是，矩阵的维度应该写作：矩阵的行数乘以列数。具体到第一个例子是一个$4 × 2$的矩阵(即行数乘以列数)。第二个例子中的矩阵是一个$2 × 3$的矩阵。所以我们说这个矩阵的维度是$2 × 3$维。</p>
+<p>有时候大家会发现会使用字母$\Re$来表示一个矩阵的维度。例如第一个例子中可以写作一个$\Re^{4 × 2}$的矩阵，第二个例子中可以说是一个$\Re^{2 × 3}$的矩阵。</p>
+<p>接下来让我们来谈谈如何表达矩阵的某个特定元素。这里我说矩阵元素(这里指矩阵内部的某个数)。</p>
+<p>我们通常使用矩阵名加下标的方式来表达矩阵中的某个元素。例如:</p>
+<p>$$<br>A_{ij}<br>$$</p>
+<p>表达的是矩阵A中第$i$行，第$j$列的元素。</p>
+<p>在第一个例子的矩阵中，$A_{11}$就等于1402，$A_{11}$就等于191。</p>
+<p>如果你写出了$A_{43}$，这应该表示的是第四行第三列。而你知道 这个矩阵没有第三列。因此这是未定义的。或者你可以认为这是一个错误。</p>
+<p>因此，矩阵提供了一种很好的方式，让你快速整理索引和访问大量数据。所以，这就是矩阵的定义。</p>
+<h4 id="向量">向量</h4><p>接下来让我们来谈谈什么是向量。</p>
+<blockquote>
+<p><strong>Vector</strong>:An n × 1 matrix.<br><strong>向量</strong>是只有一列的矩阵。</p>
+</blockquote>
+<p>例如下面就是一个向量：</p>
+<p>$$<br>y =<br>\begin{bmatrix}<br>460 \\<br>232 \\<br>315 \\<br>178<br>\end{bmatrix}<br>$$</p>
+<p>另一个术语是:这是一个四维的向量。也就意味着这是一个含有4个元素的向量。而且前面我们讲矩阵的时候提到过，这个符号$\Re^{3 × 2}$表示的是一个3行2列的矩阵，而对于这个向量，我们也同样可以表示为集合$\Re^{4}$。</p>
+<p>我们将使用符号$y_{i}$来代表向量$y$的第$i$个元素。例如这里$y_{1}$表示第一个元素460，$y_{2}$表示第二个元素232。只有$y_{1}$至$y_{4}$是有意义的，因为这定义的是一个四维向量。</p>
+<p>此外事实上有两种方法来表达某个向量中某个索引：</p>
+<p><img src="/img/16_07_25/001.png" alt=""></p>
+<p>左边是<strong>1-索引向量</strong>，它的元素写作$y_{1}$，$y_{2}$，$y_{3}$，$y_{4}$。而右边的是<strong>0-索引向量</strong>，它的元素写作，$y_{0}$，$y_{1}$，$y_{2}$，$y_{3}$。这有点像一些初级语言中的数组。</p>
+<p>事实上在数学中，1-索引的情况比较多。而对于很多机器学习的应用问题来说0-索引向量为我们提供了一个更方便的符号表达。</p>
+<p>所以你应该默认我们使用的是1-索引法表示向量。在本课程的后面所有 关于线性代数的视频中，我都将使用1-索引法表示向量。</p>
+<p>但你要明白，当我们谈论到机器学习的应用问题时，如果我们需要使用0-索引向量的话，我会明确地告诉你</p>
+<p>最后，按照惯例，通常在书写矩阵和向量时大多数人会使用大写字母来表示矩阵。因此，我们要使用大写字母，如$A$、$B$、$C$、$X$来表示矩阵。而通常我们会使用小写字母，像$a$、$b$、$x$、$y$来表示数字或是原始的数字或标量或向量。这是实际的使用习惯，我们也经常看到使用小写字母$y$来表示向量，但我们平时是用大写字母来表示矩阵 。</p>
+<h3 id="加减法与数乘运算">加减法与数乘运算</h3><p><a href="https://www.coursera.org/learn/machine-learning/lecture/R4hiJ/addition-and-scalar-multiplication" target="_blank" rel="external">视频地址</a></p>
+<p>在这段视频中，我们将要介绍矩阵的加减法以及数乘运算。</p>
+<h4 id="矩阵的加减法运算">矩阵的加减法运算</h4><p>让我们从下面这个例子开始：</p>
+<p>$$<br>\begin{bmatrix}<br>1 &amp; 0 \\<br>2 &amp; 5 \\<br>3 &amp; 1<br>\end{bmatrix}<br>+<br>\begin{bmatrix}<br>4 &amp; 0.5 \\<br>2 &amp; 5 \\<br>0 &amp; 1<br>\end{bmatrix}<br>=<br>\begin{bmatrix}<br>5 &amp; 0.5 \\<br>4 &amp; 10 \\<br>3 &amp; 2<br>\end{bmatrix}<br>$$</p>
+<p>假设有这样两个矩阵，如果想对它们做求和运算，应该怎么做呢？答案是：如果你想将两个矩阵相加，你只需要将这两个矩阵的每一个元素都逐个相加即可。</p>
+<p>这里大家不难发现，<strong>只有相同维度的两个矩阵才能相加</strong>。对于这个例子而言，是两个3行2列的矩阵相加，这是一个3行2列的矩阵，因此这两个矩阵相加的结果也是一个3行2列的矩阵。所以你只能将相同维度的矩阵，进行相加运算，同时所得到的结果将会是一个新的矩阵，这个矩阵与相加的两个矩阵维度相同。</p>
+<p>反过来，如果你想将下面这样两个维度不相同的矩阵相加，就会出现错误了。所以我们不能将它们相加，这两个矩阵的和是没有意义的。</p>
+<p>$$<br>\begin{bmatrix}<br>1 &amp; 0 \\<br>2 &amp; 5 \\<br>3 &amp; 1<br>\end{bmatrix}<br>+<br>\begin{bmatrix}<br>4 &amp; 0.5 \\<br>2 &amp; 5<br>\end{bmatrix}<br>=<br>error<br>$$</p>
+<p>这就是矩阵的加法运算。</p>
+<h4 id="矩阵的数乘运算">矩阵的数乘运算</h4><p>矩阵的数乘运算指的是用标量去乘以矩阵中的每个元素，最终得到的结果就是数乘运算的结果矩阵。这里的标量指的是实数。</p>
+<p>例如下面两个例子：</p>
+<p>$$<br>3 ×<br>\begin{bmatrix}<br>1 &amp; 0 \\<br>2 &amp; 5 \\<br>3 &amp; 1<br>\end{bmatrix}<br>=<br>\begin{bmatrix}<br>3 &amp; 0 \\<br>6 &amp; 15 \\<br>9 &amp; 3<br>\end{bmatrix}<br>$$</p>
+<p>$$<br>\begin{bmatrix}<br>4 &amp; 0 \\<br>6 &amp; 3<br>\end{bmatrix}<br>/ 4<br>=<br>1/4<br>\begin{bmatrix}<br>4 &amp; 0 \\<br>6 &amp; 3<br>\end{bmatrix}<br>=<br>\begin{bmatrix}<br>1 &amp; 0 \\<br>3/2 &amp; 3/4<br>\end{bmatrix}<br>$$</p>
+<h3 id="矩阵乘法">矩阵乘法</h3><p>见<a href="/2015/11/29/线性代数01-矩阵乘法/">矩阵乘法</a></p>
+<h3 id="矩阵乘法性质">矩阵乘法性质</h3><p><a href="https://www.coursera.org/learn/machine-learning/lecture/W1LNU/matrix-multiplication-properties" target="_blank" rel="external">视频地址</a></p>
+<p>本节主要介绍矩阵乘法的性质。</p>
+<h4 id="矩阵乘法不满足交换律">矩阵乘法不满足交换律</h4><blockquote>
+<p>Let A and B be matrices.Then in general, A × B ≠ B × A.(not commutative.)<br>如果A和B是矩阵，那么一般情况下，A × B ≠ B × A (不满足交换律)。</p>
+</blockquote>
+<p>例如：</p>
+<p>$$<br>\begin{bmatrix}<br>1 &amp; 1 \\<br>0 &amp; 0<br>\end{bmatrix}<br>\begin{bmatrix}<br>0 &amp; 0 \\<br>2 &amp; 0<br>\end{bmatrix}<br>=<br>\begin{bmatrix}<br>2 &amp; 0 \\<br>0 &amp; 0<br>\end{bmatrix}<br>$$</p>
+<p>$$<br>\begin{bmatrix}<br>0 &amp; 0 \\<br>2 &amp; 0<br>\end{bmatrix}<br>\begin{bmatrix}<br>1 &amp; 1 \\<br>0 &amp; 0<br>\end{bmatrix}<br>=<br>\begin{bmatrix}<br>0 &amp; 0 \\<br>2 &amp; 2<br>\end{bmatrix}<br>$$</p>
+<h4 id="矩阵乘法满足结合律">矩阵乘法满足结合律</h4><p>$$<br>A × B × C = (A × B) × C = A × (B × C)<br>$$</p>
+<h4 id="单位矩阵">单位矩阵</h4><p>定义单位矩阵为$I$(或者$I_{n×n}$)。单位矩阵满足:</p>
+<p>$$<br>I × Z = Z × I = Z<br>$$</p>
+<p>其中$Z$是任意矩阵。</p>
+<p>实际上单位矩阵就是对角线上元素为1，其他元素为0的方阵。例如下面几个都是单位矩阵：</p>
+<p>$$<br>\begin{bmatrix}<br>1 &amp; 0 \\<br>0 &amp; 1<br>\end{bmatrix}<br>$$</p>
+<p>$$<br>\begin{bmatrix}<br>1 &amp; 0 &amp; 0\\<br>0 &amp; 1 &amp; 0\\<br>0 &amp; 0 &amp; 1<br>\end{bmatrix}<br>$$</p>
+<h3 id="矩阵的逆和矩阵的转置">矩阵的逆和矩阵的转置</h3><h4 id="矩阵的逆">矩阵的逆</h4><p>矩阵的逆以及求解逆的方式，见<a href="/2015/11/29/线性代数02-矩阵的逆/">矩阵的逆</a></p>
+<p>奇异矩阵的介绍，见<a href="/2015/11/30/线性代数04-奇异矩阵/">奇异矩阵</a></p>
+<h4 id="矩阵的转置">矩阵的转置</h4><p>如果用$A$表示一个矩阵，那么矩阵A的转置就是$A^{T}$。矩阵的转置就相当于将这个矩阵按照45度角求镜像，矩阵的行变为矩阵的列，矩阵的列变为矩阵的行。</p>
+<blockquote>
+<p>Let A be an $m × n$ matrix, and let $B = A^{T}$.Then $B$ is an $n × m$ matrix, and $B_{ij} = A_{ji}$.<br>如果A是一个$m × n$的矩阵，并且矩阵B是A的转置，那么B是一个$n × m$的矩阵，并且$B_{ij} = A_{ji}$。</p>
+</blockquote>
+<p>举个例子：</p>
+<p>$$<br>A =<br>\begin{bmatrix}<br>1 &amp; 2 &amp; 0\\<br>3 &amp; 5 &amp; 9<br>\end{bmatrix}<br>$$</p>
+<p>$$<br>A^{T} =<br>\begin{bmatrix}<br>1 &amp; 3\\<br>2 &amp; 5\\<br>0 &amp; 9<br>\end{bmatrix}<br>$$</p>
+<p>矩阵的转置就是第一个矩阵的第一行转变为转置的第一列，第二行转变为第二列。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/07/24/斯坦福机器学习课程 第一周 (5)参数学习/" itemprop="url">
                 斯坦福机器学习课程 第一周 (5)参数学习-梯度下降算法
               </a>
@@ -1297,450 +2021,11 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/07/11/gradle学习笔记-多项目构建介绍/" itemprop="url">
-                gradle学习笔记-多项目构建介绍
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-07-11T23:06:55+08:00" content="2016-07-11">
-            2016-07-11
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/gradle/" itemprop="url" rel="index">
-                  <span itemprop="name">gradle</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/07/11/gradle学习笔记-多项目构建介绍/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/11/gradle学习笔记-多项目构建介绍/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><p>只有小规模的项目具有单一的构建文件和源码，除非恰好是一个大规模的整体的应用。项目被分割成更小的、相互依赖的模块，往往会更容易理解和处理。“相互依赖”这个词很重要，因此，这就是为什么你通常希望通过一个单一的构建将多个模块链接起来。</p>
-<p>gradle通过<strong>多项目构建(multi-project)</strong>来支持这种需求。</p>
-<h2 id="1-多项目构建的结构">1.多项目构建的结构</h2><p>这种构建引入了各种各样的子项目，但它们都有共同的特点：</p>
-<ul>
-<li>在项目的根目录都有一个<code>settings.gradle</code>文件</li>
-<li>在根目录或主目录下都有一个<code>build.gradle</code>文件</li>
-<li>每个字目录都有他们自己的<code>*.gradle</code>文件（有些多项目构建结构也许会胜率子项目的构建脚本）</li>
-</ul>
-<p><code>settings.gradle</code>告诉gradle主项目和子项目的结构是怎样的。幸运的是，你其实不必通过读这个文件来了解项目的结构是怎样，如果你想要了解项目结构的话，通过运行命令<code>gradle projects</code>就可以了。下面是一个在<strong>多项目(multiproject)</strong>下使用命令的例子：</p>
-<p><strong>列出一次构建中的项目</strong></p>
-<p>gradle -q projects</p>
-<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">&gt; gradle -q projects</div><div class="line"></div><div class="line">------------------------------------------------------------</div><div class="line">Root <span class="keyword">project</span></div><div class="line">------------------------------------------------------------</div><div class="line"></div><div class="line">Root <span class="keyword">project</span> <span class="string">'multiproject'</span></div><div class="line">+--- <span class="keyword">Project</span> <span class="string">':api'</span></div><div class="line">+--- <span class="keyword">Project</span> <span class="string">':services'</span></div><div class="line">|    +--- <span class="keyword">Project</span> <span class="string">':services:shared'</span></div><div class="line">|    \--- <span class="keyword">Project</span> <span class="string">':services:webservice'</span></div><div class="line">\--- <span class="keyword">Project</span> <span class="string">':shared'</span></div><div class="line"></div><div class="line">To see a list of the tasks of a <span class="keyword">project</span>, run gradle &lt;<span class="keyword">project</span>-path&gt;:tasks</div><div class="line"><span class="keyword">For</span> example, <span class="keyword">try</span> running gradle :api:tasks</div></pre></td></tr></table></figure>
-<p>输出结果会告诉你，这个多项目构建有三个直接的子项目：<strong>api</strong>，<strong>services</strong>和<strong>shared</strong>。其中<strong>services</strong>还有属于它的子项目:<strong>shared</strong>和<strong>webservice</strong>。通过这个目录结构图，我们可以很容易的找到任意一个其中的项目。例如：你可以通过这张图中发现<strong>webservice</strong>位于<code>&lt;root&gt;/services/webservice.</code>这个位置。</p>
-<p>默认情况下，gradle使用<code>settings.gradle</code>文件的目录名来作为根项目的名称。这样做通常不会有什么问题，因为所有的开发者会在同一个项目中检出相同的目录名。在持续集成服务器上，例如Jenkins，目录名称可能会是自动生成的并且与你的版本控制工具中的名字并不匹配。因此，建议你设置一个可预测的项目名称，即使是一个单一构建的项目。你可以通过设置<code>rootProject.name</code>来配置根项目名。</p>
-<p>每个项目都有属于它们自己的构建文件，但这并不是必须的。在上面的例子中，<strong>services</strong>项目仅仅是其他子项目的一个容器或者说是分组。在它相应的目录中没有构建文件。然而，多构建项目的根项目都有这个构建文件。</p>
-<p>根项目的<code>build.gradle</code>通常会和子项目共享配置，例如主项目会和子项目共享自己的插件和依赖项。当所有的配置都在同一个地方，也可以通过配置这一处来达到配置所有子项目的效果。这意味着，当你发现某个子项目被配置了某个属性，你通常应该先经常检查根项目的构建文件。</p>
-<p>另外一个需要被牢记的是构建配置的文件可能并不叫<code>build.gradle</code>。许多项目都会以子项目的名称来命名构建文件，例如之前例子中的<code>api.gradle</code>和<code>services.gradle</code>。在使用IDE时，这种做法有很大的好处，因为很难从几十个<code>build.gradle</code>文件中找出你要的具体是哪一个。对于<code>settings.gradle</code>文件的处理有一点小小的特殊，但对于一次构建，你不需要了解它是怎么做到这样的。只需要看一看子项目目录，去找一下以<code>.gradle</code>结尾的文件就行了。</p>
-<p>一旦你知道子项目中能用到的是什么，那么关键的问题就是构建者如何在项目中执行这些task。</p>
-<h2 id="2-执行一个多项目构建">2.执行一个多项目构建</h2><p>从用户的角度去看，多项目构建任然是一系列可以用来运行的task。这不同于你想控制哪一个项目的task的执行。这里你有两条选项：</p>
-<ul>
-<li>改变子项目对应的目录到你想要的地方，然后正常的执行<code>gradle &lt;task&gt;</code>。</li>
-<li>在任意目录下都使用一个符合标准的task的名称，尽管这通常是从根目录开始的。例如：<code>gradle :services:webservice:build</code>将执行<strong><code>webservice</code></strong>这个子项目以及它所依赖的所有子项目。</li>
-</ul>
-<p>第一种方法是类似于单项目的使用情况，但在多项目的gradle构建时略有不同。命令<code>gradle test</code>会执行相对于当前工作目录的所有子项目中的test task，前提是如果这些子项目中有这个名为<code>test</code>的task。因此，如果你在根项目的目录下运行命令，你也会在<strong>api</strong>, <strong>shared</strong>, <strong>services:shared</strong> 和<strong>services:webservice</strong>下运行test这个task。如果你仅仅在<strong>services</strong>这个项目下运行这个命令，那么只有<strong> services:shared</strong>和<strong>services:webservice</strong>这两个项目会执行test的task。</p>
-<p>为了能更多的控制执行，可以使用符合标准的名字（上面提到的第二种方法）。这些路径类似于目录路径，但需要使用”:”而不是”/“或”\”。如果路径是以”:”开头的，那么路径会以根项目为相对路径去解析。换句话说，开头的”:”代表根项目本身。所有其他的冒号都是路径分隔符。</p>
-<p>这种方法适用于任何task，所以，如果你想知道在一个特定的子项目的task是什么，只需使用类似这种方式：<code>gradle :services:webservice:tasks</code>。</p>
-<p>无论你使用哪种方式来执行task，gradle都能处理好当前依赖的任何子项目的构建。你不用担心项目间依赖问题。如果你对它们是如何配置的感兴趣，你可以阅读写多项目构建的文档<a href="https://docs.gradle.org/current/userguide/multi_project_builds.html" target="_blank" rel="external">later in the user guide</a>。</p>
-<p>还有最后一件事要注意。当你使用gradle wrapper时，第一种方式不能很好的工作，因为如果你不在项目的根目录，你必须对你的wrapper脚本指定路径。举个例子：如果你在<strong>webservice</strong>这个子项目中，你必须执行<code>../../gradlew build</code></p>
-<p>这就是构建者关于多项目构建需要了解的全部。现在你可以辨别一个构建是否是一个多项目构建项目，并且可以观察它的结构。最终你可以执行指定的子项目的task。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/07/11/gradle学习笔记-依赖管理基础/" itemprop="url">
-                gradle学习笔记-依赖管理基础
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-07-11T15:06:55+08:00" content="2016-07-11">
-            2016-07-11
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/gradle/" itemprop="url" rel="index">
-                  <span itemprop="name">gradle</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/07/11/gradle学习笔记-依赖管理基础/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/11/gradle学习笔记-依赖管理基础/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><p>这一节将介绍一些gradle中依赖管理的基本知识。</p>
-<h2 id="1-什么是依赖管理？">1.什么是依赖管理？</h2><p>粗略的说，依赖管理是由两个部分组成的。首先，gradle需要知道你的项目需要执行的一些构建和一些运行的信息，通过这些信息可以找到它们。我们称这些传入的文件为项目的<strong>依赖（dependencies）</strong>。第二，Gradle需要构建和上传您的项目产生的东西。我们把这些传出的文件称为项目的<strong>出版物（publications）</strong>。让我们更详细地看一下这两部分：</p>
-<p>大多数项目并不是完全独立的。它们需要其他项目构建的文件以便于被编译或测试，等。例如，为了在我的项目中使用Hibernate,我需要在编译我的源代码时引入一些Hibernate的jar包到classpath中。为了运行我的测试，我也许需要引入一些额外的jar包到test的classpath中，例如一个特定的JDBC驱动，或者Ehcache jar包。</p>
-<p>这些传入的文件形成了项目的依赖关系。gradle允许你告诉它你的项目依赖是怎样的，这样以来它可以照顾好你的项目依赖关系，并且在你的构建中也是可以生效的。依赖可能需要从远程仓库Maven、lvy下载到本地，或者也有可能存在于本地目录，或者也许是同一个多项目构建的项目中的一个其他项目。我们称这个过程为<strong>依赖解析(dependency resolution)</strong>。</p>
-<p>请注意，这里提到的这个主要功能的优势超越了Ant。用Ant时，你只能通过指定jar包加载的绝对路径或相对路径。然而在使用gradle时，你只需要简单的声明依赖的“名字”，以及指定其他层是从哪里获得这些依赖的即可。你可以通过在Ant上添加Apache lvy来简化这些操作，但gradle会处理的更好。</p>
-<p>通常，一个项目的依赖，其自身也存在依赖。例如，Hibernate内核需要添加几个其他的库到classpath中，才能正常运行。因此，当gradle在你的项目中运行测试，也需要去找到它的依赖项并且确保它们是可用的。我们称这种为<strong>过渡依赖(transitive dependencies)</strong>。</p>
-<p>很多项目就是为了让外部项目来使用的。例如，如果你的项目提供一个java库，你需要构建一个jar包，并且可能是源码jar以及一些文档，并将它们发布到某个地方。</p>
-<p>这些发出来的文件形成了这些项目的出版物。gradle也会做好这些工作的。你声明你的项目的出版物，然后gradle会负责构建并将它们发布到某个地方。究竟“发布（publishing）”是什么意思，取决于你具体想怎么做。也许你只是想从本地目录拷贝文件，或者上传它们到一个远端的Maven或lvy仓库，或者你使用的文件是当前项目中多个子项目中的另一个子项目中的。我们称这种行为是<strong>发布(publishing)</strong>。</p>
-<h2 id="2-声明你的依赖">2.声明你的依赖</h2><p>让我们来看看一些依赖的声明。这是一个基本构建脚本：</p>
-<p><strong>声明依赖</strong></p>
-<p>build.gradle</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">apply <span class="string">plugin:</span> <span class="string">'java'</span></div><div class="line"></div><div class="line">repositories &#123;</div><div class="line">    mavenCentral()</div><div class="line">&#125;</div><div class="line"></div><div class="line">dependencies &#123;</div><div class="line">    compile <span class="string">group:</span> <span class="string">'org.hibernate'</span>, <span class="string">name:</span> <span class="string">'hibernate-core'</span>, <span class="string">version:</span> <span class="string">'3.6.7.Final'</span></div><div class="line">    testCompile <span class="string">group:</span> <span class="string">'junit'</span>, <span class="string">name:</span> <span class="string">'junit'</span>, <span class="string">version:</span> <span class="string">'4.+'</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这些是什么呢？这些构建脚本描述了一些项目的事情。首先，规定了编译项目源码需要用到版本为“3.6.7.Final”的Hibernate core。言外之意，Hibernate core和它自身的依赖项也将在运行时被使用到。这个构建脚本也指出编译项目的测试，需要任意版本&gt;=4.0的junit。这也是再告诉gradle去看看Maven中央仓库里是否有其他的依赖被用到。下面我们详细来介绍一下。</p>
-<h2 id="3-依赖配置">3.依赖配置</h2><p>在gradle中依赖是在设置中分组配置的。一个配置是一个被命名的一系列依赖项。我们把它们称为依赖配置。您可以使用它们来声明项目的外部依赖关系。我们稍后也会看到，他们会被用来申报你的项目的publications。</p>
-<p>java插件定义了大量的标准配置。这些配置表示java插件使用到的classpath。一些已经列在下面，你可以在<a href="https://docs.gradle.org/current/userguide/java_plugin.html#tab:configurations" target="_blank" rel="external">Table 45.5, “Java plugin - dependency configurations”</a>看到更多的详细信息。</p>
-<ul>
-<li><p><strong>compile</strong></p>
-<p>  编译项目所需要的依赖</p>
-</li>
-<li><p><strong>runtime</strong></p>
-<p>  项目运行所需要的依赖。默认情况下，也包含编译时的依赖。</p>
-</li>
-<li><p><strong>testCompile</strong></p>
-<p>  项目测试是所需要的依赖。默认情况下，也包含已编译的项目的类和编译时依赖。</p>
-</li>
-<li><p><strong>testRuntime</strong></p>
-<p>  运行测试所需的依赖关系。默认情况下，包含编译、运行时和测试编译所需要的依赖。</p>
-</li>
-</ul>
-<p>各种插件添加更多的配置。你也可以在你的构建中使用自定义配置。关于定义和定制依赖的设置，详情请见<a href="https://docs.gradle.org/current/userguide/dependency_management.html#sub:configurations" target="_blank" rel="external">Section 23.3, “Dependency configurations</a></p>
-<h2 id="4-外部依赖">4.外部依赖</h2><p>你可以声明各种各样的依赖类型。一类是<strong>外部依赖(external dependency)</strong>。这是一些依赖于非当前构建的外部文件，这些文件存储在某个外部库中，如Maven中央仓库、公司级Maven、lvy库，或本地的目录。</p>
-<p>如果要定义一个外部依赖关系，您需要将它添加到依赖配置中：</p>
-<p><strong>外部依赖的定义</strong></p>
-<p>build.gradle</p>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">dependencies</span> &#123;    compile <span class="attribute">group</span>:<span class="string">'org.hibernate'</span>, <span class="attribute">name</span>:<span class="string">'hibernate-core'</span>, <span class="attribute">version</span>:<span class="string">'3.6.7.Final'</span>&#125;</div></pre></td></tr></table></figure>
-<p>一个外部依赖是通过组名，库名，以及版本号来唯一标示的。其中组名和版本号是可选的。</p>
-<p>也可以使用类似于：<code>&quot;group:name:version&quot;</code>的简写形式。</p>
-<p><strong>外部依赖定义的简写形式</strong></p>
-<p>build.gradle</p>
-<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">dependencies</span> &#123;    <span class="keyword">compile</span><span class="string">'org.hibernate:hibernate-core:3.6.7.Final'</span>&#125;</div></pre></td></tr></table></figure>
-<p>更多关于依赖的定义和使用，见<a href="https://docs.gradle.org/current/userguide/dependency_management.html#sec:how_to_declare_your_dependencies" target="_blank" rel="external">Section 23.4, “How to declare your dependencies”</a>。</p>
-<h2 id="5-仓库">5.仓库</h2><p>gradle是如何找到外部依赖的文件的呢？gradle通过在一个<strong>仓库repository</strong>中寻找这些文件。一个仓库其实就是一个通过组名，文件名和版本号标识的文件集合。gradle能理解几种不同的仓库格式，例如Maven，lvy，以及几种不同的方式访问仓库，如本地文件系统或者http。</p>
-<p>默认情况下，gradle并没有定义任何仓库。在你使用外部依赖之前你需要定义至少一个仓库。一种可选的方案是使用Maven中央仓库：</p>
-<p><strong>使用Maven中央仓库</strong></p>
-<p>build.gradle</p>
-<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class">repositories </span>&#123;</div><div class="line">    mavenCentral()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>或者是JCenter</p>
-<p><strong>使用JCenter仓库</strong></p>
-<p>build.gradle</p>
-<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class">repositories </span>&#123;</div><div class="line">    jcenter()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>或者其他任何一个远程Maven仓库：</p>
-<p><strong>使用一个远程Maven仓库</strong></p>
-<p>build.gradle</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="section">repositories</span> &#123;</div><div class="line">    <span class="section">maven</span> &#123;</div><div class="line">        <span class="attribute">url</span> <span class="string">"http://repo.mycompany.com/maven2"</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>或者使用一个lvy仓库：</p>
-<p><strong>使用一个远程lvy地址</strong></p>
-<p>build.gradle</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="section">repositories</span> &#123;</div><div class="line">    <span class="section">ivy</span> &#123;</div><div class="line">        <span class="attribute">url</span> <span class="string">"http://repo.mycompany.com/repo"</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>你也可以通过本地文件系统构建仓库。这对于Maven和lvy都适用。</p>
-<p><strong>使用本地lvy地址</strong></p>
-<p>build.gradle</p>
-<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class">repositories </span>&#123;</div><div class="line">    <span class="class">ivy </span>&#123;</div><div class="line">        <span class="comment">// URL can refer to a local directory</span></div><div class="line">        url <span class="string">"../local-repo"</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>一个项目可以有多个仓库。gradle会按照仓库的声明顺序在每一个仓库中去寻找指定的依赖，当第一次找到的时，就停止搜索。</p>
-<p>更多关于仓库的声明和使用，见<a href="https://docs.gradle.org/current/userguide/dependency_management.html#sec:repositories" target="_blank" rel="external">Section 23.6, “Repositories”</a>。</p>
-<h2 id="6-发布工件">6.发布工件</h2><p>依赖配置同样也可以被用来发布文件。我们称这些文件为<strong>发布工件publication artifacts</strong>，或者仅仅是<strong>工件artifacts</strong>。</p>
-<p>插件很好的完成了定义一个项目的工件的工作，因此你不需要做任何特殊的事情来告诉gradle需要发布什么。<br>但是，你需要告诉gradle这些工件要发布到哪里。你需要通过uploadArchives task来将你的项目附加到某个库上。下面是一个发布到远端lvy仓库的例子：</p>
-<p><strong>发布到一个远端lvy仓库</strong></p>
-<p>build.gradle</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="section">uploadArchives</span> &#123;</div><div class="line">    <span class="section">repositories</span> &#123;</div><div class="line">        <span class="section">ivy</span> &#123;</div><div class="line">            <span class="section">credentials</span> &#123;</div><div class="line">                <span class="attribute">username</span> <span class="string">"username"</span></div><div class="line">                password <span class="string">"pw"</span></div><div class="line">            &#125;</div><div class="line">            url <span class="string">"http://repo.mycompany.com"</span></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>现在，当你运行<code>gradle uploadArchives</code>时，gradle就开始构建并上传jar包了。同时gradle也会生成一个<code>ivy.xml</code>并上传到仓库中。</p>
-<p>你也可以上传到Maven仓库中。语法有一些不一样。<strong>注意</strong>你需要使用Maven插件来支持上传到Maven仓库的操作。在这种情况下，gradle会生成一个<code>pom.xml</code>文件，并上传到Maven仓库中。</p>
-<p><strong>发布到一个Maven仓库</strong></p>
-<p>build.gradle</p>
-<figure class="highlight xquery"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">apply plugin: <span class="string">'maven'</span></div><div class="line"></div><div class="line">uploadArchives &#123;</div><div class="line">    repositories &#123;</div><div class="line">        mavenDeployer &#123;</div><div class="line">            repository(url: <span class="string">"file://localhost/tmp/myRepo/"</span>)</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>更多关于发布的信息，请看<a href="https://docs.gradle.org/current/userguide/artifact_management.html" target="_blank" rel="external">Chapter 30, Publishing artifacts</a>。</p>
-<h2 id="7-下一步去哪？">7.下一步去哪？</h2><p>关于的依赖解析的全部详情，见<a href="https://docs.gradle.org/current/userguide/dependency_management.html" target="_blank" rel="external">Chapter 23, Dependency Management</a>，关于发布工件的详情见<a href="https://docs.gradle.org/current/userguide/artifact_management.html" target="_blank" rel="external">Chapter 30, Publishing artifacts</a>。</p>
-<p>如果你对上述的DSL元素感兴趣，请看<a href="https://docs.gradle.org/current/dsl/org.gradle.api.Project.html#org.gradle.api.Project:configurations(groovy.lang.Closure" target="_blank" rel="external">Project.configurations{}</a>)，<a href="https://docs.gradle.org/current/dsl/org.gradle.api.Project.html#org.gradle.api.Project:repositories(groovy.lang.Closure" target="_blank" rel="external">Project.repositories{}</a>)和<a href="https://docs.gradle.org/current/dsl/org.gradle.api.Project.html#org.gradle.api.Project:dependencies(groovy.lang.Closure" target="_blank" rel="external">Project.dependencies{}</a>)。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/07/10/gradle学习笔记-Gradle 守护进程/" itemprop="url">
-                gradle学习笔记-Gradle 守护进程
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-07-10T21:06:55+08:00" content="2016-07-10">
-            2016-07-10
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/gradle/" itemprop="url" rel="index">
-                  <span itemprop="name">gradle</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/07/10/gradle学习笔记-Gradle 守护进程/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/10/gradle学习笔记-Gradle 守护进程/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><p>来自维基百科：</p>
-<blockquote>
-<p>A daemon is a computer program that runs as a background process, rather than being under the direct control of an interactive user.<br>守护进程是一个作为计算机后台进程运行的，而不是直接可以与用户进行交互的程序。</p>
-</blockquote>
-<p>gradle运行在java虚拟机(JVM)中，并且需要使用几个支持库，这些都会花费不少的初始化时间。因此，有时开启的时候回有一点点慢。解决这个问题的方式就是<strong>gradle守护进程(Daemon)</strong>:一个长时间存活的后台进程，可以使得执行你的构建的速度比其他情况下更为迅速。我们通过避免昂贵的引导进程以及利用缓存，在内存中来保存你的项目数据，来达到提高构建速度的效果。通过使用守护进程执行gradle构建，与不使用守护进程，没有区别的。通过简单的配置，就可以设置是否使用守护进程–gradle中一切操作都是如此的透明。</p>
-<h2 id="1-开启守护进程">1.开启守护进程</h2><p>gradle守护进程默认是不可用的，但是我们建议每一个开发者的机器上都将守护进程设置为开启状态（除了持续集成服务器）。以下是几种开启守护进程的方式，但最通用的一种方式是添加这样一行：</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">org<span class="selector-class">.gradle</span><span class="selector-class">.daemon</span>=true</div></pre></td></tr></table></figure>
-<p>到文件<code>«USER_HOME»/.gradle/gradle.properties</code>，其中<code>«USER_HOME»</code>是你的home目录。以下是几个典型的路径，取决于你的系统平台：</p>
-<ul>
-<li>C:\Users\<username> (Windows Vista &amp; 7+)</username></li>
-<li>/Users/<username> (Mac OS X)</username></li>
-<li>/home/<username> (Linux)</username></li>
-</ul>
-<p>如果那个文件不存在，直接通过文本编辑器创建一个即可。你可以使用另一种方式来开启（或关闭）守护进程，具体步骤可以看下面的FAQ部分。这部分还包含关于守护进程运行的更详细的信息。</p>
-<p>一旦你开启了全局守护进程，你所有的构建都会充分利用到这种速度的提升。</p>
-<blockquote>
-<p><strong><em>关于持续集成</em></strong></p>
-<p><em>目前我们建议持续集成不要使用守护进程，取而代之更为可靠方案是为每个构建分配一个新的运行时，原因是运行时是完全与之前的构建隔离的。此外，由于守护进程主要是为了减少构建的启动时间，这一点在CI服务器上并不像是在开发者的机器上那么重要。</em></p>
-</blockquote>
-<h2 id="2-终止一个正在运行的守护进程">2.终止一个正在运行的守护进程</h2><p>如前所述，守护进程是一个后台进程。你不必担心gradle在你的机器上创建进程，虽然每一个守护进程，在没有任何活动后3小时才会停止。在某些情况下，如果你希望明确的终止一个守护进程，使用<code>gradle --stop</code>即可。</p>
-<p>这将终止所有的和当前gradle版本相同的后台进程。如果你安装了JDK，你可以通过<code>jps</code>命令来轻松的核实守护进程是否被停止了。你会看到所有正在运行的名字为“GradleDaemon”的守护进程列表。</p>
-<h2 id="3-FAQ">3.FAQ</h2><h3 id="3-1有什么方法能开启守护进程呢？">3.1有什么方法能开启守护进程呢？</h3><p>这里有两种推荐的方式在一个运行环境下开启守护进程:</p>
-<ul>
-<li>通过环境变量:在GRADLE_OPTS的环境变量下添加标示：<code>Dorg.gradle.daemon=true</code></li>
-<li>通过配置文件:添加<code>org.gradle.daemon=true</code>到<code>«GRADLE_USER_HOME»/gradle.properties</code>文件中。</li>
-</ul>
-<blockquote>
-<p><strong>注意：</strong><code>«GRADLE_USER_HOME»</code>默认值为<code>«USER_HOME»/.gradle</code>，<code>«USER_HOME»</code>是当前用户的home目录。这个位置可以通过<code>-g</code>或<code>--gradle-user-home</code>命令来设置。同样也可以通过<code>GRADLE_USER_HOME</code>环境变量和<code>org.gradle.user.home</code>JVM系统属性来设置。</p>
-</blockquote>
-<p>这两种方法有相同的效果。可根据个人喜好来选择使用。大多数用户使用的是第二种方式。</p>
-<p>在Windows下，这个命令会对当前用户开启守护进程：</p>
-<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(<span class="keyword">if</span> <span class="keyword">not</span> exist <span class="string">"%USERPROFILE%/.gradle"</span> <span class="keyword">mkdir</span> <span class="string">"%USERPROFILE%/.gradle"</span>) &amp;&amp; (echo org.gradle.daemon=true &gt;&gt; <span class="string">"%USERPROFILE%/.gradle/gradle.properties"</span>)</div></pre></td></tr></table></figure>
-<p>在UNIX-like的操作系统上，下面的这个bash脚本命令将会对当前用户开启守护进程：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">touch ~<span class="regexp">/.gradle/gradle</span>.properties &amp;&amp; echo <span class="string">"org.gradle.daemon=true"</span> <span class="meta">&gt;&gt; </span>~<span class="regexp">/.gradle/gradle</span>.properties</div></pre></td></tr></table></figure>
-<p>一旦守护进程通过这种方式开启了，所有的构建都将隐式的使用这个守护进程。</p>
-<p>可以通过使用<code>--daemon</code>和<code>--no-daemon</code>命令，来针对个别的构建的调用，进行切换开启和关闭使用守护进程。通常情况下，更便捷的方式是对某个环境（例如某个用户账号）开启守护进程，以便于所有的构建使用守护进程，从而不再需要再记得提供<code>--daemon</code>的开关了，</p>
-<h3 id="3-2_我该如何关闭守护进程呢？">3.2 我该如何关闭守护进程呢？</h3><p>gradle守护进程默认情况下是不可用的。然而，一旦启用，有时会有需要对某些项目或某些构建调用禁用的场景。</p>
-<p><code>--no-daemon</code>命令可以强制指定某个构建不使用守护进程。这个很少用，但在调试某次构建，或者gradle插件时，这个将是一个很有用的方法。当考虑到构建环境时，此命令行开关具有最高的优先级。</p>
-<h3 id="3-3_我该如何抑制“please_consider_using_the_Gradle_Daemon”这样的消息呢？">3.3 我该如何抑制“please consider using the Gradle Daemon”这样的消息呢？</h3><p>gradle也许会在构建建议的末尾发出一个“使用守护进程”警告 。为了避开这个警告，你可以通过上面的方式来开启守护进程，或者明确的禁用守护进程。你可以通过<code>--no-daemon</code>命令来明确的关闭守护进程，或者通过上面某种方式开启守护进程，但将<code>org.gradle.daemon</code>属性设置为false。</p>
-<p>由于gradle不推荐持续集成构建使用守护进程，所以如果CI环境变量是存在的，那么Gradle不会发出这条消息。</p>
-<h3 id="3-4_为什么有超过一个的守护进程在我的机器上？">3.4 为什么有超过一个的守护进程在我的机器上？</h3><p>有几种原因可以解释为什么gradle会创建一个新的守护进程，而不是使用一个已经运行。基本规则是，如果当前没有<strong>闲置</strong>的或<strong>兼容</strong>的守护进程，Gradle将可以启动一个新的守护进程。gradle会自动杀死已经闲置了超过3小时的守护进程，所以你不用担心需要手动的清理它们。</p>
-<p><strong>闲置</strong>：一个空闲守护进程是指当前没有执行构建或其他工作的守护进程。</p>
-<p><strong>兼容</strong>：一个兼容的守护进程是能够满足构建环境的要求的。java运行时环境是对构建环境兼容性依赖的一个方面的例子，另外一个例子是构建运行环境需要依赖的一套jvm系统参数。</p>
-<p>对某些方面的构建环境的请求也许某个守护进程并不满足。如果守护进程在java7的运行环境下，但是被要求的运行环境是java8，然而守护进程并不兼容，那么另一个守护进程一定会被开启。而且，一旦jvm开始运行，java运行时的某些参数是不可以被改变的。对于一个正在运行的JVM，改变内存分配（例如:<code>-Xmx1024m</code>），默认文字的编码，默认位置等，都是不可能的。</p>
-<p>“要求构建环境”通常是一些隐式的来自一些client端（例如：gradle命令行，IDE，等）并且明确的通过命令行来开关和设置。见<a href="https://docs.gradle.org/current/userguide/build_environment.html" target="_blank" rel="external">Chapter 11, The Build Environment</a>，详细介绍了如何指定并控制一个构建环境。</p>
-<p>下面的JVM系统配置是不可变的。如果被要求的构建环境需要这些配置中的任何一个，并且需要的值和守护进程的JVM的属性是不一样的，那么守护进程就不兼容了。</p>
-<ul>
-<li>file.encoding</li>
-<li>user.language</li>
-<li>user.country</li>
-<li>user.variant</li>
-<li>java.io.tmpdir</li>
-<li>javax.net.ssl.keyStore</li>
-<li>javax.net.ssl.keyStorePassword</li>
-<li>javax.net.ssl.keyStoreType</li>
-<li>javax.net.ssl.trustStore</li>
-<li>javax.net.ssl.trustStorePassword</li>
-<li>javax.net.ssl.trustStoreType</li>
-<li>com.sun.management.jmxremote</li>
-</ul>
-<p>下面的JVM属性，是被启动参数控制的，同样也是不可改变的。守护进程的环境必须完全匹配这些属性，否则就是不兼容的。</p>
-<ul>
-<li>The maximum heap size (i.e. the -Xmx JVM argument)</li>
-<li>The minimum heap size (i.e. the -Xms JVM argument)</li>
-<li>The boot classpath (i.e. the -Xbootclasspath argument)</li>
-<li>The “assertion” status (i.e. the -ea argument)</li>
-</ul>
-<p>gradle版本要求是构建环境条件的另一方面。守护进程是被连接到一个具体的gradle运行时的。多个不同版本的gradle项目并行，也是有多个守护进程出现的原因。</p>
-<h3 id="3-5_守护进程到底会消耗多少内存？我怎样才能分配更多的内存给它？">3.5 守护进程到底会消耗多少内存？我怎样才能分配更多的内存给它？</h3><p>如果请求的构建环境没有设定最大的内存大小，守护进程将使用最大1GB的内存。它将使用JVM的默认最小内存的大小。1GB对于大多数的构建来说是足够的。较大的有数以百计的子项目的构建，很多的配置，和源代码，也许才能用到1GB或许更多的内存。</p>
-<p>为了增加守护进程的内存使用，可以通过设定所请求的构建环境的一些参数来达到目的。详情请见<a href="https://docs.gradle.org/current/userguide/build_environment.html" target="_blank" rel="external"> Chapter 11, The Build Environment</a></p>
-<h3 id="3-6_我该如何停止守护进程？">3.6 我该如何停止守护进程？</h3><p>守护进程会在闲置超过3小时之后自动终止。如果你希望提前终止守护进程，你可以通过你的操作系统来杀死这个进程，或者通过输入gradle的<code>--stop</code>命令来终止。<code>--stop</code>命令会终止所有当前版本的gradle的守护进程。</p>
-<h3 id="3-7_守护进程什么时候会出错呢？">3.7 守护进程什么时候会出错呢？</h3><p>考虑到工程已经稳定的、透明的并且默默的进入到守护进程中运行。然而守护进程可能偶尔会被损坏或耗尽。一个gradle从多个源代码中任意选取一个执行构建。然而gradle自身的设计，以及大量的通过守护进程进行过的测试，用户构建的脚本，和第三方插件会通过一些缺陷，例如内存泄漏，全局变量泛滥等问题，打破守护进程的平衡。</p>
-<p>没有正确的释放资源也有可能导致守护进程（以及正常的构建）异常。当使用Windows进行读写文件后没有正常关闭文件时，对于这种现象尤为敏感。</p>
-<p>gradle主动监控堆内存的使用，并且试图检测到内存泄漏的发生点，将可用的内存排出到守护进程中。当gradle查到了一个堆内存空间的问题，gradle守护进程会结束掉当前正在运行的构建，并在下次构建中重启守护进程。这种检测是默认开启的，可用通过系统属性<code>org.gradle.daemon.performance.enable-monitoring</code>设置为false来关闭。</p>
-<p>如果怀疑守护进程开始变得不稳定了，那么我们可以轻松的杀死它。再次使用<code>--no-daemon</code>这个开关，可以指定一个构建不使用守护进程。通过这种方式，我们能判断守护进程是否是造成问题的罪魁祸首。</p>
-<h2 id="4-什么情况下我不该使用守护进程">4.什么情况下我不该使用守护进程</h2><p>我们推荐所有的开发者的环境中都是用守护进程。但我们<strong>不建议</strong>在持续集成(Continuous Integration)和构建服务器上使用守护进程。</p>
-<p>守护进程带来的快速构建，对于坐在机器前的开发人员是格外有意义的。对于持续集成构建服务来说，稳定性和可预见性，是最重要的。对每一个构建使用一个新的完全与上次构建隔离的运行时（比如进程），是一种更可靠的方案。</p>
-<h2 id="5-Tools_&amp;_IDEs">5.Tools &amp; IDEs</h2><p>Gradle Tooling API（见<a href="https://docs.gradle.org/current/userguide/embedding.html" target="_blank" rel="external">Chapter 13, Embedding Gradle using the Tooling API</a>），通过其他IDE或者一些gradle整合工具来使用时，<strong>通常</strong>都会用到守护进程来执行构建。如果你通过你的IDE来使用守护进程执行构建，那么你不需要在环境中开启守护进程。</p>
-<p>然而除非你已经明确指定了开启守护进程，否则你的命令行执行的构建将不使用守护进程。</p>
-<h2 id="6-守护进程是如何提高gradle构建速度的？">6.守护进程是如何提高gradle构建速度的？</h2><p>gradle守护进程是一个<strong>长时间存活</strong>的构建进程。在每次构建之间的间隙，它都会等在那里，直到下次构建。显而易见，多次构建中只加载一次gradle到内存中，与每次构建都加载一次相比，是有很大的好处的。这本身是一个显著的性能优化，但它本身也不会被终止掉。</p>
-<p>对于现代的JVM来说，运行时代码优化是意义重大的。例如：热区（是一种作为OpenJDK的基础，由Oracle提供支持的JVM的实现技术）会在运行时对代码进行优化。优化是渐进的，而不是瞬时的。也就是说，代码是在执行过程中逐步优化的，这意味着后面的构建可以执行的更快，这纯粹由于这个优化过程导致的。通过对热区的实验表明，5到10个构建之后，优化的效果将趋于稳定。通过守护进程进行第1次构建，和进行第10次构建，感知层面是有很大的差异的。</p>
-<p>守护进程也可以更有效的在内存中缓存的构建。例如：构建所需的类（比如插件，脚本），可以在每次构建之间缓存到内存中。同样，Gradle可将构建数据比如task的输入输出文件的哈希值维持在内存缓存中，用于增量构建。</p>
-<h3 id="6-1_未来更强大的功能">6.1 未来更强大的功能</h3><p>目前，守护进程通过内存缓存和JVM的优化使得构建执行的更快。在以后的gradle版本中，守护进程将变得更加智能，以及做到<strong>预先执行</strong>的效果。比如，他可以在构建脚本被编辑之后加入了新的改动或者添加必要的依赖时，假设当前脚本是用来运行的，并立刻开始下载依赖项。</p>
-<p>在未来的gradle版本中，将有更多其他的方式来提高构建速度。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/5/">&laquo;</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/7/">&raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/5/">&laquo;</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/7/">&raquo;</a>
   </nav>
 
  </div>
@@ -1774,7 +2059,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">98</span>
+              <span class="site-state-item-count">101</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

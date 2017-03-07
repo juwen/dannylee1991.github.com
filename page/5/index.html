@@ -199,6 +199,895 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2016/09/14/斯坦福机器学习课程 第五周 (1)训练神经网络/" itemprop="url">
+                斯坦福机器学习课程 第五周 (1)训练神经网络
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-09-14T01:14:00+08:00" content="2016-09-14">
+            2016-09-14
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/09/14/斯坦福机器学习课程 第五周 (1)训练神经网络/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/14/斯坦福机器学习课程 第五周 (1)训练神经网络/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="代价函数">代价函数</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/na28E/cost-function" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>在本节课中和后面的几节课中，我将开始讲述一种在给定训练集下为神经网络拟合参数的学习算法。正如我们讨论大多数学习算法一样，我们准备从拟合神经网络参数的代价函数开始讲起。</p>
+</blockquote>
+<p>以神经网络在分类问题中的应用为例：</p>
+<p><img src="/img/16_09_18/001.png" alt=""> </p>
+<p>假设我们有一个如上图所示的神经网络结构，然后假设我们有一个这样的训练集：</p>
+<p>$$<br>\begin{aligned}<br>(x^{(1)},y^{(1)}),(x^{(2)},y^{(2)}),…,(x^{(m)},y^{(m)})<br>\end{aligned}<br>$$</p>
+<p>一共有m个训练样本$(x^{(i)},y^{(i)})$。</p>
+<p>用大写字母$L$表示这个神经网络结构的总层数：</p>
+<p>$$<br>L = total\ no.\ of\ layers\ in\ network(神经网络总层数)<br>$$</p>
+<p>所以，对于左边的网络结构，我们得到$L=4$。</p>
+<p>然后，我们准备用$S_{l}$表示第$l$层的神经元的数量，<strong>这其中不包括L层的偏置单元</strong>：</p>
+<p>$$<br>S_{l}= no.\ of\ units(not\ counting\ bias\ unit)\ in\ layer\ l<br>$$</p>
+<p>比如说：</p>
+<ul>
+<li>$S_{1}=3$(也就是输入层)</li>
+<li>$S_{2}=5$</li>
+<li>$S_{3}=5$</li>
+<li>$S_{4}=S_{L}=4$ (因为$L=4$)</li>
+</ul>
+<p>我们接下来讨论两种分类问题，分别是<strong>二元分类</strong>和<strong>多类别分类</strong>。</p>
+<h3 id="二元分类(Binary_classification)">二元分类(Binary classification)</h3><p>在二元分类中$y$只能是0或者1：</p>
+<p>$$<br>y= 0\ or\ 1<br>$$</p>
+<p>在这个例子中，我们有一个输出单元（不同于上面的神经网络有4个输出单元）。神经网络的输出会是一个实数：</p>
+<p>$$<br>h_{Θ}(x)\in \mathbb{R}<br>$$</p>
+<p>输出单元的个数:</p>
+<p>$$<br>S_{L} = 1<br>$$</p>
+<blockquote>
+<p>在这类问题里，为了简化记法，我会把$K$设为1，这样<strong>你可以把$K$看作输出层的单元数目</strong>。</p>
+</blockquote>
+<h3 id="多类别分类（Multi-class_classification）">多类别分类（Multi-class classification）</h3><p>在多类别分类问题中，会有$K$个不同的类，比如说如果我们有四类的话，我们就用下面这种表达形式来代表$y$。在这类问题里，我们就会有$K$个输出单元。</p>
+<p><img src="/img/16_09_18/002.png" alt=""> </p>
+<p>我们的输出假设就是一个$K$维向量：</p>
+<p>$$<br>h_{Θ}(x)\in \mathbb{R}^{K}<br>$$</p>
+<p>输出单元的个数就是$K$：</p>
+<p>$$<br>S_{L} = K<br>$$</p>
+<blockquote>
+<p>通常这类问题中，我们都有$K\ge3$，因为如果我们只有两类的话，我们直接使用二元分类法就可以了。因此只有在$K\ge3$的情况下，我们才会使用这种<strong>多类别分类</strong>。</p>
+</blockquote>
+<h3 id="定义代价函数">定义代价函数</h3><p>我们在神经网络里，使用的代价函数，应该是逻辑回归里使用的代价函数的一般形式。</p>
+<p><strong>逻辑回归的代价函数:</strong></p>
+<p>$$<br>\begin{equation*}<br>J(\theta)=-\frac{1}{m}<br>[<br>\sum_{i=1}^m<br>y^{(i)}logh_{\theta}(x^{(i)})<br>+(1-y^{(i)})log(1-h_{\theta}(x^{(i)}))<br>]+<br>\frac{\lambda}{2m}<br>\sum_{j=1}^n<br>\theta^{2}_{j}<br>\end{equation*}<br>$$</p>
+<p>其中$\begin{equation*}<br>\frac{\lambda}{2m}<br>\sum_{j=1}^n<br>\theta^{2}_{j}<br>\end{equation*}$这一项是个额外的正则化项，是一个$j$从1到$n$的求和形式。因为我们并没有把偏置项0正则化。</p>
+<p>对于神经网络，我们使用的代价函数是这个式子的一般化形式。</p>
+<p>$$<br>\begin{equation*}<br>J(Θ)=-\frac{1}{m}<br>[<br>\sum_{i=1}^m<br>\sum_{k=1}^K<br>y^{(i)}_{k}log(h_{Θ}(x^{(i)}))_{k}<br>+(1-y^{(i)})_{k})log(1-(h_{Θ}(x^{(i)}))_{k})<br>]+<br>\frac{\lambda}{2m}<br>\sum_{l=1}^{L-1}<br>\sum_{i=1}^{S_{l}}<br>\sum_{j=1}^{S_{l+1}}<br>(Θ^{(l)}_{ji})^{2}<br>\end{equation*}<br>$$</p>
+<p>神经网络现在输出了在$K$维的向量$h_{Θ}(x)$：</p>
+<p>$$<br>h_{Θ}(x)\in \mathbb{R}^{K}<br>$$</p>
+<p>用$(h_{Θ}(x))_{i}$来表示第$i$个输出。</p>
+<p>其中$\begin{equation*}\sum_{k=1}^K\end{equation*}$这个求和项是$K$个输出单元的求和，比如你有4个输出单元在神经网络的最后一层，那么这个求和项就是$k$从1到4所对应的每一个逻辑回归算法的代价函数之和。</p>
+<p>最后式子中的这一项$\begin{equation*}<br>\frac{\lambda}{2m}<br>\sum_{l=1}^{L-1}<br>\sum_{i=1}^{S_{l}}<br>\sum_{j=1}^{S_{l+1}}<br>(Θ^{(l)}_{ji})^{2}<br>\end{equation*}$类似于我们在逻辑回归里所用的正则化项，这个求和项看起来确实非常复杂，它所做的就是把这些项全部加起来，也就是对所有的$Θ_{ji}^{(l)}$的值都相加。正如我们在逻辑回归里的一样，这里要除去那些对应于偏差值的项。具体来说，我们不把$Θ_{j0}^{(l)}$这些项加进去，这是因为当我们计算神经元的激励值时，我们会有这些项。这些带0的项，类似于偏置单元的项。类比于我们在做逻辑回归的时候，我们就不应该把这些项加入到正规化项里去，因为我们并不想正规化这些项，并把这些项设定为0。 （这里我表示没看懂）</p>
+<p>即使我们真的把他们加进去了，也就是说$i$从0加到$S_{l}$依然成立，并且不会有大的差异，但是这个“不把偏差项正规化”的规定可能只是会更常见一些。</p>
+<h2 id="反向传播(B-P)">反向传播(B-P)</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/1z9WW/backpropagation-algorithm" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>这个视频中，我们来讨论一下让代价函数最小化的算法，具体来说，我们将主要讲解<strong>反向传播算法（BP算法）</strong></p>
+</blockquote>
+<p>下面是我们上一节写好的代价函数：</p>
+<p><img src="/img/16_09_18/003.png" alt=""> </p>
+<p>我们要做的就是试图找到使得代价函数$J(Θ)$最小的$Θ$值：</p>
+<p><img src="/img/16_09_18/004.png" alt=""> </p>
+<p>为了使用梯度下降法，我们需要做的就是写好一个通过输入参数$Θ$，然后计算：</p>
+<p><img src="/img/16_09_18/005.png" alt=""> </p>
+<p>这一节的大部分内容也都是在讲解如何计算真两项的。</p>
+<hr>
+<p><strong>梯度下降计算</strong></p>
+<p><img src="/img/16_09_18/006.png" alt=""> </p>
+<p>首先，我们从只有一个训练样本的情况说起，假设我们整个训练集只包含一个训练样本：</p>
+<p>$$<br>(x,y)<br>$$</p>
+<p>让我们粗看一下，使用这样一个训练样本来计算的顺序。</p>
+<p>首先我们用向前传播方法来计算一下在给定输入的时候，假设函数的输出结果：</p>
+<p>$$<br>a^{(1)} = x<br>$$</p>
+<blockquote>
+<p>$a^{(1)}$就是第一层的激励值，也就是输入层</p>
+</blockquote>
+<p>$$<br>z^{(2)} = Θ^{(1)}a^{(1)}<br>$$</p>
+<p>$$<br>a^{(2)} = g(z^{(2)})<br>$$</p>
+<blockquote>
+<p>这里记得添加偏差项$a_{0}^{(2)}$</p>
+</blockquote>
+<p>$$<br>z^{(3)} = Θ^{(2)}a^{(2)}<br>$$</p>
+<p>$$<br>a^{(3)} = g(z^{(3)})<br>$$</p>
+<blockquote>
+<p>这里记得添加偏差项$a_{0}^{(3)}$</p>
+</blockquote>
+<p>$$<br>z^{(4)} = Θ^{(3)}a^{(3)}<br>$$</p>
+<p>$$<br>a^{(4)} = h_{Θ}(x) = g(z^{(4)})<br>$$</p>
+<p>通过上面的步骤计算，我们就可以得出假设函数的输出结果了：</p>
+<p><img src="/img/16_09_18/007.png" alt=""> </p>
+<p>接下来，为了计算导数项，我们将采用一种叫做<strong>反向传播(Backpropagation)</strong>的算法。</p>
+<p>反向传播算法从直观上说就是对每一个节点求下面这一个误差项:</p>
+<p><img src="/img/16_09_18/008.png" alt=""> </p>
+<blockquote>
+<p>$δ_{j}^{(l)}$这种形式代表了第$l$层的第$j$个结点的<strong>误差</strong></p>
+<p>我们还记得我们使用$a_{j}^{(l)}$来表示第$l$层的第$j$个结点的<strong>激励值</strong>，所以这个$δ$项，在某种程度上就捕捉到了我们在这个神经结点的激励值的误差。所以我们可能希望这个结点的激励值稍微不一样。</p>
+</blockquote>
+<p>具体来讲，我们用上面的那个四层的神经网络结构做例子：</p>
+<p>每一项的输出单元(layer L = 4)</p>
+<p>$$<br>δ_{j}^{(4)} = a_{j}^{(4)} - y_j<br>$$</p>
+<blockquote>
+<p>对于每一个输出单元，我们准备计算$δ$项，所以第四层的第$j$个单元的$δ$就等于<strong>这个单元的激励值减去训练样本里的真实值</strong>。所以$a_{j}^{(4)}$这一项同样可以写成$h_{Θ}(x)_{j}$：</p>
+</blockquote>
+<p>$$<br>δ_{j}^{(4)} = h_{Θ}(x)_{j} - y_j<br>$$</p>
+<p>顺便说一下，如果你把$δ$、$a$和$y$这三项都看作向量的话，那么上面的式子你也可以写出向量化的实现：</p>
+<p>$$<br>δ^{(4)} = a^{(4)} - y<br>$$</p>
+<p>这里的$δ^{(4)}$、$a^{(4)}$和$y$都是一个向量，并且向量维数等于输出单元的数目。</p>
+<p>所以现在我们计算出网络结构的误差项$δ^{(4)}$，我们下一步就是计算网络中前面几层的误差项$δ$。</p>
+<p>这就是$δ^{(3)}$的计算公式：</p>
+<p>$$<br>δ^{(3)} = (Θ^{(3)})^{T}δ^{(4)}.*g’(z^{(3)})<br>$$</p>
+<blockquote>
+<p>这里的点乘$.*$是我们从MATLAB里知道的对y元素的乘法操作，指的是两个向量中元素间对应相乘。</p>
+</blockquote>
+<p>其中$g’(z^{(3)})$这一项其实是对激励函数$g$在输入值为$z(3)$的时候所求的导数。</p>
+<p>如果你稍微会一些微积分的知识，你可以很容易的求得$g’(z^{(3)})$这一项的值是：</p>
+<p>$$<br>a^{(3)}.*(1-a^{(3)})<br>$$</p>
+<p>这里的$1$是元素都为1的向量。</p>
+<p>接下来，你可以应用一个相似的公式来求得$δ^{(2)}$:</p>
+<p>$$<br>δ^{(2)} = (Θ^{(2)})^{T}δ^{(3)}.*g’(z^{(2)})<br>$$</p>
+<p>值得注意的是，这里我们没有$δ^{(1)}$项，因为第一层是输入层，不存在误差。所以这个例子中，我们的$δ$项就只有第2层和第3层。</p>
+<hr>
+<p>反向传播法这个名字源于我们从输出层开始计算$δ$项，然后我们返回到上一层计算第三隐藏层的$δ$项，接着我们再往前一步来计算$δ^{(2)}$。</p>
+<p>所以说我们是类似于把输出层的误差反向传播给了第3层，然后再传到第二层。这就是反向传播的意思。</p>
+<p>最后，这个推导过程是出奇的复杂，但是如果你按照这样几个步骤来计算，就有可能简单直接地完成复杂的数学证明。</p>
+<p>如果你忽略标准化所产生的项，我们可以证明我们想要的偏导项，恰好就是下面这个表达式：</p>
+<p>$$<br>\frac{\partial}{\partial Θ_{ij}^{(l)}}J(Θ)=<br>a_{j}^{(l)}δ_{i}^{(l+1)}<br>$$</p>
+<p>$$<br>(ignore\ λ; if\ λ = 0)<br>$$</p>
+<blockquote>
+<p>这里我们忽略了$λ$，我们将在之后完善这一个关于正则化项。</p>
+</blockquote>
+<p>所以到现在，我们通过反向传播计算这些$δ$项，可以非常快速的计算出所有参数的偏导数项。</p>
+<hr>
+<p>好，现在让我们把上面所讲的所有内容整合在一起，然后说说如何实现反向传播算法：</p>
+<p>当我们有一个很大的训练样本的时候，而不是像我们例子里这样的一个训练样本。我们是这样做的：</p>
+<p>假设我们有m个样本的训练集：</p>
+<p>$Training\ set\ {(x^{(1)},y^{(1)}),…,(x^{(m)},y^{(m)})}$</p>
+<p>我们要做的第一件事就是设置这些值：</p>
+<p><img src="/img/16_09_18/009.png" alt=""> </p>
+<blockquote>
+<p>这里的$△$其实是大写的$δ$，实际上这些$△_{ij}^{(l)}$将被用来计算偏导数项$\frac{\partial}{\partial Θ_{ij}^{(l)}}J(Θ)$</p>
+<p>所以，正如我们接下来看到的，这些$△_{ij}^{(l)}$将被作为累加项，慢慢地增加，以算出这些偏导数。</p>
+</blockquote>
+<p>下图是我们接下来要执行的一些操作：</p>
+<p><img src="/img/16_09_18/010.png" alt=""> </p>
+<p>在这里我们将遍历我们的训练集。</p>
+<p>我们要做的第一件事就是设定$a^{(1)}$，也就是输入层的激励函数：$a^{(1)} = x^{(i)}$</p>
+<p>接下来我们运用正向传播，来计算第2，3，4，…，L层的激励值$a^{l}$。</p>
+<p>接下来，我们将用$y^{(i)}$来计算$δ^{(L)}=a^{(L)}-y^{(i)}$</p>
+<p>接下来，我们使用反向传播算法来计算$δ^{(L-1)},δ^{(L-2)},…,δ^{(2)}$</p>
+<p>最终，我们将用$△{ij}^{(l)}$来积累我们在前面写好的偏导数项：</p>
+<p>$$<br>△{ij}^{(l)}:=△{ij}^{(l)} + a_{j}^{(l)}δ_{i}^{(l+1)}<br>$$</p>
+<p>如果你再看一下上面这个表达式，你可以把它写成向量形式：</p>
+<p>具体来说，如果你把$△$看做一个矩阵，$ij$代表矩阵中的位置，那么上面的式子我们就可以写成：</p>
+<p>$$<br>△^{(l)}:=△^{(l)} + δ^{(l+1)}(a^{(l)})^{T}<br>$$</p>
+<p>最后，执行这个for循环体之后我们挑出这个for循环，然后计算下面这些式子：</p>
+<p>$$<br>D_{ij}^{(l)} := \frac{1}{m}△{ij}^{(l)} + λΘ_{ij}^{(l)}<br>\ \ \ \ if\ j ≠ 0<br>$$</p>
+<p>$$<br>D_{ij}^{(l)} := \frac{1}{m}△{ij}^{(l)}<br>\ \ \ \ if\ j = 0<br>$$</p>
+<blockquote>
+<p>这里我们对$j ≠ 0$ 和 $j = 0$分两种情况来讨论，在$j=0$的情况下对应的是偏差项，所以这也是为什么在$j=0$的情况下没有写额外的标准化项的原因。</p>
+</blockquote>
+<p>最后，尽管严格的证明对于你来说太复杂，你现在可以说明的是一旦你计算出来了这些，这就正好是代价函数关于每一个参数的偏导数：</p>
+<p>$$<br>\frac{\partial}{\partial Θ_{ij}^{(l)}}J(Θ)<br>= D_{ij}^{(l)}<br>$$</p>
+<p>所以，你可以把它用在梯度下降算法，或者其他更高级的算法中。</p>
+<h2 id="反向传播算法的直观介绍">反向传播算法的直观介绍</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/du981/backpropagation-intuition" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>这一节中，将要更加深入的讨论一下反向传播算法的这些复杂的步骤，并且希望给你一个更加直观的感受，理解这些步骤究竟是在做什么。也希望通过这一节，你能理解它至少还是一个合理的算法。</p>
+<p>但可能你即使看了这段视频你还是觉得反向传播依然很复杂，这也没关系，其实即使是我（吴恩达）接触了反向传播这么多年了，有时候任然觉得这是一个难以理解的算法，但还是希望这段视频能有些许帮助。</p>
+</blockquote>
+<h3 id="距离说明神经网络计算过程">距离说明神经网络计算过程</h3><p>为了更好地理解反向传播算法，我们再来仔细研究一下向前传播的原理。</p>
+<p><img src="/img/16_09_18/011.png" alt=""></p>
+<p>这里有一个包含两个输入单元（不包括偏差单元）的神经网络，在第二层有两个隐藏单元（不包括偏差单元），第三层也有两个隐藏单元（不包括偏差单元），最后的输出层有一个输出单元。</p>
+<h3 id="向前传播">向前传播</h3><p>为了更清楚的展示向前传播，下图展示了这个神经网络的<strong>向前传播</strong>的运算过程：</p>
+<p><img src="/img/16_09_18/012.png" alt=""></p>
+<p>事实上，<strong>反向传播</strong>算法的运算过程非常类似于此，只有计算的方向不同而已。</p>
+<h3 id="代价函数-1">代价函数</h3><p>为了更好的理解反向传播算法的原理，我们把目光转向代价函数：</p>
+<p><img src="/img/16_09_18/013.png" alt=""></p>
+<p>这个代价函数对应的情况是只有一个输出单元，如果我们有不止一个输出单元的话，只需要对所有的输出单元进行一次求和运算。</p>
+<p>请注意这组训练样本$x^{(i)}$,$y^{(i)}$，注意这种只有一个输出单元的情况，如果不考虑正则化即$λ=0$，因此最后的正则化项就没有了。</p>
+<p><img src="/img/16_09_18/014.png" alt=""></p>
+<p>这个求和运算括号里面与第i个训练样本对应的代价项，也就是说$(x^{(i)},y^{(i)})$对应的代价项，将有下面这个式子决定：</p>
+<p>$$<br>cost(i) = y^{(i)}log h_{Θ}(x^{(i)}) + (1 - y^{(i)})logh_{Θ}(x^{(i)})<br>$$</p>
+<p>而这个代价函数所扮演的角色可以看做是平方误差，当然，如果你愿意，你可以把$cost(i)$想象成：</p>
+<p>$$<br>cost(i)≈(h_{Θ}(x^{(i)})-y^{(i)})^{2}<br>$$</p>
+<p>因此，这里的$cost(i)$表征了该神经网络是否能准确地预测样本i的值，也就是输出值，和实际观测值$y^{(i)}$的接近程度。</p>
+<h3 id="反向传播">反向传播</h3><p>现在我们来看看反向传播是怎么做的。</p>
+<p>一种直观的理解是反向传播算法就是在计算所有这些$δ$项：</p>
+<p>$$<br>δ_{j}^{(l)} = “error” \ of \ cost \ for \ a_{j}^{(l)} \ (unit \ j \ in \ layer \ l).<br>$$</p>
+<p>并且我们可以把它们看作是这些激励值的“<strong>误差</strong>”(注意这些激励值是第l层中的第j项)。</p>
+<p>更正式一点的说法是$δ$项实际上是关于$z_{j}^{(l)}$的偏微分，也就是cost函数关于我们计算出的输入项的加权和，也就是$z$项的偏微分:</p>
+<p>$$<br>δ_{j}^{(l)} = \frac{\partial}{\partial z_{j}^{(l)}}cost(i) \ \ \ \ (for \ j \ge 0 )<br>$$</p>
+<p>其中：</p>
+<p>$$<br>cost(i) = y^{(i)}log h_{Θ}(x^{(i)}) + (1 - y^{(i)})logh_{Θ}(x^{(i)})<br>$$</p>
+<p>如果我们观察该神经网络内部的话，把这些$z_{j}^{(l)}$项稍微改一点点，那就将影响到神经网络的输出，并且最终会改变代价函数的值。</p>
+<p>因此，它们度量着我们对神经网络的权值做多少的改变，对中间的计算量影响是多少，进一步对整个神经网络的输出$h(x)$影响多少，以及对整个的代价影响多少。</p>
+<p>可能刚才讲的偏微分的这种理解不太容易理解，没关系，不用偏微分的思想，我们同样也可以理解。</p>
+<p>我们再深入一点，研究一下反向传播的过程，对于输入层，如果我们设置$δ$项，假设我们进行第i个训练样本，那么：</p>
+<p>$$<br>δ_{1}^{(4)}=y^{(i)}-a^{(4)}_{1}<br>$$</p>
+<p>接下来我们要对这些值进行反向传播，算出$δ_{1}^{(3)}$、$δ_{2}^{(3)}$，然后同样的再进行下一层的反向传播，算出$δ_{1}^{(2)}$、$δ_{2}^{(2)}$。</p>
+<p>举个例子:</p>
+<p>接下来，我们来看看如何计算$δ_{2}^{(2)}$。</p>
+<p>我要对一些权值进行标记:</p>
+<p><img src="/img/16_09_18/016.png" alt=""> </p>
+<p>实际上，我们要做的是我们要用下一层的$δ$值和权值相乘，然后加上另一个$δ$值和权值相乘的结果。也就是说，它其实是$δ$值的加权和。权值是这些对应边的强度。</p>
+<p><img src="/img/16_09_18/017.png" alt=""> </p>
+<p>计算过程是：</p>
+<p>$$<br>δ_{2}^{(2)}=Θ_{12}^{(2)}δ_{1}^{(3)} + Θ_{22}^{(2)}δ_{2}^{(3)}<br>$$</p>
+<p>再看看另一个例子：</p>
+<p>如果想要计算$δ_{2}^{(3)}$的值，计算过程也是类似的：</p>
+<p>$$<br>δ_{2}^{(3)}=Θ_{12}^{(3)}δ_{1}^{(4)}<br>$$</p>
+<p>另外顺便提一下，目前为止我写的$δ$值仅仅是隐藏层中的没有包括偏差单元:”+1”的。包不包括偏差单元取决于你如何实现这个反向传播算法，你也可以对这些偏差单元计算$δ$的值，这些偏差单元总是取为”+1”的值。</p>
+<p>通常来说，我在执行反向传播的时候，我是算出了这些偏差单元的$δ$值，但我通常忽略掉它们，而不是把它们带入计算，因为它们其实并不是计算那些微积分的必要部分，</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              <a class="post-title-link" href="/2016/09/11/斯坦福机器学习课程 第四周 (3)神经网络应用实例/" itemprop="url">
+                斯坦福机器学习课程 第四周 (3)神经网络应用实例
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-09-11T19:22:00+08:00" content="2016-09-11">
+            2016-09-11
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/09/11/斯坦福机器学习课程 第四周 (3)神经网络应用实例/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/11/斯坦福机器学习课程 第四周 (3)神经网络应用实例/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="神经网络应用实例">神经网络应用实例</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/rBZmG/examples-and-intuitions-i" target="_blank" rel="external">视频地址 part1</a></p>
+<p><a href="https://www.coursera.org/learn/machine-learning/lecture/solUx/examples-and-intuitions-ii" target="_blank" rel="external">视频地址 part2</a></p>
+<blockquote>
+<p>接下来将通过一个具体的例子来解释神经网络是如何计算关于输入的复杂的非线性函数的。</p>
+</blockquote>
+<h3 id="问题引入">问题引入</h3><p>考虑下面的问题：</p>
+<p>我们有二进制的输入特征$x_{1}$和$x_{2}$，它们的取值要么是0，要么是1。这个例子中，我画出了两个正样本和两个负样本。</p>
+<p><img src="/img/16_09_11/001.png" alt=""></p>
+<p>但你可以认为这是更复杂的学习问题的简化版本。在这个复杂问题中，我们可能在右上角有一堆正样本，在右下方有一堆用圆圈来表示的负样本。</p>
+<p><img src="/img/16_09_11/002.png" alt=""></p>
+<p>我们想要做到的就是有一个非线性的决策边界来区分正负样本：</p>
+<p><img src="/img/16_09_11/003.png" alt=""></p>
+<p>那么，神经网络是如何做到的呢？为了描述方便，我继续使用上面二进制输入特征的例子。</p>
+<p>具体来讲，我们要计算的目标函数:</p>
+<p>$$y=x_{1} XNOR x_{2}$$</p>
+<blockquote>
+<p>求同或(都为真或都为假时，结果为真，否则结果为假)</p>
+</blockquote>
+<p>或者也可以写作：</p>
+<p>$$NOT(y=x_{1} XOR x_{2})$$</p>
+<blockquote>
+<p>求异或(都为真或都为假时，结果为假，否则结果为真)再取反</p>
+</blockquote>
+<h3 id="AND、OR、NOT的实现">AND、OR、NOT的实现</h3><h4 id="AND">AND</h4><p>为了解释神经网络模型如何来拟合这种训练集。我们先讲解一个稍微简单一些的神经网络，它拟合了<strong>“且运算”(AND)</strong>：</p>
+<p><img src="/img/16_09_11/004.png" alt=""></p>
+<p>假设我们有二进制输入$x_{1}$和$x_{2}$，目标函数是$y=x_{1}ANDx_{2}$，那么我们怎样得到一个具有单个神经元的神经网络来计算这个<strong>逻辑与</strong>呢？为了做到这一点，我们也需要画出偏置单元（即下图中+1的单元）：</p>
+<p><img src="/img/16_09_11/005.png" alt=""></p>
+<p>接下来让我给这个网络分配一些权重(参数)：</p>
+<p><img src="/img/16_09_11/006.png" alt=""></p>
+<p>所以我的假设函数是：</p>
+<p>$$<br>h_{Θ}(x)=g(-30 + 20x_{1} + 20x_{2})<br>$$</p>
+<p>这里$Θ^{(1)}_{10}$就是$-30$、$Θ^{(2)}_{11}$就是$20$、$Θ^{(3)}_{12}$就是$20$。</p>
+<p>接下来介绍一下这个小神经元是怎样计算的。</p>
+<p>回忆一下激励函数$g(z)$看起来是这样的：</p>
+<p><img src="/img/16_09_11/007.png" alt=""></p>
+<p>再来看看我们的假设在各种情况下的输出：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$x_{1}$</th>
+<th style="text-align:center">$x_{2}$</th>
+<th style="text-align:center">$h_{Θ}(x)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$g(-30)\approx0$</td>
+</tr>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$g(-10)\approx0$</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$g(-10)\approx0$</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$g(10)\approx1$</td>
+</tr>
+</tbody>
+</table>
+<p>这就是逻辑“与”的计算结果。</p>
+<hr>
+<h4 id="OR">OR</h4><p>下面的神经网络使用同样的原理实现了“或”的功能：</p>
+<p><img src="/img/16_09_11/008.png" alt=""></p>
+<p>假设函数为：</p>
+<p>$$<br>h_{Θ}(x)=g(-10 + 20x_{1} + 20x_{2})<br>$$</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$x_{1}$</th>
+<th style="text-align:center">$x_{2}$</th>
+<th style="text-align:center">$h_{Θ}(x)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$g(-10)\approx0$</td>
+</tr>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$g(10)\approx1$</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$g(10)\approx1$</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$g(30)\approx1$</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h4 id="NOT">NOT</h4><p>下面的神经网络使用同样的原理实现了“非”的功能：</p>
+<p><img src="/img/16_09_11/009.png" alt=""></p>
+<p>假设函数为：</p>
+<p>$$<br>h_{Θ}(x)=g(10 - 20x_{1})<br>$$</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$x_{1}$</th>
+<th style="text-align:center">$h_{Θ}(x)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$g(10)\approx1$</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$g(-10)\approx0$</td>
+</tr>
+</tbody>
+</table>
+<h3 id="一个更复杂的例子">一个更复杂的例子</h3><p>下面的神经网络使用同样的原理实现了“$(NOTx_{1})AND(NOTx_{2})$”的功能：</p>
+<p><img src="/img/16_09_11/010.png" alt=""></p>
+<p>假设函数为：</p>
+<p>$$<br>h_{Θ}(x)=g(10 - 20x_{1} - 20x_{2})<br>$$</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$x_{1}$</th>
+<th style="text-align:center">$x_{2}$</th>
+<th style="text-align:center">$h_{Θ}(x)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$g(10)\approx1$</td>
+</tr>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$g(-10)\approx0$</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$g(-10)\approx0$</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$g(-30)\approx0$</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="求解_XNOR">求解    XNOR</h3><p>接下来我们使用上面求解的以下三个神经网络，就可以来运算$x_{1}XNORx_{2}$了：</p>
+<p><img src="/img/16_09_11/011.png" alt=""></p>
+<p>为了拟合$x_{1}XNORx_{2}$的非线性的样本分布：</p>
+<p><img src="/img/16_09_11/001.png" alt=""></p>
+<p>我们可以构建以下神经网络的隐藏层：</p>
+<p><img src="/img/16_09_11/012.png" alt=""></p>
+<p>对应的真值表如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$x_{1}$</th>
+<th style="text-align:center">$x_{2}$</th>
+<th style="text-align:center">$a_{1}^{(2)}$</th>
+<th style="text-align:center">$a_{2}^{(2)}$</th>
+<th style="text-align:center">$h_{Θ}(x)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center"><strong>0</strong></td>
+<td style="text-align:center"><strong>1</strong></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center"><strong>0</strong></td>
+<td style="text-align:center"><strong>0</strong></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center"><strong>0</strong></td>
+<td style="text-align:center"><strong>0</strong></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center"><strong>1</strong></td>
+<td style="text-align:center"><strong>0</strong></td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<p>有了$a_{1}^{(2)}$、$a_{2}^{(2)}$后，我们加入偏置单元，然后就可以得到输出层了：</p>
+<p><img src="/img/16_09_11/012.png" alt=""></p>
+<p>最终的真值表如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$x_{1}$</th>
+<th style="text-align:center">$x_{2}$</th>
+<th style="text-align:center">$a_{1}^{(2)}$</th>
+<th style="text-align:center">$a_{2}^{(2)}$</th>
+<th style="text-align:center">$h_{Θ}(x)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center"><strong>1</strong></td>
+</tr>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center"><strong>0</strong></td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center"><strong>0</strong></td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center"><strong>1</strong></td>
+</tr>
+</tbody>
+</table>
+<p>通过一个含有输入层、隐藏层、输出层的神经网络，我们最终拟合了$x_{1}XNORx_{2}$。</p>
+<blockquote>
+<p>更一般的理解是：在输入层中，我们有原始输入值，然后我们建立了一个隐藏层，用来计算稍微复杂一些的输入量的函数，然后通过添加另一个层我们得到了一个更复杂一点的函数，这就是神经网络可以计算较复杂函数的某种直观解释。</p>
+<p>我们知道，当层数很多的时候，你有一个相对简单的输入量的函数作为第二层，而第三层可以建立在此基础上来计算更加复杂一些的函数，然后再下一层，又可以计算再复杂一些的函数：</p>
+</blockquote>
+<p><img src="/img/16_09_11/014.png" alt=""></p>
+<h3 id="手写识别的展示">手写识别的展示</h3><p>接下来，将展示一段视频，来源于<strong>阳乐昆(Yann LeCun)</strong>，他是一名教授，供职于纽约大学，也是神经网络研究早期的奠基者之一，也是这一领域 大牛。他的很多理论和想法现在都已经被应用于各种各样的产品和应用中，遍布全世界。所以我想向大家展示一段他早期工作中的视频，这段视频中，他使用神经网络算法进行手写数字的识别。你也许记得，这门课刚开始的时候，我说过关于神经网络的一个早期成就，就是应用神经网络读取邮政编码，以帮助我们进行邮递。那么这便是其中的一项尝试。</p>
+<p>视频说明：</p>
+<p><img src="/img/16_09_11/015.png" alt=""></p>
+<p>视频如下：</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/yxuRnBEczUU" frameborder="0" allowfullscreen></iframe>
+
+<h2 id="神经网络的多类别分类">神经网络的多类别分类</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/gFpiW/multiclass-classification" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>这一节将介绍<strong>如何使用神经网络做多类别分类</strong>。</p>
+<p>在多类别分类中，通常有不止一个类别需要我们去区分，在上一节最后的视频中，我们提到了有关手写数字识别的问题，这实际上正是一个多类别分类的问题。因为识别数字从0到9，正好是10个类别。</p>
+</blockquote>
+<p>我们处理多类别分类的方法实际上是基于一个<strong>多神经网络算法</strong>而延伸出来的。</p>
+<p>让我们来看看下面这个例子：</p>
+<p>还是一个有关计算机视觉识别的例子，就像我之前介绍过的识别汽车的例子一样，但与之不同的是现在我们希望处理的是四个类别的分类问题，四个类别分别是行人、轿车、摩托车、卡车：</p>
+<p><img src="/img/16_09_11/016.png" alt=""></p>
+<p>任意给出一副图片，我们需要知道图片上是这四个类别中的哪一个。</p>
+<p>对于这样的一个问题，我们的做法是，<strong>建立一个具有四个输出单元的神经网络</strong>：</p>
+<p><img src="/img/16_09_11/017.png" alt=""></p>
+<p>也就是说，此时神经网络的输出是一个思维向量。因此现在的输出需要用一个向量来表示，这个向量中有四个元素，而我们要做的是对第一个输出元素进行分辨图片上是不是一个行人(Pedestrian)，然后对第二个元素分辨它是不是一辆轿车(Car)，对第三个元素分辨它是不是摩托车(Motorcycle)，对第四个元素分辨它是不是一辆卡车(Truck)。</p>
+<p>因此，如果图上是行人的话，我希望输出结果是：</p>
+<p>$$<br>h_{Θ}(x)\approx<br>\begin{bmatrix}<br>1 \\<br>0 \\<br>0 \\<br>0<br>\end{bmatrix}<br>$$</p>
+<p>如果图上是轿车的话，我希望输出结果是：</p>
+<p>$$<br>h_{Θ}(x)\approx<br>\begin{bmatrix}<br>0 \\<br>1 \\<br>0 \\<br>0<br>\end{bmatrix}<br>$$</p>
+<p>如果图上是摩托车的话，我希望输出结果是：</p>
+<p>$$<br>h_{Θ}(x)\approx<br>\begin{bmatrix}<br>0 \\<br>0 \\<br>1 \\<br>0<br>\end{bmatrix}<br>$$</p>
+<p>如果图上是卡车的话，我希望输出结果是：</p>
+<p>$$<br>h_{Θ}(x)\approx<br>\begin{bmatrix}<br>0 \\<br>0 \\<br>0 \\<br>1<br>\end{bmatrix}<br>$$</p>
+<p>所以，这和我们介绍逻辑回归时讨论过的一对多方法其实是一样的，只不过现在我们有四个逻辑回归的分类器，而我们需要对每一个分类器都分别进行识别分类。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              <a class="post-title-link" href="/2016/09/07/斯坦福机器学习课程 第四周 (2)神经网络/" itemprop="url">
+                斯坦福机器学习课程 第四周 (2)神经网络
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-09-07T23:42:00+08:00" content="2016-09-07">
+            2016-09-07
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/09/07/斯坦福机器学习课程 第四周 (2)神经网络/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/07/斯坦福机器学习课程 第四周 (2)神经网络/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="神经网络的表示I">神经网络的表示I</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/ka3jK/model-representation-i" target="_blank" rel="external">视频地址</a></p>
+<p>这节课介绍神经网络如何表示我们的假设。</p>
+<h3 id="神经网络起源">神经网络起源</h3><p>神经网络是在模拟大脑中的神经元时发明的，因此，要解释如何表示模型假设，我们先来看看神经元在大脑中是什么样的。我们的大脑中充满了这样的神经元：</p>
+<p><img src="/img/16_09_07/001.png" alt=""></p>
+<p>神经元是大脑中的细胞，其中有两点值得我们注意，一是神经元有一个细胞主体(Cell body)，二是神经元有一定数量的输入神经，这些输入神经叫做<strong>树突(Dendrite)</strong>。可以把它们想象成输入电线，它们接收来自其他神经元的信息。神经元的输出神经叫做<strong>轴突(Axon)</strong>，这些输出神经是用来给其他神经元传递信号或者传送信息的。</p>
+<p>简而言之，神经元是一个计算单元，它从<strong>输入神经</strong>接受一定数目的信息，并做一些计算，然后将结果通过它的<strong>轴突</strong>传送到大脑中的其他神经元。</p>
+<p>下面是一组神经元的示意图：</p>
+<p><img src="/img/16_09_07/002.png" alt=""></p>
+<p>神经元利用微弱的电流进行沟通，这些弱电流也称作<strong>动作电位</strong>(其实就是一些微弱的电流)。</p>
+<p>所以如果神经元想要传递一个消息，它就会通过它的轴突发送一段微弱的电流，给其他神经元。这就是<strong>轴突</strong>连接到输入神经元(另一个神经元的<strong>树突</strong>)。接下来这个神经元接收这条消息，做一些计算，它有可能会反过来将在轴突上的自己的消息传给其他神经元。这就是所有人类思考的模型：我们的神经元把自己收到的消息进行计算，并向其他神经元传递消息。</p>
+<blockquote>
+<p>顺便说一下，这也是我们感觉和肌肉运转的原理。如果你想要活动一块肌肉，就会触发一个神经元给你的肌肉，发送脉冲，并引起你的肌肉收缩。如果一些感官，比如说眼睛，想要向大脑传递一个消息，那么它就是像这样发送电脉冲给大脑的。</p>
+</blockquote>
+<h3 id="神经网络逻辑单元">神经网络逻辑单元</h3><p>在一个计算机的神经网络里，我们将使用一个非常简单的模型来模拟神经元的工作：</p>
+<p><img src="/img/16_09_07/003.png" alt=""></p>
+<p>我们将神经元模拟成一个逻辑单元。上图中，黄色的圆圈，你可以理解为类似神经元的东西，然后我们通过它的树突(或者说是它的输入神经)传递给它一些信息。然后神经元做一些计算，并通过它的输出神经(即它的轴突)输出计算结果。</p>
+<p>这里的$h_{\theta}(x)$通常值的是：</p>
+<p>$$<br>\begin{align*}<br>h_{\theta}(x)<br>= \frac{1}{1+e^{-\theta^{T}x}}<br>\end{align*}<br>$$</p>
+<p>其中$x$和$\theta$指的是我们的参数向量：</p>
+<p><img src="/img/16_09_07/004.png" alt=""></p>
+<p>这就是一个简单的模拟神经元的模型。</p>
+<hr>
+<p>当我绘制一个神经网络时，有时会额外增加一个$x_{0}$的输入节点，这个$x_{0}$节点有时也被称作<strong>偏置单位(或偏置神经元)</strong>。但由于$x_{0}=1$，有时我是不会画出它的，这取决于它是否对例子有利。</p>
+<h3 id="激励函数">激励函数</h3><p>在神经网络中，有时我们会听到“一个有Sigmoid函数或者Logistic函数作为<strong>激励函数(activation function)</strong>的人工神经元”这样的话。其实这里所指的<strong>激励函数(activation function)</strong>只是对类似非线性函数$g(z)$的另一个术语称呼：</p>
+<p>$$<br>\begin{align*}<br>g(z)<br>= \frac{1}{1+e^{-z}}<br>\end{align*}<br>$$</p>
+<p>$$<br>\begin{align*}<br>z<br>= \theta^{T}x<br>\end{align*}<br>$$</p>
+<blockquote>
+<p>在之前我们一值称$\theta$为模型的参数，但在神经网络的文献里，有时你可能会看到人们谈论一个模型的<strong>权重(weight)</strong>，这个<strong>权重(weight)</strong>其实和模型的参数$\theta$是一个东西。</p>
+</blockquote>
+<hr>
+<h3 id="解读神经网络">解读神经网络</h3><h4 id="输入层，输出层，隐藏层">输入层，输出层，隐藏层</h4><p>神经网络其实就是这些不同的神经元组合在一起的集合：</p>
+<p><img src="/img/16_09_07/005.png" alt=""></p>
+<p>具体来说：</p>
+<ul>
+<li><p>上图中有三个输入单元：$x_{1}$,$x_{2}$和$x_{3}$，当然我们也可以加入值为1的$x_{0}$。</p>
+</li>
+<li><p>中间有三个神经元：$a_{1}^{(2)}$，$a_{2}^{(2)}$和$a_{3}^{(2)}$，同理，你可以可以加上值永远为1的偏置单元$a_{0}^{(2)}$。</p>
+</li>
+<li><p>然后，我们在最右侧有第三层，第三层的这个节点输出了假设函数$h(x)$的计算结果$h_{Θ}(x)$。</p>
+</li>
+</ul>
+<p>用神经网络的术语来说，第一层也被称为<strong>输入层</strong>，因为我们在这一层输入我们的特征项$x_{1}$，$x_{2}$和$x_{3}$。</p>
+<p>最后一层，也被称为<strong>输出层</strong>，因为这一层的神经元会输出假设函数的最终计算结果$h_{Θ}(x)$。</p>
+<p>中间层，也被称为<strong>隐藏层</strong>，在监督学习中，你能看到输入，也能看到输出，而隐藏层的值在你的训练过程中是看不到的，它的值不是$x$也不是$y$，所以我们叫它隐藏层。神经网络可以有不止一个的隐藏层。<strong>在神经网络中，任何一个非输入层且非输出层，就被称为隐藏层</strong>。</p>
+<h4 id="神经网络运行原理">神经网络运行原理</h4><p><img src="/img/16_09_07/005.png" alt=""></p>
+<p>接下来，让我们来逐步分析，上图所呈现的神经网络的计算步骤。</p>
+<p>首先需要说明以下两个符号的含义：</p>
+<ul>
+<li>$a_{i}^{(j)}$ 表示第j层的第i个神经元。</li>
+</ul>
+<blockquote>
+<p>具体来说$a_{1}^{2}$表示的是第2层的第1个激励，即隐藏层的第一个激励。</p>
+<p>所谓<strong>激励(activation)</strong>是指由一个具体神经元读入计算并输出的值。</p>
+</blockquote>
+<ul>
+<li>$Θ^{(j)}$ 表示层与层之间权重的<strong>参数矩阵</strong>(或者叫<strong>权重矩阵</strong>)(比如说从第一层到第二层、或者从第二层到第三层的作用)。</li>
+</ul>
+<p>具体来说，$a_{1}^{(2)}$的值的计算是这样的：</p>
+<p>$$<br>a_{1}^{(2)} = g(Θ_{10}^{(1)}x_{0} +<br>Θ_{11}^{(1)}x_{1} +<br>Θ_{12}^{(1)}x_{2} +<br>Θ_{13}^{(1)}x_{3}<br>)<br>$$</p>
+<blockquote>
+<p>不要忘记这里的$g$函数是S型函数(或者说是S激励函数，也叫作逻辑激励函数)。</p>
+</blockquote>
+<p>我们可以把隐藏层的三个神经元的计算结果都写出来：</p>
+<p>$$<br>a_{1}^{(2)} = g(Θ_{10}^{(1)}x_{0} +<br>Θ_{11}^{(1)}x_{1} +<br>Θ_{12}^{(1)}x_{2} +<br>Θ_{13}^{(1)}x_{3}<br>)<br>$$</p>
+<p>$$<br>a_{2}^{(2)} = g(Θ_{20}^{(1)}x_{0} +<br>Θ_{21}^{(1)}x_{1} +<br>Θ_{22}^{(1)}x_{2} +<br>Θ_{23}^{(1)}x_{3}<br>)<br>$$</p>
+<p>$$<br>a_{3}^{(2)} = g(Θ_{30}^{(1)}x_{0} +<br>Θ_{31}^{(1)}x_{1} +<br>Θ_{32}^{(1)}x_{2} +<br>Θ_{33}^{(1)}x_{3}<br>)<br>$$</p>
+<p>这里我们有三个输入单元和三个隐藏单元，这样一来，参数矩阵$Θ^{(1)}$控制了我们来自三个输入单元到三个隐藏单元的映射。因此$Θ^{(1)}$的维数是$R^{3×4}$的(考虑$x_{0}$的情况下)矩阵。</p>
+<p>更一般的，如果一个神经网络在第$j$层有$s_{j}$个单元，在$j+1$层有$s_{j+1}$个单元，那么第$j$层的参数矩阵$Θ^{(j)}$的维度就是$s_{j+1}×(s_{j} + 1)$</p>
+<p>以上我们讨论了三个隐藏单位是怎么计算它们的值的，最后，在输出层，我们还有一个单元，它用来计算$h_{Θ}(x)$：</p>
+<p>$$<br>h_{Θ}(x) = a_{1}^{(3)}=g(<br>Θ_{10}^{(2)}a_{0}^{(2)} +<br>Θ_{11}^{(2)}a_{1}^{(2)} +<br>Θ_{12}^{(2)}a_{2}^{(2)} +<br>Θ_{13}^{(2)}a_{3}^{(2)}<br>)<br>$$</p>
+<p>以上就是从数学上对一个人工神经网络的定义。</p>
+<h2 id="神经网络的表示II">神经网络的表示II</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/Hw3VK/model-representation-ii" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>这节课，将介绍如何高效地进行计算，并展示一个向量化的实现方法。更重要的是让你们明白神经网络的好处所在，并且介绍它是如何帮助我们学习复杂的非线性假设的。</p>
+</blockquote>
+<h3 id="前向传播(forward_propagation)的向量化实现">前向传播(forward propagation)的向量化实现</h3><p>以这个神经网络为例：</p>
+<p><img src="/img/16_09_07/006.png" alt=""></p>
+<p>上一节我们介绍过假设函数的计算方式，以及上面这些方程的含义。接下来，我要定义一些额外的项，来简化上面的式子的表示，比如我要把上面第一行(用来表示第一个隐藏层输出的值)：</p>
+<p>$$<br>a_{1}^{(2)} = g(Θ_{10}^{(1)}x_{0} +<br>Θ_{11}^{(1)}x_{1} +<br>Θ_{12}^{(1)}x_{2} +<br>Θ_{13}^{(1)}x_{3}<br>)<br>$$</p>
+<p>改写为：</p>
+<p>$$<br>a_{1}^{(2)} = g(z^{(2)}_{1})<br>$$</p>
+<p>可见：</p>
+<p>$$<br>z^{(2)}_{1} = Θ_{10}^{(1)}x_{0} +<br>Θ_{11}^{(1)}x_{1} +<br>Θ_{12}^{(1)}x_{2} +<br>Θ_{13}^{(1)}x_{3}<br>$$</p>
+<p>其中$z^{(2)}_{1}$的上标$^{(2)}$表示<strong>神经网络的第二层(即这里的隐藏层)</strong>，下标$_{1}$表示<strong>当前层的第一个元素</strong>。</p>
+<p>我们通过同样的方式定义$a_{2}^{(2)}$和$a_{3}^{(2)}$。</p>
+<p>$$<br>a_{2}^{(2)} = g(z^{(2)}_{2})<br>$$</p>
+<p>$$<br>a_{3}^{(2)} = g(z^{(2)}_{3})<br>$$</p>
+<p>因此，这些$z$值都是$x_{0}$、$x_{1}$、$x_{2}$和$x_{3}$的加权线性组合，然后带入一个特定的神经元，</p>
+<p>如果你仔细观察表达式中红色方框内的区域：</p>
+<p><img src="/img/16_09_07/007.png" alt=""></p>
+<p>你会发现，这里其实是一个矩阵的乘法运算：</p>
+<p>$$<br>Θ^{(1)}x<br>$$</p>
+<p>这样一来，我们就能将神经网络的计算，向量化了。</p>
+<p>具体而言，我们定义特征向量$x$：</p>
+<p>$$<br>x=<br>\begin{bmatrix}<br>x_{0} \\<br>x_{1} \\<br>x_{2} \\<br>x_{3}<br>\end{bmatrix}<br>$$</p>
+<blockquote>
+<p>其中$x_{0}=1$</p>
+</blockquote>
+<p>并定义$z^{(2)}$：</p>
+<p>$$<br>z^{(2)}=<br>\begin{bmatrix}<br>z^{(2)}_{1} \\<br>z^{(2)}_{2} \\<br>z^{(2)}_{3}<br>\end{bmatrix}<br>$$</p>
+<blockquote>
+<p>注意，这里的$z^{(2)}$是一个三维向量。</p>
+</blockquote>
+<p>我们只需要两个步骤，就可以计算出$a^{(2)}$向量了：</p>
+<p>$$<br>z^{(2)}=Θ^{(1)}x<br>$$</p>
+<p>$$<br>a^{(2)}=g(z^{(2)})<br>$$</p>
+<blockquote>
+<p>注意，这里的$a^{(2)}$也是一个三维向量，这里的激励函数$g()$将对$z^{(2)}$中的每个元素进行计算。<br>说明一下，在输入层虽然我们有$x$输入，但我们可以把这些输入想象成是第一层的激励。所以可以定义$a^{(1)}=x$，这样就有了向量$a^{(1)}$。</p>
+</blockquote>
+<p>将向量$x$替换为向量$a^{(1)}$:</p>
+<p>$$<br>z^{(2)}=Θ^{(1)}a^{(1)}<br>$$</p>
+<hr>
+<p>现在，就我目前所写的，我得到了$a^{(2)}_{1}$、$a^{(2)}_{2}$和$a^{(2)}_{3}$的值，但是我同样还需要隐藏层的偏置单元$a^{(2)}_{0}$，这个额外的偏执单元值为1：</p>
+<p>$$<br>a^{(2)}_{0}=1<br>$$</p>
+<p>加上偏置单元后，向量$a^{(2)}$的长度变成了4：</p>
+<p>$$<br>a^{(2)}\in \mathbb{R}^{4}<br>$$</p>
+<p>最后，为了计算实际输出值：</p>
+<p>$$<br>h_{Θ}(x) = a_{1}^{(3)}=g(<br>Θ_{10}^{(2)}a_{0}^{(2)} +<br>Θ_{11}^{(2)}a_{1}^{(2)} +<br>Θ_{12}^{(2)}a_{2}^{(2)} +<br>Θ_{13}^{(2)}a_{3}^{(2)}<br>)<br>$$</p>
+<p>我们计算出代表$Θ_{10}^{(2)}a_{0}^{(2)} +Θ_{11}^{(2)}a_{1}^{(2)} + Θ_{12}^{(2)}a_{2}^{(2)} + Θ_{13}^{(2)}a_{3}^{(2)}$的$z^{(3)}$，并将其带入激励函数，最后就能得出$h(x)$的值了：</p>
+<p>$$<br>z^{(3)}=Θ^{(2)}a^{(2)}<br>$$</p>
+<p>$$<br>h_{Θ}(x)=a^{(3)}=g(z^{(3)})<br>$$</p>
+<p>这就是计算$h_{Θ}(x)$的过程，也称为<strong>前向传播(forward propagation)</strong>。</p>
+<blockquote>
+<p>这样的命名是因为我们从输入层的激励开始，然后进行前向传播给隐藏层，并计算隐藏层的激励，然后我们继续向前传播，并计算出层的激励，这个从输入层，到隐藏层，再到输出层，依次计算激励的过程，叫<strong>前向传播</strong>。</p>
+</blockquote>
+<h3 id="神经网络与逻辑回归的对比，以及学习非线性假设的原理">神经网络与逻辑回归的对比，以及学习非线性假设的原理</h3><p>这种前向传播也可以帮助我们了解神经网络的原理，以及解释为什么神经网络可以帮助我们学习非线性假设。</p>
+<p>例如下面这个神经网络：</p>
+<p><img src="/img/16_09_07/008.png" alt=""></p>
+<p>我们暂时盖住左边部分，看右侧这一部分：</p>
+<p><img src="/img/16_09_07/009.png" alt=""></p>
+<p>这看起来很像逻辑回归，在逻辑回归中，我们就用这一个逻辑回归单元来预测$h(x)$的值。具体来说：</p>
+<p>$$<br>h_{Θ}(x)=g(Θ_{10}^{(2)}a_{0}^{(2)} + Θ_{11}^{(2)}a_{1}^{(2)} + Θ_{12}^{(2)}a_{2}^{(2)} + Θ_{13}^{(2)}a_{3}^{(2)})<br>$$</p>
+<p>这很像一个很标准的逻辑回归模型，不同之处在于这里使用的是大写的$Θ$而不是小写的$\theta$，神经网络的输入特征值是通过隐藏层计算的。即，神经网络所做的工作看起来就像是逻辑回归，但是它不是使用$x_{1}$、$x_{2}$、$x_{3}$作为输入特征，而是使用$a_{1}^{(2)}$、$a_{2}^{(2)}$、$a_{3}^{(2)}$。</p>
+<hr>
+<p><img src="/img/16_09_07/010.png" alt=""></p>
+<p>然而有趣的是，特征项$a_{1}^{(2)}$、$a_{2}^{(2)}$、$a_{3}^{(2)}$是通过输入的函数来学习的。具体来说，就是从第一层(Layer1)映射到第二层(Layer2)的函数。这个函数由其他一组参数$Θ^{(1)}$决定。所以，在神经网络中，它没有用输入特征$x_{1}$、$x_{2}$、$x_{3}$来训练逻辑回归，而是训练逻辑回归的输入:$a_{1}^{(2)}$、$a_{2}^{(2)}$、$a_{3}^{(2)}$。</p>
+<p>可以想象，如果在$Θ^{(1)}$中选择不同的参数有时可以学习到一些很有趣的，和很复杂的特征，就可以得到一个比使用原始输入$x_{1}$、$x_{2}$、$x_{3}$时得到的假设更好的假设。</p>
+<p>你也可以使用多项式作为输入，例如：$x_{1}x_{2}$、$x_{2}x_{3}$等作为输入项。这个算法都可以灵活的快速学习任意的特征项，并把最后的结果通过最后一个单元的逻辑回归输出出来。</p>
+<h3 id="神经网络的架构">神经网络的架构</h3><p>你还可以用其他类型的图来表示神经网络。神经网络中神经元相连接的方式，称为<strong>神经网络的架构(Architecture)</strong>。</p>
+<p>下面是另外一个神经网络架构的例子：</p>
+<p><img src="/img/16_09_07/011.png" alt=""></p>
+<p>在这个神经网络中，第一层被称为输入层，第四层任然是我们的输出层。其中，第二层和第三层都是隐藏层。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/09/05/斯坦福机器学习课程 第四周 (1)神经网络引入/" itemprop="url">
                 斯坦福机器学习课程 第四周 (1)神经网络引入
               </a>
@@ -1934,735 +2823,11 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/07/29/斯坦福机器学习课程 第二周 (2)多元线性回归分析/" itemprop="url">
-                斯坦福机器学习课程 第二周 (2)多元线性回归分析
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-07-29T01:26:00+08:00" content="2016-07-29">
-            2016-07-29
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/07/29/斯坦福机器学习课程 第二周 (2)多元线性回归分析/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/29/斯坦福机器学习课程 第二周 (2)多元线性回归分析/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="多特征量">多特征量</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/6Nj1q/multiple-features" target="_blank" rel="external">视频地址</a></p>
-<p>在这段视频中，我们将开始介绍一种新的更为有效的线性回归形式，这种形式适用于多个变量，或者多特征量的情况。</p>
-<p>比如说：在之前我们学习过的线性回归中，我们只有一个单一特征量：‘房屋面积x’，我们希望用这个特征量来预测房子的价格，这就是我们的假设 。</p>
-<p><img src="/img/16_07_29/001.png" alt=""></p>
-<p>但是想象一下，如果我们不仅有房屋面积作为预测房屋价格的特征量或者变量，我们还知道卧室的数量楼层的数量以及房子的使用年限，这样就给了我们更多可以用来预测房屋价格的信息:</p>
-<p><img src="/img/16_07_29/002.png" alt=""></p>
-<h3 id="多特征量的表示">多特征量的表示</h3><p>先简单介绍一下记法：</p>
-<ul>
-<li>$n$ = 来表示特征量的数目</li>
-</ul>
-<p>这个例子中有4个特征量，因此，这里n=4</p>
-<ul>
-<li>$x^{(i)}$ = 第$i$个训练样本的输入特征值</li>
-</ul>
-<p>这个例子中$x^{(2)}$就是表示第二个训练样本的特征向量：</p>
-<p>$$<br>x^{(2)}<br>=<br>\begin{bmatrix}<br>1416 \\<br>3 \\<br>2 \\<br>40<br>\end{bmatrix}<br>$$</p>
-<ul>
-<li>$x_j^{(i)}$ = 第$i$个训练样本的第$j$个特征量 </li>
-</ul>
-<p>这个例子中，$x_3^{(2)}$代表着第2个训练样本里的第3个特征量。这里值是2。</p>
-<h3 id="多特征量的假设函数">多特征量的假设函数</h3><p>这是我们之前使用的假设形式：</p>
-<p>$$<br>h_{θ}(x) = θ_0 + θ_1 * x<br>$$</p>
-<p>其中$x$就是我们唯一的特征量，但现在我们有了多个特征量我们就不能再 使用这种简单的表示方式了。取而代之的，我们将把线性回归的假设改成这样：</p>
-<p>$$<br>h_{θ}(x) = θ_{0} + θ_{1} x_{1} + θ_{2} x_{2} + … + θ_{n} x_{n}<br>$$</p>
-<p>接下来，我要来介绍简化这个等式的表示方式：</p>
-<p><strong>为了表示方便,我要将$x_{0}$的值设为1。</strong>具体而言这意味着对于第$i$个样本，都有一个向量$x^{(i)}$，并且$x^{(i)}_{0} = 1$。你可以认为我们定义了一个额外的第0个特征量。因此，我过去有$n$个特征量 因为我们有$x_{1},x_{2}…x_{n}$，由于我另外定义了第0个特征向量$x_{0}$，并且它的取值总是1，所以我现在的特征向量$x$是一个从0开始标记的$n+1$维的向量：</p>
-<p>$$<br>x<br>=<br>\begin{bmatrix}<br>x_{0} \\<br>x_{1} \\<br>x_{2} \\<br>… \\<br>x_{n}<br>\end{bmatrix}<br>\in<br>\mathbb{R}^{n+1}<br>$$</p>
-<p>但我要从0开始标记，同时我也想把我的参数都看做一个向量，所以我们的参数就是：</p>
-<p>$$<br>θ<br>=<br>\begin{bmatrix}<br>θ_{0} \\<br>θ_{1} \\<br>θ_{2} \\<br>… \\<br>θ_{n}<br>\end{bmatrix}<br>\in<br>\mathbb{R}^{n+1}<br>$$</p>
-<p>所以我的假设，现在可以写成：</p>
-<p>$$<br>h_{θ}(x) = θ_{0} x_{0} + θ_{1} x_{1} + θ_{2} x_{2} + … + θ_{n} x_{n}<br>$$</p>
-<blockquote>
-<p>请注意，这里$x_{0} = 1$</p>
-</blockquote>
-<p>下面我要把这种形式假设等式写成:</p>
-<p>$$<br>h_{θ}(x) = θ^{T} x<br>$$</p>
-<p>其中$θ^{T}$是$θ$向量的转置，是一个$(n+1)×1$维的矩阵，也被称为行向量：</p>
-<p>$$<br>\underbrace{<br>\begin{bmatrix}<br>θ_{0} θ_{1} θ_{2} … θ_{n}<br>\end{bmatrix}<br>}_{θ^{T}}<br>$$</p>
-<p>因此这个假设函数的完整推导过程如下:</p>
-<p>$$<br>\begin{align*}<br>h_{θ}(x)<br>&amp;=<br>θ_{0} x_{0} + θ_{1} x_{1} + θ_{2} x_{2} + … + θ_{n} x_{n}\\<br>&amp;=<br>\begin{bmatrix}<br>θ_{0} θ_{1} θ_{2} … θ_{n}<br>\end{bmatrix}<br>\begin{bmatrix}<br>x_{0} \\<br>x_{1} \\<br>x_{2} \\<br>… \\<br>x_{n}<br>\end{bmatrix}\\<br>&amp;=<br>θ^{T} x<br>\end{align*}<br>$$</p>
-<p>这就为我们表示假设的更加便利的形式：</p>
-<p>$$<br>h_{θ}(x) = θ^{T} x<br>$$</p>
-<p>即用参数向量$θ$以及特征向量$X$的内积来表示。</p>
-<p>这样的表示方法让我们可以以这种紧凑的形式写出假设，这就是多特征量情况下的假设形式。起另一个名字：就是<strong>所谓的多元线性回归</strong>。</p>
-<h2 id="多特征的梯度下降">多特征的梯度下降</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/Z9DKX/gradient-descent-for-multiple-variables" target="_blank" rel="external">视频地址</a></p>
-<p>在之前的视频中，我们谈到了一种线性回归的假设形式，这是一种有多特征或者是多变量的形式。在本节视频中我们将会谈到如何找到满足这一假设的参数，尤其是如何使用梯度下降法来解决多特征的线性回归问题。</p>
-<p>为尽快让你理解，假设现有多元线性回归并约定$x_{0}=1$。</p>
-<p><strong>假设函数(Hypothesis)</strong>如下：</p>
-<p>$$<br>h_{θ}(x) = θ^{T}x = θ_{0} x_{0} + θ_{1} x_{1} + θ_{2} x_{2} + … + θ_{n} x_{n}<br>$$</p>
-<p>该模型的参数是从$θ_{0}$到$θ_{n}$，不要认为这是$n+1$个单独的参数。你可以把这$n+1$个$θ$参数想象成一个$n+1$维的向量$θ$。</p>
-<p><strong>参数(Parameters)</strong>如下：</p>
-<p>$$<br>θ_{0} θ_{1} θ_{2} … θ_{n}<br>$$</p>
-<p>我们的代价函数是从$θ_{0}$到$θ_{n}$的函数$J$并给出了误差项平方的和。但同样地，不要把函数$J$想成是一个关于$n+1$个自变量的函数而是看成带有一个$n+1$维向量的函数:</p>
-<p><strong>代价函数(Cost function)</strong>如下：</p>
-<p>$$<br>J(θ_{0},θ_{1},…,θ_{n}) =<br>\frac{1}{2m}<br>\sum_{i=1}^{m}<br>(h_{θ}(x^{(i)}) - y^{(i)})^{2}<br>$$</p>
-<p><strong>梯度下降法(Gradient descent)</strong>：</p>
-<p><img src="/img/16_07_29/003.png" alt=""></p>
-<p>我们将会不停地用$θ_{j}$减去$α$倍的导数项来替代$θ_{j}$。</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">当特征$n=1$时，梯度下降的情况：</th>
-<th style="text-align:center">当特征$n&gt;=1$时，梯度下降的情况：</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center"><img src="/img/16_07_29/004.png" alt=""></td>
-<td style="text-align:center"><img src="/img/16_07_29/005.png" alt=""></td>
-</tr>
-</tbody>
-</table>
-<p>下图中，为了更好的理解这个梯度下降更新规则，蓝圈圈起来的部分其实是等价的：</p>
-<p><img src="/img/16_07_29/006.png" alt=""></p>
-<p>最后，我想让你明白为什么新旧两种算法实际上是一回事儿。</p>
-<p>考虑这样一个情况：有两个或以上个数的特征，同时我们有对$θ_{1}$、$θ_{2}$、$θ_{3}$的三条更新规则(当然可能还有其它参数)。如果你观察$θ_{0}$的更新规则，你会发现这跟之前$n=1$的情况相同。它们之所以是等价的，是因为在我们的标记约定里有$x^{i}_{0}=1$。</p>
-<p><img src="/img/16_07_29/007.png" alt=""></p>
-<p><img src="/img/16_07_29/008.png" alt=""></p>
-<p>从上图可以看出，对于$n &gt;= 1$的梯度下降规则，其实是一个通用规则。请务必看懂上图，确保理解之后再继续学习！</p>
-<h2 id="梯度下降实用技巧_1：特征缩放(Feature_Scaling)以及均值归一化(mean_normalization)">梯度下降实用技巧 1：特征缩放(Feature Scaling)以及均值归一化(mean normalization)</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/xx3Da/gradient-descent-in-practice-i-feature-scaling" target="_blank" rel="external">视频地址</a></p>
-<p>在这段视频以及下一段视频中，我想告诉你一些关于梯度下降运算中的实用技巧。</p>
-<p>在这段视频中我会告诉你两个称为<strong>特征缩放(feature scaling)</strong>以及<strong>均值归一化(mean normalization)</strong>的方法。</p>
-<p>这两个方法都是为了<strong>保证特征的取值在合适的范围内</strong>的。</p>
-<h3 id="特征缩放(feature_scaling)"><strong>特征缩放(feature scaling)</strong></h3><p>其中，<strong>特征缩放(feature scaling)</strong>大致的思路是这样的：<strong>梯度下降算法中，在有多个特征的情况下，如果你能确保这些不同的特征都处在一个相近的范围，这样梯度下降法就能更快地收敛。</strong></p>
-<p>举个例子来说明：</p>
-<p>$$<br>x_{1} = size(0-2000 feet^{2})\\<br>x_{2} = 卧室的数量(1-5)<br>$$</p>
-<p>假如你有一个具有两个特征的问题，其中$x_{1}$是房屋面积大小，它的取值在0到2000之间；$x_{2}$是卧室的数量，可能这个值的取值范围在1到5之间。其代价函数$J(θ)$是一个关于参数$θ_{0}$，$θ_{1}$和$θ_{2}$的函数。但这里我们暂时不考虑$θ_{0}$并假想一个函数的变量只有$θ_{1}$和$θ_{2}$。</p>
-<p>如果$x_{1}$的取值范围远远大于$x_{2}$的取值范围的话，那么最终画出来的代价函数$J(θ)$的轮廓图就会呈现出这样一种非常偏斜并且椭圆的形状:</p>
-<p><img src="/img/16_07_29/009.png" alt=""></p>
-<p>如果你用这个代价函数来运行梯度下降的话，你要得到梯度值最终可能需要花很长一段时间，并且可能会来回波动，然后会经过很长时间最终才收敛到全局最小值。</p>
-<p><img src="/img/16_07_29/010.gif" alt=""></p>
-<p>事实上如果这些轮廓再被放大一些的话，如果你画的再夸张一些把它画的更细更长，那么可能情况会更糟糕，梯度下降的过程可能更加缓慢，需要花更长的时间反复来回振荡，最终才找到一条正确通往全局最小值的路。</p>
-<p>在这样的情况下一种有效的方法是<strong>进行特征缩放(feature scaling)</strong>。</p>
-<p>具体来说把特征$x$定义为：</p>
-<p>$$<br>x_{1} = \frac{size(feet^2)}{2000}<br>$$</p>
-<p>$$<br>x_{2} = \frac{卧室的数量}{5}<br>$$</p>
-<p>通过这样的变化，表示代价函数$J(θ)$的轮廓图的形状就会变得偏移没那么严重，可能看起来更圆一些了。</p>
-<p><img src="/img/16_07_29/011.png" alt=""></p>
-<p>如果你用这样的代价函数来执行梯度下降的话，那么可以从数学上来证明梯度下降算法将会找到一条更捷径的路径通向全局最小，而不是像刚才那样  沿着一条让人摸不着头脑的路径，来找到全局最小值。</p>
-<p>因此在这个例子中，通过特征缩放，我们最终得到的两个特征$x_{1}$和 $x_{2}$都在0和1之间，这样你得到的梯度下降算法就会更快地收敛。</p>
-<p>更一般地，<strong>我们执行特征缩放时，我们通常的目的是将特征的取值约束到$-1$到$+1$的范围内</strong>。其中，特征$x_{0}$总是等于1，因此这已经是在这个范围内了，但对于其他的特征，你可能需要通过除以不同的数来让它们处于同一范围内。</p>
-<p>$-1$和$+1$这两个数字并不是太重要，所以如果你有一个特征$x_{1}$它的取值在<code>0 ~ 3</code>之间，这没问题 如果你有另外一个特征取值在<code>-2 ~ +0.5</code>之间，这也没什么关系，因为这也非常接近<code>-1 ~ +1</code>的范围。</p>
-<p>但如果你有另一个特征$x_{3}$，假如它的范围在<code>-100 ~ +100</code>之间，那么这个范围跟<code>-1 ~ +1</code>就有很大不同了。所以这可能是一个不那么好的特征。类似地，如果你的特征在一个非常非常小的范围内，比如另外一个特征$x_{4}$，它的范围在<code>-0.0001 ~ +0.0001</code>之间,那么这同样是一个比<code>-1 ~ +1</code>小得多的范围，因此我同样会认为这个特征也不太好。所以可能你认可的范围，也许可以大于或者小于<code>-1 ~ +1</code>，但是也别太大或太小，只要与<code>-1 ~ +1</code>范围偏差不多就可以接受。</p>
-<p>因此，总的来说不用过于担心你的特征是否在完全相同的范围或区间内，但是只要它们足够接近的话，梯度下降法就会正常地工作。</p>
-<h3 id="均值归一化(mean_normalization)"><strong>均值归一化(mean normalization)</strong></h3><p>除了在特征缩放中将特征除以最大值以外，有时候我们也会进行一个称为<strong>均值归一化(mean normalization)</strong>的工作。</p>
-<p>具体做法就是：如果你有一个特征$x_{i}$你就用$x_{i} - μ_{i}$来替换。这样做的目的是为了<strong>让你的特征值具有为0的平均值</strong>。很明显 我们不需要把这一步应用到$x_{0}$中，因为$x_{0}$总是等于1的，所以它不可能有为0的的平均值。</p>
-<p>但是对其他的特征来说，比如房子的大小取值介于<code>0 ~ 2000</code>，并且假如房子面积的平均值是等于1000的，那么你可以用这个公式 </p>
-<p>$$<br>x_{1} = \frac{size - 1000}{2000}<br>$$</p>
-<p>类似地，如果你的房子有五间卧室，并且平均一套房子有两间卧室，那么你可以使用这个公式来归一化你的第二个特征$x_{2}$：</p>
-<p>$$<br>x_{2} = \frac{卧室数 - 2}{5}<br>$$</p>
-<p>在这两种情况下你可以算出新的特征$x_{1}$和$x_{2}$，它们的范围可以在<code>-0.5 ~ +0.5</code>之间，当然这肯定不对，$x_{2}$的值实际上肯定会大于0.5。更一般的规律是用:</p>
-<p>$$<br>\frac{x_{n} - μ_{n}}{S_{n}}<br>$$</p>
-<p>来替换原来的特征$x_{n}$。其中定义$μ_{n}$的意思是在训练集中特征$x_{n}$的平均值。而$S_{n}$是该特征值的范围（最大值减去最小值）。</p>
-<blockquote>
-<p>最后直的一提的是：特征缩放其实并不需要太精确，其目的只是为了让梯度下降能够运行得更快一点，让梯度下降收敛所需的循环次数更少一些而已。</p>
-</blockquote>
-<h2 id="梯度下降实用技巧_2：学习速率(Learning_Rate)">梯度下降实用技巧 2：学习速率(Learning Rate)</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/3iawu/gradient-descent-in-practice-ii-learning-rate" target="_blank" rel="external">视频地址</a></p>
-<p>在本段视频中，我将集中讨论<strong>学习率$α$</strong>。具体来说这是梯度下降算法的更新规则。</p>
-<p>$$<br>θ_{j} := θ_{j} -α \frac{∂}{∂θ_{0}} J(θ)<br>$$</p>
-<p>这里我想要告诉大家两点： </p>
-<ul>
-<li>如何调试(Debugging) : 也就是我认为应该如何确定梯度下降是正常工作的。</li>
-<li>如何选择学习率$α$ : 如何选择这个参数才能保证梯度下降正常工作。</li>
-</ul>
-<h3 id="收敛的判断">收敛的判断</h3><p>梯度下降算法所做的事情就是为你找到一个$θ$值，并希望它能够最小化代价函数$J(θ)$。</p>
-<p>我通常会在梯度下降算法运行时，绘出代价函数$J(θ)$的值。这里的$x$轴是表示梯度下降算法的迭代步数：</p>
-<p><img src="/img/16_07_29/012.png" alt=""></p>
-<blockquote>
-<p><strong>注意:</strong>这里的$x$轴是迭代步数，在我们以前看到的$J(θ)$曲线中$x$轴，曾经用来表示参数$θ$但这里不是。</p>
-</blockquote>
-<p>具体来说，这一点的含义是这样的：比如，当我运行完100步的梯度下降迭代之后，我将得到一个$θ$值，根据这个$θ$值，我将算出代价函数$J(θ)$的值。而这个点的垂直高度就代表梯度下降算法100步迭代之后得到的$θ$算出的$J(θ)$值：</p>
-<p><img src="/img/16_07_29/013.png" alt=""></p>
-<p>而这个点则是梯度下降算法迭代200次之后得到的$θ$算出的$J(θ)$值：</p>
-<p><img src="/img/16_07_29/014.png" alt=""></p>
-<p>所以这条曲线显示的是梯度下降算法迭代过程中代价函数$J(θ)$的值。</p>
-<p><strong>如果梯度下降算法正常工作，那么每一步迭代之后$J(θ)$都应该下降。</strong></p>
-<p>这条曲线中，当迭代达到300步到400步之间时（如下图所示），看起来$J(θ)$并没有下降多少。也就是说在400步迭代的时候，梯度下降算法基本上已经收敛了，因为代价函数并没有继续下降：</p>
-<p><img src="/img/16_07_29/015.png" alt=""></p>
-<p>所以说，看这条曲线可以帮助你判断梯度下降算法是否已经收敛。</p>
-<blockquote>
-<p>对于每一个特定的问题，梯度下降算法所需的迭代次数可以相差很大。也许对于某一个问题，梯度下降算法只需要30步迭代就可以收敛，然而换一个问题，也许梯度下降算法就需要3000步迭代，对于另一个机器学习问题则可能需要三百万步迭代。</p>
-</blockquote>
-<p>实际上，我们很难提前判断梯度下降算法需要多少步迭代才能收敛。通常我们需要画出这类<strong>代价函数随迭代步数数增加的变化曲线</strong>，通常我会通过看这种曲线来试着判断梯度下降算法是否已经收敛。另外也可以进行一些自动的<strong>收敛测试</strong>（也就是说用一种算法来告诉你梯度下降算法是否已经收敛）。</p>
-<p>自动收敛测试一个非常典型的例子是：如果代价函数$J(θ)$的下降小于一个很小的值$ε$那么就认为已经收敛。比如可以选择$10^{-3}$作为阈值$ε$。但通常要选择一个合适的阈值$ε$是相当困难的。</p>
-<p><strong>因此，为了检查梯度下降算法是否收敛,我实际上还是通过看上边的这条曲线图，而不是依靠自动收敛测试。</strong></p>
-<h3 id="判断梯度下降算法是否正常工作">判断梯度下降算法是否正常工作</h3><p>此外这种曲线图也可以在算法没有正常工作时提前警告你。具体地说如果代价函数$J(θ)$随迭代步数的变化曲线是这个样子:</p>
-<p><img src="/img/16_07_29/016.png" alt=""></p>
-<p>很明确的表示梯度下降算法没有正常工作，而这样的曲线图通常意味着你应该使用较小的学习率$α$。如果$J(θ)$在上升，那么最常见的原因是你在最小化一个函数时，如果你的学习率太大，梯度下降算法可能将冲过最小值达到最小值另一侧的更大的一个点。下次迭代时，也可能再次冲过最小值，达到更大的一个点，然后一直这样下去。</p>
-<p><img src="/img/16_07_29/017.png" alt=""></p>
-<p>所以，如果你看到这样一个曲线图，通常的解决方法是使用较小的$α$值，当然也要确保，你的代码中没有错误。</p>
-<p>同样的，有时你可能看到这种形状的$J(θ)$曲线:</p>
-<p><img src="/img/16_07_29/018.png" alt=""></p>
-<p>它先下降，然后上升，接着又下降，然后又上升，然后再次下降，再次上升，如此往复。而解决这种情况的方法通常同样是选择较小$α$值。</p>
-<p>我不打算证明这一点，但对于我们讨论的线性回归可以很容易从数学上证明：只要学习率足够小，那么每次迭代之后，代价函数$J(θ)$都会下降。因此如果代价函数没有下降，那可能意味着学习率过大，这时你就应该尝试一个较小的学习率。当然，你也不希望学习度太小，因为如果这样，那么梯度下降算法可能收敛得很慢，你需要迭代很多次才能到达最低点。因此如果学习率$α$太小，梯度下降算法的收敛将会很缓慢。</p>
-<p><strong>总结：</strong></p>
-<ul>
-<li><strong>如果学习率$α$太小，你会遇到收敛速度慢的问题。</strong></li>
-<li><strong>如果学习率$α$太大，代价函数$J(θ)$可能不会在每次迭代都下降，甚至可能不收敛。</strong></li>
-</ul>
-<blockquote>
-<p>在某些情况下，如果学习率$α$过大，也可能出现收敛缓慢的问题。</p>
-</blockquote>
-<h3 id="如何选择$α$">如何选择$α$</h3><p>为了调试，当我运行梯度下降算法时，我通常会尝试一系列$α$值，比如0.001， 0.01， 0.1， 1 … 这里每隔10倍取一个值，然后对于这些不同的$α$值绘制$J(θ)$随迭代步数变化的曲线，然后选择看上去使得$J(θ)$快速下降的一个$α$值。</p>
-<p>事实上在为梯度下降算法选择合适的学习率时，我大致是按3的倍数来取值的。例如：0.001， 0.003， 0、01，0.03，0.1，0.3，1…</p>
-<p>所以我会尝试一系列$α$值，直到我找到不能再小了的值，同时找到另一个不能再大的值，然后我尽量挑选其中最大的那个$α$值，或者一个比最大值略小一些的合理的值。当我做了以上工作时，我通常就可以得到一个不错的学习率。</p>
-<h2 id="特征的选择和多项式回归">特征的选择和多项式回归</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/Rqgfz/features-and-polynomial-regression" target="_blank" rel="external">视频地址</a></p>
-<p>你现在了解了多变量的线性回归，在本节中我想告诉你一些用来选择特征的方法，以及如何得到不同的学习算法。当选择了合适的特征后，这些算法往往是非常有效的。另外，我也想给你们讲一讲多项式回归，它使得你们能够使用，线性回归的方法来拟合非常复杂的函数，甚至是非线性函数。</p>
-<h3 id="特征的选择">特征的选择</h3><p>以预测房价为例，假设你有两个特征，分别是房子临街的宽度和垂直宽度。这就是我们想要卖出的房子的图片：</p>
-<p><img src="/img/16_07_29/019.png" alt=""></p>
-<p>临街宽度其实就是拥有的土地的宽度，而纵向深度就是你的房子的深度。你可能会建立一个像这样的线性回归模型：</p>
-<p><strong>Housing prices prediction</strong></p>
-<p>$$<br>h_{θ}(x) = Θ_{0} + Θ_{1} × frontage + Θ_{2} × depth<br>$$</p>
-<p>其中临街宽度是你的第一个特征$frontage$，纵深是你的第二个特征$depth$。但当我们在运用线性回归时，你不一定非要直接用给出的$frontage$和$depth$作为特征，其实你可以自己创造新的特征。因此，如果我要预测房子的价格，我真正要需做的也许是确定真正能够决定我房子大小，或者说我土地大小的因素是什么。因此，我可能会创造一个新的特征，我称之为$x$。它是临街宽度与纵深的乘积：</p>
-<p>$$<br>x = frontage × depth<br>$$</p>
-<p>$$<br>h_{θ}(x) = Θ_{0} + Θ_{1}x<br>$$</p>
-<p>这得到的就是我拥有的土地的面积。然后我可以把假设选择为使其只使用一个特征，也就是我的土地的面积。</p>
-<p>由于矩形面积的计算方法是矩形长和宽相乘，因此这取决于你从什么样的角度去审视一个特定的问题，而不是直接去使用临街宽度和纵深，这两个我们只是碰巧在开始时使用的特征。有时通过定义新的特征，你确实会得到一个更好的模型。</p>
-<h3 id="多项式回归">多项式回归</h3><p>与选择特征的想法密切相关的一个概念，被称为<strong>多项式回归(polynomial regression)</strong>。</p>
-<p>比方说你有这样一个住房价格的数据集：</p>
-<p><img src="/img/16_07_29/020.png" alt=""></p>
-<p>为了拟合它，可能会有多个不同的模型供选择。其中一个你可以选择的是像这样的二次模型：</p>
-<p>$$<br>θ_{0} + θ_{1}x + θ_{2}x^{2}<br>$$</p>
-<p>因为直线似乎并不能很好地拟合这些数据，因此也许你会想到用这样的二次模型去拟合数据。</p>
-<p>但是你可能会觉得二次函数的模型并不好用，因为一个二次函数最终会降回来。而我们并不认为房子的价格在高到一定程度后会下降回来：</p>
-<p><img src="/img/16_07_29/021.png" alt=""></p>
-<p>因此也许我们会选择一个不同的多项式模型，并转而选择使用一个三次函数：</p>
-<p>$$<br>θ_{0} + θ_{1}x + θ_{2}x^{2} + θ_{3}x^{3}<br>$$</p>
-<p>我们用这个三次函数进行拟合，我们可能得到这样的模型（绿线部分）：</p>
-<p><img src="/img/16_07_29/022.png" alt=""></p>
-<p>也许这条绿色的线对这个数据集拟合得更好，因为它不会在最后下降回来。</p>
-<p>那么，我们到底应该如何将模型与我们的数据进行拟合呢？使用多元线性回归的方法，我们可以通过将我们的算法做一个非常简单的修改来实现它：</p>
-<p>$$<br>\begin{align*}<br>h_{θ}(x) &amp;= θ_{0} + θ_{1}x_{1} + θ_{2}x_{2} + θ_{3}x_{3}<br>\\&amp;=<br>θ_{0} + θ_{1}(size) + θ_{2}(size)^{2} + θ_{3}(size)^{3}<br>\end{align*}<br>$$</p>
-<p>$$<br>x_{1} = (size) \\<br>x_{2} = (size)^{2} \\<br>x_{3} = (size)^{3} \\<br>$$</p>
-<p>我还想再说一件事，如果你像这样选择特征，那么特征的归一化就变得更重要了。因此，如果房子的大小范围在<code>1</code>到<code>1000</code>之间，那么房子面积的平方的范围就是<code>1</code>到<code>10000000</code>（也就是$1000^{2}$），而你的第三个特征$x_{3}$ 它是房子面积的立方,范围会扩大到1到$10^{9}$。这三个特征的范围有很大的不同，因此，如果你使用梯度下降法，应用特征值的归一化是非常重要的，这样才能将他们的值的范围变得具有可比性。</p>
-<p>最后一个例子，除了建立一个三次模型以外，你也许有其他的选择特征的方法。这里有很多可能的选项，但是给你另外一个合理的选择的例子：</p>
-<p>$$<br>h_{θ}(x) = θ_{0} + θ_{1}(size) + θ_{2}\sqrt{(size)}<br>$$</p>
-<p>这样的一种函数曲线看起来趋势是上升的，但慢慢变得平缓一些，而且永远不会下降回来：</p>
-<p><img src="/img/16_07_29/023.png" alt=""></p>
-<p>在这段视频中，我们探讨了多项式回归。也就是如何将一个多项式如一个二次函数或一个三次函数拟合到你的数据上。除了这个方面我们还讨论了：在使用特征时的选择性。例如：我们不使用房屋的临街宽度和纵深，也许你可以把它们乘在一起从而得到房子的土地面积这个特征。实际上这似乎有点难以抉择，这里有这么多不同的特征选择，我该如何决定使用什么特征呢？</p>
-<p>在之后的课程中我们将探讨一些算法，它们能够<strong>自动选择要使用什么特征</strong>。因此你可以使用一个算法观察给出的数据，并自动为你选择到底应该选择一个二次函数，或者一个三次函数，还是别的函数。但是，在我们学到那种算法之前，现在我希望你知道，你需要选择使用什么特征并且通过设计不同的特征，你能够用更复杂的函数去拟合你的数据，而不是只用一条直线去拟合。特别是你也可以使用多项式函数，有时候通过采取适当的角度来观察 特征就可以得到一个更符合你的数据的模型。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/07/26/斯坦福机器学习课程 第二周 (1)编程环境设置-Octave:MATLAB/" itemprop="url">
-                斯坦福机器学习课程 第二周 (1)编程环境设置-Octave/MATLAB
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-07-26T12:17:00+08:00" content="2016-07-26">
-            2016-07-26
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/07/26/斯坦福机器学习课程 第二周 (1)编程环境设置-Octave:MATLAB/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/26/斯坦福机器学习课程 第二周 (1)编程环境设置-Octave:MATLAB/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="设置你的编程环境">设置你的编程环境</h2><p>这个机器学习的课程包括几个你需要完成的编程任务。这些任务需要Octave或MATLAB科学计算语言。</p>
-<ul>
-<li>Octave是一个免费、开源的应用。它拥有一个文本接口以及一个实验图形化接口。</li>
-<li>MATLAB是一个专有软件。但是针对本套课程有一个免费的受限制的版本可以使用。</li>
-</ul>
-<h3 id="FAQ">FAQ</h3><p>这些需要花钱吗？</p>
-<p>针对你当前正在学习的课程，这两个软件都是免费的。Octave是在GNU协议下被开放的，这意味着它一直是可以免费下载的。MATLAB只能用于完成本课程中的编程任务。对于其他的使用目的（例如你在完成课程之后去做的你自己的工作），MATLAB可以从Mathworks直接授权给个人或者公司。</p>
-<p>这两者（Octave和MATLAB）质量有不同吗？</p>
-<p>这两个软件有一些微妙的区别。MATLAB会提供一个更平滑的体验（尤其在Mac下），包含更多的函数，以及能够更稳健的处理失败。然而，这套课程中使用到的函数在两个软件里都有的，并且不管是哪个应用，都有很多学生用它完成了课程内容。</p>
-<h2 id="在Windows下安装Octave/MATLAB">在Windows下安装Octave/MATLAB</h2><h3 id="在Windows下安装Octave">在Windows下安装Octave</h3><p><strong>使用这个链接来在Windows安装Octave</strong>:</p>
-<p><a href="http://wiki.octave.org/Octave_for_Microsoft_Windows" target="_blank" rel="external">http://wiki.octave.org/Octave_for_Microsoft_Windows</a></p>
-<p>在Windows下Octave能用来提交本课程的编程任务，但是需要安装一个在论坛区中的补丁。查看更多你当前版本的补丁信息，参见<a href="https://www.coursera.org/learn/machine-learning/discussions/vgCyrQoMEeWv5yIAC00Eog?page=2" target="_blank" rel="external">https://www.coursera.org/learn/machine-learning/discussions/vgCyrQoMEeWv5yIAC00Eog?page=2</a>。</p>
-<h3 id="在Windows下安装MATLAB。">在Windows下安装MATLAB。</h3><p>在course中MathWorks提供了一个MATLAB的入口。不过要注意的是请在课程的有效时间内使用(12周之内)。</p>
-<p>第一步：如果你没有MathWork，请<a href="https://www.mathworks.com/licensecenter/classroom/machine_learning_od/" target="_blank" rel="external">创建一个MathWork账号</a>。</p>
-<p>第二步：再次使用<a href="https://www.mathworks.com/licensecenter/classroom/machine_learning_od/" target="_blank" rel="external">这个连接</a>去下载并安装。你需要登录在第一步中创建的账号，然后开始安装。</p>
-<h2 id="在Mac_OS_X_(10-10_Yosemite_以及_10-9_Mavericks)上安装Octave/MATLAB">在Mac OS X (10.10 Yosemite 以及 10.9 Mavericks)上安装Octave/MATLAB</h2><h3 id="在Mac_OS_X上安装Octave">在Mac OS X上安装Octave</h3><p>Mac OS X上有一个被称为<a href="http://support.apple.com/en-us/HT202491" target="_blank" rel="external">Gatekeeper</a>的功能，这个功能只允许你安装来自App store的程序。你需要设置它来允许安装Octave。打开你的系统偏好，点击安全性与隐私，然后勾选设置允许下载的应用位置为“任何来源”。你需要输入密码来解锁设置页面。</p>
-<p><img src="/img/16_07_25/002.png" alt=""><br><img src="/img/16_07_25/003.png" alt=""></p>
-<p>2.下载<a href="http://sourceforge.net/projects/octave/files/Octave%20MacOSX%20Binary/2013-12-30%20binary%20installer%20of%20Octave%203.8.0%20for%20OSX%2010.9.1%20%28beta%29/GNU_Octave_3.8.0-6.dmg/download" target="_blank" rel="external">Octave3.8.0安装包</a>，文件有点大，可能需要花费一些时间。</p>
-<p>3.打开下载好的文件，可能在你的电脑上文件名为”GNU_Octave_3.8.0-6.dmg”，然后打开里面的”Octave-3.8.0-6.mpkg”。</p>
-<p>4.根据安装程序的说明。你也许需要输入你电脑的管理员密码。</p>
-<p>5.安装成功后，你会在应用中看到<strong>Octave-cli</strong>。这是一个Octave的文本界面入口，通过它，我们可以完成机器学习的编程任务。</p>
-<p>Octave也拥有一个叫做”Octave-gui”的处于实验阶段的图形界面入口，但我们任然建议你使用Octave-cli，因为它更稳定。</p>
-<blockquote>
-<p>提示：如果你在使用一个包管理器（例如MacPorts或者Homebrew），我们建议你使用<a href="http://wiki.octave.org/Octave_for_MacOS_X#Package_Managers" target="_blank" rel="external">通过包管理器的安装方式</a>。</p>
-</blockquote>
-<h3 id="在Mac_OS_X上安装MATLAB">在Mac OS X上安装MATLAB</h3><p>在course中MathWorks提供了一个MATLAB的入口。不过要注意的是请在课程的有效时间内使用(12周之内)。</p>
-<p>第一步：如果你没有MathWork，请<a href="https://www.mathworks.com/licensecenter/classroom/machine_learning_od/" target="_blank" rel="external">创建一个MathWork账号</a>。</p>
-<p>第二步：再次使用<a href="https://www.mathworks.com/licensecenter/classroom/machine_learning_od/" target="_blank" rel="external">这个连接</a>去下载并安装。你需要登录在第一步中创建的账号，然后开始安装。</p>
-<h2 id="在GNU/Linux上安装Octave/MATLAB">在GNU/Linux上安装Octave/MATLAB</h2><h3 id="在GNU/Linux上安装Octave">在GNU/Linux上安装Octave</h3><p>我们建议你<a href="http://wiki.octave.org/Octave_for_GNU/Linux" target="_blank" rel="external">使用系统包管理器来安装Octave</a></p>
-<p>在Ubuntu上，你可以使用：</p>
-<ul>
-<li><code>sudo apt-get update &amp;&amp; sudo apt-get install octave</code></li>
-</ul>
-<p>在Fedora上，你可以使用：</p>
-<ul>
-<li><code>sudo yum install octave-forge</code></li>
-</ul>
-<p>其他GNU/Linux系统，请参见<a href="http://wiki.octave.org/Octave_for_GNU/Linux" target="_blank" rel="external">这里</a></p>
-<h3 id="在GNU/Linux上安装MATLAB">在GNU/Linux上安装MATLAB</h3><p>第一步：如果你没有MathWork，请<a href="https://www.mathworks.com/licensecenter/classroom/machine_learning_od/" target="_blank" rel="external">创建一个MathWork账号</a>。</p>
-<p>第二步：再次使用<a href="https://www.mathworks.com/licensecenter/classroom/machine_learning_od/" target="_blank" rel="external">这个连接</a>去下载并安装。你需要登录在第一步中创建的账号，然后开始安装。</p>
-<h2 id="更多Octave/MATLAB的资源">更多Octave/MATLAB的资源</h2><h3 id="Octave资源">Octave资源</h3><p>在Octave命令行下，输入<strong>help</strong>跟上一个函数名来展示这个函数的说明文档。例如:<strong>help plot</strong>将呼起一个有关测绘(plotting)的帮助信息。更多的信息，请见<a href="http://www.gnu.org/software/octave/doc/interpreter/" target="_blank" rel="external">文档页</a>。</p>
-<h3 id="MATLAB资源">MATLAB资源</h3><p>在MATLAB命令行下，输入<strong>help</strong>跟上一个函数名来展示这个函数的说明文档。例如:<strong>help plot</strong>将呼起一个有关测绘(plotting)的帮助信息。更多的信息，请见<a href="http://cn.mathworks.com/help/matlab/?requestedDomain=www.mathworks.com" target="_blank" rel="external">文档页</a>。</p>
-<p>MathWorks也有一系列有关MATLAB功能的视频：</p>
-<p>MATLAB的介绍：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">学习模块</th>
-<th style="text-align:left">学习目标</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/rXwTiKGlilE" target="_blank" rel="external">什么是MATLAB?</a></td>
-<td style="text-align:left">介绍MATLAB</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/iYTzJXXI9vI" target="_blank" rel="external">MATLAB的环境</a></td>
-<td style="text-align:left">命令行，工作空间，目录和编辑器介绍</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/jURDBsIPt5I" target="_blank" rel="external">MATLAB变量</a></td>
-<td style="text-align:left">使用赋值操作符来定义标量变量</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/E7KllorEWkA" target="_blank" rel="external">MATLAB作为一个计算器</a></td>
-<td style="text-align:left">通过MATLAB的语法的方法和标量以及操作顺序来执行算数运算。</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/R-kBvJ3kVVk" target="_blank" rel="external">数学函数</a></td>
-<td style="text-align:left">对方法的输入输出来使用MATLAB的变量，例如：COS，SIN，EXP，NTHROOT。</td>
-</tr>
-</tbody>
-</table>
-<p>向量：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">学习模块</th>
-<th style="text-align:left">学习目标</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/2VNFqxmVqw8" target="_blank" rel="external">通过级联创建向量</a></td>
-<td style="text-align:left">通过输入单个元素创建向量</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/GihLWwp8sBw" target="_blank" rel="external">访问向量的元素</a></td>
-<td style="text-align:left">访问向量的特定元素</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/t9Kla_YFdfs" target="_blank" rel="external">向量运算</a></td>
-<td style="text-align:left">通过包含智能元素操作的向量来执行计算</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/USehPX2iEa4" target="_blank" rel="external">向量的转置</a></td>
-<td style="text-align:left">使用向量的转置来实现向量的行列交换</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/L7cERR5J9XY" target="_blank" rel="external">创建均匀分布的向量(冒号运算符)</a></td>
-<td style="text-align:left">使用冒号运算符来创建指定起始值、终止值以及间隔大小的向量</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/3QM3LRnb4Tw" target="_blank" rel="external">创建均匀分布的向量(LINSPACE 函数)</a></td>
-<td style="text-align:left">使用LINSPAC函数来创建一个向量</td>
-</tr>
-</tbody>
-</table>
-<p>可视化：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">学习模块</th>
-<th style="text-align:left">学习目标</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/00k9A9W0cl8" target="_blank" rel="external">线图</a></td>
-<td style="text-align:left">创建一个向量的折线图并且自定义的绘图标记和颜色</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/ab3XIDdloNI" target="_blank" rel="external">图形注释</a></td>
-<td style="text-align:left">标签轴，添加一个标题，或者对于一个图添加一个描述</td>
-</tr>
-</tbody>
-</table>
-<p>矩阵和数组：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">学习模块</th>
-<th style="text-align:left">学习目标</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/5tm6PKaJdI8" target="_blank" rel="external">创建一个矩阵</a></td>
-<td style="text-align:left">通过直接输入标量创建矩阵</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/DDnm7vek6KY" target="_blank" rel="external">数组创建函数</a></td>
-<td style="text-align:left">通过使用MATLAB的方法，例如<code>ZEROS</code>和<code>EYE</code>，来创建一个更大的矩阵</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/qqQnFp5aiuM" target="_blank" rel="external">访问和数组元素</a></td>
-<td style="text-align:left">通过行和列的索引来访问一个数组的元素</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/SqvtT_VspKU" target="_blank" rel="external">数组的大小和长度</a></td>
-<td style="text-align:left">使用内置函数来确定数组的尺寸</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/TgopxS-_zl8" target="_blank" rel="external">串联阵列</a></td>
-<td style="text-align:left">从一个较小的数组创建一个更大的数组</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/-jgXqAYBhxI" target="_blank" rel="external">矩阵乘法</a></td>
-<td style="text-align:left">执行矩阵乘法并列出关于尺寸不匹配的错误信息</td>
-</tr>
-</tbody>
-</table>
-<p>编程：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">学习模块</th>
-<th style="text-align:left">学习目标</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/TZr6GyxnI_w" target="_blank" rel="external">使用MATLAB编辑器</a></td>
-<td style="text-align:left">在MATLAB编辑器下写一个脚本，并且分块执行这些代码，并且查找方法的帮助</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/5gVKJVVmbrM" target="_blank" rel="external">逻辑运算符</a></td>
-<td style="text-align:left">通过使用关系运算符以及逻辑运算符来创建程序控制的逻辑变量</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/8wxh4LtT--g" target="_blank" rel="external">有条件的数据选择</a></td>
-<td style="text-align:left">允许更改一个满足指定标准的向量元素</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/oaK2-ZT9dls" target="_blank" rel="external">if-else控制语句</a></td>
-<td style="text-align:left">通过使用if-else条件判断语句来控制哪一行代码将被执行</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/1u3RahlWEZA" target="_blank" rel="external">for循环</a></td>
-<td style="text-align:left">重复执行一个指定次数的命令序列</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/dofj51Ovdl4" target="_blank" rel="external">while循环</a></td>
-<td style="text-align:left">当条件判断语句为true时，重复执行一个序列的命令</td>
-</tr>
-</tbody>
-</table>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/07/25/斯坦福机器学习课程 第一周 (6)线性代数复习/" itemprop="url">
-                斯坦福机器学习课程 第一周 (6)线性代数复习
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-07-25T01:51:00+08:00" content="2016-07-25">
-            2016-07-25
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/07/25/斯坦福机器学习课程 第一周 (6)线性代数复习/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/25/斯坦福机器学习课程 第一周 (6)线性代数复习/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="线性代数复习">线性代数复习</h2><blockquote>
-<p>这个可选模块提供了线性代数概念的复习。在接下来的课程中，对线性代数的基本理解是必要的，特别是当我们开始涵盖多个变量的模型时。</p>
-</blockquote>
-<h3 id="矩阵和向量">矩阵和向量</h3><p><a href="https://www.coursera.org/learn/machine-learning/lecture/38jIT/matrices-and-vectors" target="_blank" rel="external">视频地址</a></p>
-<p>我们先复习一下线性代数的知识。在这段视频中，我会向大家介绍<strong>矩阵</strong>和<strong>向量</strong>的概念。</p>
-<h4 id="矩阵">矩阵</h4><blockquote>
-<p><strong>Matrix</strong>:Rectangular array of numbers.</p>
-<p><strong>矩阵</strong>是指由数字组成的矩形阵列并写在方括号中间。</p>
-</blockquote>
-<p>例如下面就是一个矩阵：</p>
-<p>$$<br>\begin{bmatrix}<br>1902 &amp; 191 \\<br>1371 &amp; 821 \\<br>949 &amp; 1437 \\<br>147 &amp; 1448<br>\end{bmatrix}<br>$$</p>
-<p>这些数字可能是机器学习问题的特征值，也可能表示其他意思。</p>
-<p>接下来看一下其他矩阵的例子：</p>
-<p>$$<br>\begin{bmatrix}<br>1 &amp; 2 &amp; 3 \\<br>4 &amp; 5 &amp; 6<br>\end{bmatrix}<br>$$</p>
-<p>这里我们还需要知道的是，矩阵的维度应该写作：矩阵的行数乘以列数。具体到第一个例子是一个$4 × 2$的矩阵(即行数乘以列数)。第二个例子中的矩阵是一个$2 × 3$的矩阵。所以我们说这个矩阵的维度是$2 × 3$维。</p>
-<p>有时候大家会发现会使用字母$\Re$来表示一个矩阵的维度。例如第一个例子中可以写作一个$\Re^{4 × 2}$的矩阵，第二个例子中可以说是一个$\Re^{2 × 3}$的矩阵。</p>
-<p>接下来让我们来谈谈如何表达矩阵的某个特定元素。这里我说矩阵元素(这里指矩阵内部的某个数)。</p>
-<p>我们通常使用矩阵名加下标的方式来表达矩阵中的某个元素。例如:</p>
-<p>$$<br>A_{ij}<br>$$</p>
-<p>表达的是矩阵A中第$i$行，第$j$列的元素。</p>
-<p>在第一个例子的矩阵中，$A_{11}$就等于1402，$A_{11}$就等于191。</p>
-<p>如果你写出了$A_{43}$，这应该表示的是第四行第三列。而你知道 这个矩阵没有第三列。因此这是未定义的。或者你可以认为这是一个错误。</p>
-<p>因此，矩阵提供了一种很好的方式，让你快速整理索引和访问大量数据。所以，这就是矩阵的定义。</p>
-<h4 id="向量">向量</h4><p>接下来让我们来谈谈什么是向量。</p>
-<blockquote>
-<p><strong>Vector</strong>:An n × 1 matrix.<br><strong>向量</strong>是只有一列的矩阵。</p>
-</blockquote>
-<p>例如下面就是一个向量：</p>
-<p>$$<br>y =<br>\begin{bmatrix}<br>460 \\<br>232 \\<br>315 \\<br>178<br>\end{bmatrix}<br>$$</p>
-<p>另一个术语是:这是一个四维的向量。也就意味着这是一个含有4个元素的向量。而且前面我们讲矩阵的时候提到过，这个符号$\Re^{3 × 2}$表示的是一个3行2列的矩阵，而对于这个向量，我们也同样可以表示为集合$\Re^{4}$。</p>
-<p>我们将使用符号$y_{i}$来代表向量$y$的第$i$个元素。例如这里$y_{1}$表示第一个元素460，$y_{2}$表示第二个元素232。只有$y_{1}$至$y_{4}$是有意义的，因为这定义的是一个四维向量。</p>
-<p>此外事实上有两种方法来表达某个向量中某个索引：</p>
-<p><img src="/img/16_07_25/001.png" alt=""></p>
-<p>左边是<strong>1-索引向量</strong>，它的元素写作$y_{1}$，$y_{2}$，$y_{3}$，$y_{4}$。而右边的是<strong>0-索引向量</strong>，它的元素写作，$y_{0}$，$y_{1}$，$y_{2}$，$y_{3}$。这有点像一些初级语言中的数组。</p>
-<p>事实上在数学中，1-索引的情况比较多。而对于很多机器学习的应用问题来说0-索引向量为我们提供了一个更方便的符号表达。</p>
-<p>所以你应该默认我们使用的是1-索引法表示向量。在本课程的后面所有 关于线性代数的视频中，我都将使用1-索引法表示向量。</p>
-<p>但你要明白，当我们谈论到机器学习的应用问题时，如果我们需要使用0-索引向量的话，我会明确地告诉你</p>
-<p>最后，按照惯例，通常在书写矩阵和向量时大多数人会使用大写字母来表示矩阵。因此，我们要使用大写字母，如$A$、$B$、$C$、$X$来表示矩阵。而通常我们会使用小写字母，像$a$、$b$、$x$、$y$来表示数字或是原始的数字或标量或向量。这是实际的使用习惯，我们也经常看到使用小写字母$y$来表示向量，但我们平时是用大写字母来表示矩阵 。</p>
-<h3 id="加减法与数乘运算">加减法与数乘运算</h3><p><a href="https://www.coursera.org/learn/machine-learning/lecture/R4hiJ/addition-and-scalar-multiplication" target="_blank" rel="external">视频地址</a></p>
-<p>在这段视频中，我们将要介绍矩阵的加减法以及数乘运算。</p>
-<h4 id="矩阵的加减法运算">矩阵的加减法运算</h4><p>让我们从下面这个例子开始：</p>
-<p>$$<br>\begin{bmatrix}<br>1 &amp; 0 \\<br>2 &amp; 5 \\<br>3 &amp; 1<br>\end{bmatrix}<br>+<br>\begin{bmatrix}<br>4 &amp; 0.5 \\<br>2 &amp; 5 \\<br>0 &amp; 1<br>\end{bmatrix}<br>=<br>\begin{bmatrix}<br>5 &amp; 0.5 \\<br>4 &amp; 10 \\<br>3 &amp; 2<br>\end{bmatrix}<br>$$</p>
-<p>假设有这样两个矩阵，如果想对它们做求和运算，应该怎么做呢？答案是：如果你想将两个矩阵相加，你只需要将这两个矩阵的每一个元素都逐个相加即可。</p>
-<p>这里大家不难发现，<strong>只有相同维度的两个矩阵才能相加</strong>。对于这个例子而言，是两个3行2列的矩阵相加，这是一个3行2列的矩阵，因此这两个矩阵相加的结果也是一个3行2列的矩阵。所以你只能将相同维度的矩阵，进行相加运算，同时所得到的结果将会是一个新的矩阵，这个矩阵与相加的两个矩阵维度相同。</p>
-<p>反过来，如果你想将下面这样两个维度不相同的矩阵相加，就会出现错误了。所以我们不能将它们相加，这两个矩阵的和是没有意义的。</p>
-<p>$$<br>\begin{bmatrix}<br>1 &amp; 0 \\<br>2 &amp; 5 \\<br>3 &amp; 1<br>\end{bmatrix}<br>+<br>\begin{bmatrix}<br>4 &amp; 0.5 \\<br>2 &amp; 5<br>\end{bmatrix}<br>=<br>error<br>$$</p>
-<p>这就是矩阵的加法运算。</p>
-<h4 id="矩阵的数乘运算">矩阵的数乘运算</h4><p>矩阵的数乘运算指的是用标量去乘以矩阵中的每个元素，最终得到的结果就是数乘运算的结果矩阵。这里的标量指的是实数。</p>
-<p>例如下面两个例子：</p>
-<p>$$<br>3 ×<br>\begin{bmatrix}<br>1 &amp; 0 \\<br>2 &amp; 5 \\<br>3 &amp; 1<br>\end{bmatrix}<br>=<br>\begin{bmatrix}<br>3 &amp; 0 \\<br>6 &amp; 15 \\<br>9 &amp; 3<br>\end{bmatrix}<br>$$</p>
-<p>$$<br>\begin{bmatrix}<br>4 &amp; 0 \\<br>6 &amp; 3<br>\end{bmatrix}<br>/ 4<br>=<br>1/4<br>\begin{bmatrix}<br>4 &amp; 0 \\<br>6 &amp; 3<br>\end{bmatrix}<br>=<br>\begin{bmatrix}<br>1 &amp; 0 \\<br>3/2 &amp; 3/4<br>\end{bmatrix}<br>$$</p>
-<h3 id="矩阵乘法">矩阵乘法</h3><p>见<a href="/2015/11/29/线性代数01-矩阵乘法/">矩阵乘法</a></p>
-<h3 id="矩阵乘法性质">矩阵乘法性质</h3><p><a href="https://www.coursera.org/learn/machine-learning/lecture/W1LNU/matrix-multiplication-properties" target="_blank" rel="external">视频地址</a></p>
-<p>本节主要介绍矩阵乘法的性质。</p>
-<h4 id="矩阵乘法不满足交换律">矩阵乘法不满足交换律</h4><blockquote>
-<p>Let A and B be matrices.Then in general, A × B ≠ B × A.(not commutative.)<br>如果A和B是矩阵，那么一般情况下，A × B ≠ B × A (不满足交换律)。</p>
-</blockquote>
-<p>例如：</p>
-<p>$$<br>\begin{bmatrix}<br>1 &amp; 1 \\<br>0 &amp; 0<br>\end{bmatrix}<br>\begin{bmatrix}<br>0 &amp; 0 \\<br>2 &amp; 0<br>\end{bmatrix}<br>=<br>\begin{bmatrix}<br>2 &amp; 0 \\<br>0 &amp; 0<br>\end{bmatrix}<br>$$</p>
-<p>$$<br>\begin{bmatrix}<br>0 &amp; 0 \\<br>2 &amp; 0<br>\end{bmatrix}<br>\begin{bmatrix}<br>1 &amp; 1 \\<br>0 &amp; 0<br>\end{bmatrix}<br>=<br>\begin{bmatrix}<br>0 &amp; 0 \\<br>2 &amp; 2<br>\end{bmatrix}<br>$$</p>
-<h4 id="矩阵乘法满足结合律">矩阵乘法满足结合律</h4><p>$$<br>A × B × C = (A × B) × C = A × (B × C)<br>$$</p>
-<h4 id="单位矩阵">单位矩阵</h4><p>定义单位矩阵为$I$(或者$I_{n×n}$)。单位矩阵满足:</p>
-<p>$$<br>I × Z = Z × I = Z<br>$$</p>
-<p>其中$Z$是任意矩阵。</p>
-<p>实际上单位矩阵就是对角线上元素为1，其他元素为0的方阵。例如下面几个都是单位矩阵：</p>
-<p>$$<br>\begin{bmatrix}<br>1 &amp; 0 \\<br>0 &amp; 1<br>\end{bmatrix}<br>$$</p>
-<p>$$<br>\begin{bmatrix}<br>1 &amp; 0 &amp; 0\\<br>0 &amp; 1 &amp; 0\\<br>0 &amp; 0 &amp; 1<br>\end{bmatrix}<br>$$</p>
-<h3 id="矩阵的逆和矩阵的转置">矩阵的逆和矩阵的转置</h3><h4 id="矩阵的逆">矩阵的逆</h4><p>矩阵的逆以及求解逆的方式，见<a href="/2015/11/29/线性代数02-矩阵的逆/">矩阵的逆</a></p>
-<p>奇异矩阵的介绍，见<a href="/2015/11/30/线性代数04-奇异矩阵/">奇异矩阵</a></p>
-<h4 id="矩阵的转置">矩阵的转置</h4><p>如果用$A$表示一个矩阵，那么矩阵A的转置就是$A^{T}$。矩阵的转置就相当于将这个矩阵按照45度角求镜像，矩阵的行变为矩阵的列，矩阵的列变为矩阵的行。</p>
-<blockquote>
-<p>Let A be an $m × n$ matrix, and let $B = A^{T}$.Then $B$ is an $n × m$ matrix, and $B_{ij} = A_{ji}$.<br>如果A是一个$m × n$的矩阵，并且矩阵B是A的转置，那么B是一个$n × m$的矩阵，并且$B_{ij} = A_{ji}$。</p>
-</blockquote>
-<p>举个例子：</p>
-<p>$$<br>A =<br>\begin{bmatrix}<br>1 &amp; 2 &amp; 0\\<br>3 &amp; 5 &amp; 9<br>\end{bmatrix}<br>$$</p>
-<p>$$<br>A^{T} =<br>\begin{bmatrix}<br>1 &amp; 3\\<br>2 &amp; 5\\<br>0 &amp; 9<br>\end{bmatrix}<br>$$</p>
-<p>矩阵的转置就是第一个矩阵的第一行转变为转置的第一列，第二行转变为第二列。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/">&laquo;</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/6/">&raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/4/">&laquo;</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/6/">&raquo;</a>
   </nav>
 
  </div>
@@ -2696,7 +2861,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">98</span>
+              <span class="site-state-item-count">101</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
