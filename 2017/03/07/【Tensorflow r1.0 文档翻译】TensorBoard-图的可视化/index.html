@@ -37,16 +37,44 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="一只在迈向机器学习道路上狂奔的程序猿.">
+<meta name="description" content="TensorFlow计算图是强大而复杂的。图形可视化可以帮助您理解和调试它们。这里有一个可视化工作的例子。
+
+TensorFlow图的可视化。
+如有想查看你的图，你需要运行TensorBoard并将其指向你的作业的日志目录，单击顶部窗格上的图形选项卡，然后使用左上角的菜单选择适当的运行。有关如何运行TensorBoard并确保您记录所有必要信息的深入信息，请参阅TensorBoard：可视化学习。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Tensorflow r1.0 文档翻译】TensorBoard:图的可视化">
 <meta property="og:url" content="http://dannylee1991.github.io/2017/03/07/【Tensorflow r1.0 文档翻译】TensorBoard-图的可视化/index.html">
 <meta property="og:site_name" content="DannyLee">
-<meta property="og:description" content="一只在迈向机器学习道路上狂奔的程序猿.">
-<meta property="og:updated_time" content="2017-03-07T13:10:25.000Z">
+<meta property="og:description" content="TensorFlow计算图是强大而复杂的。图形可视化可以帮助您理解和调试它们。这里有一个可视化工作的例子。
+
+TensorFlow图的可视化。
+如有想查看你的图，你需要运行TensorBoard并将其指向你的作业的日志目录，单击顶部窗格上的图形选项卡，然后使用左上角的菜单选择适当的运行。有关如何运行TensorBoard并确保您记录所有必要信息的深入信息，请参阅TensorBoard：可视化学习。">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_03_07/007.gif">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_03_07/008.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_03_07/009.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_03_07/010.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_03_07/011.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_03_07/012.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_03_07/013.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_03_07/014.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_03_07/015.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_03_07/016.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_03_07/017.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_03_07/018.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_03_07/019.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_03_07/020.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_03_07/021.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_03_07/022.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_03_07/023.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_03_07/024.png">
+<meta property="og:updated_time" content="2017-03-08T15:36:17.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【Tensorflow r1.0 文档翻译】TensorBoard:图的可视化">
-<meta name="twitter:description" content="一只在迈向机器学习道路上狂奔的程序猿.">
+<meta name="twitter:description" content="TensorFlow计算图是强大而复杂的。图形可视化可以帮助您理解和调试它们。这里有一个可视化工作的例子。
+
+TensorFlow图的可视化。
+如有想查看你的图，你需要运行TensorBoard并将其指向你的作业的日志目录，单击顶部窗格上的图形选项卡，然后使用左上角的菜单选择适当的运行。有关如何运行TensorBoard并确保您记录所有必要信息的深入信息，请参阅TensorBoard：可视化学习。">
+<meta name="twitter:image" content="http://dannylee1991.github.io/img/17_03_07/007.gif">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -260,7 +288,131 @@ var _hmt = _hmt || [];
       
 
       
-        <span itemprop="articleBody"></span>
+        <span itemprop="articleBody"><p>TensorFlow计算图是强大而复杂的。图形可视化可以帮助您理解和调试它们。这里有一个可视化工作的例子。</p>
+<p><img src="/img/17_03_07/007.gif" alt=""></p>
+<p><em>TensorFlow图的可视化。</em></p>
+<p>如有想查看你的图，你需要运行TensorBoard并将其指向你的作业的日志目录，单击顶部窗格上的图形选项卡，然后使用左上角的菜单选择适当的运行。有关如何运行TensorBoard并确保您记录所有必要信息的深入信息，请参阅<a href="/2017/03/07/【Tensorflow%20r1.0%20文档翻译】TensorBoard-可视化学习/">TensorBoard：可视化学习</a>。</p>
+<h2 id="名称作用域和节点">名称作用域和节点</h2><p>典型的TensorFlow图可以有成千上万的节点 - 这个展示量太大了，以至于即使使用标准图工具来布局也太大了。为了简化显示，我们通过变量名指定其对应的作用域，通过使用这些信息来定义图中节点图层的可视化。默认情况下，只显示此层次结构的顶部部分。下面是一个使用<a href="https://www.tensorflow.org/api_docs/python/tf/name_scope" target="_blank" rel="external"><code>tf.name_scope</code></a>在隐藏名称范围下定义三个操作的示例：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">import tensorflow <span class="keyword">as</span> <span class="keyword">tf</span></div><div class="line"></div><div class="line">with <span class="keyword">tf</span>.name_scope(<span class="string">'hidden'</span>) <span class="keyword">as</span> scope:</div><div class="line">  <span class="keyword">a</span> = <span class="keyword">tf</span>.constant(<span class="number">5</span>, name=<span class="string">'alpha'</span>)</div><div class="line">  W = <span class="keyword">tf</span>.Variable(<span class="keyword">tf</span>.random_uniform([<span class="number">1</span>, <span class="number">2</span>], -<span class="number">1.0</span>, <span class="number">1.0</span>), name=<span class="string">'weights'</span>)</div><div class="line">  <span class="keyword">b</span> = <span class="keyword">tf</span>.Variable(<span class="keyword">tf</span>.zeros([<span class="number">1</span>]), name=<span class="string">'biases'</span>)</div></pre></td></tr></table></figure>
+<p>这将产生以下三个操作名称：</p>
+<ul>
+<li><code>hidden/alpha</code></li>
+<li><code>hidden/weights</code></li>
+<li><code>hidden/biases</code></li>
+</ul>
+<p>默认情况下，可视化将这三个操作压缩到标记为<code>hidden</code>的节点中。额外的细节不会丢失。您可以双击或单击右上角的橙色<code>+</code>号来展开节点，然后您将看到三个子节点的<code>alpha</code>，<code>weights</code>和<code>biases</code>。</p>
+<p>这是一个在初始化和展开状态更复杂的真实例子：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"><img src="/img/17_03_07/008.png" alt=""></th>
+<th style="text-align:left"><img src="/img/17_03_07/009.png" alt=""></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">顶层名称作用域<strong>pool_1</strong>的初始化视图。单击右上角的橙色<code>+</code>按钮或双击节点本身将会展开它。</td>
+<td style="text-align:left"><strong>pool_1</strong>名称作用域的展开视图。单击右上角的橙色按钮或双击节点本身将折叠名称作用域。</td>
+</tr>
+</tbody>
+</table>
+<p>按名称范围对节点分组对于创建清晰的图表至关重要。如果您正在构建模型，名称作用域可以控制生成的可视化。<strong>你的名字的作用域越好，可视化效果越好。</strong></p>
+<p>上图说明了可视化的第二个方面。TensorFlow图有两种连接：数据依赖和控制依赖。数据依赖显示了两个操作之间的tensor流，并且示为实箭头，而控制依赖使用虚线。在扩展视图（上图右侧）中，所有连接都是数据依赖关系，但连接<code>CheckNumerics</code>和<code>control_dependency</code>的虚线除外。</p>
+<p>还有第二种简化布局的小技巧。大多数TensorFlow图都存在几个与其他节点有很多连接的节点。例如，许多节点可能对初始化步骤具有控制依赖性。绘制<code>init</code>节点以及其依赖项之间的所有边将创建一个非常混乱的视图。</p>
+<p>为了减少杂乱程度，可视化将所有高度节点分离到右侧的辅助区域，并且不绘制代表它们边缘的线。相对于用线来表示边缘来讲，这里我们绘制小节点图标以指示连接关系。分离出辅助节点通常不会移除关键信息，因为这些节点通常与记录方法相关。有关如何在主图和辅助区域之间移动节点，请参阅<a href="#交互">交互</a>部分。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"><img src="/img/17_03_07/010.png" alt=""></th>
+<th style="text-align:left"><img src="/img/17_03_07/011.png" alt=""></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">节点<strong>conv_1</strong>已被连接到<strong>save</strong>。注意它右边的小<strong>save</strong>节点图标。</td>
+<td style="text-align:left"><strong>save</strong>有高度，并且将作为辅助节点出现。与<strong>conv_1</strong>的连接在其左侧显示为节点图标。为了进一步减少杂乱程度，由于<strong>save</strong>有很多连接，我们显示到第5个，其他缩写为<strong>… 12 more</strong>。</td>
+</tr>
+</tbody>
+</table>
+<p>最后一个结构简化是series collapsing(系列折叠)。有顺序的图案 - 也就是说，其名称与末尾的数字不同并且具有相同构结构的节点被折叠为单个节点堆叠，如下所示。对于具有长序列的网络，这极大地简化了视图的显示。与分层节点一样，双击也可以展开。有关如何为特定节点集禁用/启用系列折叠，请参阅<a href="#交互">交互</a>。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"><img src="/img/17_03_07/012.png" alt=""></th>
+<th style="text-align:left"><img src="/img/17_03_07/013.png" alt=""></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">节点序列的折叠视图。</td>
+<td style="text-align:left">双击后的一个小块的展开视图。</td>
+</tr>
+</tbody>
+</table>
+<p>最后，作为可读性的最后一个辅助部分，可视化对常量和摘要节点使用一些特定的图标来。下面是一个节点符号对照表：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">符号</th>
+<th style="text-align:left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><img src="/img/17_03_07/014.png" alt=""></td>
+<td style="text-align:left">高级节点，代表名称作用域。双击展开高级节点。</td>
+</tr>
+<tr>
+<td style="text-align:left"><img src="/img/17_03_07/015.png" alt=""></td>
+<td style="text-align:left">编号节点序列，它们彼此没有连接</td>
+</tr>
+<tr>
+<td style="text-align:left"><img src="/img/17_03_07/016.png" alt=""></td>
+<td style="text-align:left">编号节点序列，它们是彼此连接的</td>
+</tr>
+<tr>
+<td style="text-align:left"><img src="/img/17_03_07/017.png" alt=""></td>
+<td style="text-align:left">单个操作节点。</td>
+</tr>
+<tr>
+<td style="text-align:left"><img src="/img/17_03_07/018.png" alt=""></td>
+<td style="text-align:left">常数</td>
+</tr>
+<tr>
+<td style="text-align:left"><img src="/img/17_03_07/019.png" alt=""></td>
+<td style="text-align:left">摘要节点。</td>
+</tr>
+<tr>
+<td style="text-align:left"><img src="/img/17_03_07/020.png" alt=""></td>
+<td style="text-align:left">边缘显示操作之间的数据流。</td>
+</tr>
+<tr>
+<td style="text-align:left"><img src="/img/17_03_07/021.png" alt=""></td>
+<td style="text-align:left">边缘显示操作之间的控制依赖性。</td>
+</tr>
+<tr>
+<td style="text-align:left"><img src="/img/17_03_07/022.png" alt=""></td>
+<td style="text-align:left">表示输出操作节点可以变为输入张量的参考边。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="交互">交互</h2><p>通过平移和缩放导航图。点击并拖动即可平移，并使用滚动手势进行缩放。双击一个节点，或单击其<code>+</code>按钮，可以展开一个表示一组操作的名称作用域。为了在缩放和平移时轻松跟踪当前视点，右下角有一个小地图。</p>
+<p>要关闭打开的节点，请再次双击它，或单击它的 <code>-</code> 按钮。您也可以单击来选择某个节点。它将变成更暗的颜色，并且它的详细信息和它连接的节点将出现在可视化界面的右上角的信息卡中。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"><img src="/img/17_03_07/023.png" alt=""></th>
+<th style="text-align:left"><img src="/img/17_03_07/024.png" alt=""></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">显示<strong>conv2</strong>名称作用域的详细信息的信息卡。输入和输出从名称作用域内的操作节点的输入和输出组合。对于名称作用域，不显示属性。</td>
+<td style="text-align:left">显示<code>DecodeRaw</code>操作节点的详细信息的信息卡。除了输入和输出之外，它还显示了设备和与当前操作相关的属性。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="Tensor形状信息">Tensor形状信息</h2><h2 id="运行时统计">运行时统计</h2></span>
       
     </div>
 
@@ -426,7 +578,7 @@ var _hmt = _hmt || [];
           <div class="post-toc">
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#名称作用域和节点"><span class="nav-number">1.</span> <span class="nav-text">名称作用域和节点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#交互"><span class="nav-number">2.</span> <span class="nav-text">交互</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tensor形状信息"><span class="nav-number">3.</span> <span class="nav-text">Tensor形状信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运行时统计"><span class="nav-number">4.</span> <span class="nav-text">运行时统计</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>

@@ -264,7 +264,131 @@ var _hmt = _hmt || [];
 
       
         
-          <span itemprop="articleBody"></span>
+          <span itemprop="articleBody"><p>TensorFlow计算图是强大而复杂的。图形可视化可以帮助您理解和调试它们。这里有一个可视化工作的例子。</p>
+<p><img src="/img/17_03_07/007.gif" alt=""></p>
+<p><em>TensorFlow图的可视化。</em></p>
+<p>如有想查看你的图，你需要运行TensorBoard并将其指向你的作业的日志目录，单击顶部窗格上的图形选项卡，然后使用左上角的菜单选择适当的运行。有关如何运行TensorBoard并确保您记录所有必要信息的深入信息，请参阅<a href="/2017/03/07/【Tensorflow%20r1.0%20文档翻译】TensorBoard-可视化学习/">TensorBoard：可视化学习</a>。</p>
+<h2 id="名称作用域和节点">名称作用域和节点</h2><p>典型的TensorFlow图可以有成千上万的节点 - 这个展示量太大了，以至于即使使用标准图工具来布局也太大了。为了简化显示，我们通过变量名指定其对应的作用域，通过使用这些信息来定义图中节点图层的可视化。默认情况下，只显示此层次结构的顶部部分。下面是一个使用<a href="https://www.tensorflow.org/api_docs/python/tf/name_scope" target="_blank" rel="external"><code>tf.name_scope</code></a>在隐藏名称范围下定义三个操作的示例：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">import tensorflow <span class="keyword">as</span> <span class="keyword">tf</span></div><div class="line"></div><div class="line">with <span class="keyword">tf</span>.name_scope(<span class="string">'hidden'</span>) <span class="keyword">as</span> scope:</div><div class="line">  <span class="keyword">a</span> = <span class="keyword">tf</span>.constant(<span class="number">5</span>, name=<span class="string">'alpha'</span>)</div><div class="line">  W = <span class="keyword">tf</span>.Variable(<span class="keyword">tf</span>.random_uniform([<span class="number">1</span>, <span class="number">2</span>], -<span class="number">1.0</span>, <span class="number">1.0</span>), name=<span class="string">'weights'</span>)</div><div class="line">  <span class="keyword">b</span> = <span class="keyword">tf</span>.Variable(<span class="keyword">tf</span>.zeros([<span class="number">1</span>]), name=<span class="string">'biases'</span>)</div></pre></td></tr></table></figure>
+<p>这将产生以下三个操作名称：</p>
+<ul>
+<li><code>hidden/alpha</code></li>
+<li><code>hidden/weights</code></li>
+<li><code>hidden/biases</code></li>
+</ul>
+<p>默认情况下，可视化将这三个操作压缩到标记为<code>hidden</code>的节点中。额外的细节不会丢失。您可以双击或单击右上角的橙色<code>+</code>号来展开节点，然后您将看到三个子节点的<code>alpha</code>，<code>weights</code>和<code>biases</code>。</p>
+<p>这是一个在初始化和展开状态更复杂的真实例子：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"><img src="/img/17_03_07/008.png" alt=""></th>
+<th style="text-align:left"><img src="/img/17_03_07/009.png" alt=""></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">顶层名称作用域<strong>pool_1</strong>的初始化视图。单击右上角的橙色<code>+</code>按钮或双击节点本身将会展开它。</td>
+<td style="text-align:left"><strong>pool_1</strong>名称作用域的展开视图。单击右上角的橙色按钮或双击节点本身将折叠名称作用域。</td>
+</tr>
+</tbody>
+</table>
+<p>按名称范围对节点分组对于创建清晰的图表至关重要。如果您正在构建模型，名称作用域可以控制生成的可视化。<strong>你的名字的作用域越好，可视化效果越好。</strong></p>
+<p>上图说明了可视化的第二个方面。TensorFlow图有两种连接：数据依赖和控制依赖。数据依赖显示了两个操作之间的tensor流，并且示为实箭头，而控制依赖使用虚线。在扩展视图（上图右侧）中，所有连接都是数据依赖关系，但连接<code>CheckNumerics</code>和<code>control_dependency</code>的虚线除外。</p>
+<p>还有第二种简化布局的小技巧。大多数TensorFlow图都存在几个与其他节点有很多连接的节点。例如，许多节点可能对初始化步骤具有控制依赖性。绘制<code>init</code>节点以及其依赖项之间的所有边将创建一个非常混乱的视图。</p>
+<p>为了减少杂乱程度，可视化将所有高度节点分离到右侧的辅助区域，并且不绘制代表它们边缘的线。相对于用线来表示边缘来讲，这里我们绘制小节点图标以指示连接关系。分离出辅助节点通常不会移除关键信息，因为这些节点通常与记录方法相关。有关如何在主图和辅助区域之间移动节点，请参阅<a href="#交互">交互</a>部分。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"><img src="/img/17_03_07/010.png" alt=""></th>
+<th style="text-align:left"><img src="/img/17_03_07/011.png" alt=""></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">节点<strong>conv_1</strong>已被连接到<strong>save</strong>。注意它右边的小<strong>save</strong>节点图标。</td>
+<td style="text-align:left"><strong>save</strong>有高度，并且将作为辅助节点出现。与<strong>conv_1</strong>的连接在其左侧显示为节点图标。为了进一步减少杂乱程度，由于<strong>save</strong>有很多连接，我们显示到第5个，其他缩写为<strong>… 12 more</strong>。</td>
+</tr>
+</tbody>
+</table>
+<p>最后一个结构简化是series collapsing(系列折叠)。有顺序的图案 - 也就是说，其名称与末尾的数字不同并且具有相同构结构的节点被折叠为单个节点堆叠，如下所示。对于具有长序列的网络，这极大地简化了视图的显示。与分层节点一样，双击也可以展开。有关如何为特定节点集禁用/启用系列折叠，请参阅<a href="#交互">交互</a>。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"><img src="/img/17_03_07/012.png" alt=""></th>
+<th style="text-align:left"><img src="/img/17_03_07/013.png" alt=""></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">节点序列的折叠视图。</td>
+<td style="text-align:left">双击后的一个小块的展开视图。</td>
+</tr>
+</tbody>
+</table>
+<p>最后，作为可读性的最后一个辅助部分，可视化对常量和摘要节点使用一些特定的图标来。下面是一个节点符号对照表：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">符号</th>
+<th style="text-align:left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><img src="/img/17_03_07/014.png" alt=""></td>
+<td style="text-align:left">高级节点，代表名称作用域。双击展开高级节点。</td>
+</tr>
+<tr>
+<td style="text-align:left"><img src="/img/17_03_07/015.png" alt=""></td>
+<td style="text-align:left">编号节点序列，它们彼此没有连接</td>
+</tr>
+<tr>
+<td style="text-align:left"><img src="/img/17_03_07/016.png" alt=""></td>
+<td style="text-align:left">编号节点序列，它们是彼此连接的</td>
+</tr>
+<tr>
+<td style="text-align:left"><img src="/img/17_03_07/017.png" alt=""></td>
+<td style="text-align:left">单个操作节点。</td>
+</tr>
+<tr>
+<td style="text-align:left"><img src="/img/17_03_07/018.png" alt=""></td>
+<td style="text-align:left">常数</td>
+</tr>
+<tr>
+<td style="text-align:left"><img src="/img/17_03_07/019.png" alt=""></td>
+<td style="text-align:left">摘要节点。</td>
+</tr>
+<tr>
+<td style="text-align:left"><img src="/img/17_03_07/020.png" alt=""></td>
+<td style="text-align:left">边缘显示操作之间的数据流。</td>
+</tr>
+<tr>
+<td style="text-align:left"><img src="/img/17_03_07/021.png" alt=""></td>
+<td style="text-align:left">边缘显示操作之间的控制依赖性。</td>
+</tr>
+<tr>
+<td style="text-align:left"><img src="/img/17_03_07/022.png" alt=""></td>
+<td style="text-align:left">表示输出操作节点可以变为输入张量的参考边。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="交互">交互</h2><p>通过平移和缩放导航图。点击并拖动即可平移，并使用滚动手势进行缩放。双击一个节点，或单击其<code>+</code>按钮，可以展开一个表示一组操作的名称作用域。为了在缩放和平移时轻松跟踪当前视点，右下角有一个小地图。</p>
+<p>要关闭打开的节点，请再次双击它，或单击它的 <code>-</code> 按钮。您也可以单击来选择某个节点。它将变成更暗的颜色，并且它的详细信息和它连接的节点将出现在可视化界面的右上角的信息卡中。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"><img src="/img/17_03_07/023.png" alt=""></th>
+<th style="text-align:left"><img src="/img/17_03_07/024.png" alt=""></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">显示<strong>conv2</strong>名称作用域的详细信息的信息卡。输入和输出从名称作用域内的操作节点的输入和输出组合。对于名称作用域，不显示属性。</td>
+<td style="text-align:left">显示<code>DecodeRaw</code>操作节点的详细信息的信息卡。除了输入和输出之外，它还显示了设备和与当前操作相关的属性。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="Tensor形状信息">Tensor形状信息</h2><h2 id="运行时统计">运行时统计</h2></span>
         
       
     </div>
@@ -359,7 +483,102 @@ var _hmt = _hmt || [];
 
       
         
-          <span itemprop="articleBody"></span>
+          <span itemprop="articleBody"><p>嵌入在机器学习中无处不在，出现在推荐系统，NLP和许多其他应用程序中。事实上，在TensorFlow的上下文中，将tensor（或tensor切片）视为空间中的点是自然的，因此几乎任何TensorFlow系统将自然地产生各种嵌入。</p>
+<p>要了解有关嵌入和如何训练它们的更多信息，请参阅<a href="https://www.tensorflow.org/tutorials/word2vec" target="_blank" rel="external">单词向量表示教程</a>。如果你对图像的嵌入感兴趣，请查看<a href="http://colah.github.io/posts/2014-10-Visualizing-MNIST/" target="_blank" rel="external">这篇文章</a>，了解MNIST图像的有趣的可视化。另一方面，如果你对单词嵌入感兴趣，那么<a href="http://colah.github.io/posts/2014-10-Visualizing-MNIST/" target="_blank" rel="external">这篇文章</a>会给你一个很好的介绍。</p>
+<p>TensorBoard有一个内置的可视化工具，称为嵌入投影仪，用于交互式可视化和分析高维数据，例如嵌入。这意味着对开发人员和研究人员同样有用。它从保存tensorflow变量的检查点文件读取。虽然它对嵌入最有用，它将加载任何2D tensor，可能包括您的训练权重。</p>
+<video height="363" width="710" id="video" controls preload="none" poster="/img/17_03_07/002.png"><br>    <source id="mp4" src="/img/17_03_07/001.mp4" type="video/mp4"><br>    <p>Your user agent does not support the HTML5 Video element.</p><br></video>
+
+<p>默认情况下，嵌入投影仪执行三维<a href="https://en.wikipedia.org/wiki/Principal_component_analysis" target="_blank" rel="external">主成分分析</a>，这意味着它接受你的高维数据，并试图找到一个结构保留投影到三维空间。基本上，它通过旋转你的数据，使前三个维度显示尽可能多的数据方差。<a href="http://setosa.io/ev/principal-component-analysis/" target="_blank" rel="external">这里</a>有一个很好的视觉解释。另一个非常有用的投影是<a href="https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding" target="_blank" rel="external">t-SNE</a>。我们稍后在教程中讨论更多的t-SNE。</p>
+<p>如果您使用嵌入，您可能需要将标签/图像附加到数据点，以告诉可视化器每个数据点对应的标签/图像。您可以通过生成元数据文件，使用我们的Python API将其附加到tensor，或将其上传到已经运行的TensorBoard来完成。</p>
+<h2 id="构建">构建</h2><p>有关如何运行TensorBoard并确保您记录所有必要的信息，请参阅<a href="/2017/03/07/【Tensorflow%20r1.0%20文档翻译】TensorBoard-可视化学习/">TensorBoard-可视化学习/</a>。</p>
+<p>要可视化您的嵌入，您需要做3件事：</p>
+<p>1）设置一个二维tensor变量来保存你的嵌入。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">embedding_var</span> = tf.Variable(....)</div></pre></td></tr></table></figure>
+<p>2）定期将您的嵌入保存在<code>LOG_DIR</code>中。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">saver = tf<span class="selector-class">.train</span><span class="selector-class">.Saver</span>()</div><div class="line">saver.save(session, os<span class="selector-class">.path</span><span class="selector-class">.join</span>(LOG_DIR, <span class="string">"model.ckpt"</span>), step)</div></pre></td></tr></table></figure>
+<p>以下步骤不是必要的，但是如果您有与嵌入相关联的任何元数据（标签，图像），则需要将它们链接到tensor上，以便TensorBoard知道它。</p>
+<p>3）将元数据与嵌入关联。</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">from tensorflow.contrib.tensorboard.plugins <span class="built_in">import</span> projector</div><div class="line"><span class="comment"># Use the same LOG_DIR where you stored your checkpoint.</span></div><div class="line"><span class="attr">summary_writer</span> = tf.train.SummaryWriter(LOG_DIR)</div><div class="line"></div><div class="line"><span class="comment"># Format: tensorflow/contrib/tensorboard/plugins/projector/projector_config.proto</span></div><div class="line"><span class="attr">config</span> = projector.ProjectorConfig()</div><div class="line"></div><div class="line"><span class="comment"># You can add multiple embeddings. Here we add only one.</span></div><div class="line"><span class="attr">embedding</span> = config.embeddings.add()</div><div class="line">embedding.<span class="attr">tensor_name</span> = embedding_var.name</div><div class="line"><span class="comment"># Link this tensor to its metadata file (e.g. labels).</span></div><div class="line">embedding.<span class="attr">metadata_path</span> = os.path.join(LOG_DIR, 'metadata.tsv')</div><div class="line"></div><div class="line"><span class="comment"># Saves a configuration file that TensorBoard will read during startup.</span></div><div class="line">projector.visualize_embeddings(summary_writer, config)</div></pre></td></tr></table></figure>
+<p>运行模型并训练嵌入后，运行TensorBoard并将其指向job的<code>LOG_DIR</code>。</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tensorboard <span class="comment">--logdir=LOG_DIR</span></div></pre></td></tr></table></figure>
+<p>然后单击顶部窗格上的<em>Embeddings</em>选项卡，并选择适当的运行（如果有多个运行）。</p>
+<h2 id="元数据（可选）">元数据（可选）</h2><p>通常嵌入具有与其相关联的元数据（例如，标签，图像）。元数据应存储在模型检查点之外的单独文件中，因为元数据不是模型的可训练参数。格式应为TSV文件，第一行包含列标题，后续行包含元数据值。这里有一个例子：</p>
+<figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Name<span class="symbol">\t</span>Type<span class="symbol">\n</span></div><div class="line">Caterpie<span class="symbol">\t</span>Bug<span class="symbol">\n</span></div><div class="line">Charmeleon<span class="symbol">\t</span>Fire<span class="symbol">\n</span></div><div class="line">…</div></pre></td></tr></table></figure>
+<p>没有与主数据文件共享的显式键;相反，假设元数据文件中的顺序与嵌入tensor中的顺序匹配。换句话说，第一行是头信息，元数据文件中的第(i+1)行对应于存储在检查点中的嵌入tensor的第i行。</p>
+<blockquote>
+<p><strong>注意：</strong>如果TSV元数据文件只有一个列，那么我们不需要一个标题行，并且假设每一行都是嵌入的标签。我们包含此异常，因为它匹配常用的“词汇文件”格式。</p>
+</blockquote>
+<h3 id="图">图</h3><p>如果您有与嵌入关联的图像，则需要生成包含每个数据点的小缩略图的单个图像。这被称为<a href="https://www.google.com/webhp#q=what+is+a+sprite+image" target="_blank" rel="external">精灵图像（sprite image）</a>。精灵应具有相同数目的行和列，缩略图按行首先顺序存储：第一个数据点放置在左上角，最后一个数据点在右下角：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">2</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">5</td>
+</tr>
+<tr>
+<td style="text-align:center">6</td>
+<td style="text-align:center">7</td>
+</tr>
+</tbody>
+</table>
+<p>请注意，在上面的示例中，最后一行不必填写。对于精灵的一个具体示例，请看这个<a href="https://www.tensorflow.org/images/mnist_10k_sprite.png" target="_blank" rel="external">精灵图像</a>的10,000 MNIST数字（100x100）。</p>
+<blockquote>
+<p><strong>注意：</strong>我们目前支持高达8192px X 8192px.的精灵。</p>
+</blockquote>
+<p>构造精灵后，您需要告诉嵌入投影机在哪里可以找到它：</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">embedding.sprite.image_path = PATH_TO_SPRITE_IMAGE</div><div class="line"><span class="comment"># Specify the width and height of a single thumbnail.</span></div><div class="line">embedding.sprite.single_image_dim.<span class="keyword">extend</span>([w, h])</div></pre></td></tr></table></figure>
+<h2 id="相互作用">相互作用</h2><p>嵌入式投影机有三个面板</p>
+<ul>
+<li>1.位于左上方的数据面板，你可以选择你指定的运行、嵌入tensor和数据列来着色和标记点。</li>
+<li>2.位于左下方的预测面板，用于选择投影类型（例如PCA，t-SNE）。</li>
+<li>3.位于右侧的监视面板，在那里你可以搜索特定的点，并查看最近的邻居列表。</li>
+</ul>
+<h3 id="预测">预测</h3><p>嵌入投影仪具有减少数据集的维度的三种方法：两个线性的和一个非线性的。每个方法可用于创建二维或三维视图。</p>
+<p><strong>主成分分析（Principal Component Analysis）</strong>减少维度的主要技术是主成分分析（PCA）。嵌入投影仪计算前10个主要元素。该菜单允许您将这些元素投影到两个或三个任意组合。PCA是一个线性投影，通常用于检查全局几何。</p>
+<p><strong>t-SNE</strong>一种流行的非线性降维技术是T-SNE。嵌入投影机提供二维和三维t-SNE视图。布局是在客户端对算法的每一步执行动画。因为t-SNE经常保留一些局部结构，所以它对于探索局部邻域和找到簇是有用的。虽然对于可视化高维数据非常有用，但t-SNE图有时可能会产生迷惑或者误导的作用。想要了解如何有效地使用t-SNE，可以看看这篇<a href="http://distill.pub/2016/misread-tsne/" target="_blank" rel="external">很棒的文章</a>。</p>
+<p><strong>自定义（Custom）</strong>您还可以基于文本搜索来构造专门的线性投影，以在空间中找到有意义的方向。要定义投影轴，请输入两个搜索字符串或正则表达式。程序计算出其标签与这些搜索匹配的点集合的质心，并使用质心之间的差向量作为投影轴。</p>
+<h3 id="导航">导航</h3><p>要探索数据集，您可以在2D或3D模式中浏览视图，使用自然的点击和拖动手势进行缩放，旋转和平移。单击一个点会使右窗格显示最近邻居的显式文本列表，以及到当前点的距离。最近邻点本身在投影上突出显示。</p>
+<p>放大集群会提供一些信息，但有时更有帮助的是将视图限制为点的子集，并仅对这些点执行投影。为此，您可以通过多种方式选择点：</p>
+<ul>
+<li>1.点击一个点后，也选择其最近的邻居。</li>
+<li>2.搜索后，选择与查询匹配的点。</li>
+<li>3.启用选择，单击点并拖动定义选择球体。</li>
+</ul>
+<p>选择一组点后，您可以使用右侧“检查器”窗格中的“隔离点”按钮单独隔离这些点以进行进一步分析。</p>
+<p><img src="/img/17_03_07/003.png" alt=""></p>
+<p><em>在词嵌入数据集中选择“重要”的最近邻。</em></p>
+<p>过滤与自定义投影的组合的功能是非常强大的。下面，我们过滤了“politics”的100个最接近的邻居，并将它们投影到“best” - “worst”向量作为x轴。 y轴是随机的。</p>
+<p>你可以看到，在右边我们有“ideas”，“science”，“perspective”，“journalism”，而在左边我们有“crisis”，“violence”和“conflict”。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"><img src="/img/17_03_07/006.png" alt=""></th>
+<th style="text-align:left"><img src="/img/17_03_07/004.png" alt=""></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">自定义投影控件。</td>
+<td style="text-align:left">将“politics”的邻居定义为“best” - “worst”向量。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="共同特征">共同特征</h3><p>如果你想要分享您的发现，您可以使用右下角的书签面板，并将当前状态（包括任何投影的计算坐标）保存为小文件。投影仪可以同时打开并展示一个或多个这些小文件。这样一来，其他用户就可以浏览这些书签了。</p>
+<p><img src="/img/17_03_07/005.png" alt=""></p>
+</span>
         
       
     </div>
@@ -474,7 +693,7 @@ var _hmt = _hmt || [];
 <p>现在，你就可以通过TensorBoard来可视化数据了。</p>
 <h2 id="启动TensorBoard">启动TensorBoard</h2><p>要运行TensorBoard，请使用以下命令（或者<code>python -m tensorflow.tensorboard</code>）:</p>
 <figure class="highlight autoit"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tensorboard --logdir=path/<span class="keyword">to</span>/<span class="built_in">log</span>-directory</div></pre></td></tr></table></figure>
-<p>其中<code>logdir</code>指向<code>FileWriter</code>将其数据序列化的目录。如果此logdir目录包含包含单独运行的序列化数据的子目录，则TensorBoard将可视化所有这些运行的数据。TensorBoard开始运行之后，就可以打开您的Web浏览器到<code>localhost：6006</code>来查看TensorBoard了。</p>
+<p>其中<code>logdir</code>指向<code>FileWriter</code>将其数据序列化的目录。如果此logdir目录包含包含单独运行的序列化数据的子目录，则TensorBoard将可视化所有这些运行的数据。TensorBoard开始运行之后，就可以打开您的Web浏览器到<code>localhost:6006</code>来查看TensorBoard了。</p>
 <p>当你看着TensorBoard，你会看到在右上角的导航选项卡。每个选项卡表示可以可视化的一组序列化数据。</p>
 <p>有关如何使用图形选项卡可视化图形的详细信息，请参阅<a href="/2017/03/07/【Tensorflow%20r1.0%20文档翻译】TensorBoard-图的可视化/">TensorBoard：图形可视化</a>。</p>
 <p>有关TensorBoard的更多使用信息，请参阅<a href="https://www.tensorflow.org/code/tensorflow/tensorboard/README.md" target="_blank" rel="external">TensorBoard README</a>。</p>
