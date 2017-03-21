@@ -1168,8 +1168,8 @@ IComplexBookSearcher
           
           
             
-              <a class="post-title-link" href="/2015/09/06/单一职责原则/" itemprop="url">
-                设计模式六大原则之 单一职责原则
+              <a class="post-title-link" href="/2015/09/06/里氏替换原则/" itemprop="url">
+                设计模式六大原则之 里氏替换原则
               </a>
             
           
@@ -1205,8 +1205,8 @@ IComplexBookSearcher
           
             <span class="post-comments-count">
               &nbsp; | &nbsp;
-              <a href="/2015/09/06/单一职责原则/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/06/单一职责原则/" itemprop="commentsCount"></span>
+              <a href="/2015/09/06/里氏替换原则/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/06/里氏替换原则/" itemprop="commentsCount"></span>
               </a>
             </span>
           
@@ -1221,117 +1221,68 @@ IComplexBookSearcher
 
       
         
-          <span itemprop="articleBody"><h2 id="单一职责原则">单一职责原则</h2><p>单一职责原则的英文名称是<strong>Single Responsibility Principle</strong>,简称<strong>SRP</strong>.</p>
-<h2 id="定义">定义</h2><p><strong>单一职责的定义是：</strong></p>
+          <span itemprop="articleBody"><h2 id="里氏替换原则">里氏替换原则</h2><p>里氏替换原则 英文名称<strong>Liskov Subtitution Principle, LSP</strong></p>
+<h2 id="定义">定义</h2><p>传说中最正宗的定义：</p>
 <blockquote>
-<p>There should never be more than one reason for a class to change.</p>
-<p>应该有且仅有一个原因引起类的变更。</p>
+<p>If for each object o1 of type S there is an object o2 of type T such that for all programs P defined in terms of T, the behavior of P is unchanged when o1 is substituted for o2 then S is a subtype of T.</p>
+<p>如果对每一个类型为S的对象o1,都有类型为T的对象o2,使得以T定义的所有程序P在所有的对象o1都代换成o2时，程序P的行为没有发生变化，那么类型S是类型T的子类型.</p>
 </blockquote>
-<h2 id="举例">举例</h2><p>例如IUserInfo接口定义如下：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">IUserInfo</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">+void setUserID(String userID)</td>
-</tr>
-<tr>
-<td style="text-align:left">+String getUserID()</td>
-</tr>
-<tr>
-<td style="text-align:left">+void setPassword(String password)</td>
-</tr>
-<tr>
-<td style="text-align:left">+String getPassword()</td>
-</tr>
-<tr>
-<td style="text-align:left">+void setUserName(String userName)</td>
-</tr>
-<tr>
-<td style="text-align:left">+String getUserName()</td>
-</tr>
-<tr>
-<td style="text-align:left">+boolean changePassword(String oldPassword)</td>
-</tr>
-<tr>
-<td style="text-align:left">+boolean deleteUser()</td>
-</tr>
-<tr>
-<td style="text-align:left">+void mapUser()</td>
-</tr>
-<tr>
-<td style="text-align:left">+boolean addOrg(int orgID)</td>
-</tr>
-<tr>
-<td style="text-align:left">+boolean addRole(int roleID)</td>
-</tr>
-</tbody>
-</table>
-<p>这个接口按照<strong>单一职责</strong>的原则进行拆分，将<strong>用户信息</strong>抽取成一个<strong>BO</strong>(Business Object,业务对象)，将<strong>用户行为</strong>抽取成一个<strong>Biz</strong>(Business Logic,业务逻辑)</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">IUserBO</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">+void setUserID(String userID)</td>
-</tr>
-<tr>
-<td style="text-align:left">+String getUserID()</td>
-</tr>
-<tr>
-<td style="text-align:left">+void setPassword(String password)</td>
-</tr>
-<tr>
-<td style="text-align:left">+String getPassword()</td>
-</tr>
-<tr>
-<td style="text-align:left">+void setUserName(String userName)</td>
-</tr>
-<tr>
-<td style="text-align:left">+String getUserName()</td>
-</tr>
-</tbody>
-</table>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">IUserBiz</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">+boolean changePassword(String oldPassword)</td>
-</tr>
-<tr>
-<td style="text-align:left">+boolean deleteUser()</td>
-</tr>
-<tr>
-<td style="text-align:left">+void mapUser()</td>
-</tr>
-<tr>
-<td style="text-align:left">+boolean addOrg(int orgID)</td>
-</tr>
-<tr>
-<td style="text-align:left">+boolean addRole(int roleID)</td>
-</tr>
-</tbody>
-</table>
-<p>IUserInfo接口继承IUserBO和IUserBiz</p>
-<p>分清职责后的代码示例：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">......</div><div class="line">IUserInfo userInfo = <span class="keyword">new</span> UserInfo();</div><div class="line"><span class="comment">//我要赋值了，我就认为它是一个纯粹的BO</span></div><div class="line">IUserBO userBO = (IUserBO)userInfo;</div><div class="line">userBO.setPassword(<span class="string">"abc"</span>);</div><div class="line"><span class="comment">//我要执行动作了，我就认为是一个业务逻辑类</span></div><div class="line">IUserBiz userBiz = (IUserBiz)userInfo;</div><div class="line">userBiz.deleteUser();</div><div class="line">......</div></pre></td></tr></table></figure>
-<h2 id="注意点：">注意点：</h2><p>单一职责原则最难划分的就是职责。一个职责一个接口，但问题是“职责”没有一个量化的标准，一个类到底要负责那些职责？这些职责该怎样细化？细化后是否都要有一个接口或类？这些都需要从实际的项目去考虑。</p>
-<p>对于接口，我们在设计的时候一定要做到单一，但是对于实现类酒需要多方面考虑了。生搬硬套单一职责原则会引起类的剧增，给维护带来非常多的麻烦，而且过分细分类的职责也会人为地增加系统的复杂性。本来一个类可以实现的，硬要拆成两个类，然后再使用聚合或组合的方式藕合在一起，人为地制造了系统的复杂性。<strong><em>所以原则是死的，人是活的，这句话很有道理。</em></strong></p>
-<p>单一职责适用于接口，类，同时也适用于方法，什么意思呢？一个方法尽可能只做一件事情，比如一个方法修改用户密码，不要把这个方法放到“修改用户信息”方法中，这个方法点颗粒度很粗，比如下面这个方法：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//一个方法承担多个职责</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">changeUser</span><span class="params">(IUserBO userBO,String..changeOptions)</span></span></div></pre></td></tr></table></figure>
-<p>相比较而言，比较好的写法应该是这样的：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">changeUserName</span><span class="params">(String newUserName)</span></span></div><div class="line"><span class="keyword">void</span> <span class="title">changeHomeAddress</span><span class="params">(String newHomeAddress)</span></div><div class="line"><span class="keyword">void</span> <span class="title">changeOfficeTel</span><span class="params">(String telNumber)</span></div></pre></td></tr></table></figure>
-<p>对于单一职责原则，笔者的建议是<strong><em>接口一定要做到单一职责，类的设计尽量做到只有一个原因引起变化。</em></strong></p>
+<p>传说中第二种比较通俗的定义：</p>
+<blockquote>
+<p>Functions that use pointers or references to base classes must be able to use objects of derived classes without knowing it.</p>
+<p>所有引用基类的地方必须能透明地使用其子类的对象。</p>
+</blockquote>
+<p>更通俗的一种定义：</p>
+<blockquote>
+<p>只要父类能出现的地方子类就可以出现，而且替换为子类也不会产生任何错误或异常，使用者可能根本就不需要知道是父类还是子类。但是反过来就不行了，有子类出现的地方，父类未必就能适应。</p>
+</blockquote>
+<h2 id="举例">举例</h2><h3 id="子类必须完全实现父类的方法">子类必须完全实现父类的方法</h3><p>cs游戏中的枪支类图:<br><img src="/img/lishitihuan_1.png" alt="cs游戏枪支类图"></p>
+<p>代码清单：</p>
+<p>枪支的抽象类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">AbstractGun</span> </span>&#123;</div><div class="line">	<span class="comment">//枪用来干什么的？杀敌！</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">shoot</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>手枪、步枪、机枪的实现类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Handgun</span> <span class="keyword">extends</span> <span class="title">AbstractGun</span> </span>&#123;</div><div class="line">	<span class="comment">//手枪的特点是携带方便，射程短</span></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shoot</span><span class="params">()</span> </span>&#123;</div><div class="line">		System.out.println(<span class="string">"手枪射击..."</span>);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Rifle</span> <span class="keyword">extends</span> <span class="title">AbstractGun</span> </span>&#123;</div><div class="line">	<span class="comment">//步枪的特点是射程远，威力大</span></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shoot</span><span class="params">()</span> </span>&#123;</div><div class="line">		System.out.println(<span class="string">"步枪射击..."</span>);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MachineGun</span> <span class="keyword">extends</span> <span class="title">AbstractGun</span> </span>&#123;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shoot</span><span class="params">()</span> </span>&#123;</div><div class="line">		System.out.println(<span class="string">"机枪射击..."</span>);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>士兵的实现类:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Soldier</span> </span>&#123;</div><div class="line">	<span class="comment">//定义士兵的枪支</span></div><div class="line">	<span class="keyword">private</span> AbstractGun gun;</div><div class="line">	<span class="comment">//给士兵一支枪</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setGun</span><span class="params">(AbstractGun _gun)</span></span>&#123;</div><div class="line">		<span class="keyword">this</span>.gun = _gun;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">killEnemy</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"士兵开始杀敌人..."</span>);</div><div class="line">		gun.shoot();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>场景类:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="comment">//产生三毛这个士兵</span></div><div class="line">		Soldier sanMao = <span class="keyword">new</span> Soldier();</div><div class="line">		<span class="comment">//给三毛一支枪</span></div><div class="line">		sanMao.setGun(<span class="keyword">new</span> Rifle());</div><div class="line">		sanMao.killEnemy();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行结果如下:</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">士兵开始杀敌人...</div><div class="line">步枪射击...</div></pre></td></tr></table></figure>
+<p>在这个程序中，我们给三毛这个士兵一把步枪，然后就开始杀敌了。如果要使用机枪，当然也可以，直接把sanMao.setGun(new Rifle())修改为sanMao.setGun(new MachineGun())即可,在编写程序时Solider士兵类根本不用知道是哪个型号的枪（子类）被传入。</p>
+<blockquote>
+<p><strong>注意</strong> 在类中调用其他类时，务必要使用父类或接口，如果不能使用父类或接口，则说明类的设计已经违背了LSP原则。</p>
+</blockquote>
+<p>如果我们要加入一把玩具枪，该如何处理呢？</p>
+<p>第一种处理方式 ToyGun继承AbstractGun<br><img src="/img/lishitihuan_2.png" alt="继承方式拓展玩具枪"></p>
+<p>但是玩具枪毕竟是玩具，不能当作真枪来杀敌人，所以这样拓展并不妥当，更好的处理方式应该是如下图：</p>
+<p><img src="/img/lishitihuan_3.png" alt="委托的方式来拓展玩具枪"></p>
+<p>ToyGun脱离继承，建立一个独立的父类，为了实现代码复用，可以与AbastractGun建立关联委托关系。例如，可以在AbstractToy中声明将声音、形状都委托给AbstractGun处理，仿真枪嘛，形状和声音都要和真实的枪一样了，然后两个基类下的子类自由延展，互不影响。</p>
+<blockquote>
+<p><strong>注意</strong> 如果子类不能完整地实现父类的方法，或者父类的某些方法在子类中已经发生“畸变”，则建议断开父子继承关系，采用依赖、聚集、组合等关系代替继承。</p>
+</blockquote>
+<h3 id="子类可以有自己的个性">子类可以有自己的个性</h3><p>子类当然可以有自己的方法和属性了，这里再次强调，是因为里氏替换原则可以正着用，但是不能反过来用。在子类出现的地方，父类未必就可以胜任。</p>
+<p>以刚才对枪支为例，步枪有几个比较“响亮”的型号，比如AK47、AUG狙击步枪等，把这两个型号的枪引入后的Rifle子类图如下：</p>
+<p><img src="/img/lishitihuan_4.png" alt="步枪扩展"></p>
+<p>代码清单：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AUG</span> <span class="keyword">extends</span> <span class="title">Rifle</span></span>&#123;</div><div class="line">	<span class="comment">//狙击枪都携带一个精准的望远镜</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">zoomOut</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"通过望远镜观察敌人..."</span>);</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shoot</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"AUG射击..."</span>);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>狙击手代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Snipper</span> </span>&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">killEnemy</span><span class="params">(AUG aug)</span></span>&#123;</div><div class="line">		<span class="comment">//首先看看敌人的情况，别杀死敌人，自己也被人干掉</span></div><div class="line">		aug.zoomOut();</div><div class="line">		<span class="comment">//开始射击</span></div><div class="line">		aug.shoot();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>场景类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="comment">//产生三毛这个狙击手</span></div><div class="line">		Snipper sanMao = <span class="keyword">new</span> Snipper();</div><div class="line">		sanMao.setRifle(<span class="keyword">new</span> AUG());</div><div class="line">		sanMao.killEnemy();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">通过望远镜观察敌人...</div><div class="line">AUG射击...</div></pre></td></tr></table></figure>
+<p>那么我们能不能传递Rifle父类给sanMao呢？如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="comment">//产生三毛这个狙击手</span></div><div class="line">		Snipper sanMao = <span class="keyword">new</span> Snipper();</div><div class="line">		sanMao.setRifle((AUG)(<span class="keyword">new</span> Rifle()));</div><div class="line">		sanMao.killEnemy();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>显示是不行的，会在运行期抛出java.lang.ClassCastException异常，这也是大家常说的向下转型（downcast）是不安全的，从里氏替换原则来看，就是有子类出现的地方父类未必就可以出现。</p>
+<h3 id="覆盖或实现父类的方法时输入参数可以被放大">覆盖或实现父类的方法时输入参数可以被放大</h3><blockquote>
+<p>即子类方法的参数应该大于父类方法的参数，即子类方法的参数应该至少与父类相同或者或者是其父类</p>
+</blockquote>
+<h3 id="复写或实现父类的方法时输出结果可以被缩小">复写或实现父类的方法时输出结果可以被缩小</h3><blockquote>
+<p>即子类方法的返回值应该小于父类方法的返回值，即子类的返回值应该至多与父类的返回值相同或者是其子类</p>
+</blockquote>
+<p>以上两点 归根结底一句话：<strong>重载或实现 子类的方法输入范围&gt;=父类，返回范围&lt;=父类</strong>L</p>
 </span>
         
       
