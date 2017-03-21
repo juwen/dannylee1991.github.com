@@ -199,6 +199,206 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2017/02/22/【Tensorflow r1.0 文档翻译】机器学习的HelloWorld -- MNIST手写数字识别/" itemprop="url">
+                【Tensorflow r1.0 文档翻译】机器学习的HelloWorld -- MNIST手写数字识别
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-02-22T19:50:58+08:00" content="2017-02-22">
+            2017-02-22
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+                ， 
+              
+
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/Tensorflow/" itemprop="url" rel="index">
+                  <span itemprop="name">Tensorflow</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/02/22/【Tensorflow r1.0 文档翻译】机器学习的HelloWorld -- MNIST手写数字识别/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/02/22/【Tensorflow r1.0 文档翻译】机器学习的HelloWorld -- MNIST手写数字识别/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p>本教程面向那些不熟悉<strong>机器学习</strong>和<strong>TensorFlow</strong>的读者。如果你已经知道MNIST是什么，softmax（多项Logistic）回归是什么，你可能更喜欢这个<a href="/2017/02/26/【Tensorflow%20r1.0%20文档翻译】深入MNIST--专家级/">更快节奏的教程</a>。在开始教程之前，请确认<a href="https://www.tensorflow.org/install/index" target="_blank" rel="external">安装TensorFlow</a>。</p>
+<p>当一个人开始学习如何编程时，有一个传统，就是编写的第一个程序是能够打印”Hello World.”的程序。正如编程中的”Hello World”一样，机器学习中有MNIST。</p>
+<p>MNIST是一个简单的计算机视觉数据集。它由像以下这样的手写数字的图像组成：</p>
+<p><img src="/img/17_02_22/001.png" alt=""></p>
+<p>它还包括每个图像的标签，用于标识是哪个数字。例如，上述图像的标签是<code>5</code>,<code>0</code>,<code>4</code>和<code>1</code>。</p>
+<p>在本教程中，我们将训练一个模型，用来查看图像并预测它们是什么数字。我们的目标不是训练一个真正精准的，拥有高性能的模型，而是浅尝辄止的来体验一下TensorFlow的使用。 - 尽管我们稍后会给出实现这种效果的代码。因此，我们将从一个非常简单的，称为<strong>Softmax回归</strong>的模型开始。</p>
+<p>这个教程的实际代码非常短，其中真正有趣的东西只有三行代码。然而，了解背后的想法是非常重要的：TensorFlow如何工作和核心机器学习概念。因此，我们将非常仔细地完成这部分代码。</p>
+<h2 id="关于本教程">关于本教程</h2><p>本教程是对<a href="https://www.tensorflow.org/code/tensorflow/examples/tutorials/mnist/mnist_softmax.py" target="_blank" rel="external">mnist_softmax.py</a>中的代码进行逐行解释。</p>
+<p>您可以通过以下几种不同的方式使用本教程：</p>
+<ul>
+<li>在阅读每行的解释时，将每个代码段逐行复制并粘贴到Python环境中。</li>
+<li>在阅读教程期间，运行整个mnist_softmax.py，并使用本教程来了解您不清楚的代码行。</li>
+</ul>
+<p>我们将在本教程中完成：</p>
+<ul>
+<li>了解MNIST数据和softmax回归。</li>
+<li>创建一个函数，它是一个用于识别数字的模型，其识别原理是基于查看图像中的每个像素的值来实现的。</li>
+<li>使用TensorFlow来训练模型以识别数字，其训练方式是“查看”数千个示例（运行我们的第一个TensorFlow会话来执行此逻辑）。</li>
+<li>使用我们的测试数据检查模型的精度。</li>
+</ul>
+<h2 id="MNIST数据集">MNIST数据集</h2><p>MNIST数据集托管在<a href="http://yann.lecun.com/exdb/mnist/" target="_blank" rel="external">Yann LeCun的站点</a>。如果您要复制粘贴本教程中的代码，请从这两行代码开始，这两行代码将自动下载并读入数据：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">from tensorflow.examples.tutorials.mnist import input_data</div><div class="line">mnist = input_data.read_data_sets(&quot;MNIST_data/&quot;, one_hot=True)</div></pre></td></tr></table></figure>
+<p>MNIST数据被分为三部分：55,000个训练数据（<code>mnist.train</code>），10,000个测试数据（<code>mnist.test</code>）和5,000个验证数据（<code>mnist.validation</code>）。这种切分是非常重要的：它能通过一部分我们并没有实际用来训练学习的数据，来确保我们的算法有很好的通用性。</p>
+<p>如前所述，每个MNIST数据点有两个部分：手写数字的图像和相应的标签。我们称为图像”x”和标签”y”。训练集和测试集都包含图像及其相应的标签;例如训练图像是<code>mnist.train.images</code>，训练标签是<code>mnist.train.labels</code>。</p>
+<p>每张图像的尺寸是28×28像素。我们可以把它解释为一个大的数组：</p>
+<p><img src="/img/17_02_22/002.png" alt=""></p>
+<p>我们可以将这个数组变成一个长度为28x28 = 784的向量。如何平铺数组其实并不重要，重要的是要保证图像和数组之间的一致性。从这个角度来看，MNIST图像只是784维向量空间中的一堆点，具有<a href="http://colah.github.io/posts/2014-10-Visualizing-MNIST/" target="_blank" rel="external">非常丰富的结构</a>（警告：计算密集的可视化）。</p>
+<p>展平数据丢弃了关于图像的2D结构的信息。这样做是不是并不够好？没错，最好的计算机视觉方法确实可以利用这种2D结构信息，我们将在后面的教程进行介绍。但是我们在这里所使用的一种简单方法：<strong>softmax回归</strong>（下面会给出定义），不会利用到这种信息。</p>
+<p><code>mnist.train.images</code>是形状为<code>[55000,784]</code>的张量（n维数组）。第一个维度是在列表中图像的索引，第二个维度是每个图像中的每个像素点的索引。对于特定图像中的特定像素，张量中的每个条目是介于0和1之间的像素强度。</p>
+<p><img src="/img/17_02_22/003.png" alt=""></p>
+<p>MNIST中的每个图像都有相应的标签，标签用介于0到9之间的数字表示图像中绘制的数字。</p>
+<p>为了达到本教程的目的，我们需要要将我们的标签作为“one-hot 向量”。one-hot向量是指在大多数维度上数值为0，仅在其中一个维度上数值为1的向量。在这种情况下，第n个数字将被表示为在第n维中为1的向量。例如，3将表示为$[0,0,0,1,0,0,0,0,0,0]$。因此，<code>mnist.train.labels</code>是一个形状为<code>[55000, 10]</code>的数字矩阵。</p>
+<p><img src="/img/17_02_22/004.png" alt=""></p>
+<p>现在，我们可以开始构建我们的模型啦！</p>
+<h2 id="Softmax回归">Softmax回归</h2><p>我们知道MNIST中的每个图像都是一个在0和9之间的手写数字。因此，对于给定的图像，只有10种可能的结果。我们想要能够看到一个图像，并给出它的每个数字的概率。例如，用我们的模型来查看一个9的图片，80％的可能性确认是9，但有5％的可能是8（因为8和9顶部都有一个圈），剩余的可能性分布在其他数值上。</p>
+<p>这是一个<strong>softmax回归</strong>的典型案例。如果你想给一个对象赋予其表示不同数字的概率，可以使用softmax，因为softmax可以得出一组介于0到1之间的值，并且这组值加起来结果为1。即使在以后，当我们训练其他更复杂的模型时，最后一步也是一层softmax。</p>
+<p>softmax回归有两个步骤：首先我们将图片中属于某个特定数字的证据（evidence）相加，然后将该证据转换为概率。</p>
+<p>为了计算给定图像在特定类中的证据，我们对像素强度进行加权求和。如果像素点有很高的强度表示和对应的标签数字不匹配，那么这一点的权值是负数，相反，权值是正数。</p>
+<p>下面的图片显示了一个模型学习到的图片上每个像素对于特定数字类的权值。红色表示负权重，蓝色表示正权重。</p>
+<p><img src="/img/17_02_22/005.png" alt=""></p>
+<p>我们还需要增加一个偏置量（bias），因为输入往往会带有一些无关的干扰量。因此对于给定的输入图片<strong>x</strong>它代表的是数字<strong>i</strong>的证据可以表示为：</p>
+<p>$$<br>\text{evidence}_i = \sum_j W_{i,~ j} x_j + b_i<br>$$</p>
+<p>其中，$W_i$表示权值，$b_i$代表$i$类别的偏置量，$j$代表给定图片$x$的像素索引，用于像素求和。然后用softmax函数可以把这些证据转换成概率<strong>y</strong>：</p>
+<p>$$<br>y = \text{softmax}(\text{evidence})<br>$$</p>
+<p>这里softmax用作“激活”或“链接”函数，将我们的线性函数的输出变形为我们想要的形式 - 在这里，也就是10种数字的概率分布。你可以把它看作是将证据转换为每种分类的概率。它的定义是：</p>
+<p>$$<br>\text{softmax}(x) = \text{normalize}(\exp(x))<br>$$</p>
+<p>如果你把这个方程展开，你将得到：</p>
+<p>$$<br>\text{softmax}(x)_i = \frac{\exp(x_i)}{\sum_j \exp(x_j)}<br>$$</p>
+<p>但通常我们把softmax定义为第一种形式：对其输入求幂，然后将其归一化处理。这里幂运算表示，更大的证据对应更大的假设模型（hypothesis）里面的乘数权重值。反之，拥有更少的证据意味着在假设模型里面拥有更小的乘数系数。假设模型里的权值不可以是0值或者负值。Softmax然后会正则化这些权重值，使它们的总和等于1，以此构造一个有效的概率分布。（更多的关于Softmax函数的信息，可以参考Michael Nieslen的书里面的这个<a href="http://neuralnetworksanddeeplearning.com/chap3.html#softmax" target="_blank" rel="external">部分</a>，其中有关于softmax的可交互式的可视化解释。）</p>
+<p>softmax回归可以表示为下面这张图，不过真实情况下会有更多的$x$值。我们通过计算出$x$的权值之和加上一个偏置量，然后代入到一个softmax中，来计算出每个输出值。</p>
+<p><img src="/img/17_02_22/006.png" alt=""></p>
+<p>如果我们把它写成方程的形式，我们将得到：</p>
+<p><img src="/img/17_02_22/007.png" alt=""></p>
+<p>我们可以“向量化”这个过程，把它变成矩阵乘法和向量加法。这有助于提升计算效率。 （这也是一个有用的思考方式。）</p>
+<p><img src="/img/17_02_22/008.png" alt=""></p>
+<p>更紧凑的表达形式如下：</p>
+<p>$$<br>y = \text{softmax}(Wx + b)<br>$$</p>
+<p>现在让我们把它变成TensorFlow可以使用的形式。</p>
+<h2 id="回归的实现">回归的实现</h2><p>为了在Python中进行高效的数值计算，我们通常使用像<strong><a href="http://www.numpy.org/" target="_blank" rel="external">NumPy</a></strong>这样的库，它们会把类似矩阵乘法这样的复杂运算使用其他外部语言实现。不幸的是，从外部计算切换回Python的每一个操作，仍然是一个很大的开销。如果要在GPU上以分布式方式运行计算，那么这种开销尤其糟糕，其中传输数据的成本很高。</p>
+<p>TensorFlow也在Python之外做了很大量的计算工作，但它做了进一步的完善以改善前面说的那种切换。TensorFlow不是独立于Python运行一个昂贵的操作，而是让我们可以先用图描述一系列可交互的计算操作，然后全部一起在Python之外运行。（这样类似的运行方式，可以在不少的机器学习库中看到。）</p>
+<p>要使用TensorFlow，首先我们需要导入它。</p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</div></pre></td></tr></table></figure>
+<p>我们通过操作符号变量来描述这些交互的操作单元。让我们用下面的方式创建一个：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">x</span> = tf.placeholder(tf.float32, [None, <span class="number">784</span>])</div></pre></td></tr></table></figure>
+<p><code>x</code>不是一个特定的值。它是一个占位符(<code>placeholder</code>)，当我们要求TensorFlow运行一个计算时，我们将输入一个值。我们希望能够输入任意数量的MNIST图像，其中每个图像都被展开为784维向量。我们将其表示为float类型的2-D张量，形状为<code>[None, 784]</code>。（这里的<code>None</code>表示维度可以是任何长度。）</p>
+<p>我们的模型还需要权重和偏差。当然我们可以把它们当做是另外的输入（使用占位符），但TensorFlow有一个更好的方法来表示它们：<code>Variable</code>。<code>Variable</code>代表一个可修改的张量，它存在于TensorFlow中用于描述交互性操作的图中。在计算过程中，它们可以被拿来使用甚至可以修改。对于机器学习应用，一般都会有模型参数，可以用Variable表示。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="attr">W</span> = tf.Variable(tf.zeros([<span class="number">784</span>, <span class="number">10</span>]))</div><div class="line"><span class="attr">b</span> = tf.Variable(tf.zeros([<span class="number">10</span>]))</div></pre></td></tr></table></figure>
+<p>我们通过给与<code>tf.Variable</code>初始值来创建<code>Variable</code>:在这种情况下，我们将<code>W</code>和<code>b</code>初始化为全部为0的张量。因为我们要通过学习得到<code>W</code>和<code>b</code>，因此它们的初始值具体是什么并不重要。</p>
+<p>注意，<code>W</code>的形状为<code>[784,10]</code>，因为我们想要用784维的图片向量乘以它以得到一个10维的证据值向量，其中每一位对应着不同数字类别。<code>b</code>的形状是<code>[10]</code>，所以我们可以直接把它加到输出上面。</p>
+<p>现在，我们可以实现我们的模型啦。只需要一行代码！</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">y = tf<span class="selector-class">.nn</span><span class="selector-class">.softmax</span>(tf.matmul(x, W) + b)</div></pre></td></tr></table></figure>
+<p>首先，我们通过表达式<code>tf.matmul(x, W)</code>将<code>x</code>和<code>W</code>相乘。这对应于前面方程中的$Wx$，<code>x</code>是一个拥有多个输入的2D张量。紧接着，我们加上<code>b</code>，最后，代入到<code>tf.nn.softmax</code>中。</p>
+<p>就是这样，在几行用来设置变量的代码之后，我们只需要一行代码就可以定义好我们的模型。这不仅仅是因为TensorFlow被设计为使<strong>softmax回归</strong>变得特别简单，它也用这种非常灵活的方式来描述其他各种数值计算，从机器学习模型对物理学模拟仿真模型。一旦被定义好之后，我们的模型就可以在不同的设备上运行：计算机的CPU，GPU，甚至是手机！</p>
+<h2 id="训练">训练</h2><p>为了训练我们的模型，我们首先需要定义一个指标来评估这个模型是好的。实际上，在机器学习中，我们通常定义指标来表示一个模型是坏的，这个指标称为成本（cost）或损失（loss），然后尽量最小化这个指标。</p>
+<p>一个非常常见的，非常好的用来衡量模型损失的函数称为“<strong>交叉熵(cross-entropy)</strong>”。交叉熵产生于信息论里面的信息压缩编码技术，但是它后来演变成为从博弈论到机器学习等其他领域里的重要技术手段。它的定义如下：</p>
+<p>$$<br>H_{y’}(y) = -\sum_i y’_i \log(y_i)<br>$$</p>
+<p><strong>y</strong>是我们预测的概率分布,<strong>y’</strong>是实际的分布（我们输入的one-hot vector)。比较粗糙的理解是，交叉熵是用来衡量相对于真实值我们所给出的预测的低效性。有关交叉熵的更详细的讨论超出了本教程的范畴，但<a href="http://colah.github.io/posts/2015-09-Visual-Information/" target="_blank" rel="external">理解它的原理</a>很有必要。</p>
+<p>为了计算交叉熵，我们首先需要添加一个新的占位符用于输入正确值：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">y_</span> = tf.placeholder(tf.float32, [None, <span class="number">10</span>])</div></pre></td></tr></table></figure>
+<p>然后，我们可以实现交叉熵方法:$-\sum y’\log(y)$</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cross_entropy = <span class="keyword">tf</span>.reduce_mean(-<span class="keyword">tf</span>.reduce_sum(y_ * <span class="keyword">tf</span>.<span class="built_in">log</span>(<span class="keyword">y</span>), reduction_indices=[<span class="number">1</span>]))</div></pre></td></tr></table></figure>
+<p>首先，<code>tf.log</code>计算了每个<code>y</code>的对数。接下来，我们将<code>y_</code>与相应的<code>tf.log(y)</code>的元素做乘法运算。然后，由于参数<code>reduction_indices=[1]</code>，<code>tf.reduce_sum</code>将<code>y</code>中的第二维中的元素相加求和。最后，通过<code>tf.reduce_mean</code>计算批次中所有示例的平均值。</p>
+<p>注意，在源码中，我们不使用这些信息，因为它在数值上并不稳定。取而代之的是，我们将<code>tf.nn.softmax_cross_entropy_with_logits</code>用于非规范化的逻辑上（例如，我们对<code>tf.matmul(x, W) + b</code>使用<code>softmax_cross_entropy_with_logits</code>），因为这样在数值上更稳定方法，它在内部执行了softmax的计算。在你的代码中考虑使用<code>tf.nn.softmax_cross_entropy_with_logits</code>来代替之前的逻辑。</p>
+<p>现在，我们知道了我们想要我们的模型做什么，使用TensorFlow来训练它也非常简单。因为TensorFlow知道用于计算的整个图（graph），它会自动地使用<strong><a href="http://colah.github.io/posts/2015-08-Backprop/" target="_blank" rel="external">反向传播算法</a></strong>来有效地确定你的变量是如何影响你想要最小化的那个成本值的。然后它可以应用您选择的优化算法修改变量和减少损失。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">train_step = tf<span class="selector-class">.train</span><span class="selector-class">.GradientDescentOptimizer</span>(<span class="number">0.5</span>).minimize(cross_entropy)</div></pre></td></tr></table></figure>
+<p>在这里，我们通过使用学习率为0.5的<a href="https://en.wikipedia.org/wiki/Gradient_descent" target="_blank" rel="external">梯度下降算法</a>令TensorFlow最小化<code>cross_entropy</code>（交叉熵）。梯度下降是一个简单的程序，它的原理是每次向着减少损失的方向移动一小步，来最小化代价函数。但TensorFlow也提供了<a href="https://www.tensorflow.org/api_guides/python/train#optimizers" target="_blank" rel="external">很多其他的优化算法</a>，只需要简单的调整一行代码就可以随意切换。</p>
+<p>TensorFlow在这里实际上所做的是，它会在后台给描述你的计算的那张图里面增加一系列新的计算操作单元，用于实现反向传播算法和梯度下降算法。然后，它返回给你的只是一个单一的操作，当运行这个操作时，它用梯度下降算法训练你的模型，微调你的变量，不断减少成本。</p>
+<p>我们现在可以在<code>InteractiveSession</code>中启动我们的模型：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">sess</span> = tf.InteractiveSession()</div></pre></td></tr></table></figure>
+<p>我们首先要创建一个操作来初始化我们创建的变量：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">tf</span><span class="selector-class">.global_variables_initializer</span>()<span class="selector-class">.run</span>()</div></pre></td></tr></table></figure>
+<p>让我们开始执行训练 - 我们将运行1000次训练步骤！</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">1000</span>):</div><div class="line">  batch_xs, batch_ys = mnist<span class="selector-class">.train</span><span class="selector-class">.next_batch</span>(<span class="number">100</span>)</div><div class="line">  sess.run(train_step, feed_dict=&#123;x: batch_xs, y_: batch_ys&#125;)</div></pre></td></tr></table></figure>
+<p>每循环一次，我们将从我们的训练集中得到一批100个随机数据点。然后我们用这些数据点作为参数替换之前的占位符来运行<code>train_step</code>。</p>
+<p>使用小批随机数据称为<strong>随机训练(stochastic training)</strong> - 在这里更确切的说是随机梯度下降训练。理想情况下，我们希望将所有数据用于训练的每个步骤，因为这能给我们更好的训练结果，但很明显这需要很大的计算开销。所以，每一次训练我们可以使用不同的数据子集，这样做既可以减少计算开销，又可以最大化地学习到数据集的总体特性。</p>
+<h2 id="评估我们的模型">评估我们的模型</h2><p>那么我们的模型表现如何呢？</p>
+<p>首先，来让我们找出那些预测正确的标签。<code>tf.argmax</code>是一个很有用的方法，它能给出某个tensor对象在某一维上的其数据最大值所在的索引值。例如，<code>tf.argmax(y，1)</code>是我们的模型认为每个输入最可能的标签，而<code>tf.argmax(y_，1)</code>是正确的标签。我们可以用<code>tf.equal</code>来检查我们我预测值与真实值是否相符。</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">correct_prediction = <span class="keyword">tf</span>.equal(<span class="keyword">tf</span>.argmax(<span class="keyword">y</span>,<span class="number">1</span>), <span class="keyword">tf</span>.argmax(y_,<span class="number">1</span>))</div></pre></td></tr></table></figure>
+<p>这行代码会给我们一组布尔值。为了确定正确预测项的比例，我们可以把布尔值转换成浮点数，然后取平均值。例如，<code>[True, False, True, True]</code>会变成<code>[1,0,1,1]</code>，取平均值后得到<code>0.75</code>.</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">accuracy = <span class="keyword">tf</span>.reduce_mean(<span class="keyword">tf</span>.cast(correct_prediction, <span class="keyword">tf</span>.float32))</div></pre></td></tr></table></figure>
+<p>最后，我们计算所学习到的模型在测试数据集上面的正确率。</p>
+<figure class="highlight roboconf"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">print(sess.run(accuracy, feed_dict=&#123;<span class="attribute">x</span>: mnist<span class="variable">.test</span><span class="variable">.images</span>, y_: mnist<span class="variable">.test</span><span class="variable">.labels</span>&#125;))</div></pre></td></tr></table></figure>
+<p>结果大概维持在92%左右。</p>
+<p>这种结果很好吗？其实并不是很好。其实，它相当差。这是因为我们使用的是一个非常简单的模型。我们可以通过做一些简单的修改，可以将正确率提高到97%。事实上，最优秀的模型可以达到超过99.7%的准确率！（想了解更多信息，可以看看这个关于各种模型的<a href="http://rodrigob.github.io/are_we_there_yet/build/classification_datasets_results.html" target="_blank" rel="external">性能对比列表</a>。)</p>
+<p>比结果更重要的是，我们从这个模型中学习到的设计思想。不过，如果你仍然对这里的结果有点失望，可以查看<a href="/2017/02/26/【Tensorflow%20r1.0%20文档翻译】深入MNIST--专家级/">下一个教程</a>，在那里你可以学习如何用FensorFlow构建更加复杂的模型以获得更好的性能！</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2017/02/20/【Tensorflow r1.0 文档翻译】TensorFlow入门/" itemprop="url">
                 【Tensorflow r1.0 文档翻译】TensorFlow入门
               </a>
@@ -2238,377 +2438,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2017/01/15/【Codelab】自动性能测试/" itemprop="url">
-                【Codelab】自动性能测试
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2017-01-15T20:21:58+08:00" content="2017-01-15">
-            2017-01-15
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/Android/" itemprop="url" rel="index">
-                  <span itemprop="name">Android</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2017/01/15/【Codelab】自动性能测试/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/15/【Codelab】自动性能测试/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><p><a href="https://codelabs.developers.google.com/codelabs/android-perf-testing/index.html?index=..%2F..%2Findex#0" target="_blank" rel="external">https://codelabs.developers.google.com/codelabs/android-perf-testing/index.html?index=..%2F..%2Findex#0</a></p>
-<h2 id="1-概述">1.概述</h2><p>在这个codelab中，您将创建一个稳定和可重用的测试工具，在非常简单的现有应用程序上运行性能测试。线束将自动收集信息，如系统日志，位置请求，电池电压，图形配置等。测试失败也将记录到文件中，我们将向您展示如何编写基于性能的测试的示例。哇，这很多，对吧？Good luck!! :)</p>
-<h3 id="你会学到什么">你会学到什么</h3><ul>
-<li>如何快速导航某些Android性能工具</li>
-<li>如何使用Espresso测试框架编写单元和性能测试</li>
-<li>如何使用MonkeyRunner和Gradle来自动化测试工作流</li>
-<li>如何查看systrace输出以了解应用程序的性能问题</li>
-</ul>
-<p>由于此Codelab中的移动部件和组件的数量相当大，因此您可以通过取消注释现有代码来启用每个部件。这将使得您熟悉线束，同时还使得您对自己的项目执行类似的步骤。我们将最终得到一个测试工具，逻辑上看起来像这样。</p>
-<p><img src="/img/17_01_14/003.png" alt=""></p>
-<p>让我们开始吧！</p>
-<h2 id="2-设置">2.设置</h2><p>首先，您需要设置您的开发环境。</p>
-<h3 id="你需要什么">你需要什么</h3><p>安装以下软件包的计算机：</p>
-<ul>
-<li>最新版本的Android Studio</li>
-<li>最新版本的Android SDK</li>
-<li>JAVA JDK(1.7)</li>
-<li>Python 2.7(不是 Python 3.x)</li>
-</ul>
-<p>还应满足以下环境条件：</p>
-<ul>
-<li>Python应该可以通过PATH环境变量使用。输入命令<code>python --version</code>应该输出类似于<code>Python 2.7.10</code>。</li>
-<li>JAVA JDK应包含在PATH环境变量中，并可通过<code>JAVA_HOME</code>环境变量访问。输入命令<code>javac -version</code>应该输出类似于<code>javac 1.7.0_79</code>的内容。</li>
-<li>Android SDK路径应设置为<code>ANDROID_HOME</code>环境变量。输入命令<code>echo $JAVA_HOME</code>或<code>echo％ANDROID_HOME％</code>应输出正在运行的Android SDK的目录。</li>
-</ul>
-<p>最后，您应该有一个Android设备通过USB电缆连接到您的计算机，可用于运行测试。</p>
-<ul>
-<li>Android Marshmallow或更高的版本是首选，因为它将最大化线束的功能。</li>
-<li>需要启用Android“开发者模式”（通过点击“关于手机”下的Build Number七次）并且通过Android设置应用程序的“USB调试”。</li>
-<li>对于典型的应用程序开发，Android模拟器将是足够的，因为这个codelab是关于性能测试，最好是使用物理设备。</li>
-</ul>
-<blockquote>
-<p><strong>注意：</strong>线束将适用于较旧版本的Android，但某些数据将无法收集。</p>
-</blockquote>
-<p>在下一步中，我们将下载并构建测试应用程序。</p>
-<h2 id="3-运行并理解测试应用程序">3.运行并理解测试应用程序</h2><p>在此步骤中，我们在您的Android设备上构建并运行提供的测试应用程序。</p>
-<h3 id="获取代码">获取代码</h3><p>运行以下命令从GitHub下载示例代码。或者从<a href="https://github.com/googlecodelabs/android-perf-testing/archive/master.zip" target="_blank" rel="external">这里</a>直接作为zip文件下载。</p>
-<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git <span class="keyword">clone</span> <span class="title">https</span>://github.com/googlecodelabs/android-perf-testing.git</div></pre></td></tr></table></figure>
-<p>当这样做之后，你的计算机上会有一个<code>android-perf-testing</code>文件夹。</p>
-<p>打开Android Studio。在快速启动屏幕上，点击“打开现有的Android Studio项目”（或选择<strong>File &gt; Open</strong>）。</p>
-<p><img src="/img/17_01_14/004.png" alt=""></p>
-<p>在导入选择器窗口中打开在上一步中克隆的<code>android-perf-testing</code>文件夹。选择<code>settings.gradle</code>文件，然后单击<strong>Choose</strong>。</p>
-<p>通过单击Android Studio窗口左上角的项目文本按钮打开项目导航器。在项目导航器顶部，您可以选择不同的视图透视图，通常，导入后默认为Android透视图。将此更改为<strong>Project</strong>，以确保您可以看到我们将使用的所有文件。这个过程见下面的屏幕截图。</p>
-<p><img src="/img/17_01_14/005.png" alt=""></p>
-<p>等待完成导入过程，通过查看Android Studio屏幕的最底部，以便在状态栏中显示“Gradle build finished”消息。</p>
-<p><img src="/img/17_01_14/006.png" alt=""></p>
-<p>您可能会看到构建错误，但我们会尽快解决。 Gradle构建完成后，点击Android Studio菜单顶部的绿色<strong>Run</strong>图标即可安装并运行应用程序。</p>
-<p><img src="/img/17_01_14/007.png" alt=""></p>
-<p>如果您还没有，请插入Android设备并解锁设备的屏幕。从出现的窗口中，从可用于运行应用程序的设备列表中选择设备。</p>
-<p><img src="/img/17_01_14/008.png" alt=""></p>
-<p>应用在您的设备上运行后，应该看起来像这样。应用程序可能需要一两分钟才能部署和第一次打开。</p>
-<p><img src="/img/17_01_14/009.png" alt=""></p>
-<p>你会注意到测试应用程序的功能非常有限。使用应用程序熟悉它：</p>
-<ul>
-<li>如上所述，您可以使用“Update Text”更新<code>TextView</code>。</li>
-<li>触摸“Open List View”显示一个大的<code>ListView</code>。 <code>ListView</code>后面的实现有各种性能问题。</li>
-<li>触摸“Open Recycler View”，显示一个大型<code>RecyclerView</code>，消除了以前的一些性能问题。</li>
-</ul>
-<p>现在我们有示例应用程序的源代码导入和应用程序构建和运行。在我们自动执行某些测试之前，让我们快速了解应用的效果以及我们通常用于诊断性能问题的工具，然后我们将更好地准备自动执行这些步骤。</p>
-<blockquote>
-<p><strong>重要提示，在下一步之前，确定你：</strong></p>
-<pre><code>- 使用Android Studio窗口顶部的“<span class="keyword">*</span><span class="keyword">*</span>Run<span class="keyword">*</span><span class="keyword">*</span>”图标部署示例应用程序。
-</code></pre></blockquote>
-<h2 id="4-练习包含的应用程序的性能问题">4.练习包含的应用程序的性能问题</h2><p>我们将手动检查应用程序中的性能问题。如果我们不了解我们正在寻找什么，我们不能自动进行性能测试，所以让我们手动寻找一些jank。</p>
-<p>再次启动应用程式，然后轻触<strong>Open List View</strong>按钮。您将看到一个如下所示的屏幕：</p>
-<p><img src="/img/17_01_14/010.png" alt=""></p>
-<p>滚动到列表的底部;该应用程序随着你的滚动的距离变得更加jankier。这是因为应用程序无法为每16毫秒（大多数与UI相关的性能问题的主要原因）提供渲染子系统一帧;因此，Android正在跳过这一帧并导致视觉上的jank。当您向下滚动页面时，应用程序会跳过更多帧。如果你足够持久，你甚至会注意到它可能崩溃，直到到达列表的底部。</p>
-<blockquote>
-<p><strong>注意：</strong>如果您使用更高端的设备测试，您可能看不到jank，尽管代码是次优的。请考虑使用中低端设备。</p>
-</blockquote>
-<p>幸运的是，我们不必依靠仔细的视力来观看我们设备上的jank。在大多数Android设备的<strong>开发人员选项</strong>中有一个GPU渲染配置文件选项（靠近列表底部）。启用此选项，将屏幕上显示为条选项，然后打开应用程序，并再次使用<strong>Open List View</strong>选项。你的屏幕看起来会是类似这样：</p>
-<p><img src="/img/17_01_14/011.png" alt=""></p>
-<p>在Android设备上靠近屏幕中下部的绿色线，表示您的应用程序应该尝试从不交叉的重要的16毫秒屏障，同时向渲染子系统提供帧。帧作为时间序列水平地画在屏幕上，每个垂直条表示一个帧。条的高度指示框架花费多长时间绘制，并且当线的任何彩色部分超过绿色条时，其指示框架错过16毫秒超时并引起jank。条形的颜色表示在帧渲染的每个主要阶段中花费的时间量。栏的橙色部分表示应用程序进程代码;这个程序是浪费大量的时间。</p>
-<blockquote>
-<p><strong>注意：</strong>有关GPU渲染配置文件的更多详细信息，请参阅<a href="http://developer.android.com/tools/performance/profile-gpu-rendering/index.html" target="_blank" rel="external">文档</a>。</p>
-</blockquote>
-<p>当你看到像<code>ListView</code>这样的jank，你通常转向一个名为<strong>Systrace</strong>的工具，以深入了解发生了什么。</p>
-<blockquote>
-<p><strong>重要，在进一步之前，请务必确认：</strong></p>
-<ul>
-<li>使用与启用GPU渲染配置文件相同的过程停用GPU渲染配置文件。</li>
-</ul>
-</blockquote>
-<h2 id="5-使用Systrace">5.使用Systrace</h2><p>我们不会深入到Systrace，但我们将调试该应用程序与systrace快速诊断jank问题。此步骤还将确保Systrace在您的系统上正确配置，但如果您精通Systrace，则可以跳过此步骤。</p>
-<h3 id="什么是Systrace？">什么是Systrace？</h3><p>见<a href="http://developer.android.com/tools/help/systrace.html" target="_blank" rel="external">Android文档</a>:</p>
-<p><em>Systrace是一个工具，它将帮助您通过捕获和显示应用程序进程和其他Android系统进程的执行时间来分析应用程序的性能。</em></p>
-<h3 id="我们用它做什么？">我们用它做什么？</h3><p>我们正在使用Systrace在我们的应用程序中查找性能问题。当我们使用我们的应用程序运行Systrace时，它会从Android中收集数据，然后将其格式化为一个html文件，我们可以在网络浏览器中查看。当我们打开Systrace结果时，我们希望它能够帮助我们解决与我们的应用程序相关的一些基本问题。到目前为止，我们所知道的是，我们的应用程序是janky;如果工具帮助我们找出原因，这将是很好的。</p>
-<h3 id="如何运行Systrace">如何运行Systrace</h3><p>点击Android Studio窗口左下角的“<strong>Terminal</strong>”文本按钮。</p>
-<p><img src="/img/17_01_14/012.png" alt=""></p>
-<p>运行以下命令：</p>
-<p>Mac / Linux:</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">python <span class="variable">$ANDROID_HOME</span>/platform-tools/systrace/systrace<span class="selector-class">.py</span> --time=<span class="number">10</span> -o ~/trace<span class="selector-class">.html</span> gfx view res</div></pre></td></tr></table></figure>
-<p>Windows:</p>
-<figure class="highlight mel"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">python</span> %ANDROID_HOME%/platform-tools/systrace/systrace.py --time=<span class="number">10</span> -o %userprofile%/<span class="keyword">trace</span>.html gfx view res</div></pre></td></tr></table></figure>
-<p>这将运行Systrace 10秒，给你足够的时间来重现你在之前的步骤中看到的janky行为。运行以上命令，当systrace正在运行时，打开应用程序并再次滚动简单列表视图。Systrace将在您使用应用程序时收集数据。它将结果输出到文件：<code>trace.html</code>。</p>
-<p>打开浏览器并查看<code>trace.html</code>文件。您应该看到类似以下的显示：</p>
-<p><img src="/img/17_01_14/013.png" alt=""></p>
-<blockquote>
-<p><strong>注意</strong>：如果您在浏览器中打开该工具时遇到问题，可以按照屏幕截图。 codelab的点是自动化一些你可以在systrace中找到的东西。</p>
-</blockquote>
-<p>这是一个可视化的性能数据是由您的应用程序和系统在10秒的时间段内提供的线性时间表。</p>
-<p>同样，这不是一个Systrace教程，但请注意此窗口右上角的浮动导航栏，将光标置于与跟踪交互的不同模式。在以下屏幕截图中，从上到下，图片图标允许指针以以下方式影响屏幕：</p>
-<ul>
-<li>选择项目以查看更多详细信息</li>
-<li>在时间轴内滚动（在使用缩放之前不需要）</li>
-<li>在时间轴上放大或缩小</li>
-<li>突出显示某些时间段</li>
-</ul>
-<p><img src="/img/17_01_14/014.png" alt=""></p>
-<p>Systrace工具用于缩放和平移。</p>
-<p>您也可以使用键盘上的W，A，S，D键缩放和平移，如果这更容易。</p>
-<p>首先将您的注意力集中在警报的最上面的水平部分。</p>
-<p><img src="/img/17_01_14/015.png" alt=""></p>
-<p>此处的警报行突出显示在跟踪期间可能出现的问题;如果您单击一个，详细信息面板将在浏览器底部打开，您可以阅读警报详细信息。例如：</p>
-<p><img src="/img/17_01_14/016.png" alt=""></p>
-<p>你会注意到，应用程序的<code>ListView</code>实现有多个问题。警报提供有关性能改进的详细信息，以及可帮助解决问题的文档链接。</p>
-<p>下一个水平部分，通常有一个包含您的包名称的头。如果没有，请使用其他软件包名称右侧的箭头折叠各个部分，直到您的软件包名称可见。</p>
-<p>如果这是您第一次使用该工具，您将需要专注于Frames行（见下面的预览）。</p>
-<p><img src="/img/17_01_14/017.png" alt=""></p>
-<p>您可以在浏览器窗口底部再次找到非绿色警报的说明。特别是，查找警报，指示您的应用程序缺少可怕的16ms时间窗口以产生一帧。警报还标记其他问题，如不回收视图或不正确的时间布局充气。点击此行中的一些红色提醒，直到您也找到一个<strong>Inflation during ListView recycling</strong>的描述。应该有很多。</p>
-<p>想想为什么它可能告诉你。你将如何解决它？</p>
-<p>每当你有性能问题，Systrace是你应该开始寻找问题的主要地方之一。在这里我们验证帧被丢弃，我们发现我们的应用程序的问题。但是我们真的不应该通过手动协调我们的测试运行与Systrace来找到这个问题。在下一步中，我们将自动执行我们执行的测试，然后我们将跟踪自动化Systrace。</p>
-<h2 id="Espresso自动化UI测试">Espresso自动化UI测试</h2><p>现在，让我们开始自动化我们之前执行的手动测试：打开<code>ListView</code>并滚动整个列表。</p>
-<p>作为一个快速的Android测试引擎：通常有两种类型的测试为Android应用程序编写。单元测试通常执行离散的代码位。Android仪表化测试练习应用程序组件，以及通常模拟Android用户输入和/或模拟零件，没有专门测试。<a href="http://developer.android.com/tools/testing-support-library/index.html#Espresso" target="_blank" rel="external">Espressolibrary</a>用于协助Android仪表化测试。</p>
-<h3 id="Espresso_Test_Library">Espresso Test Library</h3><p>Espresso是一个测试库，提供用于编写​​UI测试的API，以模拟单个应用程序中的用户交互。大多数用户交互可以在使用Espresso和<a href="http://developer.android.com/tools/testing-support-library/index.html" target="_blank" rel="external">Android测试支持库</a>的其他部分的测试中快速简洁地编写脚本。</p>
-<blockquote>
-<p>注意：有时Android测试需要特定的架构设计，以允许模拟Android框架的部分。这是一个复杂的主题，在这个特定的代码库的范围之外。</p>
-</blockquote>
-<h3 id="Espresso_Library依赖">Espresso Library依赖</h3><p>使用Espresso的第一步是向项目添加库依赖项。通过在依赖关系部分中的<code>app/build.gradle</code>文件中取消注释以下行来添加库。这个片段包括一对其他经常被用到的与Espresso关联的库。</p>
-<figure class="highlight roboconf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">androidTestCompile "com.android.support:support-annotations:$&#123;<span class="attribute">supportLibVersion&#125;"</span></div><div class="line">androidTestCompile 'com.android.support.test:runner:0.5'</div><div class="line">androidTestCompile 'com<span class="variable">.android</span><span class="variable">.support</span><span class="variable">.test</span>:rules:0.5'</div><div class="line">androidTestCompile 'com<span class="variable">.android</span><span class="variable">.support</span><span class="variable">.test</span><span class="variable">.espresso</span>:espresso-core:2.2.1'</div></pre></td></tr></table></figure>
-<p>每次编辑Gradle脚本时，Android Studio都会询问您是否要在文件查看器顶部的黄色栏中与Gradle进行同步。单击<strong>Sync Now</strong>，然后等待项目的构建和重新配置。</p>
-<h3 id="编写Espresso测试">编写Espresso测试</h3><p>现在我们将编写一个测试来滚动应用程序<code>ListView</code>，就像我们之前手动操作一样。</p>
-<p>在<code>app/src/androidTest/java/</code>中导航到<code>androidTest</code>源目录。一些测试类已在<code>com.google.android.perftesting</code>包中定义。打开<code>SimpleListActivityTest</code>类。这个类保存你将为<code>SimpleListActivity</code>类逻辑编写的测试。</p>
-<p><img src="/img/17_01_14/018.png" alt=""></p>
-<p>取消注释在文件中定义的<code>ActivityTestRule</code>（见下文）。此JUnit规则确保在运行类中定义的任何测试之前创建指定的activity。</p>
-<figure class="highlight d"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">@Rule</span></div><div class="line"><span class="keyword">public</span> ActivityTestRule&lt;SimpleListActivity&gt; mActivityRule = <span class="keyword">new</span> ActivityTestRule&lt;&gt;(SimpleListActivity.<span class="keyword">class</span>);</div></pre></td></tr></table></figure>
-<p>接下来，取消注释测试方法<code>scrollFullList</code>并检查测试方法代码。测试获取被测Activity中的<code>ListView</code>，并滚动整个列表。测试等待滚动完成。查看代码后，您需要通过右键单击文件中的每个错误来解决缺少的导入错误。</p>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="variable">@Test</span></div><div class="line"><span class="variable">@PerfTest</span></div><div class="line">public void scrollFullList() throws InterruptedException &#123;</div><div class="line">ListView listView = (ListView) mActivityRule<span class="selector-class">.getActivity</span>()<span class="selector-class">.findViewById</span>(android.R.id.list);</div><div class="line">...</div></pre></td></tr></table></figure>
-<p>最后，取消注释<code>SimpleListActivityTest</code>类声明顶部的<code>@PerfTest</code>。这对于确保测试类稍后被仪器拾取很重要。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@PerfTest</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleListActivityTest</span> &#123;</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p><strong>注意：</strong> <code>@PerfTest</code>注解用于隔离应包括在性能测试中的测试和类。</p>
-</blockquote>
-<h3 id="运行测试">运行测试</h3><p>要运行所有应用程序的配置，您应当运行<code>connectedCheck</code> Gradle任务。在Android Studio中有几种方法可以运行此任务。记住确保您的测试设备的屏幕在设备上运行测试之前已解锁。</p>
-<ul>
-<li>在屏幕的最右侧有一个Gradle文本按钮，可用于打开Gradle任务导航器。在<strong>android-perf-testing &gt; android-perf-testing &gt; Tasks &gt; verification</strong>路径结构下，您可以双击<code>connectedCheck</code>任务。</li>
-</ul>
-<p><img src="/img/17_01_14/019.png" alt=""></p>
-<ul>
-<li>等待任务完成，如Android Studio窗口底部状态栏所示。此屏幕截图指示测试仍在运行，因为最右边的微调器仍在移动。如果您在运行测试之前忘记解锁设备，则任务可能会卡住。如果测试耗时超过3分钟，请停止并重新启动<code>connectedCheck</code>gradle任务。</li>
-</ul>
-<p><img src="/img/17_01_14/020.png" alt=""></p>
-<ul>
-<li>任务运行完成后，可以在Android Studio的“消息”面板中看到此生成的输出。测试运行通常会失败，您将看到类似于下图所示的故障。在更高性能的设备上，您可能不会看到此失败;考虑在中端或低端设备上进行性能测试。</li>
-</ul>
-<p><img src="/img/17_01_14/021.png" alt=""></p>
-<ul>
-<li>现在让我们在命令行上运行测试。在Android Studio屏幕的最底部，使用终端文本按钮打开终端窗口并键入：</li>
-</ul>
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./gradlew <span class="symbol">:app</span><span class="symbol">:connectedCheck</span></div></pre></td></tr></table></figure>
-<ul>
-<li>注意：如果Android Studio在<strong>Run -&gt; Edit Configurations</strong>菜单中创建新的Android测试运行配置，则拒绝该选项。你稍后会以一种不同的方式来处理。</li>
-</ul>
-<p>再次，当你运行任务，你可能看到运行测试的异常。在大多数设备上，编写不良的<code>ListView</code>会导致<code>OutOfMemoryException</code>。这可以通过导航到Android Studio窗口右下角的Gradle Console文本按钮来看到。</p>
-<p><img src="/img/17_01_14/022.png" alt=""></p>
-<blockquote>
-<p><strong>重要：</strong>如果你的测试套件没有出现失败，在确认运行测试之后继续使用Codelab是很好的。通过查看Gradle输出中指定的<code>index.html</code>文件（请参阅上一屏幕截图）来执行此操作。寻找<code>scrollFullList()</code>测试并确保它被执行。如果未执行，请确保您在上述所有代码段（包括注释）中进行了注释。</p>
-<p>恭喜，到目前为止你已经：</p>
-<ul>
-<li>编译一个有较差的实现的<code>ListView</code>的应用程序。</li>
-<li>使用性能工具来确认<code>ListView</code>的性能不佳</li>
-<li>写一个性能测试，滚动<code>ListView</code>，并在大多数设备上抛出<code>OutOfMemory</code>异常，失败的测试套件。</li>
-</ul>
-</blockquote>
-<p>让我们继续自动化Systrace，在测试中检测jank。</p>
-<h2 id="7-使用MonkeyRunner自动化Systrace">7.使用MonkeyRunner自动化Systrace</h2><p>自动化systrace是有点棘手，因为它需要与测试套件并行运行。Android开发套件附带一个名为<a href="http://developer.android.com/tools/help/monkeyrunner_concepts.html" target="_blank" rel="external">MonkeyRunner</a>的工具，我们可以使用它。 MonkeyRunner允许您使用Python 2.7语法创建脚本，允许使用连接的Android设备进行编排。这允许我们启动Systrace，然后在并行线程（以及其他）中启动测试套件。</p>
-<h3 id="MonkeyRunner脚本">MonkeyRunner脚本</h3><p>自动化systrace和测试套件的脚本相当长，所以它被包含在repo中作为一个名为<a href="https://github.com/googlecodelabs/android-perf-testing/blob/master/run_perf_tests.py" target="_blank" rel="external">run_perf_tests.py</a>的文件。在脚本末尾查看函数调用调用，作为自动化所需逻辑的摘要。你会注意到脚本遵循这个一般结构：</p>
-<ul>
-<li>1.检查环境变量</li>
-<li>2.定义函数</li>
-<li>3.清除先前运行的本地数据</li>
-<li>4.查找Android设备</li>
-<li>5.启用和清除图形信息dumpsys</li>
-<li>6.并行启动systrace线程和测试套件线程</li>
-<li>7.等待两个线程完成</li>
-<li>8.从设备下载文件</li>
-<li>9.对下载的文件运行分析</li>
-</ul>
-<p>你会注意到脚本有两个参数，（1）一个目录来记录数据（2）Android设备ID。由于您手动运行此脚本，您必须通过在Android Studio终端窗口中运行此命令手动检索设备ID。</p>
-<p>Mac / Linux:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$&#123;ANDROID_HOME&#125;</span>/platform-tools/adb devices <span class="_">-l</span></div></pre></td></tr></table></figure>
-<p>Windows:</p>
-<figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">%ANDROID_HOME%</span><span class="symbol">\p</span>latform-tools<span class="symbol">\a</span>db devices -l</div></pre></td></tr></table></figure>
-<p>它会输出类似的东西;选择屏幕左侧的设备ID以运行测试（如果您有多个设备）。</p>
-<figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">List of devices attached</div><div class="line"><span class="number">84B0456625000123</span>       device usb:337123368X <span class="built_in">product</span>:angler model:Nexus_6P device:angler</div></pre></td></tr></table></figure>
-<p>现在，使用设备ID替换<code>&lt;INSERT ID&gt;</code>后，在Android Studio终端窗口中输入这两个命令，运行脚本。如果已连接的Android设备在运行第二个命令之前已进入睡眠状态，请记住解锁它。</p>
-<p>Mac / Linux:</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">./<span class="string">gradlew :</span><span class="string">app:</span><span class="string">assembleDebug :</span><span class="string">app:</span><span class="string">assembleDebugAndroidTest :</span><span class="string">app:</span><span class="string">installDebug :</span><span class="string">app:</span>installDebugAndroidTest</div><div class="line">$&#123;ANDROID_HOME&#125;<span class="regexp">/tools/</span>monkeyrunner .<span class="regexp">/run_perf_tests.py ./</span> &lt;INSERT_ID&gt;</div></pre></td></tr></table></figure>
-<p>Windows:</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">gradlew</span> <span class="selector-pseudo">:app</span><span class="selector-pseudo">:assembleDebug</span> <span class="selector-pseudo">:app</span><span class="selector-pseudo">:assembleDebugAndroidTest</span> <span class="selector-pseudo">:app</span><span class="selector-pseudo">:installDebug</span> <span class="selector-pseudo">:app</span><span class="selector-pseudo">:installDebugAndroidTest</span></div><div class="line">%<span class="selector-tag">ANDROID_HOME</span>%\<span class="selector-tag">tools</span>\<span class="selector-tag">monkeyrunner</span> <span class="selector-tag">run_perf_tests</span><span class="selector-class">.py</span> .\ &lt;<span class="selector-tag">INSERT_ID</span>&gt;</div></pre></td></tr></table></figure>
-<p>第一个命令的输出应该看起来类似于下面的文本。请确保它确认APK已安装到您的测试设备上。</p>
-<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="bullet">...</span></div><div class="line"><span class="meta">:app:preDexDebugAndroidTest</span> UP-TO-DATE</div><div class="line"><span class="meta">:app:dexDebugAndroidTest</span> UP-TO-DATE</div><div class="line"><span class="meta">:app:packageDebugAndroidTest</span> UP-TO-DATE</div><div class="line"><span class="meta">:app:assembleDebugAndroidTest</span> UP-TO-DATE</div><div class="line"><span class="meta">:app:installDebug</span></div><div class="line">Installing APK <span class="emphasis">'app-debug.apk'</span> on <span class="emphasis">'Nexus 6P - 6.0'</span></div><div class="line">Installed on 1 device.</div><div class="line"><span class="meta">:app:installDebugAndroidTest</span></div><div class="line">Installing APK <span class="emphasis">'app-debug-androidTest-unaligned.apk'</span> on <span class="emphasis">'Nexus 6P - 6.0'</span></div><div class="line">Installed on 1 device.</div><div class="line"></div><div class="line">BUILD SUCCESSFUL</div><div class="line"></div><div class="line">Total time: 21.073 secs</div></pre></td></tr></table></figure>
-<p>第二个命令应该完成一个与此类似的日志。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">Writing logs to: ./</div><div class="line">Using device_id: 84B0115625000732</div><div class="line">Your ANDROID_HOME is <span class="keyword">set</span> <span class="keyword">to</span>: /<span class="keyword">Users</span>/paulrashidi/android_sdk2</div><div class="line">Cleaning <span class="keyword">data</span> files</div><div class="line">Waiting <span class="keyword">for</span> a device <span class="keyword">to</span> be connected.</div><div class="line">Device connected.</div><div class="line"><span class="keyword">Starting</span> dump permission <span class="keyword">grant</span></div><div class="line"><span class="keyword">Starting</span> <span class="keyword">storage</span> permission <span class="keyword">grant</span></div><div class="line">Clearing gfxinfo <span class="keyword">on</span> device</div><div class="line"><span class="keyword">Starting</span> <span class="keyword">test</span></div><div class="line">Executing systrace</div><div class="line"><span class="keyword">Exception</span> <span class="keyword">in</span> <span class="keyword">thread</span> TestThread:Traceback (most recent <span class="keyword">call</span> <span class="keyword">last</span>):</div><div class="line">  <span class="keyword">File</span> <span class="string">"/Users/paulrashidi/android_sdk2/tools/lib/jython-standalone-2.5.3.jar/Lib/threading.py"</span>, line <span class="number">179</span>, <span class="keyword">in</span> _Thread__bootstrap</div><div class="line">    self.run()</div><div class="line">  <span class="keyword">File</span> <span class="string">"/Users/paulrashidi/android_sdk2/tools/lib/jython-standalone-2.5.3.jar/Lib/threading.py"</span>, line <span class="number">170</span>, <span class="keyword">in</span> run</div><div class="line">    self._target(*self._args, **self._kwargs)</div><div class="line">  <span class="keyword">File</span> <span class="string">"/Users/paulrashidi/verytmp/android-perf-testing/./run_perf_tests.py"</span>, line <span class="number">51</span>, <span class="keyword">in</span> perform_test</div><div class="line">    print device.instrument(test_runner, params)[<span class="string">'stream'</span>]</div><div class="line">KeyError: <span class="string">'stream'</span></div><div class="line">Done running tests</div><div class="line">Done systrace <span class="keyword">logging</span></div><div class="line">Systrace <span class="keyword">Thread</span> Done</div><div class="line"><span class="keyword">Test</span> <span class="keyword">Thread</span> Done</div><div class="line"><span class="keyword">Time</span> <span class="keyword">between</span> <span class="keyword">test</span> <span class="keyword">and</span> <span class="keyword">trace</span> <span class="keyword">thread</span> completion: <span class="number">0</span></div><div class="line"><span class="keyword">Starting</span> adb pull <span class="keyword">for</span> <span class="keyword">test</span> files</div><div class="line"></div><div class="line">FAIL: Could <span class="keyword">not</span> find <span class="keyword">file</span> indicating the <span class="keyword">test</span> run completed.</div><div class="line"></div><div class="line">OVERALL: FAILED. See above <span class="keyword">for</span> more information.</div></pre></td></tr></table></figure>
-<blockquote>
-<p><strong>重要：</strong>在测试失败的时候，流错误是预期的。如果测试通过，那是因为您使用的是更高端的设备，那么您将看到那个测试完成的报告。如果日志报告没有测试完成，请仔细检查以确保您没有跳过对<code>SimpleListActivityTest</code>类的<code>@PerfTest</code>注解的注释。</p>
-<p>我们使用注解将特定测试标记为性能测试，以显示如何仅将一部分测试声明为性能测试，而不是全部运行。</p>
-</blockquote>
-<p>你应该有一个<code>perftesting</code>目录，有一个有限的文件集，类似于下面的屏幕截图。</p>
-<p><img src="/img/17_01_14/023.png" alt=""></p>
-<blockquote>
-<p><strong>重要：</strong>该脚本将在编码表的这个阶段报告“OVERALL”故障，因为并不是所有的测试配件都已就位。您可能还会收到关于“流”故障的错误或测试套件可能失败。这些错误在这一点上也是正常的。</p>
-<p>重要的是确保您在项目中的<code>perftesting/&lt;DeviceID&gt;/testdata/</code>目录中有一个<code>trace.html</code>文件。还要仔细观察<code>perftesting/&lt;DeviceID&gt;/logs/files</code>，以确保<code>run_perf_tests.py</code>脚本中的命令没有失败。您的<code>perftesting/&lt;DeviceID&gt;/testdata/</code>目录中目前应该没有文件。</p>
-</blockquote>
-<h3 id="为MonkeyRunner添加Gradle任务">为MonkeyRunner添加Gradle任务</h3><p>现在，我们让脚本对开发环境更加原生，所以我们可以从Gradle和/或Android Studio运行它。最简单的方法是创建一个将运行monkeyrunner脚本的Gradle任务。在Gradle中，我们可以通过在<code>buildSrc</code>目录中定义一个新任务来为一个典型的项目做到这一点;让我们这样做。</p>
-<p>导航到<code>buildSrc/src/main/groovy/com/google/android/perftesting/RunLocalPerfTestsTask</code>并取消注释那里的代码来实现任务。Android Studio可能会在与重复类定义相关的文件编辑窗口中报告这些Gradle任务上的构建错误，因此可以忽略这些错误。</p>
-<p><img src="/img/17_01_14/024.png" alt=""></p>
-<p>你也应该仔细阅读<code>buildSrc/src/main/groovy/com/google/android/perftesting/PerfTestTaskGeneratorPlugin</code>。这是一个自定义Gradle插件，它查询连接的Android设备，然后为每个连接的设备设置一个<code>RunLocalPerfTestsTask</code>Gradle任务。自定义Gradle插件还创建一个额外的通用<code>RunLocalPerfTests</code>任务，在运行时执行每个特定于设备的gradle任务。</p>
-<p>现在让我们将自定义Gradle插件安装到我们的项目中，以便所有自定义Gradle任务都可用。</p>
-<p>导航到<code>app/build.gradle</code>并在以下代码行中注释。重要的是，在配置Android Gradle插件之后应用此插件，因此，它被放置在<code>build.gradle</code>文件的末尾。</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">// <span class="keyword">Create</span> <span class="keyword">performance</span> testing tasks <span class="keyword">for</span> all connected Android devices <span class="keyword">using</span> a Gradle <span class="keyword">plugin</span> defined</div><div class="line">// <span class="keyword">in</span> the buildSrc directory.</div><div class="line"><span class="keyword">apply</span> <span class="keyword">plugin</span>: PerfTestTaskGeneratorPlugin</div></pre></td></tr></table></figure>
-<p>然后将此代码段添加为<code>app/build.gradle</code>文件的第一行。</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">import com<span class="selector-class">.google</span><span class="selector-class">.android</span><span class="selector-class">.perftesting</span><span class="selector-class">.PerfTestTaskGeneratorPlugin</span></div></pre></td></tr></table></figure>
-<p>Android Studio屏幕顶部会显示一条消息，询问您是否要再次同步Gradle文件。执行Gradle文件同步，然后导航到Gradle任务列表。您应该看到Gradle插件添加的新任务。如果您连接了多个设备，您将有比下面的屏幕截图更多的任务。</p>
-<p><img src="/img/17_01_14/025.png" alt=""></p>
-<p>Gradle任务<code>runLocalPerfTests</code>是运行性能测试的任务。从Gradle运行monkeyrunner脚本的一个主要优点是我们使新的性能测试任务取决于App和Test APKs的安装。每当我们对代码库进行更改时，只要我们使用Gradle任务来执行测试，Gradle就会分析所有的项目文件，并在运行测试之前根据需要重新生成相关的APK。</p>
-<p>让我们确保新任务工作。双击<code>runLocalPerfTests</code>任务运行它。耐心等待，可能需要一点时间来构建，安装，运行你的应用程序和启动monkeyrunner仪器。确保设备的屏幕显示性能测试正在运行。</p>
-<p>为了使事情更容易，让我们继续，使用保存配置选项将<code>runLocalPerfTests</code> gradle任务添加到运行配置菜单，如图所示。</p>
-<p><img src="/img/17_01_14/026.png" alt=""></p>
-<p>你现在应该有一个运行配置<code>runLocalPerfTests</code>在你的gradle边栏，如下图所示：</p>
-<p><img src="/img/17_01_14/027.png" alt=""></p>
-<p>赞！！现在，您可以在Android Studio中连接到计算机的设备上运行性能测试，并且在对源代码进行更改时，应用和测试APK都会根据需要重新构建。您还在<code>testdata</code>目录中有Systrace <code>trace.html</code>文件以进行调试，但是目前您没有关于正在运行的测试的大量数据。让我们解决这个问题。</p>
-<h2 id="8-收集更多数据并添加性能约束">8.收集更多数据并添加性能约束</h2><p>我们已经启用了Systrace和测试执行，但我们需要更多的信息。此外，由于我们现在通过MonkeyRunner运行测试，我们失去了测试成功/失败信息。让我们解决这个问题。</p>
-<h3 id="收集更多数据">收集更多数据</h3><p>团队开发了一些我们可以使用的JUnit规则示例。这些规则在<code>com.google.android.perftesting.testrules</code>包中的<code>app/src/androidTest/java/</code>目录中可用。让我们将这些规则添加到现有测试中。</p>
-<p>导航到<code>app/src/androidTests</code>目录。打开<code>SimpleListActivityTest</code>类并取消注解<code>@Rule</code>注释的成员变量，其中类名以<code>Enable</code>开头，例如下面的行。同时解决导入错误。</p>
-<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Rule</span></div><div class="line"><span class="keyword">public</span> EnableTestTracing mEnableTestTracing = <span class="keyword">new</span> EnableTestTracing();</div><div class="line">    </div><div class="line"><span class="meta">@Rule</span></div><div class="line"><span class="keyword">public</span> EnablePostTestDumpsys mEnablePostTestDumpsys = <span class="keyword">new</span> EnablePostTestDumpsys();</div><div class="line"></div><div class="line"><span class="meta">@Rule</span></div><div class="line"><span class="keyword">public</span> EnableLogcatDump mEnableLogcatDump = <span class="keyword">new</span> EnableLogcatDump();</div><div class="line"></div><div class="line"><span class="meta">@Rule</span></div><div class="line"><span class="keyword">public</span> EnableNetStatsDump mEnableNetStatsDump = <span class="keyword">new</span> EnableNetStatsDump();</div></pre></td></tr></table></figure>
-<p>这些规则中的每一个导致记录不同的数据集。</p>
-<ul>
-<li><code>EnableTestTracing</code>在每个测试之前和之后调用Trace＃<a href="https://developer.android.com/reference/android/os/Trace.html#beginSection(java.lang.String" target="_blank" rel="external">beginSection</a>和<code>Trace＃endSection</code>方法。这允许您查看Systrace并查看每个测试运行时在调试期间为您提供更多上下文。</li>
-<li><code>EnablePostTestDumpsys</code>在每次测试后收集图形信息dumpsys输出。在Android Marshmallow和更大的设备上，这包括“Janky”百分比摘要。这个Jank百分比由现有的设置的<code>run_perf_test.py</code>脚本监控。当百分比高于配置的阈值时，脚本将发出警报。</li>
-<li><code>EnableLogcatDump</code>在运行测试之前重置设备上的Logcat缓冲区，然后在测试后提取缓冲区。这在研究回归失败或只是希望看到Logcat输出的测试时很有用。</li>
-<li><code>EnableNetStatsDump</code>转储历史网络信息。这在调试网络相关问题时尤其有用。例如，如果文件下载测试超时，您可能需要仔细检查网络是否不可用，然后再深入分析问题。</li>
-</ul>
-<p>现在取消注释<code>GlobalTimeout</code>规则以添加性能约束。此规则确保此类中的任何测试在超过指定的时间量时都会抛出错误。你会注意到<code>scrollFullList</code>测试方法在它的末尾有一个while循环。如果<code>ListView</code>代码的性能不足以允许某人在合理的时间内滚动整个列表，while循环和<code>GlobalTimeout</code>规则会导致失败。</p>
-<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Rule</span></div><div class="line"><span class="keyword">public</span> Timeout globalTimeout= <span class="keyword">new</span> Timeout(</div><div class="line">SCROLL_TIME_IN_MILLIS + MAX_ADAPTER_VIEW_PROCESSING_TIME_IN_MILLIS, TimeUnit.MILLISECONDS);</div></pre></td></tr></table></figure>
-<p>现在导航到同一目录中的<code>TestListener</code>类。取消注释<code>testRunStarted</code>和<code>testRunFinished</code>方法的代码，解决导入构建错误。</p>
-<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">testRunStarted</span><span class="params">(Description description)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">    Log.w(LOG_TAG, <span class="string">"Test run started."</span>);</div><div class="line">    <span class="comment">// Cleanup data from past test runs.</span></div><div class="line">    deleteExistingTestFilesInAppData();</div><div class="line">   deleteExistingTestFilesInExternalData();</div><div class="line">....</div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">testRunFinished</span><span class="params">(Result result)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">    Log.w(LOG_TAG, <span class="string">"Test run finished."</span>);</div><div class="line">....</div></pre></td></tr></table></figure>
-<p>这将启用电池统计信息收集，测试失败日志记录，并且在测试完成后，此代码还将所有正在收集的日志文件移动到可访问的位置，在那里可以通过简单的adb命令从主机计算机拉出。</p>
-<h3 id="再次运行测试">再次运行测试</h3><p>接下来，使用Android Studio窗口顶部的<code>runLocalPerfTests</code><strong>Run Configuration</strong>再次运行性能测试。</p>
-<p>您可能会注意到，monkeyrunner脚本已经标记更多的问题，因为更多的文件现在被拉到，因此，可以执行检查。导航到项目根目录中的<code>testdata</code>目录。你会发现相当多的信息现在被记录到目录结构类似于测试类包结构的目录。浏览这些文件以查看正在记录的信息。</p>
-<blockquote>
-<p><strong>重要：</strong>如果此时没有看到新文件，请转到下一步，解决性能问题，然后再次查找文件。</p>
-</blockquote>
-<p>在下一步中，我们将查看当前脚本的输出，并从线束的信息开始修复性能问题。</p>
-<h2 id="9-修复性能问题">9.修复性能问题</h2><p>在上次性能测试运行中，您遇到了性能问题。让我们现在利用线束收集的信息来解决这些问题。</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="number">1</span>) scrollFullList(com<span class="selector-class">.google</span><span class="selector-class">.android</span><span class="selector-class">.perftesting</span><span class="selector-class">.SimpleListActivityTest</span>)</div><div class="line">Script: org<span class="selector-class">.junit</span><span class="selector-class">.runners</span><span class="selector-class">.model</span><span class="selector-class">.TestTimedOutException</span>: test timed out after <span class="number">2500</span> milliseconds</div><div class="line">Script:         at java<span class="selector-class">.lang</span><span class="selector-class">.Thread</span><span class="selector-class">.sleep</span>(Native Method)</div><div class="line">Script:         at java<span class="selector-class">.lang</span><span class="selector-class">.Thread</span><span class="selector-class">.sleep</span>(Thread<span class="selector-class">.java</span>:<span class="number">1031</span>)</div><div class="line">Script:         at java<span class="selector-class">.lang</span><span class="selector-class">.Thread</span><span class="selector-class">.sleep</span>(Thread<span class="selector-class">.java</span>:<span class="number">985</span>)</div><div class="line">Script:         at com<span class="selector-class">.google</span><span class="selector-class">.android</span><span class="selector-class">.perftesting</span><span class="selector-class">.SimpleListActivityTest</span><span class="selector-class">.scrollFullList</span>(SimpleListActivityTest<span class="selector-class">.java</span>:<span class="number">101</span>)</div><div class="line">Script:         at java<span class="selector-class">.lang</span><span class="selector-class">.reflect</span><span class="selector-class">.Method</span><span class="selector-class">.invoke</span>(Native Method)</div><div class="line">Script:         at org<span class="selector-class">.junit</span><span class="selector-class">.runners</span><span class="selector-class">.model</span><span class="selector-class">.FrameworkMethod</span>$<span class="number">1</span>.runReflectiveCall(FrameworkMethod<span class="selector-class">.java</span>:<span class="number">50</span>)</div><div class="line">Script:         at org<span class="selector-class">.junit</span><span class="selector-class">.internal</span><span class="selector-class">.runners</span><span class="selector-class">.model</span><span class="selector-class">.ReflectiveCallable</span><span class="selector-class">.run</span>(ReflectiveCallable<span class="selector-class">.java</span>:<span class="number">12</span>)</div><div class="line">Script:         at org<span class="selector-class">.junit</span><span class="selector-class">.runners</span><span class="selector-class">.model</span><span class="selector-class">.FrameworkMethod</span><span class="selector-class">.invokeExplosively</span>(FrameworkMethod<span class="selector-class">.java</span>:<span class="number">47</span>)</div><div class="line">Script:         at org<span class="selector-class">.junit</span><span class="selector-class">.internal</span><span class="selector-class">.runners</span><span class="selector-class">.statements</span><span class="selector-class">.InvokeMethod</span><span class="selector-class">.evaluate</span>(InvokeMethod<span class="selector-class">.java</span>:<span class="number">17</span>)</div><div class="line">Script:         at org<span class="selector-class">.junit</span><span class="selector-class">.internal</span><span class="selector-class">.runners</span><span class="selector-class">.statements</span><span class="selector-class">.FailOnTimeout</span><span class="variable">$CallableStatement</span>.call(FailOnTimeout<span class="selector-class">.java</span>:<span class="number">298</span>)</div><div class="line">Script:         at org<span class="selector-class">.junit</span><span class="selector-class">.internal</span><span class="selector-class">.runners</span><span class="selector-class">.statements</span><span class="selector-class">.FailOnTimeout</span><span class="variable">$CallableStatement</span>.call(FailOnTimeout<span class="selector-class">.java</span>:<span class="number">292</span>)</div><div class="line">Script:         at java<span class="selector-class">.util</span><span class="selector-class">.concurrent</span><span class="selector-class">.FutureTask</span><span class="selector-class">.run</span>(FutureTask<span class="selector-class">.java</span>:<span class="number">237</span>)</div><div class="line">Script:         at java<span class="selector-class">.lang</span><span class="selector-class">.Thread</span><span class="selector-class">.run</span>(Thread<span class="selector-class">.java</span>:<span class="number">818</span>)</div></pre></td></tr></table></figure>
-<p>此错误也记录在<code>testdata</code>目录的子目录中名为<code>test.failure.log</code>的文件中，该文件对应于测试类和方法名称。</p>
-<p>如果你打开<code>gfxinfo.dumpsys.log</code>文件，你会看到一行注明了JANK过量的存在（样本中下方约92％）。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">** Graphics info <span class="keyword">for</span> pid <span class="number">31367</span> [com.google.android.perftesting] **</div><div class="line"></div><div class="line">Stats <span class="string">since:</span> <span class="number">19840518836088</span>ns</div><div class="line">Total frames <span class="string">rendered:</span> <span class="number">323</span></div><div class="line">Janky <span class="string">frames:</span> <span class="number">296</span> (<span class="number">91.64</span>%)</div><div class="line"><span class="number">90</span>th <span class="string">percentile:</span> <span class="number">117</span>ms</div><div class="line"><span class="number">95</span>th <span class="string">percentile:</span> <span class="number">125</span>ms</div><div class="line"><span class="number">99</span>th <span class="string">percentile:</span> <span class="number">133</span>ms</div><div class="line">Number Missed <span class="string">Vsync:</span> <span class="number">290</span></div><div class="line">Number High input <span class="string">latency:</span> <span class="number">0</span></div><div class="line">Number Slow UI <span class="string">thread:</span> <span class="number">295</span></div><div class="line">Number Slow bitmap <span class="string">uploads:</span> <span class="number">286</span></div><div class="line">Number Slow issue draw <span class="string">commands:</span> <span class="number">15</span></div></pre></td></tr></table></figure>
-<p>打开systrace并观察指示性能问题的警报数量。</p>
-<blockquote>
-<p><strong>重要提示：</strong> 在Android Studio终端窗口中键入<code>open testdata/trace.html</code>，以便在所选的Web浏览器中快速打开跟踪。</p>
-</blockquote>
-<p>Systrace警报清楚地指向<code>ListView</code>回收视图问题以及调用<code>getView()</code>的时间过长。要解决此问题，请打开<code>com.google.android.perftesting.contacts.ContactsArrayAdapter</code>类，并解决显示的lint错误。</p>
-<figure class="highlight vhdl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">LayoutInflater inflater = LayoutInflater.from(getContext());</div><div class="line"></div><div class="line">// This line <span class="keyword">is</span> wrong, we<span class="symbol">'re</span> inflating a <span class="keyword">new</span> view always instead <span class="keyword">of</span> only <span class="keyword">if</span> it<span class="symbol">'s</span> <span class="keyword">null</span>.</div><div class="line">// <span class="keyword">For</span> demonstration purposes, we will leave this here <span class="keyword">to</span> show the resulting jank.</div><div class="line">convertView = inflater.inflate(R.layout.item_contact, parent, false);</div></pre></td></tr></table></figure>
-<p>应该改为这样:</p>
-<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (<span class="attr">convertView</span> == <span class="literal">null</span>) &#123;</div><div class="line">   LayoutInflater <span class="attr">inflater</span> = LayoutInflater.from(getContext());</div><div class="line">   <span class="attr">convertView</span> = inflater.inflate(R.layout.item_contact, parent, <span class="literal">false</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>再次运行perf测试，并在web浏览器中刷新<code>trace.html</code>文件。嗯…看起来像<code>getView()</code>仍然导致性能问题。看看位图代码在getView一点点你意识到它应该实际上使用的东西，有一个缓存加载位图。一个常见的选择是滑翔(Glide)。所以改变这段代码：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">// Let's just <span class="keyword">create</span> another <span class="keyword">bitmap</span> <span class="keyword">when</span> we need one. This makes <span class="keyword">no</span> attempts <span class="keyword">to</span> re-<span class="keyword">use</span></div><div class="line">// bitmaps that were previously used <span class="keyword">in</span> rendering past <span class="keyword">list</span> <span class="keyword">view</span> elements, causing a <span class="keyword">large</span></div><div class="line">// amount <span class="keyword">of</span> <span class="keyword">memory</span> <span class="keyword">to</span> be consumed <span class="keyword">as</span> you <span class="keyword">scroll</span> farther down the list.</div><div class="line"><span class="keyword">Bitmap</span> bm = BitmapFactory.decodeResource(convertView.getResources(), R.drawable.bbq);</div><div class="line">contactImage.setImageBitmap(bm);</div></pre></td></tr></table></figure>
-<p>变成这样：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">Glide</span><span class="selector-class">.with</span>(<span class="selector-tag">contactImage</span><span class="selector-class">.getContext</span>())</div><div class="line">       <span class="selector-class">.load</span>(<span class="selector-tag">R</span><span class="selector-class">.drawable</span><span class="selector-class">.bbq</span>)</div><div class="line">       <span class="selector-class">.fitCenter</span>()</div><div class="line">       <span class="selector-class">.into</span>(<span class="selector-tag">contactImage</span>);</div></pre></td></tr></table></figure>
-<p>再次运行perf测试，并在web浏览器中刷新<code>trace.html</code>文件。你可以继续优化，但你得到了一种方法。现在，您有一个可重复的方式标记问题，然后运行测试，以查看具体的更改是否有所作为。</p>
-<h2 id="10-总结">10.总结</h2><p>恭喜！你已经完成了codelab。让我们再花几分钟来总结你学到的东西和一些关键的事情要记住。</p>
-<h3 id="我们所涵盖的">我们所涵盖的</h3><ul>
-<li>如何构建一个可重复使用的测试工具，用于检测Android应用程序中的jank和性能问题，并且可以从Android Studio中进行管理</li>
-<li>如何使用MonkeyRunner自动化测试框架的大多数功能</li>
-<li>如何使用性能约束和JUnit规则注解测试</li>
-<li>如何在测试周期中以各种粒度从测试收集各种数据</li>
-</ul>
-<h3 id="需要记住的事情">需要记住的事情</h3><ul>
-<li>必需是 Debuggable apk</li>
-<li>对于大多数数据的统计，需要Android Marshmallow设备</li>
-<li>使用项目定义的PerfTest注释来限制测试的范围</li>
-<li>Systrace当前设置为在示例中运行10秒，您可能需要延长此时间。</li>
-</ul>
-<h3 id="了解更多">了解更多</h3><p>如果您想详细了解效果测试，请参阅Android开发者文档网站上的<a href="https://developer.android.com/preview/testing/performance.html" target="_blank" rel="external">测试展示效果</a>。</p>
-<p>如果您想了解更多关于Systrace的信息，请参阅<a href="http://developer.android.com/tools/help/systrace.html" target="_blank" rel="external">官方文档</a>。</p>
-<p>如果你对Espresso和UI测试更好奇，请查看这些<a href="http://developer.android.com/training/testing/ui-testing/espresso-testing.html" target="_blank" rel="external">官方文档</a>。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2647,7 +2476,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">102</span>
+              <span class="site-state-item-count">103</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
