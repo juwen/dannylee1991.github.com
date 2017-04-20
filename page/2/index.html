@@ -199,6 +199,184 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2017/02/26/【Tensorflow r1.0 文档翻译】深入MNIST--专家级/" itemprop="url">
+                【Tensorflow r1.0 文档翻译】深入MNIST--专家级
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-02-26T14:50:58+08:00" content="2017-02-26">
+            2017-02-26
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+                ， 
+              
+
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/Tensorflow/" itemprop="url" rel="index">
+                  <span itemprop="name">Tensorflow</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/02/26/【Tensorflow r1.0 文档翻译】深入MNIST--专家级/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/02/26/【Tensorflow r1.0 文档翻译】深入MNIST--专家级/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p>TensorFlow是一个用于进行大规模数值计算的强大库。其擅长的任务之一是实施和训练深层神经网络。在本教程中，我们将学到构建一个TensorFlow模型的基本步骤，并将通过这些步骤为MNIST构建一个深度卷积神经网络。</p>
+<p>这个教程假设你已经熟悉神经网络和MNIST数据集。如果你尚未了解，请查看<a href="/2017/02/22/【Tensorflow%20r1.0%20文档翻译】机器学习的HelloWorld%20--%20MNIST手写数字识别/">新手指南</a>。在开始之前，请确认<a href="https://www.tensorflow.org/install/index" target="_blank" rel="external">安装</a>了TensorFlow。</p>
+<h2 id="关于本教程">关于本教程</h2><p>本教程的第一部分解释了<a href="https://www.tensorflow.org/code/tensorflow/examples/tutorials/mnist/mnist_softmax.py" target="_blank" rel="external">mnist_softmax.py</a>代码中发生了什么，这是Tensorflow模型的基本实现。第二部分显示了一些提高精度的方法。</p>
+<p>您可以将本教程中的每个代码段复制并粘贴到Python环境中，当然你也可以选择只是读一下这部分代码。</p>
+<p>我们将在本教程中完成：</p>
+<ul>
+<li>创建一个softmax回归函数，这是一个用于识别MNIST数字的模型，其原理是基于查看图像中的每个像素。</li>
+<li>使用Tensorflow来训练模型以识别数字，方法是“查看”数千个示例（并运行我们的第一个Tensorflow会话）。</li>
+<li>使用我们的测试数据检查模型的精度。</li>
+<li>构建，训练和测试多层卷积神经网络以提高结果。</li>
+</ul>
+<h2 id="准备工作">准备工作</h2><p>在我们创建模型之前，我们首先加载MNIST数据集，并启动TensorFlow会话。</p>
+<h3 id="加载MNIST数据">加载MNIST数据</h3><p>如果您要复制粘贴本教程中的代码，请从这两行代码开始，这两行代码将自动下载并读入数据：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">from tensorflow<span class="selector-class">.examples</span><span class="selector-class">.tutorials</span><span class="selector-class">.mnist</span> import input_data</div><div class="line">mnist = input_data.read_data_sets(<span class="string">'MNIST_data'</span>, one_hot=True)</div></pre></td></tr></table></figure>
+<p>这里的<code>mnist</code>是一个轻量级类，将训练集，验证集和测试集存储为NumPy数组。同时提供了一个函数，用于在迭代中获得minibatch，后面我们将会用到。</p>
+<h3 id="启动TensorFlow_InteractiveSession">启动TensorFlow InteractiveSession</h3><p>Tensorflow依赖于一个高效的C++后端来进行计算。与后端的这个连接叫做session。一般而言，使用TensorFlow程序的流程是先创建一个图，然后在session中启动它。</p>
+<p>这里，我们使用更加方便的<code>InteractiveSession</code>类。通过它，你可以更加灵活地构建你的代码。它能让你在运行图的时候，插入一些<a href="https://www.tensorflow.org/get_started/get_started#the_computational_graph" target="_blank" rel="external">计算图</a>，这些计算图是由某些操作(operations)构成的。这对于工作在交互式环境中的人们来说非常便利，比如使用IPython。如果你没有使用<code>InteractiveSession</code>，那么你需要在启动session之前构建整个计算图，然后启<a href="https://www.tensorflow.org/get_started/get_started#the_computational_graph" target="_blank" rel="external">动该计算图</a>。</p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</div><div class="line"><span class="title">sess</span> = tf.<span class="type">InteractiveSession</span>()</div></pre></td></tr></table></figure>
+<h3 id="计算图">计算图</h3><p>为了在Python中执行高效的数值计算，我们通常引入类似<strong><a href="http://www.numpy.org/" target="_blank" rel="external">NumPy</a></strong>这种库来执行开销昂贵的操作。例如在Python之外其他高效的语言来执行矩阵乘法这类操作。不幸的是，每次操作之后切换回Python的动作依然是一个巨大的开销。这种开销特别的差，如果你想要以一种分布式的方式运行在GPU上的话，这里传输数据将会是一个巨大的开销。</p>
+<p>TensorFlow也会在Python外部执行大量的运算，但它做了进一步的处理来规避了这种开销。取代独立于Python运行单一的代价昂贵的操作的模式，TensorFlow的方式是通过在Python中描述一个可交互的操作图，然后完全在Python之外进行运行。<strong>Theano</strong>或者<strong>Torch</strong>也有与此类似的实现。</p>
+<p>在这里Python代码的作用是用来在外部定义一个操作图，然后决定具体哪一部分的运算图要被运行。详细内容，见<a href="/2017/02/20/【Tensorflow%20r1.0%20文档翻译】TensorFlow入门/">TensorFlow入门</a>中的<a href="/2017/02/20/【Tensorflow%20r1.0%20文档翻译】TensorFlow入门#用于计算的Graph（图）">用于计算的Graph（图）</a>部分。</p>
+<h2 id="构建一个Softmax回归模型">构建一个Softmax回归模型</h2><p>这一节，我们通过一个单一的线性层来构建一个softmax回归模型。在下一节中，我们将把这个softmax回归扩展为一个多层卷积网络。</p>
+<h3 id="占位符（Placeholders）">占位符（Placeholders）</h3><p>我们通过创建输入的图像创建的节点和输出的类别创建的分类来构建一个计算图。</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">x = tf.placeholder(tf.float32, <span class="built_in">shape</span>=[<span class="keyword">None</span>, <span class="number">784</span>])</div><div class="line">y_ = tf.placeholder(tf.float32, <span class="built_in">shape</span>=[<span class="keyword">None</span>, <span class="number">10</span>])</div></pre></td></tr></table></figure>
+<p>这里<code>x</code>和<code>y_</code>不是具体的值。相反，他们都是一个<code>placeholder</code>（占位符）–当我们让TensorFlow开始执行计算时才被输入具体值。</p>
+<p>输入图像的<code>x</code>包含一个2维的浮点数张量。这里我们赋予它一个<code>shape</code>（形状）为<code>[None, 784]</code>，其中<code>784</code>是由28乘28像素的图片单行展开后的维度数，<code>None</code>表示第一个维度大小不定，可以是任意尺寸，用以指代batch的大小。目标输出类别<code>y_</code>也包含一个2维的tensor，它每行都是一个10维的one-hot向量，用于表示相应的MNIST图像属于哪个数字类（0到9）。</p>
+<p>虽然<code>placeholder</code>的<code>shape</code>参数是可选的，但有了它，TensorFlow能够自动捕捉因数据维度不一致导致的错误。</p>
+<h3 id="变量（Variables）">变量（Variables）</h3><p>我们现在为我们的模型定义了权值<code>W</code>和偏置量<code>b</code>。可以将它们当作额外的输入量，但是TensorFlow有一个更好的处理方式：<code>Variable</code>。一个<code>Variable</code>代表TensorFlow计算图中的一个值，能够在计算过程中使用，甚至进行修改。在机器学习的应用过程中，模型参数一般用<code>Variable</code>来表示。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="attr">W</span> = tf.Variable(tf.zeros([<span class="number">784</span>,<span class="number">10</span>]))</div><div class="line"><span class="attr">b</span> = tf.Variable(tf.zeros([<span class="number">10</span>]))</div></pre></td></tr></table></figure>
+<p>我们在调用<code>tf.Variable</code>的时候传入初始值。在这个例子中，我们把<code>W</code>和<code>b</code>初始化全为0的tensor。<code>W</code>是一个$784×10$的矩阵（因为我们有784个输入特征以及10个输出值），<code>b</code>是一个10维向量（因为我们有10种分类）。</p>
+<p>在<code>Variable</code>可以在session中被使用之前，他们必须被session初始化。此步骤使用已经指定的初始值（在这里tensor全部以0填充），并将它们分配给每个$Variable$。下面的代码可以一次初始化全部的<code>Variables</code>：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">sess</span><span class="selector-class">.run</span>(<span class="selector-tag">tf</span><span class="selector-class">.global_variables_initializer</span>())</div></pre></td></tr></table></figure>
+<h3 id="类别预测与损失函数">类别预测与损失函数</h3><p>现在我们可以实现我们自己的回归模型了。只需要一行代码！我们把向量化后的图片输入<code>x</code>和权重矩阵<code>W</code>相乘，加上偏置<code>b</code>，然后计算每个分类的softmax概率值。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">y</span> = tf.matmul(x,W) + b</div></pre></td></tr></table></figure>
+<p>我们可以很容易地指定一个损失函数。损失表示模型的预测效果在单个示例的糟糕程度；在我们的训练过程中，我们会尽量去最小化这个值。在这里，我们的损失函数就是介于目标值和应用于模型预测的softmax激励函数之间的交叉熵。正如我们在新手教学中用到的稳定的方程一样：</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="attr">cross_entropy</span> = tf.reduce_mean(</div><div class="line">    tf.nn.softmax_cross_entropy_with_logits(<span class="attr">labels=y_,</span> <span class="attr">logits=y))</span></div></pre></td></tr></table></figure>
+<p>请注意，<code>tf.nn.softmax_cross_entropy_with_logits</code>内部将softmax应用到非规范化的模型预测中，并且将所有的结果求和，通过<code>tf.reduce_mean</code>来取这些和的平均值。</p>
+<h2 id="训练模型">训练模型</h2><p>现在我们已经定义好了我们的模型和用于训练的损失函数，那么用TensorFlow进行训练就很简单了。由于TensorFlow知道整个计算图，所以它可以使用自动微分来找出关于每个变量的损失梯度。TensorFlow有多种<a href="https://www.tensorflow.org/api_guides/python/train#optimizers" target="_blank" rel="external">内置的优化算法</a>。对于这个例子，我们将使用最大梯度下降，步长为0.5，来下降交叉熵。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">train_step = tf<span class="selector-class">.train</span><span class="selector-class">.GradientDescentOptimizer</span>(<span class="number">0.5</span>).minimize(cross_entropy)</div></pre></td></tr></table></figure>
+<p>TensorFlow在这一行中实际上是在计算图中添加新的操作。这些操作包括计算梯度，计算每个参数的步长变化，并且计算出新的参数值。</p>
+<p>返回的<code>train_step</code>操作对象，在运行时会使用梯度下降来更新参数。因此，整个模型的训练可以通过反复地运行<code>train_step</code>来完成。</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> <span class="symbol">_</span> <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1000</span>):</div><div class="line">  <span class="built_in">batch</span> = mnist.train.next_batch(<span class="number">100</span>)</div><div class="line">  train_step.run(feed_dict=&#123;x: <span class="built_in">batch</span>[<span class="number">0</span>], y_: <span class="built_in">batch</span>[<span class="number">1</span>]&#125;)</div></pre></td></tr></table></figure>
+<p>每次训练迭代我们都会加入100个训练样本。然后，然后执行一次<code>train_step</code>操作，并通过<code>feed_dict</code>将<code>placeholder</code>tensor<code>x</code>和<code>y_</code>，用训练训练数据替代。请注意，您可以使用<code>feed_dict</code>替换计算图形中的任何tensor。–它不仅仅局限于<code>placeholder</code>。</p>
+<h3 id="评估模型">评估模型</h3><p>那么我们的模型表现如何呢？</p>
+<p>首先，来让我们找出那些预测正确的标签。<code>tf.argmax</code>是一个很有用的方法，它能给出某个tensor对象在某一维上的其数据最大值所在的索引值。例如，<code>tf.argmax(y，1)</code>是我们的模型认为每个输入最可能的标签，而<code>tf.argmax(y_，1)</code>是正确的标签。我们可以用<code>tf.equal</code>来检查我们我预测值与真实值是否相符。</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">correct_prediction = <span class="keyword">tf</span>.equal(<span class="keyword">tf</span>.argmax(<span class="keyword">y</span>,<span class="number">1</span>), <span class="keyword">tf</span>.argmax(y_,<span class="number">1</span>))</div></pre></td></tr></table></figure>
+<p>这行代码会给我们一组布尔值。为了确定正确预测项的比例，我们可以把布尔值转换成浮点数，然后取平均值。例如，<code>[True, False, True, True]</code>会变成<code>[1,0,1,1]</code>，取平均值后得到<code>0.75</code>.</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">accuracy = <span class="keyword">tf</span>.reduce_mean(<span class="keyword">tf</span>.cast(correct_prediction, <span class="keyword">tf</span>.float32))</div></pre></td></tr></table></figure>
+<p>最后，我们计算所学习到的模型在测试数据集上面的正确率。</p>
+<figure class="highlight roboconf"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">print(accuracy.eval(feed_dict=&#123;<span class="attribute">x</span>: mnist<span class="variable">.test</span><span class="variable">.images</span>, y_: mnist<span class="variable">.test</span><span class="variable">.labels</span>&#125;))</div></pre></td></tr></table></figure>
+<h2 id="构建多层卷积网络">构建多层卷积网络</h2><p>在MNIST数据集上获得92%的准确率是相当差的。甚至差到令人感到尴尬的地步。在本节中，我们将解决这个问题。我们将从一个非常简单的模型跳转到一个中等复杂的模型：一个小型的卷积神经网络。这将会使我们得到一个大概在99.2%的准确率。–虽然不是最好的结果，但还算是令人满意的一个结果。</p>
+<h3 id="权值初始化">权值初始化</h3><p>要创建这个模型，我们需要创建很多权值和偏置量。通常情况下，应该使用少量噪音数据来初始化权值以用于打破对称性，并且防止0梯度产生。由于我们使用的是<a href="https://en.wikipedia.org/wiki/Rectifier_(neural_networks" target="_blank" rel="external">ReLU</a>)神经元，因此比较好的做法是用一个较小的正数来初始化偏置项，以避免神经元节点输出恒为0的问题（dead neurons）。为了不在建立模型的时候反复做初始化操作，我们定义两个用于初始化的函数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">weight_variable</span><span class="params">(shape)</span>:</span></div><div class="line">  initial = tf.truncated_normal(shape, stddev=<span class="number">0.1</span>)</div><div class="line">  <span class="keyword">return</span> tf.Variable(initial)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">bias_variable</span><span class="params">(shape)</span>:</span></div><div class="line">  initial = tf.constant(<span class="number">0.1</span>, shape=shape)</div><div class="line">  <span class="keyword">return</span> tf.Variable(initial)</div></pre></td></tr></table></figure>
+<h3 id="卷积和池化">卷积和池化</h3><p>TensorFlow在卷积和池化上有很强的灵活性。我们怎么处理边界？步长应该设多大？在这个实例里，我们会一直使用vanilla版本。我们的卷积使用1步长（stride size），0边距（padding size）的模板，保证输出和输入是同一个大小。我们的池化用简单传统的2x2大小的模板做最大池（max pooling）。为了使代码更简洁，我们把这部分抽象成一个函数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">conv2d</span><span class="params">(x, W)</span>:</span></div><div class="line">  <span class="keyword">return</span> tf.nn.conv2d(x, W, strides=[<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>], padding=<span class="string">'SAME'</span>)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">max_pool_2x2</span><span class="params">(x)</span>:</span></div><div class="line">  <span class="keyword">return</span> tf.nn.max_pool(x, ksize=[<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">1</span>],</div><div class="line">                        strides=[<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">1</span>], padding=<span class="string">'SAME'</span>)</div></pre></td></tr></table></figure>
+<h3 id="第一层卷积">第一层卷积</h3><p>现在，我们可以实现我们的第一层了。它由一个卷积接一个最大池组成。卷积在每个5x5的patch中算出32个特征。卷积的权重tensor形状是<code>[5, 5, 1, 32]</code>。前两个维度是patch的大小，接着是输入的通道数目，最后是输出的通道数目。 而对于每一个输出通道都有一个对应的偏置量。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">W_conv1 = weight_variable([<span class="number">5</span>, <span class="number">5</span>, <span class="number">1</span>, <span class="number">32</span>])</div><div class="line">b_conv1 = bias_variable([<span class="number">32</span>])</div></pre></td></tr></table></figure>
+<p>为了用这一层，我们把<code>x</code>变成一个4维tensor，其第<code>2</code>、第<code>3</code>维对应图片的宽、高，最后一维代表图片的颜色通道数(因为是灰度图所以这里的通道数为1，如果是rgb彩色图，则为3)。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">x_image = tf.reshape(x, [<span class="number">-1</span>,<span class="number">28</span>,<span class="number">28</span>,<span class="number">1</span>])</div></pre></td></tr></table></figure>
+<p>然后我们将<code>x_image</code>与权值tensor进行卷积，加上偏置量，然后应用ReLU激励函数，最后最大池化。<code>max_pool_2x2</code>方法可将图片大小缩小为14x14。</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">h_conv1 = tf.nn.relu(conv2d(x_image, W_conv1) + b_conv1)</div><div class="line">h_pool1 = max_pool_2x2(h_conv1)</div></pre></td></tr></table></figure>
+<h3 id="第二层卷积">第二层卷积</h3><p>为了构建一个更深的网络，我们会把几个类似的层堆叠起来。第二层中，每个5x5的patch会得到64个特征。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="attr">W_conv2</span> = weight_variable([<span class="number">5</span>, <span class="number">5</span>, <span class="number">32</span>, <span class="number">64</span>])</div><div class="line"><span class="attr">b_conv2</span> = bias_variable([<span class="number">64</span>])</div><div class="line"></div><div class="line"><span class="attr">h_conv2</span> = tf.nn.relu(conv2d(h_pool1, W_conv2) + b_conv2)</div><div class="line"><span class="attr">h_pool2</span> = max_pool_2x2(h_conv2)</div></pre></td></tr></table></figure>
+<h3 id="密集连接层">密集连接层</h3><p>现在，图片尺寸减小到7x7，我们加入一个有1024个神经元的全连接层，用于处理整个图片。我们把池化层输出的tensor reshape成一些向量，乘上权重矩阵，加上偏置，然后对其使用ReLU。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">W_fc1 = weight_variable([<span class="number">7</span> * <span class="number">7</span> * <span class="number">64</span>, <span class="number">1024</span>])</div><div class="line">b_fc1 = bias_variable([<span class="number">1024</span>])</div><div class="line"></div><div class="line">h_pool2_flat = tf.reshape(h_pool2, [<span class="number">-1</span>, <span class="number">7</span>*<span class="number">7</span>*<span class="number">64</span>])</div><div class="line">h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)</div></pre></td></tr></table></figure>
+<h3 id="Dropout">Dropout</h3><p>为了减少过拟合，我们在输出层之前加入<a href="https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf" target="_blank" rel="external">dropout</a>。我们用一个<code>placeholder</code>来代表一个神经元的输出在dropout中保持不变的概率。这样我们可以在训练过程中启用dropout，在测试过程中关闭dropout。 TensorFlow的<code>tf.nn.dropout</code>操作除了可以屏蔽神经元的输出外，还会自动处理神经元输出值的scale。所以用dropout的时候可以不用考虑scale。</p>
+<blockquote>
+<p>对于这个小型卷积网络，性能实际上几乎相同，没有压差。Dropout往往是非常有效的减少过度拟合的方式，但当训练非常大的神经网络时，它是最有用的。</p>
+</blockquote>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="attr">keep_prob</span> = tf.placeholder(tf.float32)</div><div class="line"><span class="attr">h_fc1_drop</span> = tf.nn.dropout(h_fc1, keep_prob)</div></pre></td></tr></table></figure>
+<h3 id="读出层">读出层</h3><p>最后，我们添加一个softmax层，就像前面的单层softmax 回归一样。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="attr">W_fc2</span> = weight_variable([<span class="number">1024</span>, <span class="number">10</span>])</div><div class="line"><span class="attr">b_fc2</span> = bias_variable([<span class="number">10</span>])</div><div class="line"></div><div class="line"><span class="attr">y_conv</span> = tf.matmul(h_fc1_drop, W_fc2) + b_fc2</div></pre></td></tr></table></figure>
+<h3 id="训练和评估模型">训练和评估模型</h3><p>这个模型的效果如何呢？为了进行训练和评估，我们使用与之前简单的单层SoftMax神经网络模型几乎相同的一套代码。</p>
+<p>不过有以下几点不同：</p>
+<ul>
+<li>我们将用更复杂的ADAM优化器来替换最陡的梯度下降优化器。</li>
+<li>我们将在<code>feed_dict</code>中包含附加参数<code>keep_prob</code>来控制丢失率。</li>
+<li>我们将在训练过程中的每执行100次迭代时，添加一次日志记录。</li>
+</ul>
+<p>随时可以继续运行此代码，但它会进行20,000次训练迭代，可能需要一段时间（可能长达半小时），具体时间取决于您的处理器。</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">cross_entropy = <span class="keyword">tf</span>.reduce_mean(</div><div class="line">    <span class="keyword">tf</span>.<span class="keyword">nn</span>.softmax_cross_entropy_with_logits(labels=y_, logits=y_conv))</div><div class="line">train_step = <span class="keyword">tf</span>.train.AdamOptimizer(<span class="number">1</span><span class="keyword">e</span>-<span class="number">4</span>).minimize(cross_entropy)</div><div class="line">correct_prediction = <span class="keyword">tf</span>.equal(<span class="keyword">tf</span>.argmax(y_conv,<span class="number">1</span>), <span class="keyword">tf</span>.argmax(y_,<span class="number">1</span>))</div><div class="line">accuracy = <span class="keyword">tf</span>.reduce_mean(<span class="keyword">tf</span>.cast(correct_prediction, <span class="keyword">tf</span>.float32))</div><div class="line">sess.run(<span class="keyword">tf</span>.global_variables_initializer())</div><div class="line"><span class="keyword">for</span> i in <span class="built_in">range</span>(<span class="number">20000</span>):</div><div class="line">  batch = mnist.train.next_batch(<span class="number">50</span>)</div><div class="line">  <span class="keyword">if</span> i%<span class="number">100</span> == <span class="number">0</span>:</div><div class="line">    train_accuracy = accuracy.<span class="built_in">eval</span>(feed_dict=&#123;</div><div class="line">        <span class="keyword">x</span>:batch[<span class="number">0</span>], y_: batch[<span class="number">1</span>], keep_pro<span class="variable">b:</span> <span class="number">1.0</span>&#125;)</div><div class="line">    <span class="keyword">print</span>(<span class="string">"step %d, training accuracy %g"</span>%(i, train_accuracy))</div><div class="line">  train_step.run(feed_dict=&#123;<span class="keyword">x</span>: batch[<span class="number">0</span>], y_: batch[<span class="number">1</span>], keep_pro<span class="variable">b:</span> <span class="number">0.5</span>&#125;)</div><div class="line"></div><div class="line"><span class="keyword">print</span>(<span class="string">"test accuracy %g"</span>%accuracy.<span class="built_in">eval</span>(feed_dict=&#123;</div><div class="line">    <span class="keyword">x</span>: mnist.test.images, y_: mnist.test.labels, keep_pro<span class="variable">b:</span> <span class="number">1.0</span>&#125;))</div></pre></td></tr></table></figure>
+<p>以上代码，在最终测试集上的准确率大概是99.2%。</p>
+<p>目前为止，我们已经学会了用TensorFlow快捷地搭建、训练和评估一个复杂一点儿的深度学习模型。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2017/02/22/【Tensorflow r1.0 文档翻译】机器学习的HelloWorld -- MNIST手写数字识别/" itemprop="url">
                 【Tensorflow r1.0 文档翻译】机器学习的HelloWorld -- MNIST手写数字识别
               </a>
@@ -2285,250 +2463,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2017/01/16/【Python3教程 第1章】基本概念/" itemprop="url">
-                【Python3教程 第1章】基本概念
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2017-01-16T00:31:58+08:00" content="2017-01-16">
-            2017-01-16
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/python/" itemprop="url" rel="index">
-                  <span itemprop="name">python</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2017/01/16/【Python3教程 第1章】基本概念/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/16/【Python3教程 第1章】基本概念/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="什么是Python？">什么是Python？</h2><h3 id="欢迎来到Python!">欢迎来到Python!</h3><p><strong>Python</strong>是一个应用于很多领域（包括web编程，脚本，科学计算，以及人工智能）的高级编程语言。</p>
-<p>同时它也非常流行，在Google、NASA、CIA以及Disney等这些机构都在使用。</p>
-<blockquote>
-<p>Python在运行时被解释器(interpreter)处理。在你的程序执行之前，不需要被编译。</p>
-</blockquote>
-<p>Python有三个主要的版本，分别是1.x,2.x和3.x。进一步细分为一些主要的版本，例如2.7和3.3。</p>
-<p>由Python3.x版本写的代码保证能够在未来的所有版本中运行。</p>
-<p>有两个版本的Python分别是2.x和3.x版本现在还在被使用到。这套课程主要涵盖的是Python 3.x版本的内容，但切换到另一个版本其实并不困难。</p>
-<p>Python有一些由其他语言写成的不同的实现。这套课程中用到的，<strong>CPython</strong>是目前最流行的。</p>
-<blockquote>
-<p><strong>解释器</strong>是运行以解释性语言（例如Python）编写的脚本的程序。</p>
-</blockquote>
-<h2 id="Python控制台">Python控制台</h2><h3 id="你的第一个程序">你的第一个程序</h3><p>这节课，我们将通过Python控制台来开始使用Python。第一步是从<strong><a href="www.python.org">www.python.org</a></strong>下载Python。</p>
-<p>你应该下载与你系统兼容的Python 3.x的版本。一旦安装完毕，Python控制台就可以使用以下的几种方式之一来访问了：</p>
-<ul>
-<li>使用命令行</li>
-<li>直接运行Python解释器</li>
-<li>运行一个图形化的Python IDLE(集成化的Python开发环境)程序</li>
-</ul>
-<p>运行IDLE之后，你将看到一个三个箭头的提示。输入<code>print(&#39;Hello world!&#39;)</code>然后按下回车。你会看到以下结果：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span>&gt;print(<span class="string">'Hello world!'</span>)</div><div class="line">Hello world!</div></pre></td></tr></table></figure>
-<p>恭喜！你已经写完了你的第一个程序。</p>
-<blockquote>
-<p>这个展示”Hello world!”的小程序在其他任何语言中像是一个传统一样，都是作为第一个程序存在的。</p>
-</blockquote>
-<h3 id="Python控制台-1">Python控制台</h3><p>Python控制台是一个允许你输入一行Python代码，重复执行那一行代码，并输出结果的程序。这被称为<strong>REPL</strong> – 一个“读取-计算-打印输出”的循环。</p>
-<p>在<code>print(&#39;Hello world!&#39;)</code>行的输出已经显示之后，您可以重新输入代码，并且您将再次获得相同的输出。尝试输入相同的代码，但使用不同的文本：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span>&gt; print(<span class="string">'Hello world!'</span>)</div><div class="line">Hello world!</div><div class="line"><span class="meta">&gt;&gt;</span>&gt; print(<span class="string">'Hello world!'</span>)</div><div class="line">Hello world!</div><div class="line"><span class="meta">&gt;&gt;</span>&gt; print(<span class="string">'Spam and eggs...'</span>)</div><div class="line">Spam <span class="keyword">and</span> eggs...</div></pre></td></tr></table></figure>
-<blockquote>
-<p>Python代码通常包含对喜剧组<strong>Monty Python</strong>的引用。这就是为什么“垃圾邮件”和“鸡蛋”这些词经常在Python中用作占位符变量，其中“foo”和“bar”将用于其他编程语言。</p>
-</blockquote>
-<p>结束Python控制台的使用后，您需要关闭它。您可以以关闭操作系统上其他程序的相同方式关闭IDLE，但其他类型的控制台必须通过不同的方法关闭。要关闭控制台，请键入“<strong>quit()</strong>”或“<strong>exit()</strong>”，然后按Enter键。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span>&gt; quit()</div></pre></td></tr></table></figure>
-<blockquote>
-<p>一些Python控制台也可以通过按<strong>Ctrl-Z</strong>关闭，这是一个控制代码，发送退出信号到控制台程序。另一个控制代码，<strong>Ctrl-C</strong>，停止正在运行的程序，如果你不小心创建了一个死循环的程序时，可以用这个指令来终止它。</p>
-</blockquote>
-<h2 id="简单操作">简单操作</h2><h3 id="加减法操作">加减法操作</h3><p>Python有计算能力。直接在Python控制台中输入计算，它将输出答案。</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; <span class="number">2</span> + <span class="number">2</span></div><div class="line"><span class="number">4</span></div><div class="line">&gt;&gt;&gt; <span class="number">5</span> + <span class="number">4</span> - <span class="number">3</span></div><div class="line"><span class="number">6</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>在这里的加号和减号周围的空格是<strong>可选的</strong>（代码的执行对它们是无效的），但这些空格使代码更容易阅读。</p>
-</blockquote>
-<h3 id="乘除法操作">乘除法操作</h3><p>Python还可以执行乘法和除法，使用星号(*)表示乘法和正斜杠(/)表示除法。</p>
-<p>使用括号确定优先执行的操作。</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; <span class="number">2</span> * (<span class="number">3</span> + <span class="number">4</span>)</div><div class="line"><span class="number">14</span></div><div class="line">&gt;&gt;&gt; <span class="number">10</span> / <span class="number">2</span></div><div class="line"><span class="number">5.0</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>使用单斜杠来分割数字会产生一个小数（或<strong>浮点数</strong>）。我们将在后面的课程中更多地了解<strong>浮点数</strong>。</p>
-</blockquote>
-<h3 id="负数运算">负数运算</h3><p>减号与数字组合会得到一个<strong>负数</strong>。在负数上的操作运算和在正数上的操作运算是一样的。</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; <span class="number">-7</span></div><div class="line"><span class="number">-7</span></div><div class="line">&gt;&gt;&gt; (<span class="number">-7</span> + <span class="number">2</span>) * (<span class="number">-4</span>)</div><div class="line"><span class="number">20</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>加号也可以跟在数字的前面，但它其实没有什么效果。其实它通常是用来强调数字是正数，目的是为了增强代码的可读性。</p>
-</blockquote>
-<h3 id="除以0">除以0</h3><p>在Python中被0除会产生一个<strong>错误(error)</strong>，因为没有答案能被算出。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span>&gt; <span class="number">11</span> / <span class="number">0</span></div><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"&lt;stdin&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;<span class="class"><span class="keyword">module</span>&gt;</span></div><div class="line"><span class="symbol">ZeroDivisionError:</span> division by zero</div></pre></td></tr></table></figure>
-<blockquote>
-<p>在Python中，最后一行的错误信息展示了错误类型。仔细读错误信息，因为它通常会告诉你如何修改程序！</p>
-</blockquote>
-<h2 id="浮点数(Float)">浮点数(Float)</h2><p><strong>Float</strong>在Python中用于表示不是整数的数字。以浮点数表示的实例如：<code>0.5</code>和<code>-7.8237591</code>。它们可以通过输入带小数点的数字直接创建，也可以使用整数除法等操作来得到。在数字末尾的多余的0会被忽略。</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; <span class="number">3</span>/<span class="number">4</span> </div><div class="line"><span class="number">0.75</span> </div><div class="line">&gt;&gt;&gt; <span class="number">9.8765000</span> </div><div class="line"><span class="number">9.8765</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>事实上，电脑无法精确的计算浮点数，同样，我们无法写出浮点数<code>1/3</code>的完整的十进制形式(<code>0.3333333333333333...</code>)。记住这一条，因为这里总是会导致一些令人生气的bug！</p>
-</blockquote>
-<p>正如你上面看到的，两个整数相除可以得到一个<strong>float</strong>。</p>
-<p>一个浮点数也可以由两个浮点数之间的运算得出，或者一个整数一个浮点数的运算也可以得出。</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; <span class="number">8</span> / <span class="number">2</span></div><div class="line"><span class="number">4.0</span></div><div class="line">&gt;&gt;&gt; <span class="number">6</span> * <span class="number">7.0</span></div><div class="line"><span class="number">42.0</span></div><div class="line">&gt;&gt;&gt; <span class="number">4</span> + <span class="number">1.65</span></div><div class="line"><span class="number">5.65</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>一个浮点数可以和一个整数相加，因为Python会自动将整数转变为浮点数。然而，这种隐式转型在Python中是一种例外情况，通常情况下，在Python中，如果你想要进行类型转换，都需要手动处理。</p>
-</blockquote>
-<h2 id="其他数值运算">其他数值运算</h2><h3 id="乘方运算">乘方运算</h3><p>除了加，减，乘，除，Python也支持乘方操作。乘方操作是使用两个星号执行的。</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; <span class="number">2</span> ** <span class="number">5</span> </div><div class="line"><span class="number">32</span> </div><div class="line">&gt;&gt;&gt; <span class="number">9</span> **（<span class="number">1</span>/<span class="number">2</span>）</div><div class="line"><span class="number">3.0</span></div></pre></td></tr></table></figure>
-<h3 id="商和余">商和余</h3><p>要确定一个除法运算的商和余数，可以分别使用<strong>floor division</strong>和<strong>取模</strong>运算。</p>
-<p>Floor division使用两个下划线构成。取模运算由百分号(%)组成。</p>
-<p>这些操作都可以用在浮点数和整数上。</p>
-<p>下面的代码展示了20可以被6除三次，以及1.25除以0.5之后余0.25：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; <span class="number">20</span> <span class="comment">// 6</span></div><div class="line"><span class="number">3</span></div><div class="line">&gt;&gt;&gt; <span class="number">1.25</span> % <span class="number">0.5</span></div><div class="line"><span class="number">0.25</span></div></pre></td></tr></table></figure>
-<h2 id="字符串">字符串</h2><p>如果你想在Python中使用一个text，你必须用到字符串。</p>
-<p>一个字符串是由<strong>单引号</strong>或<strong>双引号</strong>以及之间的文本构成的。</p>
-<p>当Python控制台显示一个字符串时，它通常是由单引号括起来的。用于字符串上的分隔符不会影响到字符串的行为。</p>
-<figure class="highlight vhdl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; <span class="string">"Python is fun!"</span></div><div class="line"><span class="symbol">'Python</span> <span class="keyword">is</span> fun!'</div><div class="line">&gt;&gt;&gt; <span class="symbol">'Always</span> look <span class="keyword">on</span> the bright side <span class="keyword">of</span> life'</div><div class="line"><span class="symbol">'Always</span> look <span class="keyword">on</span> the bright side <span class="keyword">of</span> life'</div></pre></td></tr></table></figure>
-<h3 id="转义字符">转义字符</h3><p>某些字符串无法直接包含在一个字符串内。例如，双引号不能直接包含双引号的字符串，这将导致字符串提前结束。</p>
-<p>想这些字符必须通过一个用于转义的反斜杠()在他们前面，才能满足我们的要求。</p>
-<p>必须转义的其他常见字符还有<strong>换行符</strong>和<strong>反斜杠</strong>。</p>
-<p>双引号只需要在双引号字符串中转义，对于单引号字符串也是如此。</p>
-<figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; <span class="symbol">'Brian</span>\<span class="symbol">'s</span> mother: He\<span class="symbol">'s</span> <span class="keyword">not</span> the Messiah. He\<span class="symbol">'s</span> a very naughty boy!'</div><div class="line"><span class="symbol">'Brian</span><span class="symbol">'s</span> mother: He<span class="symbol">'s</span> <span class="keyword">not</span> the Messiah. He<span class="symbol">'s</span> a very naughty boy!'</div></pre></td></tr></table></figure>
-<p><strong>\n</strong>代表新的一行。</p>
-<blockquote>
-<p>反斜杠也可用于转义标签、任意Unicode字符 以及许多其他并不能被打印的东西。这些字符称为转义字符。</p>
-</blockquote>
-<h3 id="换行">换行</h3><p>Python提供了一种简单的方式来避免手工编写”\n”来进行字符串的换行转义。创建一个<strong>三引号</strong>包裹的字符串，回车键将自动处理为转义换行符。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">"""Customer: Good morning.</span></div><div class="line">Owner: Good morning, Sir. Welcome to the National Cheese Emporium."""</div><div class="line"></div><div class="line"><span class="string">'Customer: Good morning.\nOwner: Good morning, Sir. Welcome to the National Cheese Emporium.'</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>正如你看到的那样，当我们按下回车键时，<strong>\n</strong>会自动地添加到输出中去。</p>
-</blockquote>
-<h2 id="简单的输入与输出">简单的输入与输出</h2><h3 id="输出">输出</h3><p>通常情况下，程序接受<strong>输入</strong>然后处理之后产生<strong>输出</strong>。</p>
-<p>在Python中，你可以使用<strong>print</strong>方法来生成输出。它将在屏幕上输出某些东西的文本表示形式。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span>&gt; print(<span class="number">1</span> + <span class="number">1</span>)</div><div class="line"><span class="number">2</span></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; print(<span class="string">"Hello\nWorld!"</span>)</div><div class="line">Hello</div><div class="line">World!</div></pre></td></tr></table></figure>
-<blockquote>
-<p>当一个字符串被打印时，两边的括号是不被展示的。</p>
-</blockquote>
-<h3 id="输入">输入</h3><p>在Python中，你可以使用<strong>input</strong>方法来获取用户的输入。这个方法会提示用户输入，并且返回用户按下回车时输入的字符串（内容自动转义）。</p>
-<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; input(<span class="string">"Enter something please: "</span>)</div><div class="line">Enter something please: This is what\nthe <span class="keyword">user</span> <span class="title">enters</span>!</div><div class="line"></div><div class="line">'This is what\\nthe <span class="keyword">user</span> <span class="title">enters</span>!'</div></pre></td></tr></table></figure>
-<blockquote>
-<p>能够自动的执行输入和输出的<strong>输入</strong>和<strong>输出</strong>方法在Python的控制台中并不是很有用。然而，在实际的程序中，它很有用。</p>
-</blockquote>
-<h2 id="字符串操作">字符串操作</h2><h3 id="级联">级联</h3><p>与整数浮点数相同，字符串在Python中也可以使用加法运算，这种可以在任意两个字符串之间完成的操作被称为<strong>级联</strong>。</p>
-<p>执行级联操作时，不管字符串是由单引号创建的还是双引号创建的，都可以正常执行。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span>&gt; <span class="string">"Spam"</span> + <span class="string">'eggs'</span></div><div class="line"><span class="string">'Spameggs'</span></div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; print(<span class="string">"First string"</span> + <span class="string">", "</span> + <span class="string">"second string"</span>)</div><div class="line">First string, second string</div></pre></td></tr></table></figure>
-<p>即使你的字符串中包含数字，它们在进行相加操作时，依然是以字符串的形式进行运算，而不是整数。将一个字符串与一个数字相加会产生错误，即使它们看起来很相似，但它们任然是两种不同的实体。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span>&gt; <span class="string">"2"</span> + <span class="string">"2"</span></div><div class="line"><span class="string">'22'</span></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; <span class="number">1</span> + <span class="string">'2'</span> + <span class="number">3</span> + <span class="string">'4'</span></div><div class="line">Traceback (most recent call last):</div><div class="line">  File <span class="string">"&lt;stdin&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;<span class="class"><span class="keyword">module</span>&gt;</span></div><div class="line"><span class="symbol">TypeError:</span> unsupported operand type(s) <span class="keyword">for</span> +: <span class="string">'int'</span> <span class="keyword">and</span> <span class="string">'str'</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>在后面的课程中，错误信息只显示最后一行，因为它是唯一提供当前发生的错误的详细信息的消息。</p>
-</blockquote>
-<h3 id="字符串操作-1">字符串操作</h3><p>字符串也可以和整数<strong>相乘</strong>。这种操作会生成由原始字符串重复出现组成的字符串。字符串和整数的顺序并不重要，但通常情况下，字符串是放在最前面的。</p>
-<p>字符串不能被其他字符串相乘。字符串也不能被浮点数相乘，即使浮点数是整数。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span>&gt; print(<span class="string">"spam"</span> * <span class="number">3</span>)</div><div class="line">spamspamspam</div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; <span class="number">4</span> * <span class="string">'2'</span></div><div class="line"><span class="string">'2222'</span></div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; <span class="string">'17'</span> * <span class="string">'87'</span></div><div class="line"><span class="symbol">TypeError:</span> can<span class="string">'t multiply sequence by non-int of type '</span>str<span class="string">'</span></div><div class="line"></div><div class="line">&gt;&gt;&gt; 'pythonisfun<span class="string">' * 7.0</span></div><div class="line">TypeError: can't multiply sequence by non-int of type <span class="string">'float'</span></div></pre></td></tr></table></figure>
-<h2 id="类型转换">类型转换</h2><p>在Python中，由于类型所以有些操作不能完成。例如，你不能把字符串“2”和字符串“3”相加得到字符串“5”，由于这种加法操作是在字符串上进行的，得到的结果是“23”。</p>
-<p>解决这个问题的方式是<strong>类型转换</strong>。</p>
-<p>在这个例子中，你可以使用<strong>int</strong>函数。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span>&gt; <span class="string">"2"</span> + <span class="string">"3"</span></div><div class="line"><span class="string">'23'</span></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; int(<span class="string">"2"</span>) + int(<span class="string">"3"</span>)</div><div class="line"><span class="number">5</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>在Python中，我们使用的类型是<strong>整数</strong>，<strong>浮点数</strong>和<strong>字符串</strong>。用于转换为这些的函数分别是<strong>int</strong>，<strong>float</strong>和<strong>str</strong>。</p>
-</blockquote>
-<p>另一个类型转换的例子是转换用户的输入(是一个<strong>string</strong>)成为一个数字(<strong>integers</strong>或者<strong>floats</strong>)，以至于可以进行计算。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt; <span class="keyword">float</span>(input(<span class="string">"Enter a number: "</span>)) + <span class="keyword">float</span>(input(<span class="string">"Enter another number: "</span>))</div><div class="line">Enter a <span class="string">number:</span> <span class="number">40</span></div><div class="line">Enter another <span class="string">number:</span> <span class="number">2</span></div><div class="line"><span class="number">42.0</span></div></pre></td></tr></table></figure>
-<h2 id="变量">变量</h2><p>变量在大多数编程语言中都起到了重要的作用，Python也不例外。一个变量通过赋予一个名字，然后可以存储一个值，在其后面的程序中进行调用。</p>
-<p>通过<strong>一个等号</strong>来定义一个变量。不同于到目前我们看到的大部分代码，它不会在控制台产生任何输出信息。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span>&gt; x = <span class="number">7</span></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; print(x)</div><div class="line"><span class="number">7</span></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; print(x + <span class="number">3</span>)</div><div class="line"><span class="number">10</span></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; print(x)</div><div class="line"><span class="number">7</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p>您可以使用变量执行相应的操作，就像使用数字和字符串一样。正如你所看到的，这个变量在整个程序中都保存着它的值。</p>
-</blockquote>
-<p>变量可以多次的重新赋值。在Python中，变量没有被指定类型，因此你可以赋值一个string到一个变量上，然后你也可以赋值一个integer型的数据到同一个变量上。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span>&gt; x = <span class="number">123.456</span></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; print(x)</div><div class="line"><span class="number">123.456</span></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; x = <span class="string">"This is a string"</span></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; print(x + <span class="string">"!"</span>)</div><div class="line">This is a string!</div></pre></td></tr></table></figure>
-<h3 id="变量名">变量名</h3><p>在Python中，对于变量名有一些限制，在变量名中只可以使用字母、数字和下划线。另外，不能以数字开头。</p>
-<p>如果不遵循这些规则，则会产生错误。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span>&gt; this_is_a_normal_name = <span class="number">7</span></div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; <span class="number">123</span>abc = <span class="number">7</span></div><div class="line"><span class="symbol">SyntaxError:</span> invalid syntax</div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; spaces are not allowed</div><div class="line"><span class="symbol">SyntaxError:</span> invalid syntax</div></pre></td></tr></table></figure>
-<blockquote>
-<p>Python是一种大小写敏感的编程语言。因此，<strong>Lastname</strong>和<strong>lastname</strong>在Python中是两个不同的变量名。</p>
-</blockquote>
-<p>如果使用了一个没有被赋值的变量，将产生一个<strong>错误</strong>。</p>
-<p>你可以使用<strong>del</strong>语句来删除一个变量，这意味着这个变量从名称到值的引用都会被删除，并且尝试使用被删除的变量会导致错误。被删除的变量可以正常的重新被赋值。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span>&gt; foo = <span class="string">"a string"</span></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; foo</div><div class="line"><span class="string">'a string'</span></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; bar</div><div class="line"><span class="symbol">NameError:</span> name <span class="string">'bar'</span> is <span class="keyword">not</span> <span class="keyword">defined</span></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; del foo</div><div class="line"><span class="meta">&gt;&gt;</span>&gt; foo</div><div class="line"><span class="symbol">NameError:</span> name <span class="string">'foo'</span> is <span class="keyword">not</span> <span class="keyword">defined</span></div></pre></td></tr></table></figure>
-<p>你也可以接受用户的输入作为变量的值:</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span>&gt; foo = input(<span class="string">"Enter a number: "</span>)</div><div class="line">Enter a <span class="symbol">number:</span> <span class="number">7</span></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; print(foo)</div><div class="line"><span class="number">7</span></div></pre></td></tr></table></figure>
-<h2 id="赋值运算符">赋值运算符</h2><p>赋值运算符允许你将像<code>x = x + 3</code>这样的代码写的更简洁，像这样<code>x += 3</code>。</p>
-<p>同样的操作也适用于其他操作例如<code>-</code>,<code>*</code>,<code>/</code>和<code>%</code>。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span>&gt; x = <span class="number">2</span></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; print(x)</div><div class="line"><span class="number">2</span></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; x += <span class="number">3</span></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; print(x)</div><div class="line"><span class="number">5</span></div></pre></td></tr></table></figure>
-<p>这些运算符也可以用于数字以外的类型，例如<strong>字符串</strong>。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span>&gt; x = <span class="string">"spam"</span></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; print(x)</div><div class="line">spam</div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; x += <span class="string">"eggs"</span></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; print(x)</div><div class="line">spameggs</div></pre></td></tr></table></figure>
-<blockquote>
-<p>许多其他的语言有像<code>++</code>这样的对于<code>x += 1</code>的简写的写法。Python中<strong>不支持</strong>这样做。</p>
-</blockquote>
-<h2 id="使用编辑器">使用编辑器</h2><p>到目前为止，我们仅仅通过Python控制台来写Python。这样我们每次仅能同时输入并允许一行代码。</p>
-<p>在实际的开发中其实并不是这样的，我们会将多行代码写入一个文件中，并通过Python解释器来运行它。</p>
-<p>在<strong>IDLE</strong>中，这种操作是通过创建一个文件，输入一些代码，保存文件，然后运行它来执行。这些操作可以通过点击菜单来完成或者通过键盘快捷键’Ctrl-N’,’Ctrl-S’和‘F5’来完成。</p>
-<p>文件中的每行代码都被解释为在控制台中一次输入的一行代码。</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">x = <span class="number">7</span></div><div class="line">x = x + <span class="number">2</span></div><div class="line"><span class="function"><span class="title">print</span><span class="params">(x)</span></span></div></pre></td></tr></table></figure>
-<p>执行结果：</p>
-<p><img src="/img/17_01_16/001.png" alt=""></p>
-<blockquote>
-<p>Python源代码有一个<strong>.py</strong>的扩展名。</p>
-</blockquote>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2567,7 +2501,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">103</span>
+              <span class="site-state-item-count">104</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

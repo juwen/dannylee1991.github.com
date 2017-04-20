@@ -199,6 +199,124 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2016/07/19/斯坦福机器学习课程 第一周 (2)监督学习/" itemprop="url">
+                斯坦福机器学习课程 第一周 (2)监督学习
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-07-19T10:40:00+08:00" content="2016-07-19">
+            2016-07-19
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/07/19/斯坦福机器学习课程 第一周 (2)监督学习/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/19/斯坦福机器学习课程 第一周 (2)监督学习/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="监督学习">监督学习</h2><p>在本视频中，我将介绍一种也许是最常见的机器学习问题。即监督学习。后面将给出监督学习更正式的定义，现在最好以示例来说明什么是监督学习。之后再给出正式的定义。</p>
+<p>假设你想预测房价（无比需要啊！)，之前，某学生已经从某地收集了数据集（不是中国的，囧） 其中一个数据集是这样的。</p>
+<p><img src="/img/16_07_19/001.png" alt=""></p>
+<p> 这是横坐标，即不同房子的面积，单位平方脚（^-^） 纵轴上是房价，单位 千美元。 根据给定数据，假设你朋友有栋房子，750平尺（70平米） 想知道这房子能卖多少，好卖掉。 那么，学习算法怎么帮你呢？学习算法可以： 绘出一条直线，让直线尽可能匹配到所有数据。 </p>
+<p><img src="/img/16_07_19/002.png" alt=""></p>
+<p>基于此，看上去，那个房子应该、可能、也许、大概 卖到15万美元（一平米两千刀！）。但这不是唯一的学习算法。可能还有更好的。比如不用直线了，可能平方函数会更好，即二次多项式更符合数据集。如果你这样做，预测结果就应该是20万刀（一平三千刀，涨价好快）。</p>
+<p><img src="/img/16_07_19/003.png" alt=""></p>
+<p>后面我们会介绍到如何选择，是选择直线还是平方函数来拟合。没有明确的选择，就不知哪个能给你的朋友更好的卖房建议。只是这些每个都是很好的学习算法例子。也是监督学习的例子。术语监督学习，意指给出一个算法，需要部分数据集已经有正确答案。比如给定房价数据集， 对于里面每个数据，算法都知道对应的正确房价，即这房子实际卖出的价格。算法的结果就是算出更多的正确价格，比如那个新房子，你朋友想卖的那个。</p>
+<p>用更术语的方式来定义，监督学习又叫回归问题，（应该是回归属于监督中的一种）意指要预测一个连续值的输出，比如房价。虽然从技术上，一般把房价记到美分单位。所以实际还是个离散值，但通常把它看作实际数字，是一个标量值，一个连续值的数，而术语回归，意味着要预测这类连续值属性的种类。另一个监督学习的例子，我和一些朋友 之前研究的领域。让我们来看医学记录，并预测胸部肿瘤是恶性良性。 如果某人发现有胸部肿瘤，恶性肿瘤有害又危险，良性肿瘤则是少害。 显然人们很关注这个。让我们看一个收集好的数据集，假设在数据集中，横轴表示肿瘤的大小，纵轴我打算圈上0或1，是或否，即肿瘤是恶性的还是良性的。</p>
+<p><img src="/img/16_07_19/004.png" alt=""></p>
+<p>所以如图所示，可以看到这个大小的肿瘤块 是良性的，还有这些大小的都是良性的。 不幸地是也看到一些恶性肿瘤，比如这些大小的肿瘤。 所以，有5个良性块，在这一块，还有5个恶性的，它们纵轴值为1。</p>
+<p>现在假设某人杯具地得胸部肿瘤了，大小大概是这么大。</p>
+<p><img src="/img/16_07_19/005.png" alt=""></p>
+<p>对应的机器学习问题就是，你能否估算出一个概率，即肿瘤为恶或为良的概率？ 专业地说，这是个分类问题。分类是要预测一个离散值输出。这里是0或1，恶性或良性。</p>
+<p>事实证明，在分类问题中，有时会有超过两个的值，输出的值可能超过两种。举个具体例子，胸部肿瘤可能有三种类型，所以要预测离散值0，1，2，3。假设总共有三种癌症。0就是良性肿瘤，没有癌症。1 表示1号癌症，2 是2号癌症，3 就是3号癌症。这同样是个分类问题，因为它的输出的离散值集合 分别对应于无癌，1号，2号，3号癌症。</p>
+<p>我再露一小手，在分类问题中，还有另一种作图方式 来描述数据。我画你猜。要用到些许不同的符号集合 来描绘数据。如果肿瘤大小作为唯一属性，被用于预测恶性良性，可以把数据作图成这样。</p>
+<p><img src="/img/16_07_19/006.png" alt=""></p>
+<p>使用不同的符号来表示良性和恶性，即阴性和阳性。所以，不再统一画叉叉了，改用圈圈来代表良性肿瘤，就像这样。仍沿用X（叉叉）代表恶性肿瘤。希望你能明白。我所做的就是，把在上面的数据， 映射下来。再用不同的符号， 圈和叉来分别代表良性和恶性。</p>
+<p>在上例中，只使用了一个特征属性，即肿瘤块大小，来预测肿瘤是恶性良性。在其它机器学习问题里，有着不只一个的特征和属性。</p>
+<p>例子，现在不只是知道肿瘤大小，病人年龄和肿瘤大小都知道了。</p>
+<p><img src="/img/16_07_19/007.png" alt=""></p>
+<p>这种情况下，数据集如表图所示，有些病人，年龄、肿瘤已知，不同的病人，会有一点不一样，肿瘤恶性，则用叉来代表。所以，假设 有一朋友得了肿瘤。肿瘤大小和年龄落在此处。</p>
+<p><img src="/img/16_07_19/008.png" alt=""></p>
+<p>那么依据这个给定的数据集，学习算法所做的就是画一条直线，分开 恶性肿瘤和良性肿瘤，所以学习算法会画条直线，像这样，把两类肿瘤分开。</p>
+<p><img src="/img/16_07_19/009.png" alt=""></p>
+<p>然后你就能判断你朋友的肿瘤是…了。如果它在那边，学习算法就说 你朋友的肿瘤在良性一边，因此更可能是良性的。</p>
+<p><img src="/img/16_07_19/010.png" alt=""></p>
+<p>好，本例中，总共有两个特征，即病人年龄和肿瘤大小。在别的ML问题中， 经常会用到更多特征，我朋友研究这个问题时，通常使用这些特征：比如块的厚度，即胸部肿瘤的厚度、肿瘤细胞大小和形状的一致性，等等。它表明，最有趣的学习算法（本课中将学到） 能够处理，无穷多个特征。不是3到5个这么少。在这张幻灯片中，我已经列举了总共5个不同的特征。但对于一些学习问题，真要用到的不只是三五个特征，要用到无数多个特征，非常多的属性，所以，你的学习算法要使用很多的属性或特征、线索来进行预测。那么，你如何处理 无限多特征呢？甚至你如何存储无数的东西进电脑里，又要避免内存不足？</p>
+<p>事实上，等我们介绍一种叫<strong>支持向量机（SVM）</strong>的算法时，就知道存在一个简洁的数学方法，能让电脑处理无限多的特征。想像下，我不是这边写两个特征，右边写三个特征。而是，写一个无限长的特征表，不停地写特征，似乎是个无限长的特征的表。但是，我们也有能力设计一个算法来处理这个问题。</p>
+<p>所以再从头复述一遍。本课中，我们介绍监督学习。其基本思想是，监督学习中，对于数据集中的每个数据，都有相应的正确答案，（训练集）算法就是基于这些来做出预测。就像那个房价，或肿瘤的性质。后面介绍了回归问题。即通过回归来预测一个连续值输出。我们还谈到了分类问题，目标是预测离散值输出。</p>
+<p>下面是个小测验题目：假设你有家公司，希望研究相应的学习算法去 解决两个问题。</p>
+<p>第一个问题，你有一堆货物的清单。 假设一些货物有几千件可卖，你想预测出，你能在未来三个月卖出多少货物。 </p>
+<p>第二个问题，你有很多用户， 你打算写程序来检查每个用户的帐目。 对每个用户的帐目，判断这个帐目是否被黑过（hacked or compromised）。</p>
+<p>问题一是个回归问题 因为如果我有几千件货物， 可能只好把它当作一个实际的值，一个连续的值。也把卖出的数量当作连续值。</p>
+<p>第二个问题，则是分类问题，因为可以把我想预测的一个值设为0，来表示账目没有被hacked另一个设为1，表示已经被hacked。 就像乳癌例子中，0表示良性，1表示恶性。 所以这个值为0或1，取决于是否被hacked，有算法能预测出是这两个离散值中的哪个。 因为只有少量的离散值，所以这个就是个分类问题。 这就是监督学习，下个视频将会介绍 无监督学习，学习算法的另一主要类型。 </p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/07/19/斯坦福机器学习课程 第一周 (1)欢迎来到机器学习/" itemprop="url">
                 斯坦福机器学习课程 第一周 (1)欢迎来到机器学习
               </a>
@@ -1414,163 +1532,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/05/09/Linux学习笔记（3）环境变量与文件查找/" itemprop="url">
-                Linux学习笔记（3）环境变量与文件查找
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-05-09T19:06:55+08:00" content="2016-05-09">
-            2016-05-09
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/linux/" itemprop="url" rel="index">
-                  <span itemprop="name">linux</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/05/09/Linux学习笔记（3）环境变量与文件查找/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/09/Linux学习笔记（3）环境变量与文件查找/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="环境变量">环境变量</h2><h3 id="环境变量的声明">环境变量的声明</h3><p>变量是不用声明直接使用即可创建，创建一个指定类型的变量时，可以使用<code>declare</code>来声明变量：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">declare</span> tmp</div><div class="line">tmp=dennylee1991</div><div class="line"><span class="built_in">echo</span> <span class="variable">$tmp</span></div></pre></td></tr></table></figure>
-<h3 id="环境变量的原理及作用域">环境变量的原理及作用域</h3><p>shell的环境变量作用于自身和它的子进程。在unix和类unix系统当中，每个子进程都有其各自的环境变量设置，且默认情况下，<br>当一个进程被创建时，处理创建过程中明确指定的话，它将继承其父进程的绝大部分环境设置。</p>
-<p>shell程序也作为一个进程运行在操作系统之上，而我们在shell中运行的大部分命令都将以shell的子进程的方式运行。</p>
-<p>以下三个命令用于打印相关环境变量，区别在于涉及的是不同范围的环境变量</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">命令</th>
-<th style="text-align:left">作用</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">set</td>
-<td style="text-align:left">显示当前shell所有环境变量，包括其内建环境变量，用户自定义变量，以及导出的环境变量</td>
-</tr>
-<tr>
-<td style="text-align:left">env</td>
-<td style="text-align:left">显示与当前用户相关的环境变量，还可以让命令在指定环境中运行</td>
-</tr>
-<tr>
-<td style="text-align:left">export</td>
-<td style="text-align:left">显示从shell中导出成环境变量的变量，也能通过它将自定义变量导出为环境变量</td>
-</tr>
-</tbody>
-</table>
-<p>简单的说 set 包涵 env 包涵 export</p>
-<p>更直观的，可以使用<code>vimdiff</code>工具比较三者值的不同：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">temp=dannylee</div><div class="line"><span class="keyword">export</span> temp_env=dannylee</div><div class="line">env|sort&gt;env.txt</div><div class="line"><span class="keyword">export</span>|sort&gt;<span class="keyword">export</span>.txt</div><div class="line"><span class="built_in">set</span>|sort&gt;<span class="built_in">set</span>.txt</div></pre></td></tr></table></figure>
-<p>上述操作将命令输出通过管道<code>|</code>使用<code>sort</code>命令排序，再重定向到对应文本文件中。</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vimdiff env<span class="selector-class">.txt</span> export<span class="selector-class">.txt</span> set.txt</div></pre></td></tr></table></figure>
-<p>使用<code>vimdiff</code>工具比较导出的几个文件的内容。</p>
-<h3 id="将自己的脚本添加到环境变量－命令的查找路径与顺序">将自己的脚本添加到环境变量－命令的查找路径与顺序</h3><p><code>shell</code>中之所以能执行命令，是通过环境变量<code>PATH</code>来进行搜索的。</p>
-<p>当我们在<code>shell</code>中执行一个命令时，系统就会按照<code>PATH</code>中设定的路径按照顺序依次到目录中去查找，如果存在同名的命令，则执行先找到的那个。</p>
-<p>接下来创建一个<code>shell</code>脚本以及<code>c</code>程序，并配置到环境变量中。</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ <span class="keyword">vim</span> hello_shell.<span class="keyword">sh</span></div></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/zsh</span></div><div class="line"></div><div class="line"><span class="keyword">for</span>((i=0; i&lt;10; i++));<span class="keyword">do</span></div><div class="line">	<span class="built_in">echo</span> <span class="string">"hello shell"</span></div><div class="line"><span class="keyword">done</span></div><div class="line"></div><div class="line"><span class="built_in">exit</span> 0</div></pre></td></tr></table></figure>
-<p>为文件添加可执行权限:</p>
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>chmod <span class="number">755</span> hello_shell.sh</div></pre></td></tr></table></figure>
-<p>创建一个c程序</p>
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>vim hello_world.c</div></pre></td></tr></table></figure>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line">&#123;</div><div class="line">	<span class="built_in">printf</span>(<span class="string">"hello world!\n"</span>);</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>使用<code>gcc</code>编译生成可执行文件：</p>
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>gcc -o hello_world hello_world.c</div></pre></td></tr></table></figure>
-<p><code>gcc</code>生成二进制文件默认具有可执行权限，不需要更改权限。</p>
-<p>在<code>home</code>目录下创建一个<code>mybin</code>目录，并且将上面两个可执行文件放入<code>mybin</code>中</p>
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>mkdir mybin</div><div class="line"><span class="variable">$ </span>mv hello_shell.sh hello_world mybin/</div></pre></td></tr></table></figure>
-<p>将可执行文件添加到环境变量中：</p>
-<h4 id="方式1:">方式1:</h4><figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>PATH=<span class="variable">$PATH</span><span class="symbol">:/home/lijianan/mybin</span></div></pre></td></tr></table></figure>
-<p>记得这里要写绝对路径。但是这种写法只在当前shell有效，一旦退出终端，就会失效。</p>
-<h4 id="方式2:">方式2:</h4><p>每个用户的<code>home</code>目录中有一个<code>Shell</code>每次启动时会默认执行一个配置脚本，以初始化环境，包括添加一些用户自定义环境变量等待。<br><code>zsh</code>的配置文件是<code>.zshrc</code>,相应<code>bash</code>的配置文件为<code>.bashrc</code>。它们在<code>etc</code>下还都有一个或多个全局的配置文件，不过我们一般只修改用户目录下的配置文件。</p>
-<p>我们可以简单的使用下面的命令直接添加内容到<code>.zshrc</code>中：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ echo <span class="string">"PATH=$PATH:/home/lijianan/mybin"</span> <span class="meta">&gt;&gt; </span>.zshrc</div></pre></td></tr></table></figure>
-<p><strong>注意</strong>：上述命令中<code>&gt;&gt;</code>表示将标准输出以<strong>追加到</strong>的方式重定向到一个文件中，注意前面用到的<code>&gt;</code>是以<strong>覆盖到</strong>方式重定向到一个文件中，使用时要注意辨别。</p>
-<h3 id="删除环境变量">删除环境变量</h3><p>删除变量可以使用<code>unset</code>命令：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ <span class="built_in">unset</span> temp</div></pre></td></tr></table></figure>
-<h3 id="让环境变量立刻生效">让环境变量立刻生效</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ <span class="built_in">source</span> .zshrc</div></pre></td></tr></table></figure>
-<h2 id="搜索文件">搜索文件</h2><p>四个常用指令:</p>
-<p>whereis, locate, which, find.</p>
-<h3 id="wiereis">wiereis</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>whereis who</div></pre></td></tr></table></figure>
-<p><code>whereis</code>只能搜索二进制文件<code>(-b)</code>，<code>man</code>帮助文件<code>(-m)</code>和源代码文件<code>(-s)</code>，如果想获得更全面的结果，需要使用<code>locate</code>命令</p>
-<h3 id="locate">locate</h3><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ locate <span class="meta-keyword">/etc/</span>sh</div></pre></td></tr></table></figure>
-<p><code>locate</code>用来查找指定目录下的不同文件类型，如上所示查找<code>/etc</code>下所有以<code>sh</code>开头的文件<strong>（它不仅仅是在<code>etc</code>目录下查找，而且会递归子目录进行查找）</strong></p>
-<p>查找<code>/usr/share/</code>下所有<code>jpg</code>文件：</p>
-<figure class="highlight livescript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ locate <span class="regexp">/usr/share/</span><span class="string">\*.jpg</span></div></pre></td></tr></table></figure>
-<h3 id="which">which</h3><p><code>which</code>只从<code>PATH</code>环境变量指定的路径中去搜索命令，是<code>shell</code>内建的一个命令。</p>
-<figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ <span class="keyword">which</span> <span class="keyword">man</span></div></pre></td></tr></table></figure>
-<h3 id="find">find</h3><p><code>find</code>是最强大的了，不仅可以通过文件类型、文件名查找，而且可以根据文件的属性（如文件的时间戳，文件的权限等）进行搜索。</p>
-<figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ <span class="built_in">find</span> ~ -mtime <span class="number">0</span>	#列出用户<span class="built_in">home</span>目录中，当天（<span class="number">24</span>小时之内）有改动的文件</div><div class="line">$ <span class="built_in">find</span> ~ -newer /<span class="built_in">home</span>/shiyanlou/Code 	#列出用户<span class="built_in">home</span>目录下比Code文件夹新的文件</div></pre></td></tr></table></figure>
-<h2 id="其他">其他</h2><p>运行“数字雨”</p>
-<p><code>ubuntu</code>安装<code>cmatrix</code></p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo apt-get <span class="keyword">update</span>;sudo aptget <span class="keyword">install</span> cmatrix</div></pre></td></tr></table></figure>
-<p>运行</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cmatrix</div></pre></td></tr></table></figure></span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1609,7 +1570,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">103</span>
+              <span class="site-state-item-count">104</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

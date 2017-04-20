@@ -1,0 +1,859 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="一只在迈向机器学习道路上狂奔的程序猿." />
+
+
+
+  <meta name="keywords" content="机器学习,斯坦福课程," />
+
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="使用SVM
+这段视频中，我们将介绍使用SVM时，我们实际上需要做些什么。
+
+支持向量机是一个特定的优化问题，但是我不建议你自己去手动实现这一算法来求解参数$\theta$。就像如今只有很少的人，或者说根本没有人会考虑自己写代码，来实现对矩阵求逆，或求一个数的平方根等。我们只需要调用库函数来实现这些功能即可。
+同样，可以用于解决SVM优化问题的软件很复杂，而且已经有专门研究数值优化很多年的学者在做这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="斯坦福机器学习课程 第七周 (3)使用SVM">
+<meta property="og:url" content="http://dannylee1991.github.io/2017/04/11/斯坦福机器学习课程 第七周 (3)使用SVM/index.html">
+<meta property="og:site_name" content="DannyLee">
+<meta property="og:description" content="使用SVM
+这段视频中，我们将介绍使用SVM时，我们实际上需要做些什么。
+
+支持向量机是一个特定的优化问题，但是我不建议你自己去手动实现这一算法来求解参数$\theta$。就像如今只有很少的人，或者说根本没有人会考虑自己写代码，来实现对矩阵求逆，或求一个数的平方根等。我们只需要调用库函数来实现这些功能即可。
+同样，可以用于解决SVM优化问题的软件很复杂，而且已经有专门研究数值优化很多年的学者在做这">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_11/001.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_11/002.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_11/003.png">
+<meta property="og:updated_time" content="2017-04-20T14:27:33.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="斯坦福机器学习课程 第七周 (3)使用SVM">
+<meta name="twitter:description" content="使用SVM
+这段视频中，我们将介绍使用SVM时，我们实际上需要做些什么。
+
+支持向量机是一个特定的优化问题，但是我不建议你自己去手动实现这一算法来求解参数$\theta$。就像如今只有很少的人，或者说根本没有人会考虑自己写代码，来实现对矩阵求逆，或求一个数的平方根等。我们只需要调用库函数来实现这些功能即可。
+同样，可以用于解决SVM优化问题的软件很复杂，而且已经有专门研究数值优化很多年的学者在做这">
+<meta name="twitter:image" content="http://dannylee1991.github.io/img/17_04_11/001.png">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post'
+  };
+</script>
+
+<!--baidu统计-->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?2f967e5ec4f276411160d27aeace7722";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+  <title> 斯坦福机器学习课程 第七周 (3)使用SVM | DannyLee </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">DannyLee</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+        <li class="menu-item menu-item-search">
+          <a href="#" class="st-search-show-outputs">
+            <i class="menu-item-icon icon-next-search"></i> <br />
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'ss9-_Hsd4DyhyGw4m99P','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              斯坦福机器学习课程 第七周 (3)使用SVM
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-04-11T22:47:58+08:00" content="2017-04-11">
+            2017-04-11
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/04/11/斯坦福机器学习课程 第七周 (3)使用SVM/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/04/11/斯坦福机器学习课程 第七周 (3)使用SVM/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><h2 id="使用SVM">使用SVM</h2><blockquote>
+<p>这段视频中，我们将介绍使用SVM时，我们实际上需要做些什么。</p>
+</blockquote>
+<p><strong>支持向量机</strong>是一个特定的优化问题，但是我不建议你自己去手动实现这一算法来求解参数$\theta$。就像如今只有很少的人，或者说根本没有人会考虑自己写代码，来实现对矩阵求逆，或求一个数的平方根等。我们只需要调用库函数来实现这些功能即可。</p>
+<p>同样，可以用于解决SVM优化问题的软件很复杂，而且已经有专门研究数值优化很多年的学者在做这个，因此你需要使用好的软件库来做这个。我强烈建议使用一个高度优化的软件库，而不是尝试自己去实现它。</p>
+<p>这里推荐两个我最常用到的库：liblinear和libsvm。</p>
+<p>尽管你不需要自己去实现SVM，但你也需要做以下几件事：</p>
+<ul>
+<li>选择参数$C$</li>
+<li>选择<strong>核函数</strong>（相似度函数）</li>
+</ul>
+<h3 id="核函数的选择">核函数的选择</h3><h4 id="线性核函数（无核函数）">线性核函数（无核函数）</h4><p>关于<strong>核函数</strong>其中一个选择是<strong>不用任何核函数</strong>（不用任何核函数也叫作<strong>线性核函数</strong>）:</p>
+<p>即对于预测结果$y=1$，满足$\theta^Tx\ge0$。</p>
+<blockquote>
+<p>例如这种情况下当$\theta_0 + \theta_1x_1 + … + \theta_nx_n \ge 0$时，预测$y=1$。</p>
+</blockquote>
+<p>对<strong>线性核函数</strong>这个术语，你可以把它理解为这个版本的SVM。它只是给你一个标准的线性分类器，因此对某些问题来说，它是一个合理的选择：</p>
+<p>具体来说，当你的特征数量$n$很大，但数据量$m$很小时，由于数据量不足，在这种情况下如果使用其他核函数，你可能会<strong>过拟合</strong>，因此，此时<strong>线性核函数</strong>是一个合理的选择。</p>
+<h4 id="高斯核函数">高斯核函数</h4><p>$$<br>f_i=exp(-\frac{||x-l^{(i)}||^2}{2\sigma^2}),<br>$$</p>
+<p>这是我们之前见过的高斯核函数。如果你选择这个核函数，那么你需要选择一个$$\sigma^2$$。</p>
+<p>我们之前讨论如何权衡偏差、方差的时候谈论过：</p>
+<ul>
+<li>如果$\sigma^2$很大，那么你就有可能得到一个<strong>较高偏差较低方差</strong>的分类器。</li>
+<li>如果$\sigma^2$很小，那么你就有可能得到一个<strong>较低偏差较高方差</strong>的分类器。</li>
+</ul>
+<p>那么，什么时候选择高斯核函数呢？</p>
+<p>如果你原来的特征变量$x$是$n$维的，而且<strong>$n$很小，样本数量$m$很大时</strong>，高斯核函数会是一个不错的选择。</p>
+<h5 id="如何使用高斯核函数">如何使用高斯核函数</h5><p>在很多SVM的软件包中，如果你需要使用SVM时，你需要提供一个核函数。</p>
+<p>具体地说，如果你决定使用高斯核函数，那么你需要做的就是根据你所用的SVM软件包，来提供一个用于计算核函数的特定特征的方法:</p>
+<p><img src="/img/17_04_11/001.png" alt=""></p>
+<p>然后它将自动地生成所有特征变量。</p>
+<blockquote>
+<p><strong>注意</strong>：如果你有大小很不一样的特征变量，在使用高斯核函数之前，对它们进行<strong>归一化</strong>是很重要的。</p>
+</blockquote>
+<p>假设你在计算$x$和$l$之间的范数(就是高斯核函数的分子项)：</p>
+<p>$||x-l||^2$</p>
+<p>这个式子所表达的含义如下：</p>
+<p>$$<br>v=x-l<br>$$</p>
+<p>$$<br>\begin{align*}<br>||v||^2 &amp;= v_1^2 + v_2^2 + … + v_n^2 \\<br>&amp;= (x_1-l_1)^2 + (x_2-l_2)^2 + … + (x_n-l_n)^2<br>\end{align*}<br>$$</p>
+<p>其中$v$、$x$、$l$都是向量，由于$x$是$n$维的，所以$v$也是$n$维的。</p>
+<p>现在如果你的特征变量取值范围很不一样。例如房价预测中，$x_1$表示1000平方英尺，$x_2$表示卧室数量为2，那么$(x_1-l_1)$可能相较于$(x_2-l_2)$大很多。</p>
+<p>因此，为了让SVM更好的工作，我们需要对特征变量进行<strong>归一化</strong>处理。这将会保证SVM能够同等地关注到所有不同的特征变量。</p>
+<h4 id="选择其他核函数">选择其他核函数</h4><p>当你尝试使用SVM时，目前你能用到的核函数就是<strong>线性核函数</strong>和<strong>高斯核函数</strong>，这里有一个警告：</p>
+<p>不是所有你可能提出来的相似度函数都是有效的核函数。线性核函数，高斯核函数，以及其他人有时会用到的其他的核函数，他们全部需要满足一个技术条件，这个条件叫做<strong>摩赛尔定理(Mercer`s Theorem)</strong>。</p>
+<p>因为支持向量机算法的实现有许多巧妙的数值优化技巧，为了有效地求解参数$\theta$，在最初的设想里，有一个这样的决定，将我们的注意力仅仅限制在可以满足<strong>摩赛尔定理</strong>的核函数上，这个定义做的是：确保所有的SVM包能够使用大量的优化方法，并且快速地得到参数$\theta$。所以，大多数人最后要么使用线性核函数、要么使用高斯核函数。也有一些其他的核函数是满足<strong>摩赛尔定理</strong>的，而我个人是很少很少使用其他核函数的。</p>
+<p>所以，我只是简单提及一下你可能会遇到的其他核函数，他们有：</p>
+<ul>
+<li><p><strong>多项式核函数（Polynomial kernel）</strong>：</p>
+<ul>
+<li><p>将$x$和$l$之间的相似度，定义为$(x^Tl)^2$：</p>
+<p>$$<br>k(x,l)=(x^Tl)^2<br>$$</p>
+<p>这就是一个$x$和$l$相似度的估量，如果$x$和$l$每一项很接近，那么这个内积就会很大。</p>
+<p>这是一个有些不寻常的核函数，它并不常用，但你可能会见到有人使用它的变体形式，比如：</p>
+<p>$$<br>k(x,l)=(x^Tl)^3<br>$$</p>
+<p>$$<br>k(x,l)=(x^Tl + 1)^3<br>$$</p>
+<p>$$<br>k(x,l)=(x^Tl + 5)^4<br>$$</p>
+<p>这些都是多项式核函数的变形形式。</p>
+<p>多项式核函数实际上有两个参数，一个是加在后面的常数项，如上面最后式子中的5；另一个是多项式的次数，如上面最后式子中的4。</p>
+<p>因此，多项式核函数的更一般的形式是：</p>
+<p>$$<br>k(x,l)=(x^Tl + constant)^{degree}<br>$$</p>
+<p>这种核函数并不像高斯核函数那样频繁的使用，通常他只用在当$x$和$l$都是严格的非负数时。这样以确保内积值永远不会是负数。</p>
+<p>这捕捉到了这样一个直观感觉：如果$x$和$l$之间非常相似，也许它们之间的内积会很大。</p>
+<p>它们也有其他的一些性质，但是人们通常用得不多。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>你也有可能会碰到其他一些更难懂的核函数，比如：</p>
+<ul>
+<li><strong>字符串核函数（String kernel）</strong>:<ul>
+<li>如果你的输入数据是文本字符串，或者其他类型的字符串，有时会用到这个核函数。</li>
+</ul>
+</li>
+<li><strong>卡方核函数（chi-square kernel）</strong></li>
+<li><strong>直方图交叉核函数（histogram intersection kernel）</strong></li>
+<li>…</li>
+</ul>
+<p>你可以用它们来度量不同对象之间的相似性。</p>
+<p>例如，你在做一些文本分类问题，在这个问题中，输入变量$x$是一个字符串，我们想要通过字符串核函数来找到两个字符串间的相似度（但是我个人很少用这些更加难懂的核函数，我想我平生可能用过一次卡方核函数，可能用过一次或两次直方图交叉核函数，我甚至没用过字符串核函数）。</p>
+<hr>
+<h3 id="两个细节">两个细节</h3><p>我想要在这个视频里讨论最后两个细节。</p>
+<h4 id="多类分类">多类分类</h4><p>在多类分类中，你有K个类别：</p>
+<p>$$<br>y \in ｛1,2,3,…,K｝<br>$$</p>
+<p>对应下图：</p>
+<p><img src="/img/17_04_11/002.png" alt=""></p>
+<p>很明显，这里$K=4$。</p>
+<p>那么怎样让SVM输出下面这种各个类别间合适的判定边界呢？</p>
+<p><img src="/img/17_04_11/003.png" alt=""></p>
+<p>大部分SVM软件包已经内置了多类分类的函数了，因此，如果你用的是这种软件包，你可以直接使用内置函数。</p>
+<p>另一种方式就是使用<strong>一对多(one-vs-all)方法</strong>。这个我们在讲逻辑回归的时候讨论过，所以，你要做的就是要训练$K$个SVM，每一个SVM把一个类同其他类区分开。这种操作会给你$K$个参数向量：</p>
+<p>$$<br>\theta^{(1)},\theta^{(2)},…,\theta^{(K)}<br>$$</p>
+<p>最后，这就与我们在逻辑回归中用到的一对多方法一样，选取使得$(\theta^{(i)})^Tx$最大的类$i$即可。</p>
+<blockquote>
+<p>其实大多数软件包都已经内置了多类分类的函数，因此你不必重新造轮子。</p>
+</blockquote>
+<h4 id="逻辑回归_vs_SVM">逻辑回归 vs SVM</h4><p>关于<strong>逻辑回归</strong>和<strong>SVM</strong>，我想讨论的是，你什么时候应该用哪个呢？</p>
+<p>假设$n$是特征变量的个数，$m$是训练样本数：</p>
+<ul>
+<li>如果$n$(相对于$m$)大很多时，使用<strong>逻辑回归</strong>，或者使用<strong>无核函数的SVM（线性核函数）</strong>。<br>  比如你有一个文本分类的问题，特征数量$n=10000$，而且如果你的训练集大小为$m=10$，在这个问题中，你有10000个特征变量，对应10000个词，但是你只有10个训练样本。这种情况下就比较适合使用逻辑回归或者线性核函数的SVM了。</li>
+<li>如果$n$较小，$m$是中等大小，（例如$n$为1到1000之间的值，$m$为10到10000之间的值）那么使用<strong>高斯核函数的SVM</strong>效果好一些。</li>
+<li>如果$n$很小，$m$很大时（例如$n=1000$,$m=100000+$），那么高斯核函数的SVM运行起来会很慢，这种情况下，需要<strong>尝试手动地创建更多的特征变量，然后使用逻辑回归或者无核函数的SVM（线性核函数）</strong>。</li>
+</ul>
+<p>逻辑回归和不带核函数的SVM它们都是非常相似的算法，他们会做相似的事情，并且表现也相似，但是根据你实现的具体情况，其中一个可能会比另一个更加有效。</p>
+<p>但是SVM的威力会随着你用不同的核函数而发挥出来。</p>
+<h4 id="什么时候使用神经网络？">什么时候使用神经网络？</h4><p>最后，神经网络应该在什么时候使用呢？</p>
+<p>对于上面所有的情况，一个设计得很好的神经网络也很可能会非常有效，它的一个缺点（或者说不使用神经网络的原因）是：神经网络训练起来可能会很慢。但是如果你有一个非常好的SVM实现包，它会运行得比较快，比神经网络快很多。</p>
+<blockquote>
+<p>SVM的优化问题，实际上是一个<strong>凸优化</strong>问题。因此好的SVM优化软件包总是会找到全局最小值，或者接近它的值。<br>对于SVM，你不需要担心局部最优。在实际应用中，局部最优对神经网络来说不是非常大，但是也不小。所以使用SVM，你不用考虑这部分问题。</p>
+</blockquote>
+<hr>
+<h3 id="总结">总结</h3><p>最后，如果你觉得上面这些使用参考有一些模糊，在面临实际问题时，仍然不能完全确定具体使用哪个算法更好，这个其实很正常。</p>
+<p>当我遇到机器学习问题时，有时确实不清楚具体使用哪个算法更好，但是正如你在之前的视频中看到的，算法确实很重要，但是通常更重要的是：<strong>你有多少数据</strong>，<strong>你有多熟练</strong>，<strong>是否擅长做误差分析和调试学习算法</strong>，<strong>想出如何设计新的特征变量</strong>，<strong>想出如何设计新的特征变量</strong>，以及<strong>找出应该输入给学习算法的其它特征变量</strong>等方面。通常这些方面会比你使用<strong>逻辑回归</strong>还是<strong>SVM</strong>更加重要。</p>
+<p>但是<strong>SVM</strong>仍然被广泛认为是<strong>最强大的学习算法之一</strong>，最强大的学习算法之一，而且SVM在一个区间内是一个非常有效地学习复杂非线性函数的方法。因此，有了<strong>逻辑回归</strong>、<strong>神经网络</strong>、<strong>SVM</strong>这三个学习算法，我想你已经具备了在广泛的应用里构建最前沿的机器学习系统的能力。</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/机器学习/" rel="tag">#机器学习</a>
+          
+            <a href="/tags/斯坦福课程/" rel="tag">#斯坦福课程</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/21/通过AspectJ代码注入来实现scheme跳转条件的检查判断/" rel="next">通过AspectJ代码注入来实现scheme跳转条件的检查判断</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2017/04/11/斯坦福机器学习课程 第七周 (3)使用SVM/"
+                   data-title="斯坦福机器学习课程 第七周 (3)使用SVM" data-url="http://dannylee1991.github.io/2017/04/11/斯坦福机器学习课程 第七周 (3)使用SVM/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="http://dannylee1991.github.io/images/avatar.jpg" alt="DannyLee佳楠" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">DannyLee佳楠</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">一只在迈向机器学习道路上狂奔的程序猿.</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">104</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/DannyLee1991" target="_blank">GitHub</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用SVM"><span class="nav-number">1.</span> <span class="nav-text">使用SVM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#核函数的选择"><span class="nav-number">1.1.</span> <span class="nav-text">核函数的选择</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#线性核函数（无核函数）"><span class="nav-number">1.1.1.</span> <span class="nav-text">线性核函数（无核函数）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#高斯核函数"><span class="nav-number">1.1.2.</span> <span class="nav-text">高斯核函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#如何使用高斯核函数"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">如何使用高斯核函数</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#选择其他核函数"><span class="nav-number">1.1.3.</span> <span class="nav-text">选择其他核函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#两个细节"><span class="nav-number">1.2.</span> <span class="nav-text">两个细节</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#多类分类"><span class="nav-number">1.2.1.</span> <span class="nav-text">多类分类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑回归_vs_SVM"><span class="nav-number">1.2.2.</span> <span class="nav-text">逻辑回归 vs SVM</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#什么时候使用神经网络？"><span class="nav-number">1.2.3.</span> <span class="nav-text">什么时候使用神经网络？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.3.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">DannyLee佳楠</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dannylee1991"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+  	<script src="/js/ua-parser.min.js"></script>
+  	<script src="/js/hook-duoshuo.js"></script>
+  
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"slide":{"type":"slide","bdImg":"3","bdPos":"left","bdTop":"250"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+</html>
