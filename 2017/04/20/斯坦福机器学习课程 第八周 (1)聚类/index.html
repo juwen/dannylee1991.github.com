@@ -1,0 +1,914 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="一只在迈向机器学习道路上狂奔的程序猿." />
+
+
+
+  <meta name="keywords" content="机器学习,斯坦福课程," />
+
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="无监督学习介绍视频地址
+
+接下来，我将介绍聚类这一概念。保证精彩！因为这是我们第一个无监督学习算法。我们要从未标记的数据中进行学习, 而不是从已标记的数据。 
+
+什么是无监督学习算法呢？
+之前，在本课程的开始阶段，我曾简短介绍过无监督学习算法。现在，我想将无监督学习算法与监督学习算法做个对照。
+无监督学习算法与监督学习算法对比下面是一个监督学习的例子：
+
+$$训练集：｛(x^{(1)},y^{(1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="斯坦福机器学习课程 第八周 (1)聚类">
+<meta property="og:url" content="http://dannylee1991.github.io/2017/04/20/斯坦福机器学习课程 第八周 (1)聚类/index.html">
+<meta property="og:site_name" content="DannyLee">
+<meta property="og:description" content="无监督学习介绍视频地址
+
+接下来，我将介绍聚类这一概念。保证精彩！因为这是我们第一个无监督学习算法。我们要从未标记的数据中进行学习, 而不是从已标记的数据。 
+
+什么是无监督学习算法呢？
+之前，在本课程的开始阶段，我曾简短介绍过无监督学习算法。现在，我想将无监督学习算法与监督学习算法做个对照。
+无监督学习算法与监督学习算法对比下面是一个监督学习的例子：
+
+$$训练集：｛(x^{(1)},y^{(1">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_20/001.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_20/002.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_20/003.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_20/004.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_20/005.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_20/006.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_20/007.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_20/008.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_20/009.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_20/010.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_20/011.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_20/012.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_20/013.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_20/014.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_20/015.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_20/016.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_20/017.png">
+<meta property="og:updated_time" content="2017-05-10T13:28:04.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="斯坦福机器学习课程 第八周 (1)聚类">
+<meta name="twitter:description" content="无监督学习介绍视频地址
+
+接下来，我将介绍聚类这一概念。保证精彩！因为这是我们第一个无监督学习算法。我们要从未标记的数据中进行学习, 而不是从已标记的数据。 
+
+什么是无监督学习算法呢？
+之前，在本课程的开始阶段，我曾简短介绍过无监督学习算法。现在，我想将无监督学习算法与监督学习算法做个对照。
+无监督学习算法与监督学习算法对比下面是一个监督学习的例子：
+
+$$训练集：｛(x^{(1)},y^{(1">
+<meta name="twitter:image" content="http://dannylee1991.github.io/img/17_04_20/001.png">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post'
+  };
+</script>
+
+<!--baidu统计-->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?2f967e5ec4f276411160d27aeace7722";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+  <title> 斯坦福机器学习课程 第八周 (1)聚类 | DannyLee </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">DannyLee</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+        <li class="menu-item menu-item-search">
+          <a href="#" class="st-search-show-outputs">
+            <i class="menu-item-icon icon-next-search"></i> <br />
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'ss9-_Hsd4DyhyGw4m99P','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              斯坦福机器学习课程 第八周 (1)聚类
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-04-20T22:32:58+08:00" content="2017-04-20">
+            2017-04-20
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/04/20/斯坦福机器学习课程 第八周 (1)聚类/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/04/20/斯坦福机器学习课程 第八周 (1)聚类/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><h2 id="无监督学习介绍">无监督学习介绍</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/czmip/unsupervised-learning-introduction" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>接下来，我将介绍<strong>聚类</strong>这一概念。保证精彩！因为这是我们第一个<strong>无监督学习算法</strong>。我们要从未标记的数据中进行学习, 而不是从已标记的数据。 </p>
+</blockquote>
+<p>什么是无监督学习算法呢？</p>
+<p>之前，在本课程的开始阶段，我曾简短介绍过无监督学习算法。现在，我想将<strong>无监督学习算法</strong>与<strong>监督学习算法</strong>做个对照。</p>
+<h3 id="无监督学习算法与监督学习算法对比">无监督学习算法与监督学习算法对比</h3><p>下面是一个监督学习的例子：</p>
+<p><img src="/img/17_04_20/001.png" alt=""></p>
+<p>$$<br>训练集：｛(x^{(1)},y^{(1)}),(x^{(2)},y^{(2)}),(x^{(3)},y^{(3)}),…,(x^{(m)},y^{(m)})｝<br>$$</p>
+<p>这是一组附有标记的训练数据集，我们想要找出一个决策边界，来将两者分开：</p>
+<p><img src="/img/17_04_20/002.png" alt=""></p>
+<p>在这种监督式学习中，我们针对一组标记的训练数据提出一个适当的假设。</p>
+<hr>
+<p>相比之下，在无监督学习案例中，我们面对的是一组<strong>无标记</strong>的训练数据，数据之间不具任何关联的标记。</p>
+<p>所以我们得到的数据看起来是下面这样的：</p>
+<p><img src="/img/17_04_20/003.png" alt=""></p>
+<p>$$<br>训练集：｛x^{(1)},x^{(2)},x^{(3)},…,x^{(m)}｝<br>$$</p>
+<p>所以，在无监督学习中，我们将这种未标记的训练数据送入特定的算法，然后我们要求算法替我们分析出数据的结构。</p>
+<p>就此数据而言，其中一种可能的结构是所有的数据大致地划分成两个类（或组），这种划分的算法称为<strong>聚类算法()</strong>：</p>
+<p><img src="/img/17_04_20/004.png" alt=""></p>
+<p>除此之外，无监督学习还包含其他各式各样的算法，用以寻找其他类型的结构。我们下面将会一一介绍。目前，我们先介绍聚类。</p>
+<h3 id="聚类">聚类</h3><p>稍早前，我已经提到几个应用实例：</p>
+<p><img src="/img/17_04_20/005.png" alt=""></p>
+<ul>
+<li>图1是细分市场，将所有用户划分至不同的细分市场组，以便于营销或服务。</li>
+<li>图2是社交分析体系，比如在社交网络中观察一群人，看他们和谁有电子邮件来往，或者查找一群相互有联系的人。</li>
+<li>图3是用聚类来组织运算集群或组织数据中心，因为，如果你知道在集群中，哪些计算机的数据中心倾向于一起工作，你可以用它重新组织你的资源，网络的布局，以及数据中心和通信。</li>
+<li>图4是使用聚类算法来试图理解星系的形成，和其中的天文细节。</li>
+</ul>
+<p>总之，聚类是我们学到的第一个无监督学习算法。在接下来的内容中，我将谈论聚类的具体实现方式。</p>
+<h2 id="K-Means_算法">K-Means 算法</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/93VPG/k-means-algorithm" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>在聚类问题中，我们有未加标签的数据。我们希望有一个算法能够自动的把这些数据分成<strong>有紧密关系的子集</strong>，或是<strong>簇</strong>。<strong>K均值 (K-means)算法</strong>是现在最为广泛使用的聚类方法。那么在这个视频中，我将会告诉你，什么是K均值算法以及它是怎么运作的。</p>
+</blockquote>
+<p>K均值算法最好用图来表达。如图所示：</p>
+<p><img src="/img/17_04_20/006.png" alt=""></p>
+<p>现在有一些<strong>没加标签</strong>的数据，而我想将这些数据分成两个<strong>簇</strong>。</p>
+<p>现在我执行K均值算法 方法是这样的 </p>
+<p>首先我随机选择两个点，这两个点叫做<strong>聚类中心 (cluster centroids) </strong>:</p>
+<p><img src="/img/17_04_20/007.png" alt=""></p>
+<p>为什么要两个点呢？因为我希望聚出两个类。</p>
+<p>K均值是一个迭代方法，它要做两件事情：</p>
+<ul>
+<li>第一是<strong>簇分配</strong>。</li>
+<li>第二个是<strong>移动聚类中心</strong>。</li>
+</ul>
+<p>接下来介绍这两个步骤具体是在做什么。</p>
+<h3 id="K-Means_第一步：簇分配">K-Means 第一步：簇分配</h3><p>在K均值算法的每次循环中，第一步是要进行<strong>簇分配</strong>。这就是说，我要遍历所有的样本（就是图上所有的绿色的点），然后依据每一个点是更接近红色的这个中心、还是蓝色的这个中心，来将每个数据点分配到两个不同的聚类中心中。</p>
+<p>具体来讲，就是对数据集中的所有点，依据他们更接近红色这个中心、还是蓝色这个中心，进行染色。染色之后的结果如图所示：</p>
+<p><img src="/img/17_04_20/008.png" alt=""></p>
+<p>以上就是簇分配的步骤。</p>
+<h3 id="K-Means_第二步：移动聚类中心">K-Means 第二步：移动聚类中心</h3><p>K均值的另一部分，是要<strong>移动聚类中心</strong>。</p>
+<p>具体的操作方法是这样的：我们将两个聚类中心（也就是红色的叉和蓝色的叉）移动到和它一样颜色的那堆点的均值处。</p>
+<p>那么我们要做的是找出所有红色的点，计算出它们的均值位置，然后我们就把红色点的聚类中心移动到这里。对蓝色的点也同样计算平均位置，然后移动蓝色聚类中心到该平均位置处。</p>
+<p><img src="/img/17_04_20/009.png" alt=""></p>
+<h3 id="K-Means_第三步：重复执行上面两步">K-Means 第三步：重复执行上面两步</h3><p>然后我们就会进入下一个<strong>簇分配</strong>。我们重新检查所有没有标签的样本，依据它离红色中心还是蓝色中心更近一些，重新将它染成红色或是蓝色。</p>
+<p><img src="/img/17_04_20/010.png" alt=""></p>
+<p>然后我们再次<strong>移动聚类中心</strong>。计算蓝色点的均值，以及红色点的均值，然后移动两个聚类中心：</p>
+<p><img src="/img/17_04_20/011.png" alt=""></p>
+<p>然后再做一遍<strong>簇分配</strong>和<strong>移动聚类中心</strong>操作：</p>
+<p><img src="/img/17_04_20/012.png" alt=""></p>
+<p>实际上，如果你从这一步开始，一直迭代下去，聚类中心是不会变的；并且 那些点的颜色也不会变。在这时，我们就能说<strong>K均值方法已经收敛了</strong>。</p>
+<h3 id="K-Means的规范化描述">K-Means的规范化描述</h3><p>我们来用更加规范的格式描述K均值算法。</p>
+<p>K均值算法接受两个输入：</p>
+<ul>
+<li>第一个是参数$K$，表示你想从数据中聚类出的簇的个数。</li>
+</ul>
+<blockquote>
+<p>稍后会讲到选择$K$的方法</p>
+</blockquote>
+<ul>
+<li>第二个输入参数是训练集$｛x^{(1)},x^{(2)},…,x^{(m)}｝$</li>
+</ul>
+<blockquote>
+<p>因为这是非监督学习，我们的数据集中不需要$y$，同时在非监督学习的 K均值算法里，我们约定$x^{(i)}$是一个$n$维向量，这就是“训练样本是$n$维而不是$n+1$维”的原因（按照惯例，排除$x_0=1$这一项）。</p>
+</blockquote>
+<p><strong>K均值算法：</strong></p>
+<p><img src="/img/17_04_20/013.png" alt=""></p>
+<ul>
+<li><p>第一步：随机初始化$K$个<strong>聚类中心</strong>，记作$μ_1$,$μ_2$一直到$μ_K$。 </p>
+</li>
+<li><p>第二步：</p>
+<ul>
+<li><p>K均值内部循环执行以下步骤：</p>
+<ul>
+<li><p>簇分配</p>
+<p> 首先对于每个训练样本，我们用变量$c^{(i)}$表示$K$个聚类中心中最接近$x^{(i)}$的那个中心的下标（具体的类别），这就是簇分配。</p>
+<blockquote>
+<p>大写的$K$表示所有聚类中心的个数，小写的$k$则表示某个聚类中心的下标。</p>
+</blockquote>
+<p>  我们希望的是：<strong>在所有K个中心中，找到一个$k$使得$x_i$到$μ_k$的距离是$x^{(i)}$到所有的聚类中心的距离中最小的那个</strong>，这就是计算$c_i$的方法。</p>
+<p>  这里还有另外的表示$c_i$的方法：我用<strong>范数</strong>的形式$||x^{(i)}-μ_k||$来表示，这是第$i$个训练样本到聚类中心$μ_k$的距离。</p>
+<p>  接下来我要做的是找出$k$的值，让这个式子$||x^{(i)}-μ_k||$最小，然后将 $c^{(i)}$ 赋值为$k$。</p>
+<p>  出于惯例，人们更喜欢用距离的平方$||x^{(i)}-μ_k||^2$来表示$x^{(i)}$距聚类中心$μ_k$的距离。所以我们可以认为 $c^{(i)}$ 的类别是属于距样本$x^{(i)}$的距离的平方最小的那个聚类中心的。 当然使距离的平方最小或是距离最小，都能让我们得到相同的$c^{(i)}$，但是我们通常还是使用距离的平方，因为这是约定俗成的。</p>
+</li>
+<li><p>移动聚类中心</p>
+<p>  对于每个聚类中心：$k$从1循环到$K$，将$μ_k$赋值为这个簇的均值。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>举个栗子：</strong></p>
+<p>某一个聚类中心，比如说是$μ_2$被分配了一些训练样本：1,5,6,10 这个表明$c^{(1)}=2$，$c^{(5)}=2$，$c^{(6)}=2$，$c^{(10)}=2$。如果我们从<strong>簇分配</strong>那一步得到了这些结果，这表明，样本1,5,6,10被分配给了聚类中心2；然后在移动聚类中心这一步中，我们计算出这四个的平均值，即计算$x_{(1)}+x_{(5)}+x_{(6)}+x_{(10)}$，然后计算它们的平均值。这时$μ_2$就是一个$n$维的向量，因为$x^{(1)}$，$x^{(5)}$，$x^{(6)}$，$x^{(10)}$ 都是$n$维的向量。这样聚类中心$μ_2$的移动就结束了。</p>
+<h3 id="异常情况">异常情况</h3><p>现在，我要问的问题是：</p>
+<p>既然我们要让$μ_k$移动到分配给它的那些点的均值处，那么如果存在一个没有点分配给它的聚类中心，那怎么办? </p>
+<p>通常在这种情况下，我们就直接移除那个聚类中心。如果这么做了，最终将会得到$K-1$个簇，而不是$K$个簇。</p>
+<p>但如果你就是需要$K$个簇，尽管存在没有点分配给它的聚类中心，你所要做的是，重新随机找一个聚类中心。（但是直接移除那个中心，是更为常见的方法。不过在实际过程中，这个问题不会经常出现。）</p>
+<hr>
+<p>在这个视频结束之前，我还想告诉你<strong>K均值算法</strong>的另外一个常见应用：<strong>应对没有很好分开的簇(non-separated clusters)</strong>。</p>
+<p>到目前为止，我们的K均值算法都是基于一些像图中所示的数据：</p>
+<p><img src="/img/17_04_20/014.png" alt=""></p>
+<p>有很好的隔离开来的三个簇，但是事实情况是，K均值经常会用于一些这样的数据：</p>
+<p><img src="/img/17_04_20/015.png" alt=""></p>
+<p>看起来并没有很好的分开几个簇。</p>
+<p>这是一个关于T恤的大小的应用的例子。假设你是T恤制造商，你找到了一些人，想把T恤卖给他们，然后你搜集了一些这些人的身高和体重的数据。我猜，身高体重更重要一些。然后你可能收集到了上图中一些关于人们身高和体重的样本，然后你想确定一下T恤的大小。</p>
+<p>假设我们要设计三种不同大小的t恤：小号、中号、和大号，那么小号应该是多大的?中号呢?大号呢?</p>
+<p>使用K均值算法进行聚类，是一种解决这个问题的方法。就像我展示的那样，而且K均值可能将这些数据聚成三个簇：</p>
+<p><img src="/img/17_04_20/016.png" alt=""></p>
+<p>所以说，尽管这些数据原本看起来并没有三个分开的簇，但是从某种程度上讲，K均值仍然能将数据分成几个类。你能做的就是看这第一群人，然后查看他们的身高和体重，试着去设计对这群人来说比较合身的小号衣服；以及设计一个中号的衣服；设计一个大号的衣服。</p>
+<p>这就是一种<strong>市场细分</strong>的例子。当你用K均值方法将你的市场分为三个不同的部分，你就能够区别对待你三类不同的顾客群体，从而更好的适应他们不同的需求。就像大、中、小，三种不同大小的衣服那样。</p>
+<p><img src="/img/17_04_20/017.png" alt=""></p>
+<p>这就是K均值算法，而且你现在应该已经知道如果去实现，K均值算法并且利用它解决一些问题。在下面的视频中，我想把K均值算法 研究的更深入一些，然后讨论一下如何能让K均值表现得更好一些的问题。</p>
+<h2 id="优化目标">优化目标</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/G6QWt/optimization-objective" target="_blank" rel="external">视频地址</a></p>
+<p>在大多数我们已经学到的<strong>监督学习</strong>算法中(例如线性回归，逻辑回归，以及更多的算法）都有一个优化目标函数，即需要通过算法进行最小化的代价函数。</p>
+<p>事实上，<strong>K均值</strong>也有这样一个<strong>优化目标函数</strong>（或者说是代价函数）。</p>
+<p>了解和使用这个<strong>K均值</strong>的优化目标函数有两方面的目的：</p>
+<ul>
+<li>首先这将能帮助我们调试学习算法，确保K均值算法是在正确运行中。</li>
+<li>第二个也是最重要的一个目的是，<strong>K均值</strong>优化目标函数将帮助我们找到更好的簇，并且避免局部最优解。（后面会讲到）</li>
+</ul>
+<hr>
+<p>另外顺便提一下，当K均值正在运行时，我们将对两组变量进行跟踪：</p>
+<p>首先是$c^{(i)}$:</p>
+<p>$$<br>c^{(i)}=<br>$$</p>
+<p>它表示的是 当前的样本 x(i) 所归为<br>1:02<br>的那个簇的索引或者序号 另外一组变量 我们用 μk 来表示 第 k 个簇的  聚类中心 (cluster centroid) 顺便再提一句 K均值中我们用大写 K  来表示簇的总数 用小写 k 来表示 聚类中心的序号 因此 小写 k 的范围 就应该是1到大写K之间 除此以外  还有另一个符号 我们用 μc(i) 来表示 x(i) 所属的那个簇 的聚类中心 我再稍微多解释一下 这个符号 假如说 x(i) 被划为了 第5个簇<br>1:48<br>这是什么意思呢？ </p>
+<p>1:50<br>这个意思是 x(i) 的序号 也就是 c(i) 等于5 因为 c(i) = 5 表示的就是<br>2:00<br>x(i) 这个样本 被分到了第五个簇 因此  μ 下标 c(i) 就等于 μ5  因为 c(i) 就是5<br>2:13<br>所以<br>2:15<br>这里的 μc(i) 就是第5个簇的聚类中心 而也正是我的样本 x(i) 所属的第5个簇 有了这样的符号表示 现在我们就能写出 K均值聚类算法的 优化目标了 以下便是 K均值算法需要 最小化的代价函数 J 参数是 c(1) 到 c(m) 以及 μ1 到 μk 随着算法的执行过程 这些参数将不断变化 右边给出了优化目标 也就是所有的 1/m 乘以 i = 1 到 m 个项的求和<br>2:50<br>这里我用红色框出了这部分 也即每个样本 x(i) 到 x(i) 所属的 聚类簇的中心 距离的平方值<br>3:01<br>下面<br>3:03<br>我来解释一下 这是训练样本 x(i) 的位置 这是 x(i) 这个样本被划分到的 聚类簇的中心的位置 我们在图上解释一下 如果这是 x1 x2 并且如果这个点 是我的第 i 个样本  x(i) 那么 也就是说这个值等于 x(i)<br>3:25<br>并且 x(i) 被分到了 某一个聚类中心 我用一个叉来表示这个聚类中心 所以 如果我们假设 这个聚类中心是 μ5  也就是说 假如 x(i) 被分到第五个聚类簇 那么这个距离平方值 也就是点 x(i) </p>
+<p>3:43<br>和 x(i) 被分配到的聚类中心的 距离的平方值<br>3:49<br>那么 K均值算法 要做的事情就是 它将找到参数 c(i) 和 μi 也就是说 找到能够最小化 代价函数 J 的 c 和 μ 这个代价函数 在K均值算法中 有时候也叫做 失真代价函数(distortion cost function) 再解释详细点 这是K均值算法 这跟我们之前得到的 算法是一样的 这个算法的第一步 就是聚类中心的分配 在这一步中<br>4:27<br>我们要把每一个点 划分给各自所属的聚类中心 可以用数学证明 这个聚类簇的划分步骤 实际上就是在<br>4:40<br>对代价函数 J 进行最小化 关于参数 c(1) c(2)  等等 一直到 c(m) 而保持最近的聚类中心 μ1 到 μk 固定不变<br>4:58<br>因此 第一步要做的 其实不是改变 聚类中心的位置 而是选择 c(1) c(2) 一直到 c(m)<br>5:07<br>来最小化这个代价函数 或者说失真函数 J 不难从数学的角度证明 但我在这里就不做了 但应该还是比较容易理解 这个过程就是把这些点 划分到离它们最近的 那个聚类中心 因为这样才会使得 点到对应聚类中心的距离最短 然后 另一部分 K-均值算法的第二步 </p>
+<p>5:33<br>这一部分的任务是 聚类中心的的移动 我依然不会证明这一步 但实际上是可以 在数学上来证明这一点 也就是说这一步 是选择了能够 最小化 J 的 μ 的值 也就是说 最小化代价函数 J 关于 这里的 wrt 表示 with respect to (关于) 因此是最小化 J 关于所有聚类中心的位置 μ1 到 μK 因此 K均值算法 实际上是把这两组变量 在这两部分中 分割开来考虑 分别最小化 J 首先是 c 作为变量 然后是 μ 作为变量 那么 K均值的工作就是 首先关于 c 求 J 的最小值 然后关于 μ  求 J 的最小值 然后反复循环<br>6:25<br>这就是 K均值算法<br>6:27<br>现在 我们已经理解了 K均值算法的原理 就是最小化代价函数 J 的过程 我们也可以用这个原理 来试着调试我们的学习算法 保证我们对 K均值算法的实现过程 是正确的<br>6:41<br>好的 这节课我们介绍了 K均值算法 其核心就是 对代价函数 J 的优化过程 代价函数 J 也被称为失真函数<br>6:50<br>我们可以用这个知识 来调试K均值算法 证明算法是否正在收敛 是否正在正常工作 在下一节视频中 我们将一起看看 如何帮助K均值找到更好的簇 同时避免局部最优解 </p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/机器学习/" rel="tag">#机器学习</a>
+          
+            <a href="/tags/斯坦福课程/" rel="tag">#斯坦福课程</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/26/【翻译】TextRank-对文本排序/" rel="prev">【翻译】TextRank:对文本排序</a>
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/11/斯坦福机器学习课程 第七周 (3)使用SVM/" rel="next">斯坦福机器学习课程 第七周 (3)使用SVM</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2017/04/20/斯坦福机器学习课程 第八周 (1)聚类/"
+                   data-title="斯坦福机器学习课程 第八周 (1)聚类" data-url="http://dannylee1991.github.io/2017/04/20/斯坦福机器学习课程 第八周 (1)聚类/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="http://dannylee1991.github.io/images/avatar.jpg" alt="DannyLee佳楠" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">DannyLee佳楠</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">一只在迈向机器学习道路上狂奔的程序猿.</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">106</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">19</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/DannyLee1991" target="_blank">GitHub</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#无监督学习介绍"><span class="nav-number">1.</span> <span class="nav-text">无监督学习介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#无监督学习算法与监督学习算法对比"><span class="nav-number">1.1.</span> <span class="nav-text">无监督学习算法与监督学习算法对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#聚类"><span class="nav-number">1.2.</span> <span class="nav-text">聚类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#K-Means_算法"><span class="nav-number">2.</span> <span class="nav-text">K-Means 算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#K-Means_第一步：簇分配"><span class="nav-number">2.1.</span> <span class="nav-text">K-Means 第一步：簇分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#K-Means_第二步：移动聚类中心"><span class="nav-number">2.2.</span> <span class="nav-text">K-Means 第二步：移动聚类中心</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#K-Means_第三步：重复执行上面两步"><span class="nav-number">2.3.</span> <span class="nav-text">K-Means 第三步：重复执行上面两步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#K-Means的规范化描述"><span class="nav-number">2.4.</span> <span class="nav-text">K-Means的规范化描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异常情况"><span class="nav-number">2.5.</span> <span class="nav-text">异常情况</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化目标"><span class="nav-number">3.</span> <span class="nav-text">优化目标</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">DannyLee佳楠</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dannylee1991"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+  	<script src="/js/ua-parser.min.js"></script>
+  	<script src="/js/hook-duoshuo.js"></script>
+  
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"slide":{"type":"slide","bdImg":"3","bdPos":"left","bdTop":"250"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+</html>

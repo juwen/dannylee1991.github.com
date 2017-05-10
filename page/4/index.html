@@ -199,6 +199,285 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2017/01/11/【Android文档翻译】构建仪表化单元测试/" itemprop="url">
+                【Android文档翻译】构建仪表化单元测试
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-01-11T23:07:58+08:00" content="2017-01-11">
+            2017-01-11
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/Android/" itemprop="url" rel="index">
+                  <span itemprop="name">Android</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/01/11/【Android文档翻译】构建仪表化单元测试/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/11/【Android文档翻译】构建仪表化单元测试/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p>仪表化单元测试是在物理设备和模拟器上运行的测试，它们可以利用Android框架API和support API，例如Android Testing Support Library。如果你的测试需要访问仪表信息(例如目标APP的Context信息)或者如果他们需要真正实现一个Android框架组件(例如一个Parcelable或者SharedPreferences对象)，你应该创建仪表化单元测试。</p>
+<p>使用仪表化单元测试还有助于减少编写和维护模拟代码所需的工作量。如果你想，你任然可以自由使用模拟框架，模拟任何依赖关系。</p>
+<h2 id="设置您的测试环境">设置您的测试环境</h2><p>在你的Android Studio项目中，你必须将用于测试的源文件存储在<code>module-name/src/androidTest/java/</code>中。在创建新项目，并包含检测测试示例时，此目录已存在。</p>
+<p>在你开始之前，你应该<a href="https://developer.android.google.cn/tools/testing-support-library/index.html#setup" target="_blank" rel="external">下载Android测试支持库设置</a>，它提供的API允许您为您的应用程序快速构建和运行测试代码。这个测试库包含一个JUnit4测试运行器(<a href="https://developer.android.google.cn/tools/testing-support-library/index.html#AndroidJUnitRunner" target="_blank" rel="external">AndroidJUnitRunner</a>)以及针对UI功能性测试的API(<a href="https://developer.android.google.cn/tools/testing-support-library/index.html#Espresso" target="_blank" rel="external">Espresso</a>和<a href="https://developer.android.google.cn/tools/testing-support-library/index.html#UIAutomator" target="_blank" rel="external">UI Automator</a>)。</p>
+<p>您还需要为项目配置Android测试依赖关系，以使用测试支持库提供的测试运行器和规则API。为了简化测试开发，您还应该包含<a href="https://github.com/hamcrest" target="_blank" rel="external">Hamcrest库</a>，它允许您使用Hamcrest匹配器API创建更灵活的断言。</p>
+<p>在应用程序的顶级<code>build.gradle</code>文件中，您需要将这些库指定为依赖关系。</p>
+<figure class="highlight roboconf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">dependencies &#123;</div><div class="line">    <span class="attribute">androidTestCompile 'com.android.support</span>:support-annotations:24.0.0'</div><div class="line">    androidTestCompile 'com<span class="variable">.android</span><span class="variable">.support</span><span class="variable">.test</span>:runner:0.5'</div><div class="line">    androidTestCompile 'com<span class="variable">.android</span><span class="variable">.support</span><span class="variable">.test</span>:rules:0.5'</div><div class="line">    // Optional -- Hamcrest library</div><div class="line">    androidTestCompile 'org<span class="variable">.hamcrest</span>:hamcrest-library:1.3'</div><div class="line">    // Optional -- UI testing with Espresso</div><div class="line">    androidTestCompile 'com<span class="variable">.android</span><span class="variable">.support</span><span class="variable">.test</span><span class="variable">.espresso</span>:espresso-core:2.2.2'</div><div class="line">    // Optional -- UI testing with UI Automator</div><div class="line">    androidTestCompile 'com<span class="variable">.android</span><span class="variable">.support</span><span class="variable">.test</span><span class="variable">.uiautomator</span>:uiautomator-v18:2.1.2'</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>警告：</strong>如果您的构建配置包括<code>support-annotations</code>库的编译依赖项<strong>和</strong><code>espresso-core</code>库的<code>androidTestCompile</code>依赖项，那么您的构建可能会由于依赖冲突而失败。为了解决这个问题，请更新<code>espresso-core</code>的依赖关系，如下所示：</p>
+</blockquote>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">androidTestCompile(<span class="string">'com.android.support.test.espresso:espresso-core:2.2.2'</span>, &#123;</div><div class="line">    <span class="keyword">exclude</span> <span class="keyword">group</span>: <span class="string">'com.android.support'</span>, module: <span class="string">'support-annotations'</span></div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>要使用JUnit4测试类，请确保在项目中将<code>AndroidJUnitRunner</code>指定为默认测试工具运行器，方法是在应用程序的模块级<code>build.gradle</code>文件中包含以下设置：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="section">android</span> &#123;</div><div class="line">    <span class="section">defaultConfig</span> &#123;</div><div class="line">        <span class="attribute">testInstrumentationRunner</span> <span class="string">"android.support.test.runner.AndroidJUnitRunner"</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="创建测试单元测试类">创建测试单元测试类</h2><p>您的检测单元测试类应写为JUnit4测试类。要了解有关创建JUnit 4测试类和使用JUnit 4断言和注释的更多信息，请参阅创<a href="https://developer.android.google.cn/training/testing/unit-testing/local-unit-tests.html#build" target="_blank" rel="external">建本地单元测试类</a>。</p>
+<p>要创建一个检测的JUnit4测试类，请在测试类定义的开头添加<code>@RunWith(AndroidJUnit4.class)</code>注解。您还需要指定Android测试支持库中提供的<a href="https://developer.android.google.cn/reference/android/support/test/runner/AndroidJUnitRunner.html" target="_blank" rel="external">AndroidJUnitRunner</a>类作为默认测试运行器。此步骤在“<a href="/2017/01/11/【Android文档翻译】入门测试/">测试入门</a>”中有更详细的描述。</p>
+<p><a href="https://developer.android.google.cn/training/testing/start/index.html#run-instrumented-tests" target="_blank" rel="external">以下示例显示如何编写检测单元测试</a>，以测试Parcelable接口是否已正确实现LogHistory类：</p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="meta"><span class="meta-keyword">import</span> android.os.Parcel;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> android.support.test.runner.AndroidJUnit4;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> android.util.Pair;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> org.junit.Test;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> org.junit.runner.RunWith;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> java.util.List;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> static org.hamcrest.Matchers.is;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> static org.junit.Assert.assertThat;</span></div><div class="line"></div><div class="line">@RunWith(AndroidJUnit4.class)</div><div class="line">@SmallTest</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LogHistoryAndroidUnitTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String TEST_STRING = <span class="string">"This is a string"</span>;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> long TEST_LONG = <span class="number">12345678</span>L;</div><div class="line">    <span class="keyword">private</span> LogHistory mLogHistory;</div><div class="line"></div><div class="line">    @Before</div><div class="line">    <span class="keyword">public</span> <span class="keyword">void</span> createLogHistory() &#123;</div><div class="line">        mLogHistory = <span class="keyword">new</span> LogHistory();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Test</div><div class="line">    <span class="keyword">public</span> <span class="keyword">void</span> logHistory_ParcelableWriteRead() &#123;</div><div class="line">        <span class="comment">// Set up the Parcelable object to send and receive.</span></div><div class="line">        mLogHistory.addEntry(TEST_STRING, TEST_LONG);</div><div class="line"></div><div class="line">        <span class="comment">// Write the data.</span></div><div class="line">        Parcel parcel = Parcel.obtain();</div><div class="line">        mLogHistory.writeToParcel(parcel, mLogHistory.describeContents());</div><div class="line"></div><div class="line">        <span class="comment">// After you're done with writing, you need to reset the parcel for reading.</span></div><div class="line">        parcel.setDataPosition(<span class="number">0</span>);</div><div class="line"></div><div class="line">        <span class="comment">// Read the data.</span></div><div class="line">        LogHistory createdFromParcel = LogHistory.CREATOR.createFromParcel(parcel);</div><div class="line">        List&lt;Pair&lt;String, Long&gt;&gt; createdFromParcelData = createdFromParcel.getData();</div><div class="line"></div><div class="line">        <span class="comment">// Verify that the received data is correct.</span></div><div class="line">        assertThat(createdFromParcelData.size(), <span class="keyword">is</span>(<span class="number">1</span>));</div><div class="line">        assertThat(createdFromParcelData.get(<span class="number">0</span>).first, <span class="keyword">is</span>(TEST_STRING));</div><div class="line">        assertThat(createdFromParcelData.get(<span class="number">0</span>).second, <span class="keyword">is</span>(TEST_LONG));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="创建一个测试套件">创建一个测试套件</h3><p>要组织仪器化单元测试的执行，可以在测试套件类中对一组测试类进行分组，并一起运行这些测试。测试套件可以嵌套;您的测试套件可以将其他测试套件分组并将所有组件测试类一起运行。</p>
+<p>测试套件包含在测试包中，类似于主应用程序包。按照惯例，测试套件包名称通常以<code>.suite</code>后缀结尾（例如，<code>com.example.android.testing.mysample.suite</code>）。</p>
+<p>要为单元测试创​​建测试套件，请导入JUnit RunWith和Suite类。在您的测试套件中，添加<code>@RunWith(Suite.class)</code>和<code>@Suite.SuitClasses()</code>注解，列出单个测试类或测试套件作为参数。</p>
+<p>以下示例显示如何实现名为UnitTestSuite的测试套件，它将<code>CalculatorInstrumentationTest</code>和<code>CalculatorAddParameterizedTest</code>测试类组合并运行。</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">import com<span class="selector-class">.example</span><span class="selector-class">.android</span><span class="selector-class">.testing</span><span class="selector-class">.mysample</span><span class="selector-class">.CalculatorAddParameterizedTest</span>;</div><div class="line">import com<span class="selector-class">.example</span><span class="selector-class">.android</span><span class="selector-class">.testing</span><span class="selector-class">.mysample</span><span class="selector-class">.CalculatorInstrumentationTest</span>;</div><div class="line">import org<span class="selector-class">.junit</span><span class="selector-class">.runner</span><span class="selector-class">.RunWith</span>;</div><div class="line">import org<span class="selector-class">.junit</span><span class="selector-class">.runners</span><span class="selector-class">.Suite</span>;</div><div class="line"></div><div class="line"><span class="comment">// Runs all unit tests.</span></div><div class="line"><span class="variable">@RunWith</span>(Suite.class)</div><div class="line"><span class="variable">@Suite</span>.SuiteClasses(&#123;CalculatorInstrumentationTest.class,</div><div class="line">        CalculatorAddParameterizedTest.class&#125;)</div><div class="line">public class UnitTestSuite &#123;&#125;</div></pre></td></tr></table></figure>
+<h2 id="运行仪表单元测试">运行仪表单元测试</h2><p>要运行仪表化测试，请按照下列步骤操作：</p>
+<ul>
+<li>1.通过单击工具栏中的同步项目，确保您的项目与Gradle同步。</li>
+<li>2.使用以下方法之一运行测试：<ul>
+<li>要运行单个测试，请打开<strong>Project</strong>窗口，然后右键单击一个测试，然后单击<strong>Run</strong>。</li>
+<li>要测试类中的所有方法，请右键单击测试文件中的类或方法，然后单击<strong>Run</strong>。</li>
+<li>要在目录中运行所有测试，请右键单击目录并选择<strong>Run tests</strong>。</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://developer.android.google.cn/tools/building/plugin-for-gradle.html" target="_blank" rel="external">Gradle的Android插件</a>编译位于默认目录(<code>src/androidTest/java/</code>)中的测试代码，构建测试APK和生产APK，在连接的设备或模拟器上安装这两个APK，并运行测试。然后，Android Studio将在“运行”窗口中显示已检测的测试执行的结果。</p>
+<blockquote>
+<p><strong>注意：</strong>在运行或调试测试测试时，Android Studio不会注入“<a href="https://developer.android.google.cn/studio/run/index.html#instant-run" target="_blank" rel="external">Instant Run</a>”所需的其他方法，并关闭此功能。</p>
+</blockquote>
+<h3 id="使用Firebase_Test_Lab运行测试">使用Firebase Test Lab运行测试</h3><p>使用<a href="https://firebase.google.cn/docs/test-lab/" target="_blank" rel="external">Firebase Test Lab</a>，您可以在许多流行的Android设备和设备配置(区域设置，方向，屏幕大小和平台版本)上同时测试您的应用程序。这些测试在远程Google数据中心的物理和虚拟设备上运行。您可以直接从Android Studio或从命令行将应用程序部署到测试实验室。测试结果提供测试日志，并包括任何应用程序故障的详细信息。</p>
+<p>在开始使用Firebase Test Lab之前，您需要执行以下操作，除非您已经拥有Google帐户和Firebase项目：</p>
+<ul>
+<li>1.如果您还没有Google帐户，请<a href="https://accounts.google.com/" target="_blank" rel="external">创建一个Google帐户</a>。</li>
+<li>2.在<a href="https://console.firebase.google.com/" target="_blank" rel="external">Firebase控制台</a>中，单击<strong>Create New Project</strong>。 <ul>
+<li>使用测试实验室在Spark计划的免费每日配额内测试您的应用程序是免费的。</li>
+</ul>
+</li>
+</ul>
+<h4 id="配置测试矩阵并运行测试">配置测试矩阵并运行测试</h4><p>Android Studio提供了集成工具，允许您配置如何将测试部署到Firebase测试实验室。使用Blaze计划计费创建Firebase项目后，您可以创建测试配置并运行测试：</p>
+<ul>
+<li>1.在主菜单下点击<strong>Run &gt; Edit Configurations</strong> 。</li>
+<li>2.点击<strong>Add New Configuration + </strong>然后选择<strong>Android Tests</strong>。</li>
+<li>3.在Android测试配置对话框中：<ul>
+<li>a.输入或选择测试的详细信息，例如测试名称，模块类型，测试类型和测试类别。</li>
+<li>b.从“部署目标选项”下的“目标”下拉菜单中，选择“<strong>Firebase Test Lab Device Matrix</strong>”。</li>
+<li>c.如果您尚未登录，请点击连接到Google云端平台，并允许Android Studio访问您的帐户。</li>
+<li>d.在Cloud Project旁边，单击设置按钮并从列表中选择您的Firebase项目。</li>
+</ul>
+</li>
+<li>4.创建和配置测试矩阵。<ul>
+<li>a.在<em>Matrix Configuration</em>下拉列表旁边，单击<strong>Open Dialog</strong>。</li>
+<li>b.点击<strong>Add New Configuration (+)</strong>。</li>
+<li>c.在<strong>Name</strong>字段中，输入新配置的名称。</li>
+<li>d.选择您要测试应用的设备，Android版本，地区和屏幕方向。 Firebase测试实验室将在生成测试结果时根据您的选择的每个组合来测试您的应用程序。</li>
+<li>e.单击<strong>OK</strong>保存配置</li>
+</ul>
+</li>
+<li>5.单击<em>Run/Debug Configurations</em>对话框中的<strong>OK</strong>退出。</li>
+<li>6.通过单击<strong>Run</strong>运行测试。</li>
+</ul>
+<p><img src="/img/17_01_11/002.png" alt=""></p>
+<p><strong>图1.</strong>为Firebase Test Lab创建测试配置。</p>
+<h4 id="分析测试结果">分析测试结果</h4><p>当Firebase Test Lab完成运行测试时，运行窗口将打开以显示结果，如图2所示。您可能需要单击<strong>Show Passd</strong>以查看所有已执行的测试。</p>
+<p><img src="/img/17_01_11/003.png" alt=""></p>
+<p><strong>图2.</strong>使用Firebase Test Lab查看仪表化测试的结果。</p>
+<p>您还可以通过在<em>Run</em>窗口中的测试执行日志开头显示的链接来分析Web上的测试。</p>
+<p>要了解有关解释Web结果的详细信息，请参阅<a href="https://firebase.google.cn/docs/test-lab/analyzing-results" target="_blank" rel="external">分析Android结果的Firebase测试实验室</a>。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              <a class="post-title-link" href="/2017/01/11/【Android文档翻译】构建本地单元测试/" itemprop="url">
+                【Android文档翻译】构建本地单元测试
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-01-11T22:48:58+08:00" content="2017-01-11">
+            2017-01-11
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/Android/" itemprop="url" rel="index">
+                  <span itemprop="name">Android</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/01/11/【Android文档翻译】构建本地单元测试/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/11/【Android文档翻译】构建本地单元测试/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p><a href="https://developer.android.google.cn/training/testing/unit-testing/local-unit-tests.html#build" target="_blank" rel="external">https://developer.android.google.cn/training/testing/unit-testing/local-unit-tests.html#build</a></p>
+<p>如果你的单元测试没有依赖或者只有Android上的简单依赖，你应该在本地开发机器上运行测试。这种测试方法是高效的，因为它可以帮助您避免每次运行测试时将目标应用程序和单元测试代码加载到物理设备或模拟器上的开销。因此，运行单元测试的执行时间大大减少。使用这种方法，你通常使用一个模拟框架，如<a href="https://github.com/mockito/mockito" target="_blank" rel="external">Mockito</a>，来实现任何依赖关系。</p>
+<h2 id="设置您的测试环境">设置您的测试环境</h2><p>在您的Android Studio项目中，必须将用于本地单元测试的源文件存储在<code>module-name/src/test/java/</code>。创建新项目时，此目录已存在。</p>
+<p>您还需要为项目配置测试依赖关系，以使用JUnit 4框架提供的标准API。如果您的测试需要与Android依赖关系交互，请引入<a href="https://github.com/mockito/mockito" target="_blank" rel="external">Mockito</a>库以简化本地单元测试。要了解有关在本地单元测试中使用模拟对象的更多信息，请参阅<a href="https://developer.android.google.cn/training/testing/unit-testing/local-unit-tests.html#mocking-dependencies" target="_blank" rel="external">模拟Android依赖项</a>。</p>
+<p>在应用程序的顶级<code>build.gradle</code>文件中，您需要将这些库指定为依赖关系：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">dependencies</span> &#123;</div><div class="line">    <span class="comment">// Required -- JUnit 4 framework</span></div><div class="line">    testCompile <span class="string">'junit:junit:4.12'</span></div><div class="line">    <span class="comment">// Optional -- Mockito framework</span></div><div class="line">    testCompile <span class="string">'org.mockito:mockito-core:1.10.19'</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="创建本地单元测试类">创建本地单元测试类</h2><p>你的本地单元测试类应该写成一个JUnit 4测试类。 JUnit是Java最受欢迎和广泛使用的单元测试框架。这个框架的最新版本，JUnit 4，允许你以比它的前身版本更清洁和更灵活的方式编写测试。与以前的基于JUnit 3的Android单元测试的方法不同，使用JUnit 4，您不需要扩展junit.framework.TestCase类。您也不需要在测试方法名称前加上’test’关键字，或者使用<code>junit.framework</code>或<code>junit.extensions</code>包中的任何类。</p>
+<p>要创建基本的JUnit 4测试类，请创建一个包含一个或多个测试方法的Java类。测试方法以<code>@Test</code>注解开始，包含练习和验证要测试的组件中的单个功能的代码。</p>
+<p>以下示例显示如何实现本地单元测试类。测试方法<code>emailValidator_CorrectEmailSimple_ReturnsTrue</code>验证被测应用程序中的<code>isValidEmail()</code>方法是否返回正确的结果。</p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta"><span class="meta-keyword">import</span> org.junit.Test;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> java.util.regex.Pattern;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> static org.junit.Assert.assertFalse;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> static org.junit.Assert.assertTrue;</span></div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EmailValidatorTest</span> </span>&#123;</div><div class="line"></div><div class="line">    @Test</div><div class="line">    <span class="keyword">public</span> <span class="keyword">void</span> emailValidator_CorrectEmailSimple_ReturnsTrue() &#123;</div><div class="line">        assertThat(EmailValidator.isValidEmail(<span class="string">"name@email.com"</span>), <span class="keyword">is</span>(<span class="literal">true</span>));</div><div class="line">    &#125;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>要测试应用程序中的组件是否返回预期结果，请使用<a href="http://junit.org/javadoc/latest/org/junit/Assert.html" target="_blank" rel="external">junit.Assert</a>方法执行验证检查（或断言），以便将受测试组件的状态与某些预期值进行比较。为了使测试更可读，可以使用<a href="https://github.com/hamcrest" target="_blank" rel="external">Hamcrest匹配器</a>（例如<code>is()</code>和<code>equalTo()</code>方法）将返回的结果与预期结果进行匹配。</p>
+<h2 id="模拟Android依赖">模拟Android依赖</h2><p>默认情况下，Gradle的Android插件针对android.jar库的修改版本执行您的本地单元测试，该版本不包含任何实际代码。相反，从单元测试中调用Android类的方法会抛出异常。这是为了确保你只测试你的代码，不依赖于Android平台的任何特定的行为（你没有明确的被模拟）。</p>
+<p>您可以使用模拟框架在代码中存根外部依赖关系，以便轻松测试您的组件是否按照预期的方式与依赖关系交互。通过用模拟对象替换Android依赖项，您可以将单元测试与Android系统的其余部分隔离，同时验证这些依赖关系中的正确方法是否被调用。Java的Mockito mocking框架（1.9.5及更高版本）提供了与Android单元测试的兼容性。使用<a href="https://github.com/mockito/mockito" target="_blank" rel="external">Mockito</a>，您可以配置模拟对象以在调用时返回一些特定值。</p>
+<p>要使用此框架将mock对象添加到本地单元测试，请遵循以下编程模型：</p>
+<ul>
+<li>1.在<code>build.gradle</code>文件中包含Mockito库依赖关系，如<a href="#设置您的测试环境">设置您的测试环境</a>中所述的那样。</li>
+<li>2.在单元测试类定义的开始，添加<code>@RunWith(MockitoJUnitRunner.class)</code>注解。这个注解告诉Mockito测试运行器验证你的框架的使用是正确的，并简化了你的模拟对象的初始化。</li>
+<li>3.要为Android依赖项创建模拟对象，请在字段声明之前添加<code>@Mock</code>注解。</li>
+<li>4.要存根依赖关系的行为，当条件满足使用<code>when()</code>和<code>thenReturn()</code>方法时，你可以指定一个条件和返回值。</li>
+</ul>
+<p>以下示例显示如何使用mock Context 对象创建单元测试。</p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="meta"><span class="meta-keyword">import</span> static org.hamcrest.MatcherAssert.assertThat;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> static org.hamcrest.CoreMatchers.*;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> static org.mockito.Mockito.*;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> org.junit.Test;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> org.junit.runner.RunWith;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> org.mockito.Mock;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> org.mockito.runners.MockitoJUnitRunner;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> android.content.SharedPreferences;</span></div><div class="line"></div><div class="line">@RunWith(MockitoJUnitRunner.class)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UnitTestSample</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String FAKE_STRING = <span class="string">"HELLO WORLD"</span>;</div><div class="line"></div><div class="line">    @Mock</div><div class="line">    Context mMockContext;</div><div class="line"></div><div class="line">    @Test</div><div class="line">    <span class="keyword">public</span> <span class="keyword">void</span> readStringFromContext_LocalizedString() &#123;</div><div class="line">        <span class="comment">// Given a mocked Context injected into the object under test...</span></div><div class="line">        when(mMockContext.getString(R.string.hello_word))</div><div class="line">                .thenReturn(FAKE_STRING);</div><div class="line">        ClassUnderTest myObjectUnderTest = <span class="keyword">new</span> ClassUnderTest(mMockContext);</div><div class="line"></div><div class="line">        <span class="comment">// ...when the string is returned from the object under test...</span></div><div class="line">        String result = myObjectUnderTest.getHelloWorldString();</div><div class="line"></div><div class="line">        <span class="comment">// ...then the result should be the expected one.</span></div><div class="line">        assertThat(result, <span class="keyword">is</span>(FAKE_STRING));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>要了解有关使用Mockito框架的更多信息，请参阅示<a href="http://site.mockito.org/mockito/docs/current/org/mockito/Mockito.html" target="_blank" rel="external">Mockito API参考</a>和<a href="https://github.com/googlesamples/android-testing/tree/master/unit/BasicSample" target="_blank" rel="external">示例代码</a>中的<code>SharedPreferencesHelperTest</code>类。</p>
+<p>如果android.jar中Android API对你的测试问题抛出了异常，您可以更改行为，以使方法通过在项目的顶级<code>build.gradle</code>文件中添加以下配置来返回null或零：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">  ...</div><div class="line">  <span class="built_in">test</span>Options &#123;</div><div class="line">    unitTests.returnDefaultValues = <span class="literal">true</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>警告</strong>:将<code>returnDefaultValues</code>属性设置为<code>true</code>应该小心。null/零返回值可以在测试中引入回归，这难以调试，并且可能允许失败的测试通过。只能使用它作为最后的手段。</p>
+</blockquote>
+<h2 id="运行本地单元测试">运行本地单元测试</h2><p>要运行本地单元测试，请按照下列步骤操作：</p>
+<ul>
+<li>1.通过单击工具栏中的<strong>Sync Project</strong>，确保您的项目与Gradle同步。</li>
+<li>2.使用以下方法之一运行测试：<ul>
+<li>若要运行单个测试，请打开<strong>Project</strong>窗口，然后右击测试并单击<strong>Run</strong>。</li>
+<li>要在类中测试所有方法，请右击测试文件中的类或方法，然后单击<strong>Run</strong>。</li>
+<li>若要在目录中运行所有测试，请右击目录并选择<strong>Run tests</strong>。</li>
+</ul>
+</li>
+</ul>
+<p>Gradle的Android插件编译位于默认目录<code>(src/test/java/)</code>中的本地单元测试代码，并使用默认的测试运行器类在本地执行它。然后，Android Studio将在<strong>Run</strong>窗口中显示结果。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2017/01/11/【Android文档翻译】入门测试/" itemprop="url">
                 【Android文档翻译】入门测试
               </a>
@@ -1382,410 +1661,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/11/30/房价预测（1）-搜房网数据爬取/" itemprop="url">
-                房价预测（1）-搜房网数据爬取
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-11-30T22:21:58+08:00" content="2016-11-30">
-            2016-11-30
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/11/30/房价预测（1）-搜房网数据爬取/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/30/房价预测（1）-搜房网数据爬取/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="搜房网数据爬取">搜房网数据爬取</h2><blockquote>
-<p>如今<strong>房事</strong>牵动着每家每户的心，所以以搜房网数据为例，用程序员的角度去客观分析一下房价走势，并对房价数据进行预测，也顺便对学到的<strong>机器学习</strong>相关知识练练手。</p>
-</blockquote>
-<h3 id="爬虫Scrapy">爬虫Scrapy</h3><p>数据分析的第一步，当然是数据的采集。这里我使用的是<a href="http://scrapy-chs.readthedocs.io/zh_CN/latest/" target="_blank" rel="external">Scrpy</a>。这是一个开源的python爬虫框架，可以很方便的处理很多爬虫方面的工作，而且中文的文档写的也比较明确。</p>
-<p>安装好python环境后，通过pip即可安装：</p>
-<figure class="highlight cmake"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pip <span class="keyword">install</span> Scrapy</div></pre></td></tr></table></figure>
-<p>具体使用方式，可以看一下这个<a href="http://scrapy-chs.readthedocs.io/zh_CN/latest/intro/tutorial.html" target="_blank" rel="external">Scrapy入门教程</a>，也不难，这里就不做过多的介绍了。</p>
-<h3 id="fang-com从何处入手呢？">fang.com从何处入手呢？</h3><p>大致了解了Scrapy的用法之后，我们就可以实际操作一把了。那么我们面对搜房网这个庞然大物到底要从何处开始爬呢？</p>
-<p>首先，先声明一下我的目的：目的是分析房价数据，所以要爬取的数据主要是每个房源信息的数据咯。</p>
-<p>想要拿到每条房源信息的url，通常我们是拿到每个列表页的数据。</p>
-<p>那么我们第一个要爬取的数据就是房源列表信息了。</p>
-<h4 id="列表爬取">列表爬取</h4><p>所谓列表页，就是这个页面：<a href="http://esf.sh.fang.com/housing/" target="_blank" rel="external">上海二手房</a>，下面“全部小区”部分的列表信息就是我们想要的。</p>
-<p>通过观察搜房网，我发现还有另外一个列表页入口，看起来似乎更容易爬取一些，就是：<a href="http://esf.sh.fang.com/map/" target="_blank" rel="external">地图页</a>。</p>
-<p>在这个页面左侧有个列表：</p>
-<p><img src="/img/16_11_30/001.png" alt=""></p>
-<p>进一步点击这个列表，最后我们可以得到这个页面：</p>
-<p><img src="/img/16_11_30/002.png" alt=""></p>
-<p>通过抓包工具，我们可以看到这个列表通过Ajax发送get请求，得到一段json数据：</p>
-<p><img src="/img/16_11_30/003.png" alt=""></p>
-<p>我们真正想要的数据在这段json中最后的<code>item</code>中：</p>
-<p><img src="/img/16_11_30/004.png" alt=""></p>
-<p>这里藏的就是这个列表的html代码。</p>
-<p>回过头来，再来看看我们请求的地址：</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://esf.<span class="keyword">sh</span>.fang.<span class="keyword">com</span>/<span class="keyword">map</span>/?mapmode=<span class="keyword">y</span>&amp;district=<span class="number">996</span>&amp;subwayline=&amp;subwaystation=&amp;price=&amp;room=&amp;area=&amp;towards=&amp;<span class="built_in">floor</span>=&amp;hage=&amp;equipment=&amp;keyword=&amp;comarea=<span class="number">21929</span>&amp;orderby=<span class="number">30</span>&amp;isyouhui=&amp;x1=<span class="number">120.798</span>&amp;y1=<span class="number">30.926054</span>&amp;x2=<span class="number">122.177798</span>&amp;y2=<span class="number">31.571157</span>&amp;newCode=&amp;houseNum=&amp;schoolDist=&amp;schoolid=&amp;ecshop=ecshophouse&amp;PageNo=<span class="number">1</span>&amp;zoom=<span class="number">16</span>&amp;<span class="keyword">a</span>=ajaxSearch&amp;city=<span class="keyword">sh</span>&amp;searchtype=loupan</div></pre></td></tr></table></figure>
-<p>这里需要凭借直觉来剔除掉一些多余的参数的，至少满足请求到的数据不是局限于<strong>崇明区</strong>的，而是全上海的。</p>
-<p>经过一些尝试之后，我发现下面这个url可以请求到全部的列表数据，其中<code>PageNo</code>参数是页数：</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://esf.<span class="keyword">sh</span>.fang.<span class="keyword">com</span>/<span class="keyword">map</span>/?mapmode=<span class="keyword">y</span>&amp;orderby=<span class="number">30</span>&amp;ecshop=ecshophouse&amp;PageNo=<span class="number">2</span>&amp;<span class="keyword">a</span>=ajaxSearch&amp;city=<span class="keyword">sh</span>&amp;searchtype=loupan</div></pre></td></tr></table></figure>
-<p>我们可以先通过</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">scrapy </span><span class="keyword">shell </span><span class="string">"http://esf.sh.fang.com/map/?mapmode=y&amp;orderby=30&amp;ecshop=ecshophouse&amp;PageNo=2&amp;a=ajaxSearch&amp;city=sh&amp;searchtype=loupan"</span></div></pre></td></tr></table></figure>
-<p>来找出房源详情页的url。</p>
-<p>最终，我发现通过<code>response.xpath(&quot;//a/@href&quot;).extract()</code>可以提取出所有的链接地址，其中如果url中包含<code>&quot;esf&quot;</code>字符串，是二手房房源的url地址。所以<code>parse()</code>的代码如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(self, response)</span>:</span></div><div class="line"></div><div class="line">        infos = response.xpath(<span class="string">"//a/@href"</span>).extract()</div><div class="line"></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> infos:</div><div class="line">            i_str = str(i).encode(<span class="string">"utf-8"</span>)</div><div class="line">            <span class="keyword">if</span> <span class="string">"esf"</span> <span class="keyword">in</span> i_str:</div><div class="line">                url = i_str.replace(<span class="string">'\\'</span>, <span class="string">''</span>).strip()</div></pre></td></tr></table></figure>
-<p>这样我们就得到了所有二手房房源详情页面的url了。</p>
-<blockquote>
-<p>这里有一个小坑：</p>
-<p>这一行代码<code>i_str = str(i).encode(&quot;utf-8&quot;)</code>中，由于i默认没有解码成utf-8的格式，所以不能直接和字符串<code>&quot;esf&quot;</code>进行运算，所以需要一部encode操作。</p>
-</blockquote>
-<h4 id="详情页爬取">详情页爬取</h4><p>对于详情页，我主要想爬取的数据如下：</p>
-<p><img src="/img/16_11_30/005.png" alt=""></p>
-<p>这个页面似乎没有什么取巧的方式了，只能硬着头皮去看他的源码，一层层的抽取了。下面是详情页解析的代码：</p>
-<figure class="highlight sqf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div></pre></td><td class="code"><pre><div class="line">def parse_details(self, response):</div><div class="line"></div><div class="line">        <span class="meta"># path</span></div><div class="line">        xpath = <span class="string">"//body/div[@class='wrap']/div[@class='main clearfix']/div[@class='mainBoxL']"</span></div><div class="line">        div_title = <span class="string">"/div[@class='title']"</span></div><div class="line">        p_gray9 = <span class="string">"/p[@class='gray9']"</span></div><div class="line">        h1 = <span class="string">"/h1"</span></div><div class="line">        span_mr10 = <span class="string">"/span[@class='mr10']"</span></div><div class="line">        div_houseInfor_clearfix = <span class="string">"/div[@class='houseInfor clearfix']"</span></div><div class="line">        div_inforTxt = <span class="string">"/div[@class='inforTxt']"</span></div><div class="line">        dl = <span class="string">"/dl"</span></div><div class="line">        dt_gray6_zongjia1 = <span class="string">"/dt[@class='gray6 zongjia1']"</span></div><div class="line">        span_red20b = <span class="string">"/span[@class='red20b']"</span></div><div class="line">        dd_gray6 = <span class="string">"/dd[@class='gray6']"</span></div><div class="line">        dd = <span class="string">"/dd"</span></div><div class="line">        dt = <span class="string">"/dt"</span></div><div class="line"></div><div class="line">        item = ESFItem()</div><div class="line">        item[<span class="string">'id'</span>] = response.xpath(xpath +</div><div class="line">                                    div_title +</div><div class="line">                                    p_gray9 +</div><div class="line">                                    span_mr10).extract_first().strip()</div><div class="line"></div><div class="line">        item[<span class="string">'publish_time'</span>] = response.xpath(xpath +</div><div class="line">                                              div_title +</div><div class="line">                                              p_gray9).extract_first().strip()</div><div class="line"></div><div class="line">        item[<span class="string">'title'</span>] = response.xpath(xpath +</div><div class="line">                                       div_title +</div><div class="line">                                       h1).extract_first().strip()</div><div class="line"></div><div class="line">        item[<span class="string">'total_price'</span>] = response.xpath(xpath +</div><div class="line">                                             div_houseInfor_clearfix +</div><div class="line">                                             div_inforTxt +</div><div class="line">                                             dl +</div><div class="line">                                             dt_gray6_zongjia1 +</div><div class="line">                                             span_red20b).extract_first().strip()</div><div class="line"></div><div class="line">        dd_infos = response.xpath(xpath + div_houseInfor_clearfix + div_inforTxt + dl + dd).extract()</div><div class="line">        huxing_str = <span class="string">"&lt;span class=\"</span>gray6\<span class="string">"&gt;户&lt;span class=\"</span>padl27\<span class="string">"&gt;&lt;/span&gt;型："</span></div><div class="line">        jzmj_str = <span class="string">"&lt;dd class=\"</span>gray6\<span class="string">"&gt;建筑面积：&lt;span class=\"</span>black \<span class="string">"&gt;"</span></div><div class="line">        symj_str = <span class="string">"&lt;dd class=\"</span>gray6\<span class="string">"&gt;使用面积：&lt;span class=\"</span>black \<span class="string">"&gt;"</span></div><div class="line">        nd_str = <span class="string">"&lt;span class=\"</span>gray6\<span class="string">"&gt;年&lt;span class=\"</span>padl27\<span class="string">"&gt;&lt;/span&gt;代：&lt;/span&gt;"</span></div><div class="line">        cx_str = <span class="string">"&lt;span class=\"</span>gray6\<span class="string">"&gt;朝&lt;span class=\"</span>padl27\<span class="string">"&gt;&lt;/span&gt;向：&lt;/span&gt;"</span></div><div class="line">        lc_str = <span class="string">"&lt;span class=\"</span>gray6\<span class="string">"&gt;楼&lt;span class=\"</span>padl27\<span class="string">"&gt;&lt;/span&gt;层：&lt;/span&gt;"</span></div><div class="line">        jg_str = <span class="string">"&lt;span class=\"</span>gray6 \<span class="string">"&gt;结&lt;span class=\"</span>padl27\<span class="string">"&gt;&lt;/span&gt;构：&lt;/span&gt;"</span></div><div class="line">        zx_str = <span class="string">"&lt;span class=\"</span>gray6\<span class="string">"&gt;装&lt;span class=\"</span>padl27\<span class="string">"&gt;&lt;/span&gt;修：&lt;/span&gt;"</span></div><div class="line">        zzlb_str = <span class="string">"&lt;span class=\"</span>gray6\<span class="string">"&gt;住宅类别：&lt;/span&gt;"</span></div><div class="line">        jzlb_str = <span class="string">"&lt;span class=\"</span>gray6\<span class="string">"&gt;建筑类别：&lt;/span&gt;"</span></div><div class="line">        cqxz_str = <span class="string">"&lt;span class=\"</span>gray6 \<span class="string">"&gt;产权性质：&lt;/span&gt;"</span></div><div class="line"></div><div class="line">        <span class="keyword">for</span> i <span class="built_in">in</span> dd_infos:</div><div class="line">            <span class="keyword">if</span> huxing_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_type'</span>] = i.strip()</div><div class="line"></div><div class="line">            elif jzmj_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_build_area'</span>] = i.strip()</div><div class="line"></div><div class="line">            elif symj_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_use_area'</span>] = i.strip()</div><div class="line"></div><div class="line">            elif nd_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_age'</span>] = i.strip()</div><div class="line">               </div><div class="line">            elif cx_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'orientation'</span>] = i.strip()</div><div class="line">                </div><div class="line">            elif lc_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'floor'</span>] = i.strip()</div><div class="line">                </div><div class="line">            elif jg_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'structure'</span>] = i.strip()</div><div class="line">                </div><div class="line">            elif zx_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'decoration'</span>] = i</div><div class="line">                </div><div class="line">            elif zzlb_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'residential_category'</span>] = i.strip()</div><div class="line">                </div><div class="line">            elif jzlb_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'building_class'</span>] = i.strip()</div><div class="line">                </div><div class="line">            elif cqxz_str <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'property_right'</span>] = i.strip()</div><div class="line">               </div><div class="line"></div><div class="line">        dt_infos = response.xpath(xpath + div_houseInfor_clearfix + div_inforTxt + dl + dt + <span class="string">"/a"</span>).extract()</div><div class="line">        <span class="keyword">for</span> i <span class="built_in">in</span> dt_infos:</div><div class="line">            <span class="keyword">if</span> <span class="string">"查看此楼盘的更多二手房房源"</span> <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'property_name'</span>] = i.strip()</div><div class="line">                </div><div class="line">            elif <span class="string">"&lt;span class=\"</span>gray6 floatl\<span class="string">"&gt;学&lt;span class=\"</span>padl27\<span class="string">"&gt;&lt;/span&gt;校：&lt;/span&gt;"</span> <span class="built_in">in</span> <span class="built_in">str</span>(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'school'</span>] = i.strip()</div></pre></td></tr></table></figure>
-<p>这样我们就可以得到详情页的信息了。</p>
-<p>接下来，把上面两个爬取的操作链接在一起：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(self, response)</span>:</span></div><div class="line">       infos = response.xpath(<span class="string">"//a/@href"</span>).extract()</div><div class="line"></div><div class="line">       <span class="keyword">for</span> i <span class="keyword">in</span> infos:</div><div class="line">           i_str = str(i).encode(<span class="string">"utf-8"</span>)</div><div class="line">           <span class="keyword">if</span> <span class="string">"esf"</span> <span class="keyword">in</span> i_str:</div><div class="line">               url = i_str.replace(<span class="string">'\\'</span>, <span class="string">''</span>).strip()</div><div class="line">               </div><div class="line">               <span class="comment"># 执行下一个request，回去自动调用callback函数，去解析详情页</span></div><div class="line">               <span class="keyword">yield</span> scrapy.Request(url=url.replace(<span class="string">"\""</span>, <span class="string">""</span>), callback=self.parse_details)</div></pre></td></tr></table></figure>
-<h4 id="设置起始url">设置起始url</h4><p>由于要爬取的不仅仅是一页数据，所以我们的<code>start_urls</code>列表不能只有一个url，我们需要有一个<code>PageNo</code>自增长的url的list。</p>
-<p>直接上代码：</p>
-<figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">base_url = <span class="string">"http://esf.sh.fang.com/map/?mapmode=y&amp;orderby=30&amp;ecshop=ecshophouse&amp;PageNo=$&amp;a=ajaxSearch&amp;city=sh&amp;searchtype=loupan"</span></div><div class="line">    start_urls = []</div><div class="line">    # 可以把10设置成一个比较大的数字，由于测试使用，所以写死一个较小的数</div><div class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="keyword">range</span>(2, 10):</div><div class="line">        start_urls.<span class="keyword">append</span>(str(base_url).<span class="keyword">replace</span>(<span class="string">"$"</span>, str(i)))</div></pre></td></tr></table></figure>
-<h4 id="可以开始了吗？">可以开始了吗？</h4><p>列表爬取和详情爬取，以及起始url都设置ok了，那么我们是不是可以让我们的蜘蛛行动起来了呢？</p>
-<p>且慢，这里也有坑。</p>
-<p>这里我将页面数设置了200页，开始爬取，结果悲剧就发生了，由于短时间内访问量过大，搜房网的二手房页面似乎把我的ip屏蔽了：</p>
-<p><img src="/img/16_11_30/006.png" alt=""></p>
-<p>这里我参考了<a href="http://www.tuicool.com/articles/VRfQR3U" target="_blank" rel="external">这篇文章</a>，通过</p>
-<ul>
-<li>设置随机UserAgent</li>
-<li>添加代理IP</li>
-<li>禁用cookies</li>
-<li>设置加载延迟</li>
-</ul>
-<p>这些方式来防止被屏蔽。</p>
-<p>设置完毕后，就可以愉快的开始爬取了~</p>
-<h4 id="蜘蛛代码">蜘蛛代码</h4><p>最终蜘蛛的代码如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># coding=utf-8</span></div><div class="line"><span class="keyword">import</span> random</div><div class="line"></div><div class="line"><span class="keyword">import</span> scrapy</div><div class="line"><span class="keyword">from</span> ..items <span class="keyword">import</span> ESFItem</div><div class="line"></div><div class="line"><span class="keyword">import</span> sys</div><div class="line"></div><div class="line">reload(sys)</div><div class="line">sys.setdefaultencoding(<span class="string">'utf-8'</span>)</div><div class="line"></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ESFListSpider</span><span class="params">(scrapy.Spider)</span>:</span></div><div class="line">    name = <span class="string">"esflist"</span></div><div class="line"></div><div class="line">    <span class="comment"># allowed_domains = ["fang.com"]</span></div><div class="line"></div><div class="line">    base_url = <span class="string">"http://esf.sh.fang.com/map/?mapmode=y&amp;orderby=30&amp;ecshop=ecshophouse&amp;PageNo=$&amp;a=ajaxSearch&amp;city=sh&amp;searchtype=loupan"</span></div><div class="line">    start_urls = []</div><div class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, <span class="number">4</span>):</div><div class="line">        start_urls.append(str(base_url).replace(<span class="string">"$"</span>, str(i)))</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, user_agent=<span class="string">''</span>)</span>:</span></div><div class="line">        self.user_agent = user_agent</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">process_request</span><span class="params">(self, request, spider)</span>:</span></div><div class="line">        <span class="comment"># 这句话用于随机选择user-agent</span></div><div class="line">        ua = random.choice(self.user_agent_list)</div><div class="line">        <span class="keyword">if</span> ua:</div><div class="line">            request.headers.setdefault(<span class="string">'User-Agent'</span>, ua)</div><div class="line"></div><div class="line">    user_agent_list = [</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1"</span> \</div><div class="line">        <span class="string">"Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.6 (KHTML, like Gecko) Chrome/20.0.1092.0 Safari/536.6"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.6 (KHTML, like Gecko) Chrome/20.0.1090.0 Safari/536.6"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/19.77.34.5 Safari/537.1"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.9 Safari/536.5"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.0) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.36 Safari/536.5"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 5.1) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_0) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1062.0 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1062.0 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1061.0 Safari/536.3"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"</span>, \</div><div class="line">        <span class="string">"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"</span></div><div class="line">    ]</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(self, response)</span>:</span></div><div class="line"></div><div class="line">        infos = response.xpath(<span class="string">"//a/@href"</span>).extract()</div><div class="line"></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> infos:</div><div class="line">            i_str = str(i).encode(<span class="string">"utf-8"</span>)</div><div class="line">            <span class="keyword">if</span> <span class="string">"esf"</span> <span class="keyword">in</span> i_str:</div><div class="line">                url = i_str.replace(<span class="string">'\\'</span>, <span class="string">''</span>).strip()</div><div class="line"></div><div class="line">                <span class="keyword">yield</span> scrapy.Request(url=url.replace(<span class="string">"\""</span>, <span class="string">""</span>), callback=self.parse_details)</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse_details</span><span class="params">(self, response)</span>:</span></div><div class="line">        <span class="keyword">print</span> <span class="string">"+++++++++++++被执行了+++++++++++++++++++"</span></div><div class="line"></div><div class="line">        <span class="comment"># path</span></div><div class="line">        xpath = <span class="string">"//body/div[@class='wrap']/div[@class='main clearfix']/div[@class='mainBoxL']"</span></div><div class="line">        div_title = <span class="string">"/div[@class='title']"</span></div><div class="line">        p_gray9 = <span class="string">"/p[@class='gray9']"</span></div><div class="line">        h1 = <span class="string">"/h1"</span></div><div class="line">        span_mr10 = <span class="string">"/span[@class='mr10']"</span></div><div class="line">        div_houseInfor_clearfix = <span class="string">"/div[@class='houseInfor clearfix']"</span></div><div class="line">        div_inforTxt = <span class="string">"/div[@class='inforTxt']"</span></div><div class="line">        dl = <span class="string">"/dl"</span></div><div class="line">        dt_gray6_zongjia1 = <span class="string">"/dt[@class='gray6 zongjia1']"</span></div><div class="line">        span_red20b = <span class="string">"/span[@class='red20b']"</span></div><div class="line">        dd_gray6 = <span class="string">"/dd[@class='gray6']"</span></div><div class="line">        dd = <span class="string">"/dd"</span></div><div class="line">        dt = <span class="string">"/dt"</span></div><div class="line"></div><div class="line">        item = ESFItem()</div><div class="line">        item[<span class="string">'id'</span>] = response.xpath(xpath +</div><div class="line">                                    div_title +</div><div class="line">                                    p_gray9 +</div><div class="line">                                    span_mr10).extract_first().strip()</div><div class="line"></div><div class="line">        item[<span class="string">'publish_time'</span>] = response.xpath(xpath +</div><div class="line">                                              div_title +</div><div class="line">                                              p_gray9).extract_first().strip()</div><div class="line"></div><div class="line">        item[<span class="string">'title'</span>] = response.xpath(xpath +</div><div class="line">                                       div_title +</div><div class="line">                                       h1).extract_first().strip()</div><div class="line"></div><div class="line">        item[<span class="string">'total_price'</span>] = response.xpath(xpath +</div><div class="line">                                             div_houseInfor_clearfix +</div><div class="line">                                             div_inforTxt +</div><div class="line">                                             dl +</div><div class="line">                                             dt_gray6_zongjia1 +</div><div class="line">                                             span_red20b).extract_first().strip()</div><div class="line"></div><div class="line">        dd_infos = response.xpath(xpath + div_houseInfor_clearfix + div_inforTxt + dl + dd).extract()</div><div class="line">        huxing_str = <span class="string">"&lt;span class=\"gray6\"&gt;户&lt;span class=\"padl27\"&gt;&lt;/span&gt;型："</span></div><div class="line">        jzmj_str = <span class="string">"&lt;dd class=\"gray6\"&gt;建筑面积：&lt;span class=\"black \"&gt;"</span></div><div class="line">        symj_str = <span class="string">"&lt;dd class=\"gray6\"&gt;使用面积：&lt;span class=\"black \"&gt;"</span></div><div class="line">        nd_str = <span class="string">"&lt;span class=\"gray6\"&gt;年&lt;span class=\"padl27\"&gt;&lt;/span&gt;代：&lt;/span&gt;"</span></div><div class="line">        cx_str = <span class="string">"&lt;span class=\"gray6\"&gt;朝&lt;span class=\"padl27\"&gt;&lt;/span&gt;向：&lt;/span&gt;"</span></div><div class="line">        lc_str = <span class="string">"&lt;span class=\"gray6\"&gt;楼&lt;span class=\"padl27\"&gt;&lt;/span&gt;层：&lt;/span&gt;"</span></div><div class="line">        jg_str = <span class="string">"&lt;span class=\"gray6 \"&gt;结&lt;span class=\"padl27\"&gt;&lt;/span&gt;构：&lt;/span&gt;"</span></div><div class="line">        zx_str = <span class="string">"&lt;span class=\"gray6\"&gt;装&lt;span class=\"padl27\"&gt;&lt;/span&gt;修：&lt;/span&gt;"</span></div><div class="line">        zzlb_str = <span class="string">"&lt;span class=\"gray6\"&gt;住宅类别：&lt;/span&gt;"</span></div><div class="line">        jzlb_str = <span class="string">"&lt;span class=\"gray6\"&gt;建筑类别：&lt;/span&gt;"</span></div><div class="line">        cqxz_str = <span class="string">"&lt;span class=\"gray6 \"&gt;产权性质：&lt;/span&gt;"</span></div><div class="line"></div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> dd_infos:</div><div class="line">            <span class="keyword">if</span> huxing_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_type'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> jzmj_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_build_area'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> symj_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_use_area'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> nd_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'house_age'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> cx_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'orientation'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> lc_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'floor'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> jg_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'structure'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> zx_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'decoration'</span>] = i</div><div class="line">            <span class="keyword">elif</span> zzlb_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'residential_category'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> jzlb_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'building_class'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> cqxz_str <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'property_right'</span>] = i.strip()</div><div class="line"></div><div class="line">        dt_infos = response.xpath(xpath + div_houseInfor_clearfix + div_inforTxt + dl + dt + <span class="string">"/a"</span>).extract()</div><div class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> dt_infos:</div><div class="line">            <span class="keyword">if</span> <span class="string">"查看此楼盘的更多二手房房源"</span> <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'property_name'</span>] = i.strip()</div><div class="line">            <span class="keyword">elif</span> <span class="string">"&lt;span class=\"gray6 floatl\"&gt;学&lt;span class=\"padl27\"&gt;&lt;/span&gt;校：&lt;/span&gt;"</span> <span class="keyword">in</span> str(i).encode(<span class="string">"utf-8"</span>):</div><div class="line">                item[<span class="string">'school'</span>] = i.strip()</div></pre></td></tr></table></figure>
-<h3 id="what`s_next?">what`s next?</h3><p>接下来我会将爬取到的数据进行加工后持久化到本地，不过今天就先到这里吧~</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/10/24/斯坦福机器学习课程 第六周 (1)评价一个学习算法/" itemprop="url">
-                斯坦福机器学习课程 第六周 (1)评价一个学习算法
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-10-24T22:28:58+08:00" content="2016-10-24">
-            2016-10-24
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/10/24/斯坦福机器学习课程 第六周 (1)评价一个学习算法/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/24/斯坦福机器学习课程 第六周 (1)评价一个学习算法/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="如何少走弯路？">如何少走弯路？</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/OVM4M/deciding-what-to-try-next" target="_blank" rel="external">视频地址</a></p>
-<h3 id="这些坑可能会耽误你几个月">这些坑可能会耽误你几个月</h3><blockquote>
-<p>到目前为止，我们已经介绍了许多不同的学习算法。如果你一直跟着这些视频的进度学习，你会发现自己已经不知不觉地成为一个了解许多先进机器学习技术的专家了。</p>
-<p>然而，在懂机器学习的人当中，依然存在着很大的差距。一部分人确实掌握了怎样高效有力地运用这些学习算法，而另一些人他们可能对我马上要讲的东西就不那么熟悉了，他们可能没有完全理解怎样运用这些算法，因此总是把时间浪费在毫无意义的尝试上。</p>
-<p>我想做的是，确保你在设计机器学习的系统时，你能够明白怎样选择一条最合适、最正确的道路。</p>
-<p>因此，在这节视频和之后的几段视频中，我将向你介绍一些实用的建议和指导，帮助你明白怎样进行选择。</p>
-<p>具体来讲，我将重点关注的问题是：假如你在开发一个机器学习系统，或者想试着改进一个机器学习系统的性能，你应如何决定接下来应该选择哪条道路？</p>
-</blockquote>
-<p>以预测房价为例：</p>
-<p>假如在预测房价的例子中，你已经完成了正则化线性回归，也就是最小化代价函数$J$的值。</p>
-<p><img src="/img/16_10_24/001.png" alt=""></p>
-<p>假如在你得到你的学习参数以后，如果你要将你的假设函数放到一组新的房屋样本上进行测试，假如说你发现在预测房价时产生了巨大的误差，现在的问题是要想改进这个算法接下来该怎么办？</p>
-<p>实际上你可以想出很多方法来改进这个算法的性能。</p>
-<p>通常情况下我们会使用这几种方法：</p>
-<ul>
-<li>通过使用更多的训练样本</li>
-</ul>
-<blockquote>
-<p>但有的时候，更多的训练样本并不能解决问题。</p>
-</blockquote>
-<ul>
-<li>尝试选用更少的特征集</li>
-</ul>
-<blockquote>
-<p>你可以从众多的特征集中仔细挑选一小部分来防止<strong>过拟合</strong>。</p>
-</blockquote>
-<ul>
-<li>尝试选用更多的特征集</li>
-</ul>
-<blockquote>
-<p>也许目前的特征集对你来讲并不是很有帮助，你希望获取更多有用的特征数据</p>
-</blockquote>
-<ul>
-<li>也可以尝试增加多项式特征的方法($x_{1}^{2}$,$x_{2}^{2}$,$x_{1}x_{2}$,etc.)</li>
-<li>通过增大正则化参数$\lambda$</li>
-<li>通过减小正则化参数$\lambda$</li>
-</ul>
-<p>上面的这些方法，都可以扩展开来，都可能是一个花费6个月甚至更长时间的项目。</p>
-<p>遗憾的是，大多数人用来选择这些方法的标准是凭感觉的。而且很多人都会错误的选择其中一种方法花费大量的时间和精力，走上了“不归路”。</p>
-<p>幸运的是，有一系列简单的方法，能让你事半功倍，排除掉上面的那个优化清单上的至少一半的方法，留下真正有用的方法。同时也有一种很简单的方法，可以很轻松的排除掉很多选择从而为你节省大量不必要花费的时间。</p>
-<h3 id="机器学习诊断法引入">机器学习诊断法引入</h3><p>在接下来的视频中，我首先介绍<strong>怎样评估机器学习算法的性能</strong>，然后在之后的几段视频中，我们将开始讨论这些方法，它们也被称为<strong>“机器学习诊断法(Machine learning diagnostic)”</strong>。</p>
-<blockquote>
-<p>Diagnostic:A test that you can run to gain insight what is/isn’t working with a learning algorithm, and gain guidance as to how best to improve its performance.</p>
-<p>诊断法：这是一种测试法，你通过执行这种测试能够深入了解某种算法到底是否有用，并且也可以告诉你如何改进算法的效果。</p>
-</blockquote>
-<p>诊断法是一种很有用的方法，可以更有效率地利用好你的时间，但同时也会花费一些时间来实现。</p>
-<h2 id="评估假设函数">评估假设函数</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/yfbJY/evaluating-a-hypothesis" target="_blank" rel="external">视频地址</a></p>
-<p>当我们确定学习算法的参数的时候，我们考虑的是选择参量来使训练误差最小化。有人认为，得到一个非常小的训练误差一定是一件好事，但我们已经知道，仅仅是因为这个假设具有很小的训练误差并不能说明它就一定是一个好的假设函数，而且我们也学习了过拟合假设函数的例子。所以这推广到新的训练集上是不适用的。</p>
-<p>那么，你该如何判断一个假设函数是过拟合的呢？对于这个简单的例子，我们可以对假设函数$h(x)$进行画图，然后观察图形趋势：</p>
-<p><img src="/img/16_10_24/002.png" alt=""></p>
-<p>但对于特征变量不止一个的这种一般情况：</p>
-<p><img src="/img/16_10_24/003.png" alt=""></p>
-<p>想要通过画出假设函数来进行观察，就会变得很难甚至是不可能实现的。</p>
-<p>因此我们需要另一种方法来评估我们的假设函数。</p>
-<h3 id="评估假设函数的方法">评估假设函数的方法</h3><p>如下给出了一种评估假设函数的标准方法：</p>
-<p>假设我们有这样一组数据组：</p>
-<p><img src="/img/16_10_24/004.png" alt=""></p>
-<p>虽然这里只有十组数据，但通常情况下我们都有成百上千组训练样本。</p>
-<p>为了确保我们可以评估我们的假设函数，我们要做的是将这些数据进行三七分：</p>
-<p><img src="/img/16_10_24/005.png" alt=""></p>
-<p>第一部分（70%）将成为我们的<strong>训练集(Training Set)</strong></p>
-<p>第二部分（30%）将成为我们的<strong>测试集(Test Set)</strong></p>
-<blockquote>
-<p>将所有数据按照7:3的比例划分，是一种常见的划分比例</p>
-</blockquote>
-<p>现在我们有了一部分训练数据集：</p>
-<p>$$<br>(x^{(1)},y^{(1)})\\<br>(x^{(2)},y^{(2)})\\<br>……\\<br>(x^{(m)},y^{(m)})<br>$$</p>
-<blockquote>
-<p>这里的$m$依然表示训练样本的总数</p>
-</blockquote>
-<p>剩下的部分数据将被用作测试数据：</p>
-<p>$$<br>(x^{(1)}_{test},y^{(1)}_{test})\\<br>(x^{(2)}_{test},y^{(2)}_{test})\\<br>……\\<br>(x^{(m_{test})}_{test},y^{(m_{test})}_{test})<br>$$</p>
-<blockquote>
-<p>这里$m_{test}$表示测试样本的总数，$_{test}$表示这些样本是来自测试集。</p>
-<p><strong>注意</strong>：如果说我们的数据是有某种规律的话，那么我们按照7:3的比例取数据时，应该是随机选取的。</p>
-</blockquote>
-<h3 id="评估步骤详解">评估步骤详解</h3><h4 id="线性回归中">线性回归中</h4><p>在线性回归中，的训练/测试流程：</p>
-<ul>
-<li>1.需要对训练集进行学习，得到参数$\theta$。</li>
-</ul>
-<blockquote>
-<p>具体来讲就是最小化训练误差$J(\theta)$。这里的是使用那70%的数据训练得出的结果。</p>
-</blockquote>
-<ul>
-<li>2.计算出测试误差</li>
-</ul>
-<blockquote>
-<p>使用$J_{test}(\theta)$来表示测试误差，我们要做的是取出之前从训练集中学习得到的参数$\theta$带入到$J_{test}(\theta)$来计算我们的测试误差。可以写成如下形式：</p>
-</blockquote>
-<p>$$<br>\begin{align*}<br>J_{test}(\theta)= \frac{1}{2m_{test}}\sum_{i=1}^{m_{test}}(<br> h_{\theta}(x_{test}^{(i)}) - y_{test}^{(i)}<br> )^{2}<br>\end{align*}<br>$$</p>
-<blockquote>
-<p>这实际上是测试集平方误差的平均值。</p>
-</blockquote>
-<hr>
-<h4 id="分类问题中">分类问题中</h4><p>当然，这是当我们使用线性回归和平方误差标准时测试误差的定义，那么如果是分类问题，比如说使用逻辑回归的时候呢？</p>
-<p>训练和测试逻辑回归与之前所说的非常类似：</p>
-<ul>
-<li>1.首先我们要从训练数据中（前70%）学习得到参数$\theta$</li>
-<li>2.然后用下面的式子计算测试数据的误差值:</li>
-</ul>
-<p><img src="/img/16_10_24/006.png" alt=""></p>
-<p>在分类问题中的测试误差$J_{test}(\theta)$其实也被称作<strong>误分类率</strong>（也被称为<strong>0/1错分率</strong>）。表示你预测到的正确或错误样本的情况。</p>
-<p>比如说可以这样定义一次预测的误差：</p>
-<ul>
-<li><p>当$h_{\theta}\ge0.5$时$y=0$</p>
-</li>
-<li><p>或者当$h_{\theta}\lt0.5$时$y=1$</p>
-</li>
-</ul>
-<p>这两种情况下我们的假设都对样本进行另外误判，否则其他情况下假设值都能正确的对样本$y$进行分类。</p>
-<p>$$<br>err(h_{\theta}^{(x)},y)<br>=\{<br>\begin{align*}<br>&amp;= 1 \ \ if\ h_{\theta}(x)\ge0.5,\ y=0<br>        \ or\ if\ h_{\theta}(x)\le0.5,\ y=1 \\<br>&amp;= 0 \ otherwise<br>\end{align*}<br>$$</p>
-<p>然后我们就能应用错分率误差来定义测试误差，也就是：</p>
-<p>$$<br>\begin{align*}<br>Test\ error =<br> \frac{1}{m_{test}}\sum_{i=1}^{m_{test}}err(<br> h_{\theta}(x_{test}^{(i)}), y_{test}^{(i)}<br> )<br>\end{align*}<br>$$</p>
-<blockquote>
-<p>以上我们介绍了一套标准技术来评价一个已经学习过的假设，在下一段视频中，我们要应用这些方法来帮助我们进行诸如特征选择一类的问题（比如多项式次数的选择，或者正则化参数的选择）。</p>
-</blockquote>
-<h2 id="多项式模型的选择以及训练集/验证集/测试集的划分">多项式模型的选择以及训练集/验证集/测试集的划分</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/QGKbr/model-selection-and-train-validation-test-sets" target="_blank" rel="external">视频地址</a></p>
-<blockquote>
-<p>假如你想要确定对于某组数据最合适的多项式次数是几次，怎样选用正确的特征来构造学习算法，这些问题我们称之为<strong>”模型选择问题“</strong>。</p>
-<p>在我们对于这一问题的讨论中，我们还将提到如何将数据分为三组：也就是<strong>训练集、验证集和测试集</strong>，而不仅仅是前面提到的两组数据。</p>
-<p>这一节中，我们将会介绍这些内容的含义。</p>
-</blockquote>
-<h3 id="选择合适的模型解决过拟合问题">选择合适的模型解决过拟合问题</h3><p>在过拟合的情况中，学习算法在适用于训练集时表现非常完美，但这并不代表此时的假设也很完美。</p>
-<p>更一般的说，这也是为什么训练集误差通常不能正确预测出该假设是否能很好地拟合新样本的原因。</p>
-<p>具体来讲，如果你把这些参数集，比如$\theta_{0}$,$\theta_{1}$,$\theta_{2}$…调整到尽量拟合你的训练集，那么结果就是你的假设会在训练集上表现地很好，但这并不能确定当你的假设推广到训练集之外的新的样本上时，预测结果是怎样的。</p>
-<p>而更为普遍的规律是，只要你的参数非常拟合某个数据组，比如说非常拟合训练集（当然也可以是其他数据集）：</p>
-<p><img src="/img/16_10_24/007.png" alt=""></p>
-<p>那么你的假设对于相同数据组的预测误差（比如说训练误差）是不能够用来推广到一般情况的，或者说，是不能作为实际的泛化误差的（也就是说，不能说明你的假设对于新样本的效果）。</p>
-<hr>
-<p>接下来具体来说说模型选择问题：</p>
-<p>假如说你现在要选择能最好地拟合你数据的多项式次数，那么下面的式子你应该选择哪一个呢？</p>
-<p><img src="/img/16_10_24/008.png" alt=""></p>
-<p>假设$d$代表我们应该选择的多项式的次数(上面的式子次数依次为从1到10)，我们除了需要确定参数$\theta$之外，还要考虑如何确定这个多项式的次数$d$。</p>
-<p>因此，我们需要确定参数$d$最适当的取值。</p>
-<p>具体地说，比如你想要选择一个模型，那就从这10个模型中，选择一个最适当的多项式次数，并且用这个模型进行估计，预测你的假设能否很好地推广到新的样本上。</p>
-<p>那么你可以这样做：</p>
-<ul>
-<li>你可以先选择第一个模型，然后求训练误差的最小值。这样你就会得到一个参数向量$\theta$。</li>
-<li>然后你再选择第二个模型，进行同样的过程，这样你会得到另一个参数向量$\theta$。</li>
-<li>拟合三次函数模型时，同理，也能得到一个参数向量$\theta$。</li>
-<li>…</li>
-<li>用相同的方式得到第10个模型的向量$\theta$。</li>
-</ul>
-<p><img src="/img/16_10_24/009.png" alt=""></p>
-<p>如果一次模型训练后得到的参数向量为$\theta^{(1)}$,二次模型训练后得到的参数向量为$\theta^{(2)}$，依次类推，十次模型训练后得到的参数向量为$\theta^{(10)}$。</p>
-<p>接下来，我们要做的是对所有这些模型求出<strong>测试集误差</strong>。因此，我们可以算出每一个模型的$Jtest(\theta^{(1)})$、$Jtest(\theta^{(2)})$、$Jtest(\theta^{(3)})$…$Jtest(\theta^{(10)})$。</p>
-<p>接下来为了确定哪一个模型最好，我们可以找出<strong>测试集误差最小的模型</strong>。</p>
-<p>假设我们最终选择了五次多项式模型:</p>
-<p>$$<br>Choose \ \ \theta_{0} + … \theta_{5}x^{5}<br>$$</p>
-<h3 id="正确的评价某个假设函数的预测能力">正确的评价某个假设函数的预测能力</h3><blockquote>
-<p>由于我们使用的是<strong>测试结果集</strong>来衡量的代价函数，从而得到多项式次数$d$这个参数的值为5，所以这样任然不能公平地说明这个假设可以推广到一般情况。</p>
-<p>也就是说我们选择了一个能最好地拟合测试集的参数$d$的值，因此我们的参数向量$\theta^{(5)}$在拟合测试集时的结果很可能导致一个比实际泛化误差更完美的预测结果。（因为我们找到的是一个最能拟合测试集的参数$d$）。因此我们再用测试集来评价我们的假设就显得不公平了。</p>
-<p>而我们其实更关心的是对新样本的拟合效果，所以我们之前说到的如果我们用训练集来拟合参数$\theta_{0}$,$\theta_{1}$等参数时，拟合后的模型在作用于训练集上的效果是不能预测出我们将这个假设推广到新样板上时效果如何的。这是因为这些参数能够很好地拟合训练集，因此它们很有可能在对训练集的预测中表现的很好，但对其他的新样本来说就不一定那么好了。</p>
-</blockquote>
-<p>我们要做的实际上是用测试集来拟合参数$d$，但是这同样也意味着这并不能较为公平地预测出假设函数在遇到新样本时的表现。</p>
-<h4 id="方式">方式</h4><p>为了解决这一问题在模型选择中，如果我们要评价某个假设，我们通常采用以下的方法：</p>
-<p>给定某个数据集，这里我们要将其分为三段：训练集、<strong>交叉验证集（cross validation set）</strong>、测试集。</p>
-<p><img src="/img/16_10_24/010.png" alt=""></p>
-<p>一种典型的分割比例是：训练集60%，交叉验证集20%，测试集20%。（这个比例可稍作调整）</p>
-<p><img src="/img/16_10_24/011.png" alt=""></p>
-<blockquote>
-<p>$m$是训练集个数，$m_{cv}$是交叉验证集个数，$m_{test}$是测试集个数。</p>
-</blockquote>
-<p>我们可以得到 训练集/交叉验证集/测试集 的误差：</p>
-<p><img src="/img/16_10_24/012.png" alt=""></p>
-<p>现在我们的模型选择问题是这样的：我们现在要使用交叉验证集来选择合适的模型：</p>
-<p><img src="/img/16_10_24/013.png" alt=""></p>
-<p>即通过使用<strong>训练集</strong>对每一个假设函数依次去求最小化的代价函数$minJ(\theta)$，并求得对应的参数向量$\theta^{(d)}$。</p>
-<p>然后我们要做的是在<strong>交叉验证集</strong>中测试这些假设的表现，测出$J_{cv}$来看看这些假设在交叉验证集中表现如何。</p>
-<p>然后我们要选择<strong>交叉验证集</strong>误差最小的那个假设模型，假如这个模型是$J_{cv}(\theta^{(4)})$对应的那个模型，因此我们就选择这个四次多项式模型：</p>
-<p>$$<br>\theta_{0} + \theta_{1}x^{1} + … + \theta_{4}x^{4}<br>$$</p>
-<p>我们得到了拟合出最好的系数$d=4$。</p>
-<p>这个过程中，我们没有使用<strong>测试集</strong>进行拟合，这样我们就回避了<strong>测试集</strong>的嫌疑。这样我们就可以光明正大的使用<strong>测试集</strong>来估计所选模型的泛化误差了。</p>
-<p>最后，我们可以使用<strong>测试集</strong>来评价模型的表现。</p>
-<p>但最后还是要提醒大家的一点是，在如今的机器学习应用中，确实也有很多人是像我之前介绍的那样做的（用测试集来选择模型，然后用同样的测试集来评价模型的表现，报告测试误差，看起来好像还能得到比较不错的泛化误差），我说过这并不是一个好的方法，但不幸的是，现在还有很多人这样做。如果测试集足够多的话，这也许还能行得通，但大多数的机器学习开发人员是不会这么做的，因为最佳做法还是把数据分成 训练集、验证集、测试集。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1824,7 +1699,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">104</span>
+              <span class="site-state-item-count">106</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1838,7 +1713,7 @@ var _hmt = _hmt || [];
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-count">19</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
