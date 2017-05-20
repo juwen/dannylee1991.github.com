@@ -310,6 +310,172 @@ var _hmt = _hmt || [];
 <p><img src="/img/17_05_12/013.png" alt=""></p>
 <p>这就是把数据从三维降到二维的过程。</p>
 <p>这就是降维以及如何使用它来压缩数据的过程。</p>
+<h2 id="动机II：可视化数据">动机II：可视化数据</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/t6pYD/motivation-ii-visualization" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>在上节中，我们讲到一种通过数据降维来进行数据压缩的方法。在本节我将会讲到第二种数据降维的应用，那就是<strong>可视化数据</strong>。</p>
+<p>对于大多数的机器学习应用，它真的可以帮助我们来开发高效的学习算法，但前提是我们能更好地理解数据。降维就是数据可视化的一种方法。</p>
+</blockquote>
+<p>假如我们已经收集了大量的有关全世界不同国家的统计数据集：</p>
+<p><img src="/img/17_05_12/014.png" alt=""></p>
+<p>第一个特征$x_1$是国家的国内生产总值；第二个特征$x_2$是一个百分比，表示人均占有的GDP；第三个特征$x_3$是人类发展指数；第四个特征$x_4$是预期寿命；…直到$x_{50}$</p>
+<p>在这里我们有大量的国家的数据，对于每个国家有50个特征。我们有这样的众多国家的数据集，为了使得我们能更好地来理解数据，我们需要对数据进行可视化展示。这里我们有50个特征，但绘制一幅50维度的图是异常困难的，因此我们需要对数据进行降维，然后再可视化。</p>
+<p>具体做法如下：</p>
+<p>我们使用特征向量$x^{(i)}$来表示每个国家。$x^{(i)}$有着50个维度。我们需要对这50个特征降维之后，我们可以用另一种方式来代表$x^{(i)}$：使用一个二维的向量$z$来代替之前50维的$x$。</p>
+<p><img src="/img/17_05_12/015.png" alt=""></p>
+<p>$$<br>z^{(i)} \in R^2<br>$$</p>
+<p>我们用$z_1$和$z_2$这两个数来总结50个维度的数据，我们可以使用这两个数来绘制出这些国家的二维图，使用这样的方法尝试去理解二维空间下不同国家在不同特征的差异会变得更容易。</p>
+<p>在降维处理时，我们用$z_1$来表示那些象征着国家整体情况的数据，例如”国家总面积”、”国家总体经济水平”等；用$z_2$来表示象征着人均情况的数据，例如”人均GDP”，”人均幸福感”等。</p>
+<p>降维处理之后，将数据按照这两个维度展示如下：</p>
+<p><img src="/img/17_05_12/016.png" alt=""></p>
+<p>在图中，右侧的点，象征着国家整体经济比较好的国家；上方的点，象征着人均经济比较好、人均幸福感较高、人均寿命较长…的国家。</p>
+<hr>
+<p>那么具体我们要如何去压缩数据达到降维的效果呢？在下一节视频中我们将会开始开发一种特别的算法。简称<strong>PCA</strong>或者<strong>主成分分析 </strong>。这个算法允许我们进行数据可视化，同时可以进行早先我们提到的一些有关数据压缩方面的应用。</p>
+<h2 id="主成分分析（PCA）相关概念">主成分分析（PCA）相关概念</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/GBFTt/principal-component-analysis-problem-formulation" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>对于降维问题来说，目前最流行最常用的算法是<strong>主成分分析法(Principal Componet Analysis, PCA）</strong>。</p>
+<p>在本节中，我想首先开始讨论PCA问题的公式描述，也就是说，我们用公式准确地精确地描述：我们想让PCA来做什么。</p>
+</blockquote>
+<h3 id="PCA的执行过程2D_-&gt;_1D">PCA的执行过程2D -&gt; 1D</h3><p>假设我们有这样的一个数据集:</p>
+<p><img src="/img/17_05_12/017.png" alt=""></p>
+<p>这个数据集含有二维实数空间内的样本X。</p>
+<p>假设我想对数据进行降维，从二维降到一维。也就是说我想找到一条直线将数据投影到这条直线上，那怎么找到一条好的直线来投影这些数据呢？ </p>
+<p>这样的一条直线也许是个不错的选择：</p>
+<p><img src="/img/17_05_12/018.png" alt=""></p>
+<p>你认为这是一个不错的选择的原因是：如果你观察投影到直线上的点的位置，我们发现每个点到它们对应的投影到直线上的点之间的距离非常小。（也就是说这些蓝色的线段非常的短）：</p>
+<p><img src="/img/17_05_12/019.png" alt=""></p>
+<p>所以，正式的说<strong>PCA</strong>所做的就是<strong>寻找一个低维的面(在这个例子中，其实是一条直线）数据投射在上面，使得这些蓝色小线段的平方和达到最小值</strong>。这些蓝色线段的长度被叫做<strong>投影误差</strong>。</p>
+<p>所以<strong>PCA</strong>所做的就是寻找一个投影平面，对数据进行投影，使得这个能够最小化。</p>
+<p>另外在应用<strong>PCA</strong>之前，通常的做法是先进行<strong>均值归一化</strong>和<strong>特征规范化</strong>，使得特征$x_1$和$x_2$均值为0，数值在可比较的范围之内。</p>
+<blockquote>
+<p>在这个例子里，我已经这么做了。但是在后面我还将回过来讨论更多有关PCA背景下的特征规范化和均值归一化问题。</p>
+</blockquote>
+<hr>
+<p>我们正式一点地写出<strong>PCA</strong>的目标是这样的：</p>
+<p>如果我们将数据从二维降到一维的话，我们需要试着寻找一个向量$u^{(i)}$，该向量属于$n$维空间中的向量（在这个例子中是二维的），我们将寻找一个对数据进行投影的方向，使得<strong>投影误差能够最小</strong>（在这个例子里，我们把PCA寻找到这个向量记做$u^{(1)}$）：</p>
+<p><img src="/img/17_05_12/020.png" alt=""></p>
+<p>所以当我把数据投影到这条向量所在的直线上时，最后我将得到非常小的重建误差。</p>
+<blockquote>
+<p>另外需要说明的时无论PCA给出的是这个$u^{(1)}$是正还是负都没关系。因为无论给的是正的还是负的$u^{(1)}$它对应的直线都是同一条，也就是我将投影的方向。</p>
+</blockquote>
+<p>这就是将二维数据降到一维的例子。</p>
+<p>更一般的情况是我们有$n$维的数据想降到$k$维。在这种情况下我们不仅仅只寻找单个的向量（$u^{(1)}$）来对数据进行投影，我们要找到$k$个方向($u^{(k)}$)来对数据进行投影，从而最小化投影误差。</p>
+<h3 id="PCA的执行过程3D_-&gt;_2D">PCA的执行过程3D -&gt; 2D</h3><p>下面的例子中，假设我有一些三维数据点：</p>
+<p><img src="/img/17_05_12/021.png" alt=""></p>
+<p>我想要做的是是寻找两个向量$u^{(1)}$和$u^{(2)}$：</p>
+<p><img src="/img/17_05_12/022.png" alt=""></p>
+<p>这两个向量一起定义了一个二维平面，我将把数据投影到这个二维平面上。</p>
+<blockquote>
+<p>如果你精通线性代数，那么这里更正式的定义是：我们将寻找一组向量$u^{(1)}$，$u^{(2)}$，…，$u^{(k)}$，我们将要做的是将数据投影到这$k$个向量展开的线性子空间上。</p>
+<p>但是如果你不熟悉线性代数，那就想成是寻找$k$个方向（而不是之寻找一个方向）对数据进行投影。</p>
+</blockquote>
+<p>所以对于3D降维到2D的这个例子来说，寻找一个$k$维的平面，就是在寻找二维的平面。</p>
+<hr>
+<p>因此<strong>PCA</strong>做的就是：<strong>寻找一组$k$维向量(一条直线、或者平面、或者诸如此类等等)对数据进行投影，来最小化正交投影误差。</strong></p>
+<h3 id="PCA和线性回归的关系">PCA和线性回归的关系</h3><p>最后一个我有时会被问到的问题是：<strong>PCA和线性回归有怎么样的关系？</strong></p>
+<p>因为当我解释<strong>PCA</strong>的时候，我有时候会画出这样看上去有点像线性回归的图：</p>
+<p><img src="/img/17_05_12/023.png" alt=""></p>
+<p>但是，事实上<strong>PCA不是线性回归</strong>。尽管看上去有一些相似，但是它们确实是两种不同的算法。</p>
+<h4 id="不同点_之一">不同点 之一</h4><p>如果我们做线性回归，我们做的是在给定某个输入特征$x$的情况下预测某个变量$y$的数值。因此对于线性回归，我们想做的是拟合一条直线，来最小化点和直线之间的平方误差：</p>
+<p><img src="/img/17_05_12/024.png" alt=""></p>
+<p>所以我们要最小化的是，上图中蓝线幅值的平方。注意我画的这些蓝色的垂直线，这是垂直距离。它是某个点与通过假设的得到的其预测值之间的距离。</p>
+<p>与此想反，PCA要做的是最小化这些样本点与直线的最短距离(直角距离)：</p>
+<p><img src="/img/17_05_12/025.png" alt=""></p>
+<p>这是一种非常不同的效果。</p>
+<h4 id="不同点_之二">不同点 之二</h4><p>更更更一般的是，当你做线性回归的时候，有一个特别的变量$y$作为我们即将预测的值，线性回归所要做的就是用$x$的所有的值来预测$y$。然而在PCA中，没有这么一个特殊的变量$y$是我们要预测的。我们所拥有的是特征$x_1$,$x_2$,…,$x_n$，所有的这些特征都是被同样地对待。</p>
+<p>在上面那个从3维降到2维的例子中，原先的3个特征$x_1$,$x_2$,$x_3$都是被同样地对待的，没有特殊的变量$y$需要被预测。</p>
+<hr>
+<p>因此，PCA不是线性回归。尽管有一定程度的相似性，使得它们看上去是有关联的，但它们实际上是非常不同的算法。</p>
+<p>因此，希望你们能理解PCA是做什么的：它是寻找到一个低维的平面，对数据进行投影，以便最小化投影误差平方的（最小化每个点与投影后的对应点之间的距离的平方值）。</p>
+<h2 id="PCA算法_实现过程">PCA算法 实现过程</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/GBFTt/principal-component-analysis-problem-formulation" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>本节，将介绍<strong>PCA</strong>算法的具体细节，学完本节后，你就应该知道<strong>PCA</strong>的实现过程，并且应用PCA来给你的数据降维了。</p>
+</blockquote>
+<h3 id="数据预处理">数据预处理</h3><p>在使用PCA之前，我们通常会有一个数据预处理的过程。</p>
+<p>拿到某组有m个无标签样本的训练集，一般先进行<strong>均值归一化(mean normalization)</strong>。这一步很重要。然后还可以进行<strong>特征缩放(feature scaling)</strong>，这根据你的数据而定。</p>
+<blockquote>
+<p>这跟我们之前在<strong>监督学习</strong>中提到的<strong>均值归一</strong>和<strong>特征缩放</strong>是一样的。</p>
+</blockquote>
+<h4 id="数据预处理第一步：均值归一化(mean_normalization)">数据预处理第一步：均值归一化(mean normalization)</h4><p>对于<strong>均值归一</strong>，我们首先应该计算出每个特征的均值$μ$，然后我们用$x-μ$来替换掉$x$。这样就使得所有特征的均值为0。</p>
+<p><strong>举例说明：</strong></p>
+<p>比如说，如果$x_1$表示房子的面积，$x_2$表示房屋的卧室数量，然后我们可以把每个特征进行缩放，使其处于同一可比的范围内。</p>
+<p>同样地，跟之前的监督学习类似，我们可以首先计算出每个特征的均值：</p>
+<p>$$<br>μ_j=\frac{1}{m}\sum_{i=1}^{m}x_j^{(i)}<br>$$</p>
+<p>然后每个样本值对应的特征减去其对应的均值：</p>
+<p>$$<br>x_j^{(i)} ← x_j^{(i)}-μ_j<br>$$</p>
+<p>将所有的特征替换为这种形式的结果。这样就保证了所有特征的均值为0。</p>
+<h4 id="数据预处理第二步：特征缩放(feature_scaling)">数据预处理第二步：特征缩放(feature scaling)</h4><p>然后，由于不同特征的取值范围都很不一样，我们还需要进行<strong>特征缩放</strong>。</p>
+<p>我们需要将每个特征的取值范围都划定在同一范围内，因此对于均值化处理之后的特征值$x_j^{(i)}-μ_j$，我们还需要做进一步处理：</p>
+<p>$$<br>x_j^{(i)} ← \frac{x_j^{(i)}-μ_j}{s_j}<br>$$</p>
+<p>这里$s_j$表示特征$j$度量范围，即该特征的最大值减去最小值。</p>
+<h3 id="PCA算法">PCA算法</h3><p>接下来就正式进入PCA的算法部分。</p>
+<p>在之前的视频中，我们已经知道了PCA的原理。PCA是在试图找到一个低维的子空间，然后把原数据投影到子空间上，并且最小化平方投影误差的值（投影误差的平方和，即下图中蓝色线段长度的平方和）：</p>
+<p><img src="/img/17_05_12/026.png" alt=""></p>
+<p>那么应该怎样来计算这个子空间呢? 实际上这个问题有完整的数学证明来解释如何找到这样的子空间，不过这个数学证明过程是非常复杂的，同时也超出了本课程的范围。但如果你推导一遍这个数学证明过程，你就会发现要找到$u^{(1)}$的值，也不是一件很难的事。但在这里，我不会给出证明，我只是简单描述一下实现PCA所需要进行的步骤。</p>
+<p>假如说我们想要把数据从$n$维降低到$k$维，我们首先要做的是计算出下面这个协方差矩阵(通常用$∑$来表示)：</p>
+<p>$$<br>∑=\frac{1}{m}\sum_{i=1}^n(x^{(i)})(x^{(i)})^T<br>$$</p>
+<blockquote>
+<p>很不幸的是，这个希腊符号$∑$和求和符号重复了。希望你对这里不要产生混淆。</p>
+</blockquote>
+<p>计算出这个协方差矩阵后，假如我们把它存为Octave中的一个名为<code>Sigma</code>的变量，我们需要做的是计算出<code>Sigma</code>矩阵的<strong>特征向量(eigenvectors)</strong>。</p>
+<p>在Octave中，你可以使用如下命令来实现这一功能：</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[<span class="name">U</span>,S,V] = svd(<span class="name">Sigma</span>)<span class="comment">;</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>顺便说一下，<code>svd</code>表示<strong>奇异值分解(singular value decomposition)</strong>，这是某种更高级的奇异值分解，这是比较高级的线性代数的内容。你不必掌握这些，但实际上<code>Sigma</code>是一个协方差矩阵。有很多种方法来计算它的特征向量。</p>
+<p>如果你线性代数学得很好，或者你之前听说过特征向量的话，那也许知道在Octave中还有另一个<code>eig</code>命令，可以用来计算特征向量。实际上<code>svd</code>命令和<code>eig</code>命令将得到相同的结果。但<code>svd</code>其实要更稳定一些，所以我一般选择用<code>svd</code>，不过我也有一些朋友喜欢用<code>eig</code>函数。</p>
+<p>在这里对协方差矩阵<code>Sigma</code>使用<code>eig</code>和<code>svd</code>时，你会得到同样的答案。这是因为协方差均值总满足一个数学性质，称为<strong>对称正定(symmetric positive definite)</strong>，其实你不必细究这个具体是什么意思，只要知道这种情况下，使用<code>eig</code>和<code>svd</code>结果是一样的就可以了。</p>
+</blockquote>
+<p>好了，这就是你需要了解的一点线性代数知识，如果有任何地方不清楚的话不必在意。你只需要知道上面这行Octave代码就行了。</p>
+<p>如果你用除了Octave或者MATLAB之外的其他编程环境，你要做的是找到某个可以计算svd，即奇异值分解的函数库文件。在主流的编程语言中，应该有不少这样的库文件。我们可以用它们来计算出协方差矩阵的$U$ $S$ $V$矩阵。</p>
+<hr>
+<p>我再提几个细节问题。</p>
+<p>这个协方差矩阵<code>Sigma</code>应该是一个$n×n$的矩阵，通过定义可以发现这是一个$n×1$的向量，和它自身的转置（一个$1×n$的向量）相乘得到的结果，这个结果自然是一个$n×n$的矩阵。</p>
+<p>然后把这n个$n×n$的矩阵加起来，当然还是$n×n$矩阵。</p>
+<p>然后svd将输出三个矩阵，分别是$U$ $S$ $V$。你真正需要的是$U$矩阵。</p>
+<p>$U$矩阵也是一个$n×n$矩阵：</p>
+<p><img src="/img/17_05_12/027.png" alt=""></p>
+<p>实际上$U$矩阵的列元素就是我们需要的$u^{(1)}$,$u^{(1)}$等等。</p>
+<p>如果我们想将数据的维度从$n$降低到$k$的话，我们只需要提取前$k$列向量。这样我们就得到了$u^{(1)}$到$u^{(k)}$，也就是我们用来投影数据的$k$个方向。</p>
+<p>我们取出$U$矩阵的前$k$列得到一个新的，由$u^{(1)}$到$u^{(k)}$组成的矩阵$U_{reduce}$：</p>
+<p>$$<br>\begin{equation}<br>U_{reduce}=\left[<br>\begin{matrix}<br>|&amp;|&amp;|&amp;…&amp;|\\<br>|&amp;|&amp;|&amp;…&amp;|\\<br>u^{(1)}&amp;u^{(2)}&amp;u^{(3)}&amp;…&amp;u^{(k)}\\<br>|&amp;|&amp;|&amp;…&amp;|\\<br>|&amp;|&amp;|&amp;…&amp;|\\<br>\end{matrix}<br>\right]<br>\end{equation}<br>$$</p>
+<p>这是一个$n × k$维的矩阵。</p>
+<p>然后我们用这个$U_{reduce}$来对我的数据进行<strong>降维</strong>。我们定义：</p>
+<p>$$<br>\begin{equation}<br>z=\left[<br>\begin{matrix}<br>|&amp;|&amp;|&amp;…&amp;|\\<br>|&amp;|&amp;|&amp;…&amp;|\\<br>u^{(1)}&amp;u^{(2)}&amp;u^{(3)}&amp;…&amp;u^{(k)}\\<br>|&amp;|&amp;|&amp;…&amp;|\\<br>|&amp;|&amp;|&amp;…&amp;|\\<br>\end{matrix}<br>\right]<br>^{T}x<br>\\<br>=<br>\left[<br>\begin{matrix}<br>-&amp;-&amp;u^{(1)}&amp;…&amp;-\\<br>-&amp;-&amp;u^{(2)}&amp;…&amp;-\\<br>-&amp;-&amp;u^{(3)}&amp;…&amp;-\\<br>.&amp;.&amp;.&amp;…&amp;.\\<br>-&amp;-&amp;u^{(k)}&amp;…&amp;-\\<br>\end{matrix}<br>\right]<br>x<br>\end{equation}<br>$$</p>
+<p>$$<br>z \in R^k<br>$$</p>
+<p>其中$\left[<br>\begin{matrix}<br>-&amp;-&amp;u^{(1)}&amp;…&amp;-\\<br>-&amp;-&amp;u^{(2)}&amp;…&amp;-\\<br>-&amp;-&amp;u^{(3)}&amp;…&amp;-\\<br>.&amp;.&amp;.&amp;…&amp;.\\<br>-&amp;-&amp;u^{(k)}&amp;…&amp;-\\<br>\end{matrix}<br>\right]$是$k×n$的矩阵，$x$是$n×1$的矩阵，因此$z$是$k×1$的矩阵。</p>
+<p>这里的$x$可以是训练集中的样本，也可以是交叉验证集中的样本，也可以是测试集样本。</p>
+<h3 id="总结">总结</h3><p>总结一下，这就是PCA的全过程：</p>
+<ul>
+<li><p>首先进行均值归一化</p>
+<ul>
+<li>保证所有的特征量都是均值为0的。</li>
+</ul>
+</li>
+<li><p>然后可以选择进行特征缩放</p>
+<ul>
+<li>如果不同特征量的范围跨度很大的话，你确实需要进行特征缩放这一步。</li>
+</ul>
+</li>
+<li><p>在以上的预处理之后，我们计算出这个协方差<code>Sigma</code>矩阵：</p>
+</li>
+</ul>
+<p>$$<br>Sigma = \frac{1}{m}\sum_{i=1}^m(x^{(i)})(x^{(i)})^T<br>$$</p>
+<ul>
+<li>然后我们可以应用<code>svd</code>函数来计算出<code>U S V</code>矩阵:</li>
+</ul>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[<span class="name">U</span>,S,V] = svd(<span class="name">Sigma</span>)<span class="comment">;</span></div></pre></td></tr></table></figure>
+<ul>
+<li>然后，我们取出$U$矩阵的前$k$列元素组成新的$U_{reduce}$矩阵：</li>
+</ul>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">Ureduce</span> = U(:,<span class="number">1</span>:k);</div></pre></td></tr></table></figure>
+<ul>
+<li>最后这个式子给出了我们从原来的特征$x$变成降维后的$z$的过程:</li>
+</ul>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">z</span> = Ureduce`*x;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>另外，跟<strong>k均值算法</strong>类似，如果你使用<strong>PCA</strong>的话，你的$x$应该是$n$维实数。所以没有$x_0 = 1$这一项。</p>
+<p>有一件事儿我没做：$u^{(1)},u^{(2)}…u^{(k)}$通过将数据投影到$k$维的子平面上确实使得投影误差的平方和为最小值，但是我并没有证明这一点，因为这已经超出了这门课的范围。</p>
+<p>幸运的是PCA算法能够用不多的几行代码就能实现它。</p>
+</blockquote>
 </span>
         
       
