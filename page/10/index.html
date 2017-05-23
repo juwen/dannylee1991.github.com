@@ -199,6 +199,216 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2015/12/06/机器学习(01) kNN算法/" itemprop="url">
+                机器学习(01)kNN算法
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2015-12-06T21:39:55+08:00" content="2015-12-06">
+            2015-12-06
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2015/12/06/机器学习(01) kNN算法/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/12/06/机器学习(01) kNN算法/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="k-近邻算法概述">k-近邻算法概述</h2><p>简单的说，k-近邻算法采用<strong>测量不同特征值之间的距离方法进行分类</strong>。</p>
+<h3 id="kNN的工作原理是：">kNN的工作原理是：</h3><blockquote>
+<p>在一个样本数据集中（又称作训练样本集），每个样本都存在有<strong>标签</strong>，即我们知道样本数据集中每个数据所属分类的对应关系。输入<strong>没有标签</strong>的新数据时，将新数据的每个特征与样本集中数据的对应特征进行比较，然后算法<strong>提取样本集中特征最相似数据</strong>（最近邻）的分类标签。一般来说，我们只选择样本数据集中<strong>前k个</strong>最相似的数据，这就是k-近邻算法中k的出处，通常<strong>k是不大于20</strong>的整数。最后，选择k个最相似数据中出现次数最多的分类，作为新数据的分类。</p>
+</blockquote>
+<h3 id="k-近邻算法的优缺点">k-近邻算法的优缺点</h3><p>优点：精度高、对异常值不敏感、无数据输入假定。<br>缺点：计算复杂度高、空间复杂度高。<br>试用数据范围：数值型和标称型。</p>
+<h3 id="k-近邻算法的一般流程">k-近邻算法的一般流程</h3><p>[1] 收集数据：可以使用任何方法。<br>[2] 准备数据：距离计算需要的数值，最好是结构化的数据格式。<br>[3] 分析数据：可以使用任何方法。<br>[4] 训练算法：此步骤不适用于k-近邻算法。<br>[5] 测试算法：计算错误率。<br>[6] 使用算法：首先需要输入样本数据和结构化的输出结果，然后运行k-近邻算法判定输入数据分别属于哪个分类，最后应用对计算出的分类执行后续的处理。</p>
+<h2 id="举例：">举例：</h2><h3 id="使用k-近邻算法分类爱情片和动作片">使用k-近邻算法分类爱情片和动作片</h3><p>有人曾经统计过很多电影的打斗镜头和接吻镜头，下图显示了6部电影的打斗和接吻镜头数。假如有一部未看过的电影，如何确定它是爱情片还是动作片呢？</p>
+<p><img src="/img/ml_01_01.png" alt="使用打斗和接吻镜头数分类电影"></p>
+<p>首先我们需要知道这个未知电影存在多少个打斗镜头和接吻镜头。上图对应的数据如下：</p>
+<p>每部电影的打斗镜头数、接吻镜头数以及电影评估类型：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">电影名称</th>
+<th style="text-align:right">打斗镜头</th>
+<th style="text-align:center">接吻镜头</th>
+<th style="text-align:center">电影类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">California Man</td>
+<td style="text-align:right">3</td>
+<td style="text-align:center">104</td>
+<td style="text-align:center">爱情片</td>
+</tr>
+<tr>
+<td style="text-align:left">He’s Not Really into Dudes</td>
+<td style="text-align:right">2</td>
+<td style="text-align:center">100</td>
+<td style="text-align:center">爱情片</td>
+</tr>
+<tr>
+<td style="text-align:left">Beautiful Woman</td>
+<td style="text-align:right">1</td>
+<td style="text-align:center">81</td>
+<td style="text-align:center">爱情片</td>
+</tr>
+<tr>
+<td style="text-align:left">Kevin Longblade</td>
+<td style="text-align:right">101</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">动作片</td>
+</tr>
+<tr>
+<td style="text-align:left">Robo Slayer 3000</td>
+<td style="text-align:right">99</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">动作片</td>
+</tr>
+<tr>
+<td style="text-align:left">Amped II</td>
+<td style="text-align:right">98</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">动作片</td>
+</tr>
+<tr>
+<td style="text-align:left">?</td>
+<td style="text-align:right">18</td>
+<td style="text-align:center">90</td>
+<td style="text-align:center">未知</td>
+</tr>
+</tbody>
+</table>
+<p>即使不知道未知电影属于哪种类型，我们也可以通过某种方法计算出来。首先<strong>计算未知电影与样本集中其他电影的距离</strong>，如下表所示（暂时不要关心距离是如何计算的）：</p>
+<p>已知电影与未知电影的距离</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">电影名称</th>
+<th style="text-align:center">与未知电影的距离</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">California Man</td>
+<td style="text-align:center">20.5</td>
+</tr>
+<tr>
+<td style="text-align:left">He’s Not Really into Dudes</td>
+<td style="text-align:center">18.7</td>
+</tr>
+<tr>
+<td style="text-align:left">Beautiful Woman</td>
+<td style="text-align:center">19.2</td>
+</tr>
+<tr>
+<td style="text-align:left">Kevin Longblade</td>
+<td style="text-align:center">115.3</td>
+</tr>
+<tr>
+<td style="text-align:left">Robo Slayer 3000</td>
+<td style="text-align:center">117.4</td>
+</tr>
+<tr>
+<td style="text-align:left">Amped II</td>
+<td style="text-align:center">118.9</td>
+</tr>
+</tbody>
+</table>
+<p>现在我们得到了样本集中所有电影与未知电影的距离，按照距离递增排序，可以找到k个距离最近的电影。假定k=3，则三个最靠近的电影依次是<em>He’s Not Really into Dudes</em>、<em>Beautiful Woman</em>和<em>California Man</em>。k-近邻算法按照距离最近的三部电影的类型，决定未知电影的类型，而这三部电影全是爱情片，因此我们判定未知电影是爱情片。</p>
+<h2 id="代码实现kNN">代码实现kNN</h2><h3 id="创建样本数据集：">创建样本数据集：</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> numpy <span class="keyword">import</span> *</div><div class="line"><span class="keyword">import</span> operator</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">createDataSet</span><span class="params">()</span>:</span></div><div class="line">	group = array([<span class="number">1.0</span>,<span class="number">1.1</span>],[<span class="number">1.0</span>,<span class="number">1.0</span>],[<span class="number">0</span>,<span class="number">0</span>],[<span class="number">0</span>,<span class="number">0.1</span>])</div><div class="line">	labels = [<span class="string">'A'</span>,<span class="string">'A'</span>,<span class="string">'B'</span>,<span class="string">'B'</span>]</div><div class="line">	<span class="keyword">return</span> group,labels</div></pre></td></tr></table></figure>
+<p>命令行执行后得到：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>group,labels = kNN.createDataSet()</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>group</div><div class="line">array([[<span class="number">1.0</span>, <span class="number">1.1</span>],</div><div class="line">	[<span class="number">1.0</span>, <span class="number">1.0</span>],</div><div class="line">	[<span class="number">0.0</span>, <span class="number">0.0</span>],</div><div class="line">	[<span class="number">0.0</span>, <span class="number">0.1</span>]])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>labels</div><div class="line">[<span class="string">'A'</span>, <span class="string">'A'</span>, <span class="string">'B'</span>, <span class="string">'B'</span>]</div></pre></td></tr></table></figure>
+<p>向量label包含了每个数据点的标签信息，label包含的元素个数等于group矩阵行数。这里，我们将数据点（1.0，1.1）定义为类A，数据点(0,0.1)定义为类B。</p>
+<p>下图是四个点在坐标系中的表示：</p>
+<p><img src="/img/ml_01_02.png" alt="k-近邻算法：带有4个数据点的简单例子"></p>
+<h3 id="从文本文件中解析数据">从文本文件中解析数据</h3><p>将每组数据划分到某个类中，伪代码如下：</p>
+<p><code>对未知类别属性的数据集中的每个点依次执行以下操作：</code></p>
+<ul>
+<li>(1) 计算已知类别数据集中的点与当前点之间的距离；</li>
+<li>(2) 按照距离递增次序排序；</li>
+<li>(3) 选取与当前点距离最小的k个点；</li>
+<li>(4) 确定前k个点所在类别的出现频率；</li>
+<li>(5) 返回前k个点出现频率最高的类别作为当前点的预测分类。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># inX:用于分类的输入向量  </span></div><div class="line"><span class="comment"># dataSet:输入的训练样本集</span></div><div class="line"><span class="comment"># labels:标签向量</span></div><div class="line"><span class="comment"># k:用于选择最近邻的数量</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">classify0</span><span class="params">(inX, dataSet, labels, k)</span>:</span></div><div class="line">	<span class="comment"># 距离计算</span></div><div class="line">	dataSetSize = dataSet.shape[<span class="number">0</span>] <span class="comment"># 数据的条目数</span></div><div class="line">	diffMat = tile(inX, (dataSetSize,<span class="number">1</span>)) - dataSet</div><div class="line">	sqDiffMat = diffMat**<span class="number">2</span></div><div class="line">	sqDistances = sqDiffMat.sum(axis=<span class="number">1</span>)</div><div class="line">	distances = sqDistances**<span class="number">0.5</span></div><div class="line">	</div><div class="line">	<span class="comment"># 将距离值按照从小到大排序</span></div><div class="line">	sortedDistIndicies = distances.argsort()</div><div class="line">	classCount=&#123;&#125;</div><div class="line">	</div><div class="line">	<span class="comment"># 取出前k个元素</span></div><div class="line">	<span class="keyword">for</span> i <span class="keyword">in</span> rangs(k):</div><div class="line">		<span class="comment"># 取出对应的label</span></div><div class="line">		voteIlabel = labels[sortedDistIndicies[i]]</div><div class="line">		<span class="comment"># 计算当前取出的label的数量</span></div><div class="line">		classCount[voteIlabel] = classCount.get(voteIlabel,<span class="number">0</span>) + <span class="number">1</span></div><div class="line">	</div><div class="line">	<span class="comment"># 逆序排列label对应总数的列表 返回对应的label</span></div><div class="line">	sortedClassCount = sorted(classCount.iteritems(),key=operator.itemgetter(<span class="number">1</span>), reverse=<span class="keyword">True</span>)</div><div class="line">	<span class="keyword">return</span> sortedClassCount[<span class="number">0</span>][<span class="number">0</span>]</div></pre></td></tr></table></figure>
+<p><code>关于距离计算的部分</code></p>
+<p>参考欧式距离公式：<br><img src="/img/ml_01_03.png" alt="欧式距离公式"></p>
+<p>例如，计算点(0,0)到(1,2)之间的距离为：<br><img src="/img/ml_01_04.png" alt="距离计算例子1"></p>
+<p>计算点(1,0,0,1)与(7,6,9,4)之间的距离为：<br><img src="/img/ml_01_05.png" alt="距离计算例子2"></p>
+<p>为了预测数据所在的分类，在Python提示符中输入下列命令：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>kNN.classify0([<span class="number">0</span>,<span class="number">0</span>], group, labels, <span class="number">3</span>)</div></pre></td></tr></table></figure>
+<p>输出的结果应该是B。</p>
+<h3 id="测试分类器">测试分类器</h3><p>分类器并不会得到百分之百的正确的结果，为了测试分类器的效果，我们可以使用已知晓答案的数据，当然答案不能告诉分类器，检验分类器给出的结果是否符合预期结果。</p>
+<p>通过大量的测试数据，我们可以得到分类器的错误率–分类器给出错误结果的词数 除以 测试执行的总数。</p>
+<p>错误率是常用的评估方法，主要用于评估分类器在某个数据集上的执行效果。完美分类器的错误率为0，最差分类器的错误率是1.0，在这种情况下，分类器根本就无法找到一个正确答案。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2015/12/05/线性代数06-向量简介/" itemprop="url">
                 线性代数06-向量简介
               </a>
@@ -1081,107 +1291,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2015/10/04/闭开原则/" itemprop="url">
-                设计模式六大原则之 闭开原则
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2015-10-04T10:46:55+08:00" content="2015-10-04">
-            2015-10-04
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/设计模式/" itemprop="url" rel="index">
-                  <span itemprop="name">设计模式</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2015/10/04/闭开原则/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2015/10/04/闭开原则/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="定义">定义</h2><blockquote>
-<p>Software entities like classes,modules and functions should be open for extension but closed for modifications.(一个软件实体如类、模块和函数应该对扩展开放，对修改关闭。)</p>
-</blockquote>
-<p>开闭原则是java世界的最基础的设计原则，它指导我们如何建立一个稳定的、灵活的系统。</p>
-<h2 id="定义实质">定义实质</h2><p>开闭原则定义已经非常明确的告诉我们，软件实体应该<strong>对扩展开放，对修改关闭</strong>。其含义是说一个软件实体应该通过扩展来实现变化，而不是通过修改已有的代码来实现变化。</p>
-<p>软件实体通常包括以下几个部分：</p>
-<p>1.项目或软件产品中按照一定的逻辑规则划分的模块。</p>
-<p>2.抽象和类。</p>
-<p>3.方法。</p>
-<h2 id="如何使用开闭原则">如何使用开闭原则</h2><p>开闭原则是一个非常虚的原则，前面五个原则是对开闭原则的具体解释，但是开闭原则并不局限于这么多，它“虚”得没有边界，就像“好好学习，天天向上”的口号一样，告诉我们要好好学习，但是学什么，怎么学并没有告诉我们，需要去体会和掌握。那么我们如何使用开闭原则呢？</p>
-<h3 id="1-抽象约束">1.抽象约束</h3><p>抽象是<strong>对一组事物的通用描述，没有具体的实现，</strong>也就表示它可以有非常多的可能性，可以跟随需求变化而变化。因此，通过接口或抽象类可以约束一组可能变化的行为，并且能够实现对扩展开放，其包含三层含义：</p>
-<ul>
-<li>1.通过接口或抽象类约束扩展，对扩展进行边界限定，不允许出现在接口或抽象类中不存在的public方法</li>
-<li>2.参数类型、引用对象尽量使用接口或者抽象类，而不是实现类</li>
-<li>3.抽象层尽量保持稳定，一旦确定即不允许修改。</li>
-</ul>
-<h3 id="2-元数据（metadata）控制模块行为">2.元数据（metadata）控制模块行为</h3><p>什么是<strong>元数据</strong>？用来描述环境和数据的数据，通俗地说就是配置参数，参数可以从文件中获得，也可以从数据库中获得。</p>
-<h3 id="3-封装变化">3.封装变化</h3><p>对变化的封装包含两层含义：1.将相同的变化封装到一个接口或抽象类中；2.将不同的变化封装到不同的接口或抽象类中，不应该有两个不同的变化出现在同一个接口或抽象类中。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1220,7 +1329,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">107</span>
+              <span class="site-state-item-count">108</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
