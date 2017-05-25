@@ -51,7 +51,7 @@
 在上一节中，我们推导了异常检测算法。在本节，我想介绍一下如何开发一个异常检测的应用来解决一个实际问题。
 
 在之前，我们已经提到了使用实数评估法的重要性。这样做的想法是，当你在用某个学习算法来开发一个具体的机器学习应用时，你常常需要做出很多决定，比如说选择用什么样的特征等等。而如果你找到某种评估算法的方式，比如直接返回一个数字，来告诉你算法的好坏，那么你做这些决定">
-<meta property="og:updated_time" content="2017-05-25T15:09:25.000Z">
+<meta property="og:updated_time" content="2017-05-25T16:00:32.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="斯坦福机器学习课程 第九周 (2)构建一个异常检测系统">
 <meta name="twitter:description" content="异常检测系统的开发与评估视频地址
@@ -310,6 +310,37 @@ var _hmt = _hmt || [];
 <p>如果你有一组交叉验证集样本，一种选择参数$ε$的方法就是通过尝试多个不同的$ε$，然后选出一个使得$F_1-score$最大的$ε$，这个$ε$就是在交叉验证集上表现最好的。</p>
 <p>更一般来说,我们使用训练集、测试集和交叉验证集的方法是当我们需要作出决定时，比如要包括哪些特征或者说要确定参数$ε$取多大合适，我们就可以不断地用交叉验证集来评价这个算法，然后决定我们应该用哪些特征，以及选择哪一个$ε$。</p>
 <p>所以就是在交叉验证集中评价算法，然后选出一组特征，或者找到能符合我们要求的ε的值后，我们就能用测试集来最终评价算法的表现了。</p>
+<h2 id="异常检测_VS_监督学习">异常检测 VS 监督学习</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/Rkc5x/anomaly-detection-vs-supervised-learning" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>在上一节，我们谈到如何评价一个异常检测算法。我们先是用了一些带标签的数据，以及一些我们知道是异常或者正常的样本(用$y=1$或$y=0$来表示)。</p>
+<p>这就引出了这样一个问题：既然我们有了带标签的数据，那么为什么我们不直接用监督学习的方法（比如逻辑回归或者神经网络）呢？</p>
+<p>这一节，就来介绍一下什么时候应该用异常检测算法，什么时候用监督学习算法是更有成效的。</p>
+</blockquote>
+<p>下面这张表格对比了什么时候应该用什么算法：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">异常检测</th>
+<th style="text-align:center">监督学习</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">负样本量很少(通常是在0到20个之间),正样本很多的时候</td>
+<td style="text-align:center">正负样本都很多的时候</td>
+</tr>
+<tr>
+<td style="text-align:center">有多种不同的异常类型时（因为对任何算法来说，从大量正样本中去学习到异常具体是什么，都是困难的）；未知的异常与我们已知的异常完全不一样时。</td>
+<td style="text-align:center">有足够多的正样本来让你的算法学习到对应的特征，并且在未知的正样本中，也和已知的样本是类似的。</td>
+</tr>
+</tbody>
+</table>
+<p>这就是在遇到具体情况时，要选择异常检查还是监督学习的方式。</p>
+<p>其实关键区别就是<strong>在异常检测算法中我们只有一小撮正样本</strong>，因此监督学习算法不能从这些样本中学到太多东西。</p>
+<hr>
+<p>关于上面表格中，有关<strong>异常检测</strong>中的不同类型的异常情况，我们用之前的垃圾邮件的例子来说明。</p>
+<p>在那个例子中，垃圾邮件的类型其实也有很多种。有的是想卖东西给你、有的是想钓出你的密码(这种就叫钓鱼邮件)、还有其他一些类型的垃圾邮件…但对于垃圾邮件的问题，我们能得到绝大多数不同类型的垃圾邮件，因为我们有大量的垃圾邮件样本的集合。因此这也是为什么我们通常把垃圾邮件问题看作是监督学习问题的原因，虽然垃圾邮件的种类通常有太多太多 。</p>
+<p>因此，我们可以看看一些异常检测的应用和监督学习应用的比较，我们不难发现对于欺诈检测(fraud detection)，如果你掌握了许多种不同类型的诈骗方法，并且只有相对较小的训练集（只有很少一部分用户有异常行为）那我会使用异常检测算法。当然，有时候欺诈检测的方法也可能会偏向于使用监督学习算法，但是如果你并没有看到许多在你网站上进行异常行为的用户样本，那么欺诈检测通常还是被当做是一个异常检测算法，而不是一个监督学习算法。</p>
 </span>
       
     </div>
@@ -476,7 +507,7 @@ var _hmt = _hmt || [];
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#异常检测系统的开发与评估"><span class="nav-number">1.</span> <span class="nav-text">异常检测系统的开发与评估</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据集划分"><span class="nav-number">1.1.</span> <span class="nav-text">数据集划分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异常检测算法的推导和评估方法"><span class="nav-number">1.2.</span> <span class="nav-text">异常检测算法的推导和评估方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ε是怎么得到的呢？"><span class="nav-number">1.2.1.</span> <span class="nav-text">ε是怎么得到的呢？</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#异常检测系统的开发与评估"><span class="nav-number">1.</span> <span class="nav-text">异常检测系统的开发与评估</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据集划分"><span class="nav-number">1.1.</span> <span class="nav-text">数据集划分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异常检测算法的推导和评估方法"><span class="nav-number">1.2.</span> <span class="nav-text">异常检测算法的推导和评估方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ε是怎么得到的呢？"><span class="nav-number">1.2.1.</span> <span class="nav-text">ε是怎么得到的呢？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异常检测_VS_监督学习"><span class="nav-number">2.</span> <span class="nav-text">异常检测 VS 监督学习</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
