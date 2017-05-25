@@ -199,6 +199,384 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2017/02/06/斯坦福机器学习课程 第七周 (1)大间距分类/" itemprop="url">
+                斯坦福机器学习课程 第七周 (1)大间距分类
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-02-06T00:42:58+08:00" content="2017-02-06">
+            2017-02-06
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/02/06/斯坦福机器学习课程 第七周 (1)大间距分类/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/02/06/斯坦福机器学习课程 第七周 (1)大间距分类/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="优化目标">优化目标</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/sHfVT/optimization-objective" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>到目前为止，你已经见过一系列不同的学习算法。在监督学习中许多学习算法的性能都非常类似，因此重要的不是你该选择使用学习算法A还是学习算法B，而更重要的是应用这些算法时所创建的大量数据。</p>
+<p>在应用这些算法时，表现情况通常依赖于你的水平。比如你为学习算法所设计的 特征量的选择，以及如何选择正则化参数，诸如此类的事。还有一个更加强大的算法，广泛的应用于工业界和学术界，它被称为<strong>支持向量机(Support Vector Machine)</strong>。</p>
+<p>与逻辑回归和神经网络相比，<strong>支持向量机</strong>或者简称<strong>SVM</strong>在学习复杂的非线性方程时提供了一种更为清晰，更加强大的方式。</p>
+<p>因此，在接下来的视频中我会探讨这一算法，在稍后的课程中，我也会对监督学习算法进行简要的总结。当然，仅仅是作简要描述。但对于<strong>支持向量机</strong>，鉴于该算法的强大和受欢迎度，在本课中我会花许多时间来讲解它，它也是我们所介绍的最后一个监督学习算法。</p>
+</blockquote>
+<h3 id="支持向量机引入">支持向量机引入</h3><p>为了描述<strong>支持向量机</strong>，我将会从逻辑回归开始，展示我们如何一点一点修改，来得到本质上的支持向量机。</p>
+<p>在逻辑回归中，我们已经熟悉了它的假设函数形式：</p>
+<p>$$<br>h_{\theta}(x)=\frac{1}{1+\mathrm{e}^{-\theta^{T}x}}<br>$$</p>
+<p>和S型激励函数：</p>
+<p><img src="/img/17_02_06/001.png" width="300" height="200" align="center"></p>
+<p>现在让我们一起来考虑下，我们想要逻辑回归做什么？</p>
+<ul>
+<li><p>如果有一个样本为$y=1$，那么我们希望假设函数$h(x)≈1$，即$\theta^{T}&gt;&gt;0$。你不难发现，此时逻辑回归的输出将趋近于1。</p>
+</li>
+<li><p>如果有另一个样本为$y=0$，那么我们希望假设函数$h(x)≈0$，即$\theta^{T}&lt;&lt;0$。此时逻辑回归的输出将趋近于0。</p>
+</li>
+</ul>
+<hr>
+<p>如果你进一步观察逻辑回归的代价函数，你会发现每个样本(x, y)都会为总代价函数增加这样的一项：</p>
+<p>$$<br>-(ylogh_{\theta}(x) + (1-y)log(1-h_{\theta}(x)))<br>= -ylog\frac{1}{1+\mathrm{e}^{-\theta^{T}x}} - (1-y)log(1-\frac{1}{1+\mathrm{e}^{-\theta^{T}x}})<br>$$</p>
+<p>在逻辑回归中，这里的这一项就是表示一个训练样本所对应的表达式。</p>
+<p>现在一起来考虑<strong>y=1</strong>和<strong>y=0</strong>的两种情况：</p>
+<ul>
+<li><strong>y=1的情况下（即$\theta^{T}x&gt;&gt;0$）</strong>：</li>
+</ul>
+<p>对于</p>
+<p>$$<br>-ylog\frac{1}{1+\mathrm{e}^{-\theta^{T}x}} - (1-y)log(1-\frac{1}{1+\mathrm{e}^{-\theta^{T}x}})<br>$$</p>
+<p>由于$(1-y)=0$，所以我们只需考虑前半部分：</p>
+<p>$$<br>-ylog\frac{1}{1+\mathrm{e}^{-\theta^{T}x}}<br>$$</p>
+<p>如果画出代价函数关于$z$的图，你会看到下图：</p>
+<p><img src="/img/17_02_06/002.png" width="300" height="200" align="center"></p>
+<p>我们可以看到，当$z$增大时(即$\theta^{T}x$增大时)，$z$对应的值会变得非常小，对整个代价函数而言，影响也非常小。</p>
+<p>现在开始建立<strong>支持向量机</strong>，我们会从这个代价函数$-ylog\frac{1}{1+\mathrm{e}^{-\theta^{T}x}}$开始，一点点的修改：</p>
+<p>我们画出一个非常接近于逻辑回归函数的折线，这个折线经由$z=1$的一点的两条线段组成：</p>
+<p><img src="/img/17_02_06/003.png" width="300" height="200" align="center"></p>
+<p>到这里已经非常接近逻辑回归中使用的代价函数了，只是这里是由两条线段组成。先不要考虑线段的斜率，这并不重要，重要的是我们将在$y=1$的前提下使用新的代价函数。</p>
+<ul>
+<li><strong>y=0的情况下（即$\theta^{T}x&lt;&lt;0$）</strong>：</li>
+</ul>
+<p>对于</p>
+<p>$$<br>-ylog\frac{1}{1+\mathrm{e}^{-\theta^{T}x}} - (1-y)log(1-\frac{1}{1+\mathrm{e}^{-\theta^{T}x}})<br>$$</p>
+<p>由于$y=0$，所以我们只需考虑后半部分：</p>
+<p>$$<br>(1-y)log(1-\frac{1}{1+\mathrm{e}^{-\theta^{T}x}})<br>$$</p>
+<p>如果画出代价函数关于$z$的图，你会看到下图：</p>
+<p><img src="/img/17_02_06/004.png" width="300" height="200" align="center"></p>
+<p>用相似的方法，我们开始建立<strong>支持向量机</strong>：</p>
+<p><img src="/img/17_02_06/005.png" width="300" height="200" align="center"></p>
+<p>我们将在$y=0$的前提下使用新的代价函数。</p>
+<hr>
+<p>那么现在我们来给这两个方程命名：</p>
+<p>对于这个函数：</p>
+<p><img src="/img/17_02_06/003.png" width="300" height="200" align="center"></p>
+<p>我们命名为<strong>$cost_{1}(z)$</strong>。</p>
+<p>对于第二个函数：</p>
+<p><img src="/img/17_02_06/005.png" width="300" height="200" align="center"></p>
+<p>我们命名为<strong>$cost_{0}(z)$</strong>。</p>
+<p>这里的下标指的是在函数中对应的$y=1$和$y=0$的情况。</p>
+<hr>
+<h3 id="构建支持向量机">构建支持向量机</h3><p>拥有了这些定义之后，现在我们就开始构建<strong>支持向量机</strong>。</p>
+<h4 id="1-替换逻辑回归函数">1.替换逻辑回归函数</h4><p>这就是我们在逻辑回归中使用的代价函数$J(\theta)$：</p>
+<p><img src="/img/17_02_06/006.png" alt=""></p>
+<p>对于支持向量机而言，实际上，我们要将</p>
+<ul>
+<li><p>上面式子中的这一项：$(-logh_{\theta}(x^{(i)}))$替换为：$cost_{1}(z)$，即:$cost_{1}(\theta^{T}x^{(i)})$</p>
+</li>
+<li><p>同样，这一项：$((-log(1-h_{\theta}(x^{(i)}))))$替换为：$cost_{0}(z)$，即:$cost_{0}(\theta^{T}x^{(i)})$</p>
+</li>
+</ul>
+<p>这里替换之后的$cost_{1}(z)$和$cost_{0}(z)$就是上面提到的那两条靠近逻辑回归函数的折线。</p>
+<p>所以对于<strong>支持向量机</strong>的最小化代价函数问题，代价函数的形式如下：</p>
+<p>$$<br>\mathop{min}\limits_{θ}<br>\frac{1}{m}[<br>\sum_{i=1}^{m}<br>y^{(i)}<br>cost_{1}(\theta^{T}x^{(i)})+<br>(1-y^{(i)})<br>cost_{0}(\theta^{T}x^{(i)})<br>]+<br>\frac{\lambda}{2m}<br>\sum_{j=1}^{n}<br>\theta_{j}^2<br>$$</p>
+<h4 id="2-去除多余的常数项_$\frac{1}{m}$">2.去除多余的常数项 $\frac{1}{m}$</h4><p>现在按照<strong>支持向量机</strong>的惯例，我们去除$\frac{1}{m}$这一项，因为这一项是个常数项，即使去掉我们也可以得出相同的$\theta$最优值：</p>
+<p>$$<br>\mathop{min}\limits_{θ}<br>\sum_{i=1}^{m}<br>[<br>y^{(i)}<br>cost_{1}(\theta^{T}x^{(i)})+<br>(1-y^{(i)})<br>cost_{0}(\theta^{T}x^{(i)})<br>]+<br>\frac{\lambda}{2}<br>\sum_{j=1}^{n}<br>\theta_{j}^2<br>$$</p>
+<h4 id="3-正则化项系数的处理">3.正则化项系数的处理</h4><p>在逻辑回归的目标函数中，我们有两项表达式：</p>
+<ul>
+<li>来自于训练样本的代价函数:</li>
+</ul>
+<p>$$<br>\frac{1}{m}[<br>\sum_{i=1}^{m}<br>y^{(i)}<br>(-logh_{\theta}(x^{(i)}))+<br>(1-y^{(i)})<br>((-log(1-h_{\theta}(x^{(i)}))))<br>]<br>$$</p>
+<ul>
+<li>正则化项：</li>
+</ul>
+<p>$$<br>\frac{\lambda}{2}<br>\sum_{j=1}^{n}<br>\theta_{j}^2<br>$$</p>
+<p>我们不得不使用正则化项来平衡我们的代价函数。这就相当于：</p>
+<p>$$<br>A + \lambda B<br>$$</p>
+<p>其中A相当于上面的第一项，B相当于第二项。</p>
+<p>我们通过修改不同的正则化参数$\lambda$来达到优化目的，这样我们就能够使得训练样本拟合的更好。</p>
+<p>但对于<strong>支持向量机</strong>，按照惯例我们将使用一个不同的参数来替换这里使用的$\lambda$来实现权衡这两项的目的。这个参数我们称为<strong>C</strong>。同时将优化目标改为:</p>
+<p>$$<br>CA + B<br>$$</p>
+<p>因此，在逻辑回归中，如果给$\lambda$一个很大的值，那么就意味着给与$B$了一个很大的权重，而在<strong>支持向量机</strong>中，就相当于对$C$设定了一个非常小的值，这样一来就相当于对$B$给了比$A$更大的权重。</p>
+<p>因此，这只是一种来控制这种权衡关系的不同的方式。当然你也可以把这里的$C$当做$farc{1}{\lambda}$来使用。</p>
+<p>因此，这样就得到了在<strong>支持向量机</strong>中的我们的整个优化目标函数：</p>
+<p>$$<br>\mathop{min}\limits_{θ}<br>C<br>\sum_{i=1}^{m}[<br>y^{(i)}<br>cost_{1}(\theta^{T}x^{(i)})+<br>(1-y^{(i)})<br>cost_{0}(\theta^{T}x^{(i)})<br>]+<br>\frac{1}{2}<br>\sum_{j=1}^{n}<br>\theta_{j}^2<br>$$</p>
+<hr>
+<p>最后有别于<strong>逻辑回归</strong>的一点，对于<strong>支持向量机</strong>假设函数的形式如下：</p>
+<p>$$<br>h_{\theta}(x) = 1 \ \ \ if \ \theta^Tx \ge 0<br>$$</p>
+<p>$$<br>h_{\theta}(x) = 0 \ \ \ if \ \theta^Tx \lt 0<br>$$</p>
+<p>而不是<strong>逻辑回归</strong>中的S型曲线：</p>
+<p>$$<br>h_{\theta}(x)=\frac{1}{1+e^{-x}}<br>$$</p>
+<h2 id="大间距的直觉">大间距的直觉</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/wrjaS/large-margin-intuition" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>人们有时将<strong>支持向量机</strong>看做是<strong>大间距分类器</strong>。在这一部分，我将介绍其中的含义，这有助于我们直观地理解SVM模型的假设是什么样的。</p>
+</blockquote>
+<p>这是我的支持向量机模型的代价函数：</p>
+<p>$$<br>\mathop{min}\limits_{θ}<br>C<br>\sum_{i=1}^{m}[<br>y^{(i)}<br>cost_{1}(\theta^{T}x^{(i)})+<br>(1-y^{(i)})<br>cost_{0}(\theta^{T}x^{(i)})<br>]+<br>\frac{1}{2}<br>\sum_{j=1}^{n}<br>\theta_{j}^2<br>$$</p>
+<ul>
+<li>如果你有一个正样本，即$y=1$时，那么代价函数$cost_{1}(z)$的图像如下：</li>
+</ul>
+<p><img src="/img/17_02_06/007.png" width="300" height="200" align="center"></p>
+<p>可以看出，<strong>只有在$z\ge1$(即$\theta^{T}x\ge1$)时(不仅仅是$\ge0$)，代价函数$cost_{1}(z)$的值才等于0</strong>。</p>
+<ul>
+<li>反之，如果你有一个负样本，即$y=0$时，那么代价函数$cost_{0}(z)$的图像如下：</li>
+</ul>
+<p><img src="/img/17_02_06/008.png" width="300" height="200" align="center"></p>
+<p>可以看出，<strong>只有在$z\le-1$(即$\theta^{T}x\le-1$)时(不仅仅是$\lt0$)，代价函数$cost_{0}(z)$的值才等于0</strong>。</p>
+<p>这是<strong>支持向量机</strong>的一个有趣的性质。</p>
+<h3 id="安全距离因子">安全距离因子</h3><p>事实上，在逻辑回归中：</p>
+<ul>
+<li><p>如果你有一个正样本，即$y=1$的情况下，我们仅仅需要$\theta^{T}x\ge0$；</p>
+</li>
+<li><p>如果你有一个负样本，即$y=0$的情况下，我们仅仅需要$\theta^{T}x\lt0$；</p>
+</li>
+</ul>
+<p>就能将该样本恰当的分类了。</p>
+<p>但是<strong>支持向量机</strong>的要求更高，不仅仅要求$\theta^{T}x\ge0$或$\theta^{T}x\lt0$，而且要求$\theta^{T}x$比0大很多，或小很多。比如这里要求$\theta^{T}x\ge1$以及$\theta^{T}x\le-1$。</p>
+<p>这就相当于在<strong>支持向量机</strong>中嵌入了一个额外的安全因子（或者说是安全距离因子）。接下来让我们来看看这个因子会导致什么结果：</p>
+<p>具体而言，我接下来会将代价函数中的常数项$C$设置成一个非常大的值，比如100000或者其他非常大的数，然后再来观察支持向量机会给出什么结果。</p>
+<p>当代价函数中</p>
+<p>$$<br>\mathop{min}\limits_{θ}<br>C<br>\sum_{i=1}^{m}[<br>y^{(i)}<br>cost_{1}(\theta^{T}x^{(i)})+<br>(1-y^{(i)})<br>cost_{0}(\theta^{T}x^{(i)})<br>]+<br>\frac{1}{2}<br>\sum_{j=1}^{n}<br>\theta_{j}^2<br>$$</p>
+<p>$C$的值非常大时，则最小化代价函数的时候，我们会很希望找到一个使第一项：</p>
+<p>$$<br>\sum_{i=1}^{m}[<br>y^{(i)}<br>cost_{1}(\theta^{T}x^{(i)})+<br>(1-y^{(i)})<br>cost_{0}(\theta^{T}x^{(i)})<br>]<br>$$</p>
+<p>为0的最优解。</p>
+<p>可以看到当输入一个正样本$y^{(i)}=1$时，我们想令上面这一项为0，从图中可以得出</p>
+<p><img src="/img/17_02_06/007.png" width="300" height="200" align="center"></p>
+<p>对于代价函数$cost_{1}(z)$我们需要使得$\theta^{T}x^{(i)}\ge1$。</p>
+<p>类似地，对于一个负训练样本$y^{(i)}=0$时，我们想令上面这一项为0，从图中可以得出</p>
+<p><img src="/img/17_02_06/008.png" width="300" height="200" align="center"></p>
+<p>对于代价函数$cost_{0}(z)$我们需要使得$\theta^{T}x^{(i)}\le-1$。</p>
+<hr>
+<p>这样一来会产生下面这种优化问题：</p>
+<p>因为我们将选择参数使第一项为0，因此这个函数的第一项为0，因此是：</p>
+<p>$$<br>\mathop{min}\limits_{θ}<br>C0+<br>\frac{1}{2}<br>\sum_{j=1}^{n}<br>\theta_{j}^2<br>$$</p>
+<p>我们知道是$C0$的结果是0，因此可以删掉，所以最终得到的结果是：</p>
+<p>$$<br>\mathop{min}\limits_{θ}<br>\frac{1}{2}<br>\sum_{j=1}^{n}<br>\theta_{j}^2<br>$$</p>
+<p>其中：</p>
+<ul>
+<li>若$y^{(i)}=1$时，则$\theta^{T}x^{(i)}\ge1$</li>
+<li>若$y^{(i)}=0$时，则$\theta^{T}x^{(i)}\le-1$</li>
+</ul>
+<p>这样我们就得到了一个非常有趣的决策边界。</p>
+<h3 id="SVM决策边界：线性分割案例">SVM决策边界：线性分割案例</h3><p>具体而言，如果你仔细观察下面这个既有正样本又有负样本的数据集</p>
+<p><img src="/img/17_02_06/009.png" width="300" height="200" align="center"></p>
+<p>不难看出，这个数据集是线性可分的（即存在一条直线把正负样本分开）。可以看出有很多直线都可以把正负样本区分开，比如下面这两条看起来不太自然的直线：</p>
+<p><img src="/img/17_02_06/010.png" width="300" height="200" align="center"></p>
+<p>支持向量机会选择黑色的这一条直线：</p>
+<p><img src="/img/17_02_06/011.png" width="300" height="200" align="center"></p>
+<p>这条直线看起来好很多，因为它看起来更加稳健。在数学上来讲就是这条直线拥有相对于训练数据更大的最短距离，这个所谓的距离就是指<strong>间距(margin)</strong>：</p>
+<p><img src="/img/17_02_06/012.png" width="300" height="200" align="center"></p>
+<p>而之前两条粉线和蓝线距离训练样本非常近，在分离样本时就会表现的比黑线差。</p>
+<p>这就是<strong>支持向量机</strong>拥有<a href="http://baike.baidu.com/link?url=My7Y1mL_9uj-XdR2DC2kyGLop-AaPdzSgdNmgRmaJVYV77puxNs-_A7ERwLv3uWih02JCu6esljRn90mc3EkMwKXBckm_6wSqU42EX06vC4ouxQhinIZco7crxr7HetC" target="_blank" rel="external">鲁棒性</a>的原因。因为它一直努力用一个最大间距来分离样本。因此支持向量机分类器有时又被称为<strong>大间距分类器</strong>。</p>
+<p>也许你想知道支持向量机是如何做到产生这个大间距分类器的，目前我还没解释这一点，在下一节中我会直观的来解释这一点。目前这个例子只是用于理解<strong>支持向量机模型</strong>的做法，即努力将正负样本用最大的间距区分开。</p>
+<h3 id="大间距分类器中的异常值">大间距分类器中的异常值</h3><p>最后要讲的一点是对于支持向量机中的异常数据的处理。在下面这组训练集中：</p>
+<p><img src="/img/17_02_06/013.png" width="300" height="200" align="center"></p>
+<p>我们通过使用支持向量机来进行分类，会得到这条黑色的决策边界，从而最大间距的区分这两种数据：</p>
+<p><img src="/img/17_02_06/014.png" width="300" height="200" align="center"></p>
+<p>当有一个异常值产生时：</p>
+<p><img src="/img/17_02_06/015.png" width="300" height="200" align="center"></p>
+<p>我们的算法会受到异常值的影响。这时我们将支持向量机中的正则化因子$C$设置的非常大，那么我们会得到类似这样一条粉色的决策边界：</p>
+<p><img src="/img/17_02_06/016.png" width="300" height="200" align="center"></p>
+<p>那么我们仅仅通过一个异常值，就将我们的决策边界旋转了这么大的角度，实在是不明智的。</p>
+<p><img src="/img/17_02_06/017.png" width="300" height="200" align="center"></p>
+<p>当我们的正则化因子$C$的值非常大时，支持向量机确实会如此处理，但如果我们适当的减小$C$的值，你最终还是会得到那条黑色的决策边界的。</p>
+<p>如果数据是线性不可分的话，像这样：</p>
+<p><img src="/img/17_02_06/018.png" width="300" height="200" align="center"></p>
+<p>支持向量机也可以恰当的将它们分开。</p>
+<p>值得提醒的是$C$的作用其实等同于$\frac{1}{\lambda}$，$\lambda$就是我们之前用到的正则化参数。在支持向量机中，$C$不是很大的时候，可以对包含异常数据、以及线性不可分的数据有比较好的处理效果。</p>
+<p>稍后我们还会介绍支持向量机的偏差和方差，希望到那时候关于如何处理参数的这种平衡会变得更加清晰。</p>
+<h2 id="大间距分类器背后的数学原理(选学)">大间距分类器背后的数学原理(选学)</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/3eNnh/mathematics-behind-large-margin-classification" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>这一节将介绍大间距分类背后的数学原理。</p>
+<p>本节作为选学内容，你完全可以跳过，但是听听这节课可能让你对支持向量机中的优化问题，以及如何得到大间距分类器产生更好的直观理解。</p>
+</blockquote>
+<h3 id="向量内积">向量内积</h3><p>首先，带大家复习一下<strong>向量内积</strong>的知识。</p>
+<p>假设我们有两个二维向量：</p>
+<p>$$<br>u=<br> \begin{bmatrix}<br>   u_1 \\<br>    u_2<br> \end{bmatrix}<br> \<br> v=<br> \begin{bmatrix}<br>   v_1 \\<br>   v_2<br> \end{bmatrix}<br>$$</p>
+<p>我们把</p>
+<p>$$<br>u^{T}v<br>$$</p>
+<p>的计算结果称作向量$u$和$v$之间的<strong>内积</strong>。</p>
+<p>由于这里我们用的是二维向量，因此我们可以把这两个向量绘制在同一坐标系内，向量$u$和$v$如下：</p>
+<p><img src="/img/17_02_06/019.png" width="300" height="200" align="center"></p>
+<p>其中我们用$||u||$来表示$u$的<strong>范数</strong>（即$u$的长度），因此$||u||$的计算公式如下：</p>
+<p>$$<br>||u||=\sqrt{u_1^2+u_2^2}<br>$$</p>
+<p>下面我们来看看<strong>向量内积</strong>具体是如何计算的：</p>
+<p>将向量$v$投影到向量$u$上，如下图我们对向量$v$做一个相对于向量$u$的直角投影：</p>
+<p><img src="/img/17_02_06/020.png" width="300" height="200" align="center"></p>
+<p>投影之后的长度就是图中红线$p$的长度：</p>
+<p>$$<br>p = 向量v投影到向量u上的长度<br>$$</p>
+<p>同时也有另外一种计算内积的方式：</p>
+<p>$$<br>u^Tv=p·||u||<br>$$</p>
+<p>通过这种方式计算出来的内积，答案和之前也是一样的。</p>
+<p>事实上，如果你想要使用将$u$投影到$v$上来用这种方式来计算内积，得到的答案也是相同的。</p>
+<p>要注意的一点是，这里的$p$是有符号的，如果两个向量的夹角大于90°，像下图中这种情形，如果将$v$投影到$u$上会得到这样一种投影：</p>
+<p><img src="/img/17_02_06/021.png" width="300" height="200" align="center"></p>
+<p>此时的$p$就是一个负数。</p>
+<blockquote>
+<p>在向量的内积问题中，如果两个向量的夹角小于90°，那么$p$的符号就是为正；如果两个向量的夹角大于90°，那么$p$的符号就为负。</p>
+</blockquote>
+<p>这就是<strong>向量内积</strong>的知识，接下来我们尝试使用它来理解支持向量机中的目标函数。</p>
+<h3 id="SVM决策边界">SVM决策边界</h3><p>下面是我们在支持向量机中的目标函数:</p>
+<p>$$<br>\mathop{min}\limits_{θ}<br>\frac{1}{2}<br>\sum_{j=1}^{n}<br>\theta_{j}^2<br>$$</p>
+<p>其中</p>
+<ul>
+<li>若$y^{(i)}=1$时，则$\theta^{T}x^{(i)}\ge1$</li>
+<li>若$y^{(i)}=0$时，则$\theta^{T}x^{(i)}\le-1$</li>
+</ul>
+<p>接下来为了让目标函数更容易被分析，我们来忽略掉截距的影响，令$\theta_0=0$，这样更容易绘制示意图。并且我们将特征数$n$设置为2，因此我们仅有两个特征$x_1$和$x_2$：</p>
+<p>$$<br>\begin{align*}<br>\mathop{min}\limits_{θ}<br>\frac{1}{2}<br>\sum_{j=1}^{n}<br>\theta_{j}^2<br>&amp;=<br>\frac{1}{2}<br>(\theta_1^2+\theta_2^2)<br>\\&amp;=<br>\frac{1}{2}<br>(\sqrt{\theta_1^2+\theta_2^2})^2<br>\end{align*}<br>$$</p>
+<p>其中</p>
+<p>$$<br>\sqrt{\theta_1^2+\theta_2^2} = ||\theta||<br>$$</p>
+<p>因此可以得出：</p>
+<p>$$<br>\mathop{min}\limits_{θ}<br>\frac{1}{2}<br>\sum_{j=1}^{n}<br>\theta_{j}^2<br>=<br>\frac{1}{2}||\theta||^2<br>$$</p>
+<p>可见，<strong>支持向量机所做的事情，其实就是在极小化参数向量$\theta$范数的平方（或者说是长度的平方）</strong>。</p>
+<hr>
+<p>现在让我们来看看这两行的含义：</p>
+<ul>
+<li>若$y^{(i)}=1$时，则$\theta^{T}x^{(i)}\ge1$</li>
+<li>若$y^{(i)}=0$时，则$\theta^{T}x^{(i)}\le-1$</li>
+</ul>
+<p>想一想$\theta^{T}x^{(i)}$这一项等于什么呢？</p>
+<p>在前面我们画出了$u^Tv$的示意图，这里$\theta^T$就相当于$u^T$、$x^{(i)}$就相当于$v$。让我们来看一下示意图：</p>
+<p>我们考虑一个单一的样本$x^{(i)}$，其坐标为$(x^{(i)}_1,x^{(i)}_2)$</p>
+<p><img src="/img/17_02_06/022.png" width="300" height="200" align="center"></p>
+<p>这个训练样本点其实可以表示为一个训练样本向量：</p>
+<p><img src="/img/17_02_06/023.png" width="300" height="200" align="center"></p>
+<p>现在，我们有一个参数向量：</p>
+<p><img src="/img/17_02_06/024.png" width="300" height="200" align="center"></p>
+<p>那么我们向量内积的计算方式，通过使用之前的方法可以得出。训练样本向量投影到参数向量上的长度$p^{(i)}$，表示第i个训练样本在参数向量$\theta$上的投影：</p>
+<p><img src="/img/17_02_06/025.png" width="300" height="200" align="center"></p>
+<p>根据之前我们所学到的，我们可以知道：</p>
+<p>$$<br>\begin{align*}<br>\theta^Tx^{(i)}<br>&amp;=p^{(i)}·||\theta||<br>\\<br>&amp;=\theta_1x_1^{(i)}+\theta_2x_2^{(i)}<br>\end{align*}<br>$$</p>
+<p>那么，这告诉我们了什么呢？这说明：</p>
+<ul>
+<li>若$y^{(i)}=1$时，则$\theta^{T}x^{(i)}\ge1$</li>
+<li>若$y^{(i)}=0$时，则$\theta^{T}x^{(i)}\le-1$</li>
+</ul>
+<p>这里的约束项是可以用$p^{(i)}·||\theta||$来替代的：</p>
+<ul>
+<li>若$y^{(i)}=1$时，则$p^{(i)}·||\theta||\ge1$</li>
+<li>若$y^{(i)}=0$时，则$p^{(i)}·||\theta||\le-1$</li>
+</ul>
+<p>因此，将其写入我们的优化目标后，<strong>完整的目标函数</strong>为：</p>
+<p>$$<br>\mathop{min}\limits_{θ}<br>\frac{1}{2}<br>\sum_{j=1}^{n}<br>\theta_{j}^2<br>=<br>\frac{1}{2}||\theta||^2<br>$$</p>
+<p>其中</p>
+<ul>
+<li>若$y^{(i)}=1$时，则$p^{(i)}·||\theta||\ge1$</li>
+<li>若$y^{(i)}=0$时，则$p^{(i)}·||\theta||\le-1$</li>
+</ul>
+<hr>
+<h4 id="实例">实例</h4><p>现在让我们考虑下面这里的训练样本：</p>
+<p><img src="/img/17_02_06/026.png" width="300" height="200" align="center"></p>
+<p>其中假设截距依然为0，即$\theta_0=0$，我们来看一下支持向量机会选择什么样的决策边界。</p>
+<p>假设有这样一条决策边界：</p>
+<p><img src="/img/17_02_06/027.png" width="300" height="200" align="center"></p>
+<p>很明显，这不是一个好的决策边界，因为这个决策边界离训练样本很近，我们来看一下为什么支持向量机不会选择它。</p>
+<p>由于<strong>决策边界和参数向量是正交的(斜率相乘结果为-1)</strong>(<a href="https://zhidao.baidu.com/question/1992397864989257747.html" target="_blank" rel="external">为什么决策边界和参数向量是正交的</a>)，我们可以绘制出对应的参数向量$\theta$：</p>
+<p><img src="/img/17_02_06/028.png" width="300" height="200" align="center"></p>
+<blockquote>
+<p>这里由于我们指定了$\theta_0=0$，也就意味着决策边界是过原点的。</p>
+</blockquote>
+<p>假设我们以这一点为第一个训练样本：</p>
+<p><img src="/img/17_02_06/029.png" width="300" height="200" align="center"></p>
+<p>我们可以画出这个样本向量到$\theta$的投影$p^{(1)}$：</p>
+<p><img src="/img/17_02_06/030.png" width="300" height="200" align="center"></p>
+<p>类似的，我们也可以画出第二个样本向量到$\theta$的投影$p^{(2)}$：</p>
+<p><img src="/img/17_02_06/031.png" width="300" height="200" align="center"></p>
+<p>我们会发现，这些$p^{(i)}$将会是一些非常小的数。因此当我们考察优化目标函数的时候：</p>
+<ul>
+<li><p>对于<strong>正样本($y^{(i)}=1$，即图中的”x”样本)</strong>而言，我们需要$p^{(i)}·||\theta||\ge1$，由于$p^{(i)}$非常小，也就意味着$||\theta||$需要非常大。</p>
+</li>
+<li><p>对于<strong>负样本($y^{(i)}=-1$，即图中的”o”样本)</strong>而言，我们需要$p^{(i)}·||\theta||\le-1$，由于$p^{(i)}$非常小，也就意味着$||\theta||$需要非常大。</p>
+</li>
+</ul>
+<p>但我们的实际目标是希望找到一个参数$\theta$，使得它的范数$||\theta||$是尽可能小的，因此这并不是一个好的决策边界，因为我们的$||\theta||$比较大。</p>
+<hr>
+<p>对于下面这个决策边界来说，情况就会有很大的不同：</p>
+<p><img src="/img/17_02_06/032.png" width="300" height="200" align="center"></p>
+<p>这里，我们以纵坐标作为决策边界，那么我们的参数向量的方向就是垂直于它的方向：</p>
+<p><img src="/img/17_02_06/033.png" width="300" height="200" align="center"></p>
+<p>如果我们现在再来绘制出样本向量在参数向量上的投影$p^{(1)}$和$p^{(2)}$的话，你会发现这些投影的长度比之前长多了：</p>
+<p><img src="/img/17_02_06/034.png" width="300" height="200" align="center"></p>
+<p>因为投影$p$的长度变大了，随之$\theta$的范数$||\theta||$也相应的变小了。这就意味着通过选择第二种远离样本的决策边界，支持向量机可以使参数$\theta$的范数$||\theta||$变小很多。</p>
+<p>这就是<strong>为什么支持向量机可以产生大间距分类的原因</strong>。</p>
+<hr>
+<p>最后一点，我们的推导自始至终都使用了<strong>截距为0（即$\theta_0=0$）</strong>这个简化假设。这样做的作用就是可以使得决策边界始终是通过原点的，如果你的决策边界不过原点，那么$\theta_0\ne0$，但支持向量机会产生大间距分类器的结论依然成立（具体推导过程不再叙述，和这里很类似）。但是可以说明的是，即便$\theta_0\ne0$，支持向量机仍然会找到正样本和负样本之间的大间距分隔。总之 我们解释了为什么支持向量机是一个大间距分类器。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2017/02/04/【Python3教程 第3章】方法和模块/" itemprop="url">
                 【Python3教程 第3章】方法和模块
               </a>
@@ -2115,166 +2493,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2017/01/13/【Android文档翻译】测试多个应用程序的UI/" itemprop="url">
-                【Android文档翻译】测试多个应用程序的UI
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2017-01-13T08:45:58+08:00" content="2017-01-13">
-            2017-01-13
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/Android/" itemprop="url" rel="index">
-                  <span itemprop="name">Android</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2017/01/13/【Android文档翻译】测试多个应用程序的UI/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/13/【Android文档翻译】测试多个应用程序的UI/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><p><a href="https://developer.android.google.cn/training/testing/ui-testing/uiautomator-testing.html" target="_blank" rel="external">https://developer.android.google.cn/training/testing/ui-testing/uiautomator-testing.html</a></p>
-<p>涉及多个应用程序的用户交互的用户界面（UI）测试允许您在用户流跨越其他应用程序或系统UI时验证您的应用程序行为正确。这样的用户流的示例是消息应用，其允许用户输入文本消息，启动Android联系人选择器，以便用户可以选择要向其发送消息的收件人，然后将控制权返回给原始应用程序，以供用户提交邮件。</p>
-<p>本课包括如何使用<a href="https://developer.android.google.cn/tools/testing-support-library/index.html" target="_blank" rel="external">Android测试支持库</a>提供的UI Automator测试框架编写此类UI测试。UI Automator API可让您与设备上的可见元素进行交互，无论哪个<a href="https://developer.android.google.cn/reference/android/app/Activity.html" target="_blank" rel="external">Activity</a>正在获取焦点。您的测试可以通过使用方便的描述符（例如该组件中显示的文本或其内容描述）来查找UI组件。UI Automator测试可以在运行Android 4.3（API级别18）或更高版本的设备上运行。</p>
-<p>UI Automator测试框架是一种基于工具的API，可与<a href="https://developer.android.google.cn/reference/android/support/test/runner/AndroidJUnitRunner.html" target="_blank" rel="external">AndroidJUnitRunner</a>测试运行程序配合使用。</p>
-<h2 id="设置UI_Automator">设置UI Automator</h2><p>在使用UI Automator构建UI测试之前，请确保按照<a href="/2017/01/11/【Android文档翻译】入门测试/">测试入门</a>中所述配置测试源代码位置和项目依赖关系。</p>
-<p>在Android应用程序模块的<code>build.gradle</code>文件中，您必须为UI Automator库设置依赖性引用:</p>
-<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">dependencies</span> &#123;</div><div class="line">    ...</div><div class="line">    androidTestCompile <span class="string">'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>要优化UI Automator测试，您应该首先检查目标应用程序的UI组件，并确保它们可访问。这些优化提示将在接下来的两部分中介绍。</p>
-<h3 id="在设备上检查UI">在设备上检查UI</h3><p>在设计测试之前，请检查设备上可见的UI组件。为了确保您的UI Automator测试可以访问这些组件，请检查这些组件是否有可见的文本标签，<code>android：contentDescription</code>值或两者都有。</p>
-<p><code>uiautomatorviewer</code>工具提供了一个方便的可视界面来检查布局层次结构，并查看在设备前台可见的UI组件的属性。此信息允许您使用UI Automator创建更细粒度的测试。例如，您可以创建与特定可见属性匹配的UI选择器。</p>
-<p>启动uiautomatorviewer工具：</p>
-<ul>
-<li>1.在物理设备上启动目标应用程序。</li>
-<li>2.将设备连接到开发机器。</li>
-<li>3.打开终端窗口并导航到<code>&lt;android-sdk&gt;/tools/</code>目录。</li>
-<li>4.使用此命令运行工具：</li>
-</ul>
-<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>uiautomatorviewer</div></pre></td></tr></table></figure>
-<p>查看应用程序的UI属性：</p>
-<ul>
-<li>1.在<code>uiautomatorviewer</code>界面中，单击设备截图按钮。</li>
-<li>2.将鼠标悬停在左侧面板中的快照上，以查看由<code>uiautomatorviewer</code>工具标识的UI组件。属性列在右下方面板的右下方面板和右上方面板中的布局层次结构中。</li>
-<li>3.或者，单击<strong>Toggle NAF Nodes</strong>按钮可查看UI Automator无法访问的UI组件。只有有限的信息可用于这些组件。</li>
-</ul>
-<p>要了解Android提供的常见类型的UI组件，请参阅<a href="https://developer.android.google.cn/guide/topics/ui/index.html" target="_blank" rel="external">用户界面</a>。</p>
-<h3 id="确保您的Activity可访问">确保您的Activity可访问</h3><p>UI Automator测试框架对已实现Android辅助功能的应用的效果更好。当您使用View类型的UI元素或来自SDK或支持库的View子类时，您不需要实现辅助功能支持，因为这些类已经为您完成了。</p>
-<p>但是，有些应用使用自定义UI元素来提供更丰富的用户体验。这些元素将不提供自动可访问性支持。如果您的应用程式包含不是来自SDK或支援库的View子类别的执行个体，请务必按照下列步骤为这些元素加入无障碍功能：</p>
-<ul>
-<li>1.创建一个继承自<strong><a href="https://developer.android.google.cn/reference/android/support/v4/widget/ExploreByTouchHelper.html" target="_blank" rel="external">ExploreByTouchHelper</a></strong>的类。</li>
-<li>2.通过调用<a href="https://developer.android.google.cn/reference/android/support/v4/view/ViewCompat.html#setAccessibilityDelegate(android.view.View, android.support.v4.view.AccessibilityDelegateCompat" target="_blank" rel="external">setAccessibilityDelegate()</a>将新类的实例与特定自定义UI元素相关联。</li>
-</ul>
-<p>有关向自定义视图元素添加辅助功能的其他指南，请参阅<a href="https://developer.android.google.cn/guide/topics/ui/accessibility/custom-views.html" target="_blank" rel="external">构建可访问的自定义视图</a>。要了解更多有关在Android的可访问性一般的最佳实践，请参阅<a href="https://developer.android.google.cn/guide/topics/ui/accessibility/apps.html" target="_blank" rel="external">使应用程序更容易访问</a>。</p>
-<h3 id="创建UI_Automator测试类">创建UI Automator测试类</h3><p>您的UI Automator测试类应以与JUnit 4测试类相同的方式编写。要了解有关创建JUnit 4测试类和使用JUnit 4断言和注释的更多信息，请参阅<a href="/2017/01/11/【Android文档翻译】构建仪表化单元测试/#创建测试单元测试类">构建测试单元测试类</a>。</p>
-<p>在测试类定义的开头添加<code>@RunWith(AndroidJUnit4.class)</code>注解。您还需要指定Android测试支持库中提供的<a href="https://developer.android.google.cn/reference/android/support/test/runner/AndroidJUnitRunner.html" target="_blank" rel="external">AndroidJUnitRunner</a>类作为默认测试运行器。此步骤<a href="#在设备或模拟器上运行UI Automator测试">在设备或模拟器上的运行UI自动程序测试</a>中有更详细的描述。</p>
-<p>在您的UI Automator测试类中实现以下编程模型：</p>
-<ul>
-<li>1.通过调用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiDevice.html#getInstance(android.app.Instrumentation" target="_blank" rel="external"><code>getInstance()</code></a>方法并传递一个<a href="https://developer.android.google.cn/reference/android/app/Instrumentation.html" target="_blank" rel="external"><code>Instrumentation</code></a>对象作为参数，获取<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiDevice.html" target="_blank" rel="external"><code>UiDevice</code></a>对象以访问要测试的设备。</li>
-<li>2.通过调用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiDevice.html#findObject(android.support.test.uiautomator.UiSelector" target="_blank" rel="external"><code>findObject()</code></a>方法，获取<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html" target="_blank" rel="external"><code>UiObject</code></a>对象以访问设备上显示的UI组件（例如，前台中的当前视图）</li>
-<li>3.通过调用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html" target="_blank" rel="external"><code>UiObject</code></a>的方法模拟要在该UI组件上执行的特定用户交互;例如，调用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html#performMultiPointerGesture(android.view.MotionEvent.PointerCoords[]..." target="_blank" rel="external"><code>performMultiPointerGesture()</code></a>来模拟多点触摸手势，并使用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html#setText(java.lang.String" target="_blank" rel="external"><code>setText()</code></a>来编辑文本字段。</li>
-<li>4.在执行这些用户交互操作后，检查UI是否反映了预期的状态或行为。</li>
-</ul>
-<p>这些步骤在下面的部分中有更详细地描述。</p>
-<h3 id="访问UI组件">访问UI组件</h3><p><a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiDevice.html" target="_blank" rel="external">UiDevice</a>对象是访问和操纵设备状态的主要方式。在测试中，可以调用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiDevice.html" target="_blank" rel="external">UiDevice</a>的方法来检查各种属性的状态，例如当前方向或显示大小。您的测试可以使用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiDevice.html" target="_blank" rel="external">UiDevice</a>对象执行设备级操作，例如强制设备进行特定旋转，D-pad硬件按键事件，以及Home和Menu按键的事件。</p>
-<p>最好从设备的主屏幕开始测试。从主屏幕（或您在设备中选择的其他某个起始位置），您可以调用UI Automator API提供的方法来选择特定的UI元素并与其进行交互。</p>
-<p>以下代码段显示您的测试如何获取<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiDevice.html" target="_blank" rel="external">UiDevice</a>的实例，并模拟Home按钮：</p>
-<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="meta"><span class="meta-keyword">import</span> org.junit.Before;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> android.support.test.runner.AndroidJUnit4;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> android.support.test.uiautomator.UiDevice;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> android.support.test.uiautomator.By;</span></div><div class="line"><span class="meta"><span class="meta-keyword">import</span> android.support.test.uiautomator.Until;</span></div><div class="line">...</div><div class="line"></div><div class="line">@RunWith(AndroidJUnit4.class)</div><div class="line">@SdkSuppress(minSdkVersion = <span class="number">18</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ChangeTextBehaviorTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String BASIC_SAMPLE_PACKAGE</div><div class="line">            = <span class="string">"com.example.android.testing.uiautomator.BasicSample"</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> int LAUNCH_TIMEOUT = <span class="number">5000</span>;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String STRING_TO_BE_TYPED = <span class="string">"UiAutomator"</span>;</div><div class="line">    <span class="keyword">private</span> UiDevice mDevice;</div><div class="line"></div><div class="line">    @Before</div><div class="line">    <span class="keyword">public</span> <span class="keyword">void</span> startMainActivityFromHomeScreen() &#123;</div><div class="line">        <span class="comment">// Initialize UiDevice instance</span></div><div class="line">        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());</div><div class="line"></div><div class="line">        <span class="comment">// Start from the home screen</span></div><div class="line">        mDevice.pressHome();</div><div class="line"></div><div class="line">        <span class="comment">// Wait for launcher</span></div><div class="line">        <span class="keyword">final</span> String launcherPackage = mDevice.getLauncherPackageName();</div><div class="line">        assertThat(launcherPackage, notNullValue());</div><div class="line">        mDevice.wait(Until.hasObject(By.pkg(launcherPackage).depth(<span class="number">0</span>)),</div><div class="line">                LAUNCH_TIMEOUT);</div><div class="line"></div><div class="line">        <span class="comment">// Launch the app</span></div><div class="line">        Context context = InstrumentationRegistry.getContext();</div><div class="line">        <span class="keyword">final</span> Intent intent = context.getPackageManager()</div><div class="line">                .getLaunchIntentForPackage(BASIC_SAMPLE_PACKAGE);</div><div class="line">        <span class="comment">// Clear out any previous instances</span></div><div class="line">        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);</div><div class="line">        context.startActivity(intent);</div><div class="line"></div><div class="line">        <span class="comment">// Wait for the app to appear</span></div><div class="line">        mDevice.wait(Until.hasObject(By.pkg(BASIC_SAMPLE_PACKAGE).depth(<span class="number">0</span>)),</div><div class="line">                LAUNCH_TIMEOUT);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>在示例中，<code>@SdkSuppress(minSdkVersion = 18)</code>语句有助于确保测试仅在UI自动化框架要求的Android 4.3（API级别18）或更高版本的设备上运行。</p>
-<p>使用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiDevice.html#findObject(android.support.test.uiautomator.UiSelector" target="_blank" rel="external"><code>findObject()</code></a>方法来检索一个代表与给定选择器标准匹配的视图的<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html" target="_blank" rel="external"><code>UiObject</code></a>。请注意，每当您的测试使用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html" target="_blank" rel="external">UiObject</a>实例来单击UI元素或查询属性时，UI Automator测试框架会在当前显示中搜索匹配项。</p>
-<p>以下代码段显示了您的测试如何构建表示应用程序中的“取消”按钮和“确定”按钮的<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html" target="_blank" rel="external">UiObject</a>实例。</p>
-<figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">UiObject cancelButton = mDevice.findObject(<span class="keyword">new</span> UiSelector()</div><div class="line">        .<span class="built_in">text</span>(<span class="string">"Cancel"</span>))</div><div class="line">        .className(<span class="string">"android.widget.Button"</span>));</div><div class="line">UiObject okButton = mDevice.findObject(<span class="keyword">new</span> UiSelector()</div><div class="line">        .<span class="built_in">text</span>(<span class="string">"OK"</span>))</div><div class="line">        .className(<span class="string">"android.widget.Button"</span>));</div><div class="line"></div><div class="line"><span class="comment">// Simulate a user-click on the OK button, if found.</span></div><div class="line"><span class="built_in">if</span>(okButton.<span class="built_in">exists</span>() &amp;&amp; okButton.isEnabled()) &#123;</div><div class="line">    okButton.<span class="built_in">click</span>();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="指定选择器">指定选择器</h4><p>如果要在应用程序中访问特定的UI组件，请使用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiSelector.html" target="_blank" rel="external"><code>UiSelector</code></a>类。此类表示对当前显示的UI中的特定元素的查询。</p>
-<p>如果找到多个匹配元素，则布局层次结构中的第一个匹配元素将作为目标<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html" target="_blank" rel="external"><code>UiObject</code></a>返回。构建<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiSelector.html" target="_blank" rel="external"><code>UiSelector</code></a>时，可以将多个属性链接在一起以优化搜索。如果没有找到匹配的UI元素，则抛出<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObjectNotFoundException.html" target="_blank" rel="external"><code>UiAutomatorObjectNotFoundException</code></a>。</p>
-<p>您可以使用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiSelector.html#childSelector(android.support.test.uiautomator.UiSelector" target="_blank" rel="external"><code>childSelector()</code></a>方法嵌套多个<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiSelector.html" target="_blank" rel="external"><code>UiSelector</code></a>实例。例如，以下代码示例显示您的测试如何指定搜索以在当前显示的UI中查找第一个ListView，然后在该ListView中搜索以查找具有文本属性Apps的UI元素。</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">UiObject appItem = new UiObject(<span class="name">new</span> UiSelector()</div><div class="line">        .className(<span class="string">"android.widget.ListView"</span>)</div><div class="line">        .instance(<span class="number">1</span>)</div><div class="line">        .childSelector(<span class="name">new</span> UiSelector()</div><div class="line">        .text(<span class="string">"Apps"</span>)))<span class="comment">;</span></div></pre></td></tr></table></figure>
-<p>作为最佳实践，在指定选择器时，应该使用资源ID（如果已分配给UI元素）而不是文本元素或内容描述符。并非所有元素都具有文本元素（例如，工具栏中的图标）。文本选择器很脆弱，如果UI有轻微更改，则可能导致测试失败。它们也可能不跨越不同的语言扩展;您的文本选择器可能不匹配已被翻译的字符串。</p>
-<p>在选择器标准中指定对象状态可能很有用。例如，如果要选择所有已选元素的列表，以便可以取消选中它们，请调用参数设置为true的<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/By.html#checked(boolean" target="_blank" rel="external"><code>checked()</code></a>方法。</p>
-<h3 id="执行操作">执行操作</h3><p>一旦你的测试获得了一个<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html" target="_blank" rel="external"><code>UiObject</code></a>对象，你可以调用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html" target="_blank" rel="external"><code>UiObject</code></a>类中的方法在该对象所表示的UI组件上执行用户交互。您可以指定以下操作：</p>
-<ul>
-<li><a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html#click(" target="_blank" rel="external"><code>click()</code></a>:单击UI元素的可见边界的中心。</li>
-<li><a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html#dragTo(int, int, int" target="_blank" rel="external"><code>dragTo()</code></a>:将此对象拖放到任意坐标。</li>
-<li><a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html#setText(java.lang.String" target="_blank" rel="external"><code>setText()</code></a>:在清除字段的内容后，在可编辑字段中设置文本。相反，<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html#clearTextField(" target="_blank" rel="external"><code>clearTextField()</code></a>方法清除可编辑字段中的现有文本。</li>
-<li><a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html#swipeUp(int" target="_blank" rel="external"><code>swipeUp()</code></a>):对<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiObject.html" target="_blank" rel="external"><code>UiObject</code></a>执行向上滑动操作。类似地，<code>swipeDown()</code>，<code>swipeLeft()</code>和<code>swipeRight()</code>方法执行相应的操作。</li>
-</ul>
-<p>UI Automator测试框架允许您通过<code>getContext()</code>获取<code>Context</code>对象来发送<code>Intent</code>或启动<code>Activity</code>，而不使用shell命令。</p>
-<p>以下代码段显示了您的测试如何使用<code>Intent</code>启动正在测试的应用程序。当您只想测试计算器应用程序，而不关心启动器时，此方法很有用。</p>
-<figure class="highlight fortran"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> void setUp() &#123;</div><div class="line">    ...</div><div class="line"></div><div class="line">    // Launch a simple calculator app</div><div class="line">    Context context = getInstrumentation().getContext();</div><div class="line">    <span class="keyword">Intent</span> <span class="keyword">intent</span> = context.getPackageManager()</div><div class="line">            .getLaunchIntentForPackage(CALC_PACKAGE);</div><div class="line">    <span class="keyword">intent</span>.addFlags(<span class="keyword">Intent</span>.FLAG_ACTIVITY_CLEAR_TASK);</div><div class="line">            // Clear <span class="keyword">out</span> <span class="built_in">any</span> previous instances</div><div class="line">    context.startActivity(<span class="keyword">intent</span>);</div><div class="line">    mDevice.<span class="keyword">wait</span>(Until.hasObject(By.pkg(CALC_PACKAGE).depth(<span class="number">0</span>)), TIMEOUT);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h4 id="对集合执行操作">对集合执行操作</h4><p>如果您要模拟项目集合（例如，音乐专辑中的歌曲或收件箱中的电子邮件列表）中的用户互动，请使用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiCollection.html" target="_blank" rel="external"><code>UiCollection</code></a>类。要创建<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiCollection.html" target="_blank" rel="external"><code>UiCollection</code></a>对象，请指定用于搜索UI容器或其他子UI用户界面元素（例如包含子UI用户界面元素的布局视图）的包装器的<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiSelector.html" target="_blank" rel="external"><code>UiSelector</code></a>。</p>
-<p>以下代码段显示了您的测试可能如何构造一个<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiCollection.html" target="_blank" rel="external"><code>UiCollection</code></a>来表示在<code>FrameLayout</code>中显示的视频专辑：</p>
-<figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">UiCollection videos = <span class="keyword">new</span> UiCollection(<span class="keyword">new</span> UiSelector()</div><div class="line">        .className(<span class="string">"android.widget.FrameLayout"</span>));</div><div class="line"></div><div class="line"><span class="comment">// Retrieve the number of videos in this collection:</span></div><div class="line"><span class="keyword">int</span> count = videos.getChildCount(<span class="keyword">new</span> UiSelector()</div><div class="line">        .className(<span class="string">"android.widget.LinearLayout"</span>));</div><div class="line"></div><div class="line"><span class="comment">// Find a specific video and simulate a user-click on it</span></div><div class="line">UiObject video = videos.getChildByText(<span class="keyword">new</span> UiSelector()</div><div class="line">        .className(<span class="string">"android.widget.LinearLayout"</span>), <span class="string">"Cute Baby Laughing"</span>);</div><div class="line">video.<span class="built_in">click</span>();</div><div class="line"></div><div class="line"><span class="comment">// Simulate selecting a checkbox that is associated with the video</span></div><div class="line">UiObject checkBox = video.getChild(<span class="keyword">new</span> UiSelector()</div><div class="line">        .className(<span class="string">"android.widget.Checkbox"</span>));</div><div class="line"><span class="built_in">if</span>(!checkBox.isSelected()) checkbox.<span class="built_in">click</span>();</div></pre></td></tr></table></figure>
-<h4 id="对可滚动视图执行操作">对可滚动视图执行操作</h4><p>使用<a href="https://developer.android.google.cn/reference/android/support/test/uiautomator/UiScrollable.html" target="_blank" rel="external"><code>UiScrollable</code></a>类来模拟跨显示的垂直或水平滚动。当UI元素位于屏幕外并且您需要滚动以将其置于视图中时，此技术非常有用。</p>
-<p>以下代码段显示了如何模拟向下滚动设置菜单并点击关于平板电脑选项：</p>
-<figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">UiScrollable settingsItem = <span class="keyword">new</span> UiScrollable(<span class="keyword">new</span> UiSelector()</div><div class="line">        .className(<span class="string">"android.widget.ListView"</span>));</div><div class="line">UiObject about = settingsItem.getChildByText(<span class="keyword">new</span> UiSelector()</div><div class="line">        .className(<span class="string">"android.widget.LinearLayout"</span>), <span class="string">"About tablet"</span>);</div><div class="line">about.<span class="built_in">click</span>();</div></pre></td></tr></table></figure>
-<h3 id="验证结果">验证结果</h3><p><a href="https://developer.android.google.cn/reference/android/test/InstrumentationTestCase.html" target="_blank" rel="external"><code>InstrumentationTestCase</code></a>扩展了<a href="https://developer.android.google.cn/reference/junit/framework/TestCase.html" target="_blank" rel="external"><code>TestCase</code></a>，因此您可以使用标准的JUnit Assert方法来测试应用程序中的UI组件是否返回预期结果。</p>
-<p>以下代码段显示您的测试如何在计算器应用程序中找到多个按钮，按顺序点击它们，然后验证是否显示正确的结果。</p>
-<figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> final <span class="keyword">String</span> CALC_PACKAGE = <span class="string">"com.myexample.calc"</span>;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="keyword">void</span> testTwoPlusThreeEqualsFive() &#123;</div><div class="line">    <span class="comment">// Enter an equation: 2 + 3 = ?</span></div><div class="line">    mDevice.findObject(<span class="keyword">new</span> UiSelector()</div><div class="line">            .packageName(CALC_PACKAGE).resourceId(<span class="string">"two"</span>)).<span class="built_in">click</span>();</div><div class="line">    mDevice.findObject(<span class="keyword">new</span> UiSelector()</div><div class="line">            .packageName(CALC_PACKAGE).resourceId(<span class="string">"plus"</span>)).<span class="built_in">click</span>();</div><div class="line">    mDevice.findObject(<span class="keyword">new</span> UiSelector()</div><div class="line">            .packageName(CALC_PACKAGE).resourceId(<span class="string">"three"</span>)).<span class="built_in">click</span>();</div><div class="line">    mDevice.findObject(<span class="keyword">new</span> UiSelector()</div><div class="line">            .packageName(CALC_PACKAGE).resourceId(<span class="string">"equals"</span>)).<span class="built_in">click</span>();</div><div class="line"></div><div class="line">    <span class="comment">// Verify the result = 5</span></div><div class="line">    UiObject result = mDevice.findObject(By.res(CALC_PACKAGE, <span class="string">"result"</span>));</div><div class="line">    assertEquals(<span class="string">"5"</span>, result.getText());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="在设备或模拟器上运行UI_Automator测试">在设备或模拟器上运行UI Automator测试</h2><p>您可以从Android Studio或从命令行运行UI Automator测试。确保指定<a href="https://developer.android.google.cn/reference/android/support/test/runner/AndroidJUnitRunner.html" target="_blank" rel="external">AndroidJUnitRunner</a>作为项目中的默认instrumentation runner。</p>
-<p>要运行UI Automator测试，请按照<a href="/2017/01/11/【Android文档翻译】入门测试/">测试入门</a>中所述的运行测试测试的步骤操作。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2313,7 +2531,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">108</span>
+              <span class="site-state-item-count">109</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

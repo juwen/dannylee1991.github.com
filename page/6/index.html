@@ -199,6 +199,231 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2016/09/07/斯坦福机器学习课程 第四周 (2)神经网络/" itemprop="url">
+                斯坦福机器学习课程 第四周 (2)神经网络
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-09-07T23:42:00+08:00" content="2016-09-07">
+            2016-09-07
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/09/07/斯坦福机器学习课程 第四周 (2)神经网络/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/07/斯坦福机器学习课程 第四周 (2)神经网络/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="神经网络的表示I">神经网络的表示I</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/ka3jK/model-representation-i" target="_blank" rel="external">视频地址</a></p>
+<p>这节课介绍神经网络如何表示我们的假设。</p>
+<h3 id="神经网络起源">神经网络起源</h3><p>神经网络是在模拟大脑中的神经元时发明的，因此，要解释如何表示模型假设，我们先来看看神经元在大脑中是什么样的。我们的大脑中充满了这样的神经元：</p>
+<p><img src="/img/16_09_07/001.png" alt=""></p>
+<p>神经元是大脑中的细胞，其中有两点值得我们注意，一是神经元有一个细胞主体(Cell body)，二是神经元有一定数量的输入神经，这些输入神经叫做<strong>树突(Dendrite)</strong>。可以把它们想象成输入电线，它们接收来自其他神经元的信息。神经元的输出神经叫做<strong>轴突(Axon)</strong>，这些输出神经是用来给其他神经元传递信号或者传送信息的。</p>
+<p>简而言之，神经元是一个计算单元，它从<strong>输入神经</strong>接受一定数目的信息，并做一些计算，然后将结果通过它的<strong>轴突</strong>传送到大脑中的其他神经元。</p>
+<p>下面是一组神经元的示意图：</p>
+<p><img src="/img/16_09_07/002.png" alt=""></p>
+<p>神经元利用微弱的电流进行沟通，这些弱电流也称作<strong>动作电位</strong>(其实就是一些微弱的电流)。</p>
+<p>所以如果神经元想要传递一个消息，它就会通过它的轴突发送一段微弱的电流，给其他神经元。这就是<strong>轴突</strong>连接到输入神经元(另一个神经元的<strong>树突</strong>)。接下来这个神经元接收这条消息，做一些计算，它有可能会反过来将在轴突上的自己的消息传给其他神经元。这就是所有人类思考的模型：我们的神经元把自己收到的消息进行计算，并向其他神经元传递消息。</p>
+<blockquote>
+<p>顺便说一下，这也是我们感觉和肌肉运转的原理。如果你想要活动一块肌肉，就会触发一个神经元给你的肌肉，发送脉冲，并引起你的肌肉收缩。如果一些感官，比如说眼睛，想要向大脑传递一个消息，那么它就是像这样发送电脉冲给大脑的。</p>
+</blockquote>
+<h3 id="神经网络逻辑单元">神经网络逻辑单元</h3><p>在一个计算机的神经网络里，我们将使用一个非常简单的模型来模拟神经元的工作：</p>
+<p><img src="/img/16_09_07/003.png" alt=""></p>
+<p>我们将神经元模拟成一个逻辑单元。上图中，黄色的圆圈，你可以理解为类似神经元的东西，然后我们通过它的树突(或者说是它的输入神经)传递给它一些信息。然后神经元做一些计算，并通过它的输出神经(即它的轴突)输出计算结果。</p>
+<p>这里的$h_{\theta}(x)$通常值的是：</p>
+<p>$$<br>\begin{align*}<br>h_{\theta}(x)<br>= \frac{1}{1+e^{-\theta^{T}x}}<br>\end{align*}<br>$$</p>
+<p>其中$x$和$\theta$指的是我们的参数向量：</p>
+<p><img src="/img/16_09_07/004.png" alt=""></p>
+<p>这就是一个简单的模拟神经元的模型。</p>
+<hr>
+<p>当我绘制一个神经网络时，有时会额外增加一个$x_{0}$的输入节点，这个$x_{0}$节点有时也被称作<strong>偏置单位(或偏置神经元)</strong>。但由于$x_{0}=1$，有时我是不会画出它的，这取决于它是否对例子有利。</p>
+<h3 id="激励函数">激励函数</h3><p>在神经网络中，有时我们会听到“一个有Sigmoid函数或者Logistic函数作为<strong>激励函数(activation function)</strong>的人工神经元”这样的话。其实这里所指的<strong>激励函数(activation function)</strong>只是对类似非线性函数$g(z)$的另一个术语称呼：</p>
+<p>$$<br>\begin{align*}<br>g(z)<br>= \frac{1}{1+e^{-z}}<br>\end{align*}<br>$$</p>
+<p>$$<br>\begin{align*}<br>z<br>= \theta^{T}x<br>\end{align*}<br>$$</p>
+<blockquote>
+<p>在之前我们一值称$\theta$为模型的参数，但在神经网络的文献里，有时你可能会看到人们谈论一个模型的<strong>权重(weight)</strong>，这个<strong>权重(weight)</strong>其实和模型的参数$\theta$是一个东西。</p>
+</blockquote>
+<hr>
+<h3 id="解读神经网络">解读神经网络</h3><h4 id="输入层，输出层，隐藏层">输入层，输出层，隐藏层</h4><p>神经网络其实就是这些不同的神经元组合在一起的集合：</p>
+<p><img src="/img/16_09_07/005.png" alt=""></p>
+<p>具体来说：</p>
+<ul>
+<li><p>上图中有三个输入单元：$x_{1}$,$x_{2}$和$x_{3}$，当然我们也可以加入值为1的$x_{0}$。</p>
+</li>
+<li><p>中间有三个神经元：$a_{1}^{(2)}$，$a_{2}^{(2)}$和$a_{3}^{(2)}$，同理，你可以可以加上值永远为1的偏置单元$a_{0}^{(2)}$。</p>
+</li>
+<li><p>然后，我们在最右侧有第三层，第三层的这个节点输出了假设函数$h(x)$的计算结果$h_{Θ}(x)$。</p>
+</li>
+</ul>
+<p>用神经网络的术语来说，第一层也被称为<strong>输入层</strong>，因为我们在这一层输入我们的特征项$x_{1}$，$x_{2}$和$x_{3}$。</p>
+<p>最后一层，也被称为<strong>输出层</strong>，因为这一层的神经元会输出假设函数的最终计算结果$h_{Θ}(x)$。</p>
+<p>中间层，也被称为<strong>隐藏层</strong>，在监督学习中，你能看到输入，也能看到输出，而隐藏层的值在你的训练过程中是看不到的，它的值不是$x$也不是$y$，所以我们叫它隐藏层。神经网络可以有不止一个的隐藏层。<strong>在神经网络中，任何一个非输入层且非输出层，就被称为隐藏层</strong>。</p>
+<h4 id="神经网络运行原理">神经网络运行原理</h4><p><img src="/img/16_09_07/005.png" alt=""></p>
+<p>接下来，让我们来逐步分析，上图所呈现的神经网络的计算步骤。</p>
+<p>首先需要说明以下两个符号的含义：</p>
+<ul>
+<li>$a_{i}^{(j)}$ 表示第j层的第i个神经元。</li>
+</ul>
+<blockquote>
+<p>具体来说$a_{1}^{2}$表示的是第2层的第1个激励，即隐藏层的第一个激励。</p>
+<p>所谓<strong>激励(activation)</strong>是指由一个具体神经元读入计算并输出的值。</p>
+</blockquote>
+<ul>
+<li>$Θ^{(j)}$ 表示层与层之间权重的<strong>参数矩阵</strong>(或者叫<strong>权重矩阵</strong>)(比如说从第一层到第二层、或者从第二层到第三层的作用)。</li>
+</ul>
+<p>具体来说，$a_{1}^{(2)}$的值的计算是这样的：</p>
+<p>$$<br>a_{1}^{(2)} = g(Θ_{10}^{(1)}x_{0} +<br>Θ_{11}^{(1)}x_{1} +<br>Θ_{12}^{(1)}x_{2} +<br>Θ_{13}^{(1)}x_{3}<br>)<br>$$</p>
+<blockquote>
+<p>不要忘记这里的$g$函数是S型函数(或者说是S激励函数，也叫作逻辑激励函数)。</p>
+</blockquote>
+<p>我们可以把隐藏层的三个神经元的计算结果都写出来：</p>
+<p>$$<br>a_{1}^{(2)} = g(Θ_{10}^{(1)}x_{0} +<br>Θ_{11}^{(1)}x_{1} +<br>Θ_{12}^{(1)}x_{2} +<br>Θ_{13}^{(1)}x_{3}<br>)<br>$$</p>
+<p>$$<br>a_{2}^{(2)} = g(Θ_{20}^{(1)}x_{0} +<br>Θ_{21}^{(1)}x_{1} +<br>Θ_{22}^{(1)}x_{2} +<br>Θ_{23}^{(1)}x_{3}<br>)<br>$$</p>
+<p>$$<br>a_{3}^{(2)} = g(Θ_{30}^{(1)}x_{0} +<br>Θ_{31}^{(1)}x_{1} +<br>Θ_{32}^{(1)}x_{2} +<br>Θ_{33}^{(1)}x_{3}<br>)<br>$$</p>
+<p>这里我们有三个输入单元和三个隐藏单元，这样一来，参数矩阵$Θ^{(1)}$控制了我们来自三个输入单元到三个隐藏单元的映射。因此$Θ^{(1)}$的维数是$R^{3×4}$的(考虑$x_{0}$的情况下)矩阵。</p>
+<p>更一般的，如果一个神经网络在第$j$层有$s_{j}$个单元，在$j+1$层有$s_{j+1}$个单元，那么第$j$层的参数矩阵$Θ^{(j)}$的维度就是$s_{j+1}×(s_{j} + 1)$</p>
+<p>以上我们讨论了三个隐藏单位是怎么计算它们的值的，最后，在输出层，我们还有一个单元，它用来计算$h_{Θ}(x)$：</p>
+<p>$$<br>h_{Θ}(x) = a_{1}^{(3)}=g(<br>Θ_{10}^{(2)}a_{0}^{(2)} +<br>Θ_{11}^{(2)}a_{1}^{(2)} +<br>Θ_{12}^{(2)}a_{2}^{(2)} +<br>Θ_{13}^{(2)}a_{3}^{(2)}<br>)<br>$$</p>
+<p>以上就是从数学上对一个人工神经网络的定义。</p>
+<h2 id="神经网络的表示II">神经网络的表示II</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/Hw3VK/model-representation-ii" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>这节课，将介绍如何高效地进行计算，并展示一个向量化的实现方法。更重要的是让你们明白神经网络的好处所在，并且介绍它是如何帮助我们学习复杂的非线性假设的。</p>
+</blockquote>
+<h3 id="前向传播(forward_propagation)的向量化实现">前向传播(forward propagation)的向量化实现</h3><p>以这个神经网络为例：</p>
+<p><img src="/img/16_09_07/006.png" alt=""></p>
+<p>上一节我们介绍过假设函数的计算方式，以及上面这些方程的含义。接下来，我要定义一些额外的项，来简化上面的式子的表示，比如我要把上面第一行(用来表示第一个隐藏层输出的值)：</p>
+<p>$$<br>a_{1}^{(2)} = g(Θ_{10}^{(1)}x_{0} +<br>Θ_{11}^{(1)}x_{1} +<br>Θ_{12}^{(1)}x_{2} +<br>Θ_{13}^{(1)}x_{3}<br>)<br>$$</p>
+<p>改写为：</p>
+<p>$$<br>a_{1}^{(2)} = g(z^{(2)}_{1})<br>$$</p>
+<p>可见：</p>
+<p>$$<br>z^{(2)}_{1} = Θ_{10}^{(1)}x_{0} +<br>Θ_{11}^{(1)}x_{1} +<br>Θ_{12}^{(1)}x_{2} +<br>Θ_{13}^{(1)}x_{3}<br>$$</p>
+<p>其中$z^{(2)}_{1}$的上标$^{(2)}$表示<strong>神经网络的第二层(即这里的隐藏层)</strong>，下标$_{1}$表示<strong>当前层的第一个元素</strong>。</p>
+<p>我们通过同样的方式定义$a_{2}^{(2)}$和$a_{3}^{(2)}$。</p>
+<p>$$<br>a_{2}^{(2)} = g(z^{(2)}_{2})<br>$$</p>
+<p>$$<br>a_{3}^{(2)} = g(z^{(2)}_{3})<br>$$</p>
+<p>因此，这些$z$值都是$x_{0}$、$x_{1}$、$x_{2}$和$x_{3}$的加权线性组合，然后带入一个特定的神经元，</p>
+<p>如果你仔细观察表达式中红色方框内的区域：</p>
+<p><img src="/img/16_09_07/007.png" alt=""></p>
+<p>你会发现，这里其实是一个矩阵的乘法运算：</p>
+<p>$$<br>Θ^{(1)}x<br>$$</p>
+<p>这样一来，我们就能将神经网络的计算，向量化了。</p>
+<p>具体而言，我们定义特征向量$x$：</p>
+<p>$$<br>x=<br>\begin{bmatrix}<br>x_{0} \\<br>x_{1} \\<br>x_{2} \\<br>x_{3}<br>\end{bmatrix}<br>$$</p>
+<blockquote>
+<p>其中$x_{0}=1$</p>
+</blockquote>
+<p>并定义$z^{(2)}$：</p>
+<p>$$<br>z^{(2)}=<br>\begin{bmatrix}<br>z^{(2)}_{1} \\<br>z^{(2)}_{2} \\<br>z^{(2)}_{3}<br>\end{bmatrix}<br>$$</p>
+<blockquote>
+<p>注意，这里的$z^{(2)}$是一个三维向量。</p>
+</blockquote>
+<p>我们只需要两个步骤，就可以计算出$a^{(2)}$向量了：</p>
+<p>$$<br>z^{(2)}=Θ^{(1)}x<br>$$</p>
+<p>$$<br>a^{(2)}=g(z^{(2)})<br>$$</p>
+<blockquote>
+<p>注意，这里的$a^{(2)}$也是一个三维向量，这里的激励函数$g()$将对$z^{(2)}$中的每个元素进行计算。<br>说明一下，在输入层虽然我们有$x$输入，但我们可以把这些输入想象成是第一层的激励。所以可以定义$a^{(1)}=x$，这样就有了向量$a^{(1)}$。</p>
+</blockquote>
+<p>将向量$x$替换为向量$a^{(1)}$:</p>
+<p>$$<br>z^{(2)}=Θ^{(1)}a^{(1)}<br>$$</p>
+<hr>
+<p>现在，就我目前所写的，我得到了$a^{(2)}_{1}$、$a^{(2)}_{2}$和$a^{(2)}_{3}$的值，但是我同样还需要隐藏层的偏置单元$a^{(2)}_{0}$，这个额外的偏执单元值为1：</p>
+<p>$$<br>a^{(2)}_{0}=1<br>$$</p>
+<p>加上偏置单元后，向量$a^{(2)}$的长度变成了4：</p>
+<p>$$<br>a^{(2)}\in \mathbb{R}^{4}<br>$$</p>
+<p>最后，为了计算实际输出值：</p>
+<p>$$<br>h_{Θ}(x) = a_{1}^{(3)}=g(<br>Θ_{10}^{(2)}a_{0}^{(2)} +<br>Θ_{11}^{(2)}a_{1}^{(2)} +<br>Θ_{12}^{(2)}a_{2}^{(2)} +<br>Θ_{13}^{(2)}a_{3}^{(2)}<br>)<br>$$</p>
+<p>我们计算出代表$Θ_{10}^{(2)}a_{0}^{(2)} +Θ_{11}^{(2)}a_{1}^{(2)} + Θ_{12}^{(2)}a_{2}^{(2)} + Θ_{13}^{(2)}a_{3}^{(2)}$的$z^{(3)}$，并将其带入激励函数，最后就能得出$h(x)$的值了：</p>
+<p>$$<br>z^{(3)}=Θ^{(2)}a^{(2)}<br>$$</p>
+<p>$$<br>h_{Θ}(x)=a^{(3)}=g(z^{(3)})<br>$$</p>
+<p>这就是计算$h_{Θ}(x)$的过程，也称为<strong>前向传播(forward propagation)</strong>。</p>
+<blockquote>
+<p>这样的命名是因为我们从输入层的激励开始，然后进行前向传播给隐藏层，并计算隐藏层的激励，然后我们继续向前传播，并计算出层的激励，这个从输入层，到隐藏层，再到输出层，依次计算激励的过程，叫<strong>前向传播</strong>。</p>
+</blockquote>
+<h3 id="神经网络与逻辑回归的对比，以及学习非线性假设的原理">神经网络与逻辑回归的对比，以及学习非线性假设的原理</h3><p>这种前向传播也可以帮助我们了解神经网络的原理，以及解释为什么神经网络可以帮助我们学习非线性假设。</p>
+<p>例如下面这个神经网络：</p>
+<p><img src="/img/16_09_07/008.png" alt=""></p>
+<p>我们暂时盖住左边部分，看右侧这一部分：</p>
+<p><img src="/img/16_09_07/009.png" alt=""></p>
+<p>这看起来很像逻辑回归，在逻辑回归中，我们就用这一个逻辑回归单元来预测$h(x)$的值。具体来说：</p>
+<p>$$<br>h_{Θ}(x)=g(Θ_{10}^{(2)}a_{0}^{(2)} + Θ_{11}^{(2)}a_{1}^{(2)} + Θ_{12}^{(2)}a_{2}^{(2)} + Θ_{13}^{(2)}a_{3}^{(2)})<br>$$</p>
+<p>这很像一个很标准的逻辑回归模型，不同之处在于这里使用的是大写的$Θ$而不是小写的$\theta$，神经网络的输入特征值是通过隐藏层计算的。即，神经网络所做的工作看起来就像是逻辑回归，但是它不是使用$x_{1}$、$x_{2}$、$x_{3}$作为输入特征，而是使用$a_{1}^{(2)}$、$a_{2}^{(2)}$、$a_{3}^{(2)}$。</p>
+<hr>
+<p><img src="/img/16_09_07/010.png" alt=""></p>
+<p>然而有趣的是，特征项$a_{1}^{(2)}$、$a_{2}^{(2)}$、$a_{3}^{(2)}$是通过输入的函数来学习的。具体来说，就是从第一层(Layer1)映射到第二层(Layer2)的函数。这个函数由其他一组参数$Θ^{(1)}$决定。所以，在神经网络中，它没有用输入特征$x_{1}$、$x_{2}$、$x_{3}$来训练逻辑回归，而是训练逻辑回归的输入:$a_{1}^{(2)}$、$a_{2}^{(2)}$、$a_{3}^{(2)}$。</p>
+<p>可以想象，如果在$Θ^{(1)}$中选择不同的参数有时可以学习到一些很有趣的，和很复杂的特征，就可以得到一个比使用原始输入$x_{1}$、$x_{2}$、$x_{3}$时得到的假设更好的假设。</p>
+<p>你也可以使用多项式作为输入，例如：$x_{1}x_{2}$、$x_{2}x_{3}$等作为输入项。这个算法都可以灵活的快速学习任意的特征项，并把最后的结果通过最后一个单元的逻辑回归输出出来。</p>
+<h3 id="神经网络的架构">神经网络的架构</h3><p>你还可以用其他类型的图来表示神经网络。神经网络中神经元相连接的方式，称为<strong>神经网络的架构(Architecture)</strong>。</p>
+<p>下面是另外一个神经网络架构的例子：</p>
+<p><img src="/img/16_09_07/011.png" alt=""></p>
+<p>在这个神经网络中，第一层被称为输入层，第四层任然是我们的输出层。其中，第二层和第三层都是隐藏层。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/09/05/斯坦福机器学习课程 第四周 (1)神经网络引入/" itemprop="url">
                 斯坦福机器学习课程 第四周 (1)神经网络引入
               </a>
@@ -2498,166 +2723,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/07/25/斯坦福机器学习课程 第一周 (6)线性代数复习/" itemprop="url">
-                斯坦福机器学习课程 第一周 (6)线性代数复习
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-07-25T01:51:00+08:00" content="2016-07-25">
-            2016-07-25
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/07/25/斯坦福机器学习课程 第一周 (6)线性代数复习/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/25/斯坦福机器学习课程 第一周 (6)线性代数复习/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="线性代数复习">线性代数复习</h2><blockquote>
-<p>这个可选模块提供了线性代数概念的复习。在接下来的课程中，对线性代数的基本理解是必要的，特别是当我们开始涵盖多个变量的模型时。</p>
-</blockquote>
-<h3 id="矩阵和向量">矩阵和向量</h3><p><a href="https://www.coursera.org/learn/machine-learning/lecture/38jIT/matrices-and-vectors" target="_blank" rel="external">视频地址</a></p>
-<p>我们先复习一下线性代数的知识。在这段视频中，我会向大家介绍<strong>矩阵</strong>和<strong>向量</strong>的概念。</p>
-<h4 id="矩阵">矩阵</h4><blockquote>
-<p><strong>Matrix</strong>:Rectangular array of numbers.</p>
-<p><strong>矩阵</strong>是指由数字组成的矩形阵列并写在方括号中间。</p>
-</blockquote>
-<p>例如下面就是一个矩阵：</p>
-<p>$$<br>\begin{bmatrix}<br>1902 &amp; 191 \\<br>1371 &amp; 821 \\<br>949 &amp; 1437 \\<br>147 &amp; 1448<br>\end{bmatrix}<br>$$</p>
-<p>这些数字可能是机器学习问题的特征值，也可能表示其他意思。</p>
-<p>接下来看一下其他矩阵的例子：</p>
-<p>$$<br>\begin{bmatrix}<br>1 &amp; 2 &amp; 3 \\<br>4 &amp; 5 &amp; 6<br>\end{bmatrix}<br>$$</p>
-<p>这里我们还需要知道的是，矩阵的维度应该写作：矩阵的行数乘以列数。具体到第一个例子是一个$4 × 2$的矩阵(即行数乘以列数)。第二个例子中的矩阵是一个$2 × 3$的矩阵。所以我们说这个矩阵的维度是$2 × 3$维。</p>
-<p>有时候大家会发现会使用字母$\Re$来表示一个矩阵的维度。例如第一个例子中可以写作一个$\Re^{4 × 2}$的矩阵，第二个例子中可以说是一个$\Re^{2 × 3}$的矩阵。</p>
-<p>接下来让我们来谈谈如何表达矩阵的某个特定元素。这里我说矩阵元素(这里指矩阵内部的某个数)。</p>
-<p>我们通常使用矩阵名加下标的方式来表达矩阵中的某个元素。例如:</p>
-<p>$$<br>A_{ij}<br>$$</p>
-<p>表达的是矩阵A中第$i$行，第$j$列的元素。</p>
-<p>在第一个例子的矩阵中，$A_{11}$就等于1402，$A_{11}$就等于191。</p>
-<p>如果你写出了$A_{43}$，这应该表示的是第四行第三列。而你知道 这个矩阵没有第三列。因此这是未定义的。或者你可以认为这是一个错误。</p>
-<p>因此，矩阵提供了一种很好的方式，让你快速整理索引和访问大量数据。所以，这就是矩阵的定义。</p>
-<h4 id="向量">向量</h4><p>接下来让我们来谈谈什么是向量。</p>
-<blockquote>
-<p><strong>Vector</strong>:An n × 1 matrix.<br><strong>向量</strong>是只有一列的矩阵。</p>
-</blockquote>
-<p>例如下面就是一个向量：</p>
-<p>$$<br>y =<br>\begin{bmatrix}<br>460 \\<br>232 \\<br>315 \\<br>178<br>\end{bmatrix}<br>$$</p>
-<p>另一个术语是:这是一个四维的向量。也就意味着这是一个含有4个元素的向量。而且前面我们讲矩阵的时候提到过，这个符号$\Re^{3 × 2}$表示的是一个3行2列的矩阵，而对于这个向量，我们也同样可以表示为集合$\Re^{4}$。</p>
-<p>我们将使用符号$y_{i}$来代表向量$y$的第$i$个元素。例如这里$y_{1}$表示第一个元素460，$y_{2}$表示第二个元素232。只有$y_{1}$至$y_{4}$是有意义的，因为这定义的是一个四维向量。</p>
-<p>此外事实上有两种方法来表达某个向量中某个索引：</p>
-<p><img src="/img/16_07_25/001.png" alt=""></p>
-<p>左边是<strong>1-索引向量</strong>，它的元素写作$y_{1}$，$y_{2}$，$y_{3}$，$y_{4}$。而右边的是<strong>0-索引向量</strong>，它的元素写作，$y_{0}$，$y_{1}$，$y_{2}$，$y_{3}$。这有点像一些初级语言中的数组。</p>
-<p>事实上在数学中，1-索引的情况比较多。而对于很多机器学习的应用问题来说0-索引向量为我们提供了一个更方便的符号表达。</p>
-<p>所以你应该默认我们使用的是1-索引法表示向量。在本课程的后面所有 关于线性代数的视频中，我都将使用1-索引法表示向量。</p>
-<p>但你要明白，当我们谈论到机器学习的应用问题时，如果我们需要使用0-索引向量的话，我会明确地告诉你</p>
-<p>最后，按照惯例，通常在书写矩阵和向量时大多数人会使用大写字母来表示矩阵。因此，我们要使用大写字母，如$A$、$B$、$C$、$X$来表示矩阵。而通常我们会使用小写字母，像$a$、$b$、$x$、$y$来表示数字或是原始的数字或标量或向量。这是实际的使用习惯，我们也经常看到使用小写字母$y$来表示向量，但我们平时是用大写字母来表示矩阵 。</p>
-<h3 id="加减法与数乘运算">加减法与数乘运算</h3><p><a href="https://www.coursera.org/learn/machine-learning/lecture/R4hiJ/addition-and-scalar-multiplication" target="_blank" rel="external">视频地址</a></p>
-<p>在这段视频中，我们将要介绍矩阵的加减法以及数乘运算。</p>
-<h4 id="矩阵的加减法运算">矩阵的加减法运算</h4><p>让我们从下面这个例子开始：</p>
-<p>$$<br>\begin{bmatrix}<br>1 &amp; 0 \\<br>2 &amp; 5 \\<br>3 &amp; 1<br>\end{bmatrix}<br>+<br>\begin{bmatrix}<br>4 &amp; 0.5 \\<br>2 &amp; 5 \\<br>0 &amp; 1<br>\end{bmatrix}<br>=<br>\begin{bmatrix}<br>5 &amp; 0.5 \\<br>4 &amp; 10 \\<br>3 &amp; 2<br>\end{bmatrix}<br>$$</p>
-<p>假设有这样两个矩阵，如果想对它们做求和运算，应该怎么做呢？答案是：如果你想将两个矩阵相加，你只需要将这两个矩阵的每一个元素都逐个相加即可。</p>
-<p>这里大家不难发现，<strong>只有相同维度的两个矩阵才能相加</strong>。对于这个例子而言，是两个3行2列的矩阵相加，这是一个3行2列的矩阵，因此这两个矩阵相加的结果也是一个3行2列的矩阵。所以你只能将相同维度的矩阵，进行相加运算，同时所得到的结果将会是一个新的矩阵，这个矩阵与相加的两个矩阵维度相同。</p>
-<p>反过来，如果你想将下面这样两个维度不相同的矩阵相加，就会出现错误了。所以我们不能将它们相加，这两个矩阵的和是没有意义的。</p>
-<p>$$<br>\begin{bmatrix}<br>1 &amp; 0 \\<br>2 &amp; 5 \\<br>3 &amp; 1<br>\end{bmatrix}<br>+<br>\begin{bmatrix}<br>4 &amp; 0.5 \\<br>2 &amp; 5<br>\end{bmatrix}<br>=<br>error<br>$$</p>
-<p>这就是矩阵的加法运算。</p>
-<h4 id="矩阵的数乘运算">矩阵的数乘运算</h4><p>矩阵的数乘运算指的是用标量去乘以矩阵中的每个元素，最终得到的结果就是数乘运算的结果矩阵。这里的标量指的是实数。</p>
-<p>例如下面两个例子：</p>
-<p>$$<br>3 ×<br>\begin{bmatrix}<br>1 &amp; 0 \\<br>2 &amp; 5 \\<br>3 &amp; 1<br>\end{bmatrix}<br>=<br>\begin{bmatrix}<br>3 &amp; 0 \\<br>6 &amp; 15 \\<br>9 &amp; 3<br>\end{bmatrix}<br>$$</p>
-<p>$$<br>\begin{bmatrix}<br>4 &amp; 0 \\<br>6 &amp; 3<br>\end{bmatrix}<br>/ 4<br>=<br>1/4<br>\begin{bmatrix}<br>4 &amp; 0 \\<br>6 &amp; 3<br>\end{bmatrix}<br>=<br>\begin{bmatrix}<br>1 &amp; 0 \\<br>3/2 &amp; 3/4<br>\end{bmatrix}<br>$$</p>
-<h3 id="矩阵乘法">矩阵乘法</h3><p>见<a href="/2015/11/29/线性代数01-矩阵乘法/">矩阵乘法</a></p>
-<h3 id="矩阵乘法性质">矩阵乘法性质</h3><p><a href="https://www.coursera.org/learn/machine-learning/lecture/W1LNU/matrix-multiplication-properties" target="_blank" rel="external">视频地址</a></p>
-<p>本节主要介绍矩阵乘法的性质。</p>
-<h4 id="矩阵乘法不满足交换律">矩阵乘法不满足交换律</h4><blockquote>
-<p>Let A and B be matrices.Then in general, A × B ≠ B × A.(not commutative.)<br>如果A和B是矩阵，那么一般情况下，A × B ≠ B × A (不满足交换律)。</p>
-</blockquote>
-<p>例如：</p>
-<p>$$<br>\begin{bmatrix}<br>1 &amp; 1 \\<br>0 &amp; 0<br>\end{bmatrix}<br>\begin{bmatrix}<br>0 &amp; 0 \\<br>2 &amp; 0<br>\end{bmatrix}<br>=<br>\begin{bmatrix}<br>2 &amp; 0 \\<br>0 &amp; 0<br>\end{bmatrix}<br>$$</p>
-<p>$$<br>\begin{bmatrix}<br>0 &amp; 0 \\<br>2 &amp; 0<br>\end{bmatrix}<br>\begin{bmatrix}<br>1 &amp; 1 \\<br>0 &amp; 0<br>\end{bmatrix}<br>=<br>\begin{bmatrix}<br>0 &amp; 0 \\<br>2 &amp; 2<br>\end{bmatrix}<br>$$</p>
-<h4 id="矩阵乘法满足结合律">矩阵乘法满足结合律</h4><p>$$<br>A × B × C = (A × B) × C = A × (B × C)<br>$$</p>
-<h4 id="单位矩阵">单位矩阵</h4><p>定义单位矩阵为$I$(或者$I_{n×n}$)。单位矩阵满足:</p>
-<p>$$<br>I × Z = Z × I = Z<br>$$</p>
-<p>其中$Z$是任意矩阵。</p>
-<p>实际上单位矩阵就是对角线上元素为1，其他元素为0的方阵。例如下面几个都是单位矩阵：</p>
-<p>$$<br>\begin{bmatrix}<br>1 &amp; 0 \\<br>0 &amp; 1<br>\end{bmatrix}<br>$$</p>
-<p>$$<br>\begin{bmatrix}<br>1 &amp; 0 &amp; 0\\<br>0 &amp; 1 &amp; 0\\<br>0 &amp; 0 &amp; 1<br>\end{bmatrix}<br>$$</p>
-<h3 id="矩阵的逆和矩阵的转置">矩阵的逆和矩阵的转置</h3><h4 id="矩阵的逆">矩阵的逆</h4><p>矩阵的逆以及求解逆的方式，见<a href="/2015/11/29/线性代数02-矩阵的逆/">矩阵的逆</a></p>
-<p>奇异矩阵的介绍，见<a href="/2015/11/30/线性代数04-奇异矩阵/">奇异矩阵</a></p>
-<h4 id="矩阵的转置">矩阵的转置</h4><p>如果用$A$表示一个矩阵，那么矩阵A的转置就是$A^{T}$。矩阵的转置就相当于将这个矩阵按照45度角求镜像，矩阵的行变为矩阵的列，矩阵的列变为矩阵的行。</p>
-<blockquote>
-<p>Let A be an $m × n$ matrix, and let $B = A^{T}$.Then $B$ is an $n × m$ matrix, and $B_{ij} = A_{ji}$.<br>如果A是一个$m × n$的矩阵，并且矩阵B是A的转置，那么B是一个$n × m$的矩阵，并且$B_{ij} = A_{ji}$。</p>
-</blockquote>
-<p>举个例子：</p>
-<p>$$<br>A =<br>\begin{bmatrix}<br>1 &amp; 2 &amp; 0\\<br>3 &amp; 5 &amp; 9<br>\end{bmatrix}<br>$$</p>
-<p>$$<br>A^{T} =<br>\begin{bmatrix}<br>1 &amp; 3\\<br>2 &amp; 5\\<br>0 &amp; 9<br>\end{bmatrix}<br>$$</p>
-<p>矩阵的转置就是第一个矩阵的第一行转变为转置的第一列，第二行转变为第二列。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2696,7 +2761,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">108</span>
+              <span class="site-state-item-count">109</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
