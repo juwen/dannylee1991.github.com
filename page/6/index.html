@@ -199,6 +199,378 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2016/09/11/斯坦福机器学习课程 第四周 (3)神经网络应用实例/" itemprop="url">
+                斯坦福机器学习课程 第四周 (3)神经网络应用实例
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-09-11T19:22:00+08:00" content="2016-09-11">
+            2016-09-11
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/09/11/斯坦福机器学习课程 第四周 (3)神经网络应用实例/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/11/斯坦福机器学习课程 第四周 (3)神经网络应用实例/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="神经网络应用实例">神经网络应用实例</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/rBZmG/examples-and-intuitions-i" target="_blank" rel="external">视频地址 part1</a></p>
+<p><a href="https://www.coursera.org/learn/machine-learning/lecture/solUx/examples-and-intuitions-ii" target="_blank" rel="external">视频地址 part2</a></p>
+<blockquote>
+<p>接下来将通过一个具体的例子来解释神经网络是如何计算关于输入的复杂的非线性函数的。</p>
+</blockquote>
+<h3 id="问题引入">问题引入</h3><p>考虑下面的问题：</p>
+<p>我们有二进制的输入特征$x_{1}$和$x_{2}$，它们的取值要么是0，要么是1。这个例子中，我画出了两个正样本和两个负样本。</p>
+<p><img src="/img/16_09_11/001.png" alt=""></p>
+<p>但你可以认为这是更复杂的学习问题的简化版本。在这个复杂问题中，我们可能在右上角有一堆正样本，在右下方有一堆用圆圈来表示的负样本。</p>
+<p><img src="/img/16_09_11/002.png" alt=""></p>
+<p>我们想要做到的就是有一个非线性的决策边界来区分正负样本：</p>
+<p><img src="/img/16_09_11/003.png" alt=""></p>
+<p>那么，神经网络是如何做到的呢？为了描述方便，我继续使用上面二进制输入特征的例子。</p>
+<p>具体来讲，我们要计算的目标函数:</p>
+<p>$$y=x_{1} XNOR x_{2}$$</p>
+<blockquote>
+<p>求同或(都为真或都为假时，结果为真，否则结果为假)</p>
+</blockquote>
+<p>或者也可以写作：</p>
+<p>$$NOT(y=x_{1} XOR x_{2})$$</p>
+<blockquote>
+<p>求异或(都为真或都为假时，结果为假，否则结果为真)再取反</p>
+</blockquote>
+<h3 id="AND、OR、NOT的实现">AND、OR、NOT的实现</h3><h4 id="AND">AND</h4><p>为了解释神经网络模型如何来拟合这种训练集。我们先讲解一个稍微简单一些的神经网络，它拟合了<strong>“且运算”(AND)</strong>：</p>
+<p><img src="/img/16_09_11/004.png" alt=""></p>
+<p>假设我们有二进制输入$x_{1}$和$x_{2}$，目标函数是$y=x_{1}ANDx_{2}$，那么我们怎样得到一个具有单个神经元的神经网络来计算这个<strong>逻辑与</strong>呢？为了做到这一点，我们也需要画出偏置单元（即下图中+1的单元）：</p>
+<p><img src="/img/16_09_11/005.png" alt=""></p>
+<p>接下来让我给这个网络分配一些权重(参数)：</p>
+<p><img src="/img/16_09_11/006.png" alt=""></p>
+<p>所以我的假设函数是：</p>
+<p>$$<br>h_{Θ}(x)=g(-30 + 20x_{1} + 20x_{2})<br>$$</p>
+<p>这里$Θ^{(1)}_{10}$就是$-30$、$Θ^{(2)}_{11}$就是$20$、$Θ^{(3)}_{12}$就是$20$。</p>
+<p>接下来介绍一下这个小神经元是怎样计算的。</p>
+<p>回忆一下激励函数$g(z)$看起来是这样的：</p>
+<p><img src="/img/16_09_11/007.png" alt=""></p>
+<p>再来看看我们的假设在各种情况下的输出：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$x_{1}$</th>
+<th style="text-align:center">$x_{2}$</th>
+<th style="text-align:center">$h_{Θ}(x)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$g(-30)\approx0$</td>
+</tr>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$g(-10)\approx0$</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$g(-10)\approx0$</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$g(10)\approx1$</td>
+</tr>
+</tbody>
+</table>
+<p>这就是逻辑“与”的计算结果。</p>
+<hr>
+<h4 id="OR">OR</h4><p>下面的神经网络使用同样的原理实现了“或”的功能：</p>
+<p><img src="/img/16_09_11/008.png" alt=""></p>
+<p>假设函数为：</p>
+<p>$$<br>h_{Θ}(x)=g(-10 + 20x_{1} + 20x_{2})<br>$$</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$x_{1}$</th>
+<th style="text-align:center">$x_{2}$</th>
+<th style="text-align:center">$h_{Θ}(x)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$g(-10)\approx0$</td>
+</tr>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$g(10)\approx1$</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$g(10)\approx1$</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$g(30)\approx1$</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h4 id="NOT">NOT</h4><p>下面的神经网络使用同样的原理实现了“非”的功能：</p>
+<p><img src="/img/16_09_11/009.png" alt=""></p>
+<p>假设函数为：</p>
+<p>$$<br>h_{Θ}(x)=g(10 - 20x_{1})<br>$$</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$x_{1}$</th>
+<th style="text-align:center">$h_{Θ}(x)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$g(10)\approx1$</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$g(-10)\approx0$</td>
+</tr>
+</tbody>
+</table>
+<h3 id="一个更复杂的例子">一个更复杂的例子</h3><p>下面的神经网络使用同样的原理实现了“$(NOTx_{1})AND(NOTx_{2})$”的功能：</p>
+<p><img src="/img/16_09_11/010.png" alt=""></p>
+<p>假设函数为：</p>
+<p>$$<br>h_{Θ}(x)=g(10 - 20x_{1} - 20x_{2})<br>$$</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$x_{1}$</th>
+<th style="text-align:center">$x_{2}$</th>
+<th style="text-align:center">$h_{Θ}(x)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$g(10)\approx1$</td>
+</tr>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$g(-10)\approx0$</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$g(-10)\approx0$</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$g(-30)\approx0$</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="求解_XNOR">求解    XNOR</h3><p>接下来我们使用上面求解的以下三个神经网络，就可以来运算$x_{1}XNORx_{2}$了：</p>
+<p><img src="/img/16_09_11/011.png" alt=""></p>
+<p>为了拟合$x_{1}XNORx_{2}$的非线性的样本分布：</p>
+<p><img src="/img/16_09_11/001.png" alt=""></p>
+<p>我们可以构建以下神经网络的隐藏层：</p>
+<p><img src="/img/16_09_11/012.png" alt=""></p>
+<p>对应的真值表如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$x_{1}$</th>
+<th style="text-align:center">$x_{2}$</th>
+<th style="text-align:center">$a_{1}^{(2)}$</th>
+<th style="text-align:center">$a_{2}^{(2)}$</th>
+<th style="text-align:center">$h_{Θ}(x)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center"><strong>0</strong></td>
+<td style="text-align:center"><strong>1</strong></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center"><strong>0</strong></td>
+<td style="text-align:center"><strong>0</strong></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center"><strong>0</strong></td>
+<td style="text-align:center"><strong>0</strong></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center"><strong>1</strong></td>
+<td style="text-align:center"><strong>0</strong></td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<p>有了$a_{1}^{(2)}$、$a_{2}^{(2)}$后，我们加入偏置单元，然后就可以得到输出层了：</p>
+<p><img src="/img/16_09_11/012.png" alt=""></p>
+<p>最终的真值表如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$x_{1}$</th>
+<th style="text-align:center">$x_{2}$</th>
+<th style="text-align:center">$a_{1}^{(2)}$</th>
+<th style="text-align:center">$a_{2}^{(2)}$</th>
+<th style="text-align:center">$h_{Θ}(x)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center"><strong>1</strong></td>
+</tr>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center"><strong>0</strong></td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center"><strong>0</strong></td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center"><strong>1</strong></td>
+</tr>
+</tbody>
+</table>
+<p>通过一个含有输入层、隐藏层、输出层的神经网络，我们最终拟合了$x_{1}XNORx_{2}$。</p>
+<blockquote>
+<p>更一般的理解是：在输入层中，我们有原始输入值，然后我们建立了一个隐藏层，用来计算稍微复杂一些的输入量的函数，然后通过添加另一个层我们得到了一个更复杂一点的函数，这就是神经网络可以计算较复杂函数的某种直观解释。</p>
+<p>我们知道，当层数很多的时候，你有一个相对简单的输入量的函数作为第二层，而第三层可以建立在此基础上来计算更加复杂一些的函数，然后再下一层，又可以计算再复杂一些的函数：</p>
+</blockquote>
+<p><img src="/img/16_09_11/014.png" alt=""></p>
+<h3 id="手写识别的展示">手写识别的展示</h3><p>接下来，将展示一段视频，来源于<strong>阳乐昆(Yann LeCun)</strong>，他是一名教授，供职于纽约大学，也是神经网络研究早期的奠基者之一，也是这一领域 大牛。他的很多理论和想法现在都已经被应用于各种各样的产品和应用中，遍布全世界。所以我想向大家展示一段他早期工作中的视频，这段视频中，他使用神经网络算法进行手写数字的识别。你也许记得，这门课刚开始的时候，我说过关于神经网络的一个早期成就，就是应用神经网络读取邮政编码，以帮助我们进行邮递。那么这便是其中的一项尝试。</p>
+<p>视频说明：</p>
+<p><img src="/img/16_09_11/015.png" alt=""></p>
+<p>视频如下：</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/yxuRnBEczUU" frameborder="0" allowfullscreen></iframe>
+
+<h2 id="神经网络的多类别分类">神经网络的多类别分类</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/gFpiW/multiclass-classification" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>这一节将介绍<strong>如何使用神经网络做多类别分类</strong>。</p>
+<p>在多类别分类中，通常有不止一个类别需要我们去区分，在上一节最后的视频中，我们提到了有关手写数字识别的问题，这实际上正是一个多类别分类的问题。因为识别数字从0到9，正好是10个类别。</p>
+</blockquote>
+<p>我们处理多类别分类的方法实际上是基于一个<strong>多神经网络算法</strong>而延伸出来的。</p>
+<p>让我们来看看下面这个例子：</p>
+<p>还是一个有关计算机视觉识别的例子，就像我之前介绍过的识别汽车的例子一样，但与之不同的是现在我们希望处理的是四个类别的分类问题，四个类别分别是行人、轿车、摩托车、卡车：</p>
+<p><img src="/img/16_09_11/016.png" alt=""></p>
+<p>任意给出一副图片，我们需要知道图片上是这四个类别中的哪一个。</p>
+<p>对于这样的一个问题，我们的做法是，<strong>建立一个具有四个输出单元的神经网络</strong>：</p>
+<p><img src="/img/16_09_11/017.png" alt=""></p>
+<p>也就是说，此时神经网络的输出是一个思维向量。因此现在的输出需要用一个向量来表示，这个向量中有四个元素，而我们要做的是对第一个输出元素进行分辨图片上是不是一个行人(Pedestrian)，然后对第二个元素分辨它是不是一辆轿车(Car)，对第三个元素分辨它是不是摩托车(Motorcycle)，对第四个元素分辨它是不是一辆卡车(Truck)。</p>
+<p>因此，如果图上是行人的话，我希望输出结果是：</p>
+<p>$$<br>h_{Θ}(x)\approx<br>\begin{bmatrix}<br>1 \\<br>0 \\<br>0 \\<br>0<br>\end{bmatrix}<br>$$</p>
+<p>如果图上是轿车的话，我希望输出结果是：</p>
+<p>$$<br>h_{Θ}(x)\approx<br>\begin{bmatrix}<br>0 \\<br>1 \\<br>0 \\<br>0<br>\end{bmatrix}<br>$$</p>
+<p>如果图上是摩托车的话，我希望输出结果是：</p>
+<p>$$<br>h_{Θ}(x)\approx<br>\begin{bmatrix}<br>0 \\<br>0 \\<br>1 \\<br>0<br>\end{bmatrix}<br>$$</p>
+<p>如果图上是卡车的话，我希望输出结果是：</p>
+<p>$$<br>h_{Θ}(x)\approx<br>\begin{bmatrix}<br>0 \\<br>0 \\<br>0 \\<br>1<br>\end{bmatrix}<br>$$</p>
+<p>所以，这和我们介绍逻辑回归时讨论过的一对多方法其实是一样的，只不过现在我们有四个逻辑回归的分类器，而我们需要对每一个分类器都分别进行识别分类。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/09/07/斯坦福机器学习课程 第四周 (2)神经网络/" itemprop="url">
                 斯坦福机器学习课程 第四周 (2)神经网络
               </a>
@@ -2442,287 +2814,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/07/26/斯坦福机器学习课程 第二周 (1)编程环境设置-Octave:MATLAB/" itemprop="url">
-                斯坦福机器学习课程 第二周 (1)编程环境设置-Octave/MATLAB
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-07-26T12:17:00+08:00" content="2016-07-26">
-            2016-07-26
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/07/26/斯坦福机器学习课程 第二周 (1)编程环境设置-Octave:MATLAB/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/26/斯坦福机器学习课程 第二周 (1)编程环境设置-Octave:MATLAB/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="设置你的编程环境">设置你的编程环境</h2><p>这个机器学习的课程包括几个你需要完成的编程任务。这些任务需要Octave或MATLAB科学计算语言。</p>
-<ul>
-<li>Octave是一个免费、开源的应用。它拥有一个文本接口以及一个实验图形化接口。</li>
-<li>MATLAB是一个专有软件。但是针对本套课程有一个免费的受限制的版本可以使用。</li>
-</ul>
-<h3 id="FAQ">FAQ</h3><p>这些需要花钱吗？</p>
-<p>针对你当前正在学习的课程，这两个软件都是免费的。Octave是在GNU协议下被开放的，这意味着它一直是可以免费下载的。MATLAB只能用于完成本课程中的编程任务。对于其他的使用目的（例如你在完成课程之后去做的你自己的工作），MATLAB可以从Mathworks直接授权给个人或者公司。</p>
-<p>这两者（Octave和MATLAB）质量有不同吗？</p>
-<p>这两个软件有一些微妙的区别。MATLAB会提供一个更平滑的体验（尤其在Mac下），包含更多的函数，以及能够更稳健的处理失败。然而，这套课程中使用到的函数在两个软件里都有的，并且不管是哪个应用，都有很多学生用它完成了课程内容。</p>
-<h2 id="在Windows下安装Octave/MATLAB">在Windows下安装Octave/MATLAB</h2><h3 id="在Windows下安装Octave">在Windows下安装Octave</h3><p><strong>使用这个链接来在Windows安装Octave</strong>:</p>
-<p><a href="http://wiki.octave.org/Octave_for_Microsoft_Windows" target="_blank" rel="external">http://wiki.octave.org/Octave_for_Microsoft_Windows</a></p>
-<p>在Windows下Octave能用来提交本课程的编程任务，但是需要安装一个在论坛区中的补丁。查看更多你当前版本的补丁信息，参见<a href="https://www.coursera.org/learn/machine-learning/discussions/vgCyrQoMEeWv5yIAC00Eog?page=2" target="_blank" rel="external">https://www.coursera.org/learn/machine-learning/discussions/vgCyrQoMEeWv5yIAC00Eog?page=2</a>。</p>
-<h3 id="在Windows下安装MATLAB。">在Windows下安装MATLAB。</h3><p>在course中MathWorks提供了一个MATLAB的入口。不过要注意的是请在课程的有效时间内使用(12周之内)。</p>
-<p>第一步：如果你没有MathWork，请<a href="https://www.mathworks.com/licensecenter/classroom/machine_learning_od/" target="_blank" rel="external">创建一个MathWork账号</a>。</p>
-<p>第二步：再次使用<a href="https://www.mathworks.com/licensecenter/classroom/machine_learning_od/" target="_blank" rel="external">这个连接</a>去下载并安装。你需要登录在第一步中创建的账号，然后开始安装。</p>
-<h2 id="在Mac_OS_X_(10-10_Yosemite_以及_10-9_Mavericks)上安装Octave/MATLAB">在Mac OS X (10.10 Yosemite 以及 10.9 Mavericks)上安装Octave/MATLAB</h2><h3 id="在Mac_OS_X上安装Octave">在Mac OS X上安装Octave</h3><p>Mac OS X上有一个被称为<a href="http://support.apple.com/en-us/HT202491" target="_blank" rel="external">Gatekeeper</a>的功能，这个功能只允许你安装来自App store的程序。你需要设置它来允许安装Octave。打开你的系统偏好，点击安全性与隐私，然后勾选设置允许下载的应用位置为“任何来源”。你需要输入密码来解锁设置页面。</p>
-<p><img src="/img/16_07_25/002.png" alt=""><br><img src="/img/16_07_25/003.png" alt=""></p>
-<p>2.下载<a href="http://sourceforge.net/projects/octave/files/Octave%20MacOSX%20Binary/2013-12-30%20binary%20installer%20of%20Octave%203.8.0%20for%20OSX%2010.9.1%20%28beta%29/GNU_Octave_3.8.0-6.dmg/download" target="_blank" rel="external">Octave3.8.0安装包</a>，文件有点大，可能需要花费一些时间。</p>
-<p>3.打开下载好的文件，可能在你的电脑上文件名为”GNU_Octave_3.8.0-6.dmg”，然后打开里面的”Octave-3.8.0-6.mpkg”。</p>
-<p>4.根据安装程序的说明。你也许需要输入你电脑的管理员密码。</p>
-<p>5.安装成功后，你会在应用中看到<strong>Octave-cli</strong>。这是一个Octave的文本界面入口，通过它，我们可以完成机器学习的编程任务。</p>
-<p>Octave也拥有一个叫做”Octave-gui”的处于实验阶段的图形界面入口，但我们任然建议你使用Octave-cli，因为它更稳定。</p>
-<blockquote>
-<p>提示：如果你在使用一个包管理器（例如MacPorts或者Homebrew），我们建议你使用<a href="http://wiki.octave.org/Octave_for_MacOS_X#Package_Managers" target="_blank" rel="external">通过包管理器的安装方式</a>。</p>
-</blockquote>
-<h3 id="在Mac_OS_X上安装MATLAB">在Mac OS X上安装MATLAB</h3><p>在course中MathWorks提供了一个MATLAB的入口。不过要注意的是请在课程的有效时间内使用(12周之内)。</p>
-<p>第一步：如果你没有MathWork，请<a href="https://www.mathworks.com/licensecenter/classroom/machine_learning_od/" target="_blank" rel="external">创建一个MathWork账号</a>。</p>
-<p>第二步：再次使用<a href="https://www.mathworks.com/licensecenter/classroom/machine_learning_od/" target="_blank" rel="external">这个连接</a>去下载并安装。你需要登录在第一步中创建的账号，然后开始安装。</p>
-<h2 id="在GNU/Linux上安装Octave/MATLAB">在GNU/Linux上安装Octave/MATLAB</h2><h3 id="在GNU/Linux上安装Octave">在GNU/Linux上安装Octave</h3><p>我们建议你<a href="http://wiki.octave.org/Octave_for_GNU/Linux" target="_blank" rel="external">使用系统包管理器来安装Octave</a></p>
-<p>在Ubuntu上，你可以使用：</p>
-<ul>
-<li><code>sudo apt-get update &amp;&amp; sudo apt-get install octave</code></li>
-</ul>
-<p>在Fedora上，你可以使用：</p>
-<ul>
-<li><code>sudo yum install octave-forge</code></li>
-</ul>
-<p>其他GNU/Linux系统，请参见<a href="http://wiki.octave.org/Octave_for_GNU/Linux" target="_blank" rel="external">这里</a></p>
-<h3 id="在GNU/Linux上安装MATLAB">在GNU/Linux上安装MATLAB</h3><p>第一步：如果你没有MathWork，请<a href="https://www.mathworks.com/licensecenter/classroom/machine_learning_od/" target="_blank" rel="external">创建一个MathWork账号</a>。</p>
-<p>第二步：再次使用<a href="https://www.mathworks.com/licensecenter/classroom/machine_learning_od/" target="_blank" rel="external">这个连接</a>去下载并安装。你需要登录在第一步中创建的账号，然后开始安装。</p>
-<h2 id="更多Octave/MATLAB的资源">更多Octave/MATLAB的资源</h2><h3 id="Octave资源">Octave资源</h3><p>在Octave命令行下，输入<strong>help</strong>跟上一个函数名来展示这个函数的说明文档。例如:<strong>help plot</strong>将呼起一个有关测绘(plotting)的帮助信息。更多的信息，请见<a href="http://www.gnu.org/software/octave/doc/interpreter/" target="_blank" rel="external">文档页</a>。</p>
-<h3 id="MATLAB资源">MATLAB资源</h3><p>在MATLAB命令行下，输入<strong>help</strong>跟上一个函数名来展示这个函数的说明文档。例如:<strong>help plot</strong>将呼起一个有关测绘(plotting)的帮助信息。更多的信息，请见<a href="http://cn.mathworks.com/help/matlab/?requestedDomain=www.mathworks.com" target="_blank" rel="external">文档页</a>。</p>
-<p>MathWorks也有一系列有关MATLAB功能的视频：</p>
-<p>MATLAB的介绍：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">学习模块</th>
-<th style="text-align:left">学习目标</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/rXwTiKGlilE" target="_blank" rel="external">什么是MATLAB?</a></td>
-<td style="text-align:left">介绍MATLAB</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/iYTzJXXI9vI" target="_blank" rel="external">MATLAB的环境</a></td>
-<td style="text-align:left">命令行，工作空间，目录和编辑器介绍</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/jURDBsIPt5I" target="_blank" rel="external">MATLAB变量</a></td>
-<td style="text-align:left">使用赋值操作符来定义标量变量</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/E7KllorEWkA" target="_blank" rel="external">MATLAB作为一个计算器</a></td>
-<td style="text-align:left">通过MATLAB的语法的方法和标量以及操作顺序来执行算数运算。</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/R-kBvJ3kVVk" target="_blank" rel="external">数学函数</a></td>
-<td style="text-align:left">对方法的输入输出来使用MATLAB的变量，例如：COS，SIN，EXP，NTHROOT。</td>
-</tr>
-</tbody>
-</table>
-<p>向量：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">学习模块</th>
-<th style="text-align:left">学习目标</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/2VNFqxmVqw8" target="_blank" rel="external">通过级联创建向量</a></td>
-<td style="text-align:left">通过输入单个元素创建向量</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/GihLWwp8sBw" target="_blank" rel="external">访问向量的元素</a></td>
-<td style="text-align:left">访问向量的特定元素</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/t9Kla_YFdfs" target="_blank" rel="external">向量运算</a></td>
-<td style="text-align:left">通过包含智能元素操作的向量来执行计算</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/USehPX2iEa4" target="_blank" rel="external">向量的转置</a></td>
-<td style="text-align:left">使用向量的转置来实现向量的行列交换</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/L7cERR5J9XY" target="_blank" rel="external">创建均匀分布的向量(冒号运算符)</a></td>
-<td style="text-align:left">使用冒号运算符来创建指定起始值、终止值以及间隔大小的向量</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/3QM3LRnb4Tw" target="_blank" rel="external">创建均匀分布的向量(LINSPACE 函数)</a></td>
-<td style="text-align:left">使用LINSPAC函数来创建一个向量</td>
-</tr>
-</tbody>
-</table>
-<p>可视化：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">学习模块</th>
-<th style="text-align:left">学习目标</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/00k9A9W0cl8" target="_blank" rel="external">线图</a></td>
-<td style="text-align:left">创建一个向量的折线图并且自定义的绘图标记和颜色</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/ab3XIDdloNI" target="_blank" rel="external">图形注释</a></td>
-<td style="text-align:left">标签轴，添加一个标题，或者对于一个图添加一个描述</td>
-</tr>
-</tbody>
-</table>
-<p>矩阵和数组：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">学习模块</th>
-<th style="text-align:left">学习目标</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/5tm6PKaJdI8" target="_blank" rel="external">创建一个矩阵</a></td>
-<td style="text-align:left">通过直接输入标量创建矩阵</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/DDnm7vek6KY" target="_blank" rel="external">数组创建函数</a></td>
-<td style="text-align:left">通过使用MATLAB的方法，例如<code>ZEROS</code>和<code>EYE</code>，来创建一个更大的矩阵</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/qqQnFp5aiuM" target="_blank" rel="external">访问和数组元素</a></td>
-<td style="text-align:left">通过行和列的索引来访问一个数组的元素</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/SqvtT_VspKU" target="_blank" rel="external">数组的大小和长度</a></td>
-<td style="text-align:left">使用内置函数来确定数组的尺寸</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/TgopxS-_zl8" target="_blank" rel="external">串联阵列</a></td>
-<td style="text-align:left">从一个较小的数组创建一个更大的数组</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/-jgXqAYBhxI" target="_blank" rel="external">矩阵乘法</a></td>
-<td style="text-align:left">执行矩阵乘法并列出关于尺寸不匹配的错误信息</td>
-</tr>
-</tbody>
-</table>
-<p>编程：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">学习模块</th>
-<th style="text-align:left">学习目标</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/TZr6GyxnI_w" target="_blank" rel="external">使用MATLAB编辑器</a></td>
-<td style="text-align:left">在MATLAB编辑器下写一个脚本，并且分块执行这些代码，并且查找方法的帮助</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/5gVKJVVmbrM" target="_blank" rel="external">逻辑运算符</a></td>
-<td style="text-align:left">通过使用关系运算符以及逻辑运算符来创建程序控制的逻辑变量</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/8wxh4LtT--g" target="_blank" rel="external">有条件的数据选择</a></td>
-<td style="text-align:left">允许更改一个满足指定标准的向量元素</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/oaK2-ZT9dls" target="_blank" rel="external">if-else控制语句</a></td>
-<td style="text-align:left">通过使用if-else条件判断语句来控制哪一行代码将被执行</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/1u3RahlWEZA" target="_blank" rel="external">for循环</a></td>
-<td style="text-align:left">重复执行一个指定次数的命令序列</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="http://youtu.be/dofj51Ovdl4" target="_blank" rel="external">while循环</a></td>
-<td style="text-align:left">当条件判断语句为true时，重复执行一个序列的命令</td>
-</tr>
-</tbody>
-</table>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2761,7 +2852,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">109</span>
+              <span class="site-state-item-count">110</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

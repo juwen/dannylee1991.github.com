@@ -199,6 +199,176 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2016/12/18/斯坦福机器学习课程 第六周 (3)机器学习系统设计/" itemprop="url">
+                斯坦福机器学习课程 第六周 (3)机器学习系统设计-[构建垃圾邮件分类器][误差分析]
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-12-18T17:51:58+08:00" content="2016-12-18">
+            2016-12-18
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/12/18/斯坦福机器学习课程 第六周 (3)机器学习系统设计/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/18/斯坦福机器学习课程 第六周 (3)机器学习系统设计/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="构建垃圾邮件分类器">构建垃圾邮件分类器</h2><blockquote>
+<p>在接下来的视频中，我将谈到机器学习的系统设计。</p>
+<p>这些视频将谈及在设计复杂的机器学习系统时，你将遇到的主要问题。同时我们会试着给出一些关于如何巧妙构建一个复杂的机器学习系统的建议。</p>
+<p>接下来的视频可能看起来有点不连贯，因为这些视频会涉及一些你在设计机器学习系统时可能会遇到的不同问题。虽然下面的课程数学性可能不是那么的强，但是我认为我们将要讲到的这些东西是非常有用的。可能在构建大型机器学习系统时节省大量的时间。</p>
+</blockquote>
+<h3 id="先想想第一步做什么">先想想第一步做什么</h3><p><a href="https://www.coursera.org/learn/machine-learning/lecture/4h5X4/prioritizing-what-to-work-on" target="_blank" rel="external">视频地址</a></p>
+<p>具体的说，我们首先要讲的是当我们在进行机器学习时，着重要考虑什么问题。首先我要举一个垃圾邮件分类的例子。</p>
+<p>假如你想建立一个垃圾邮件分类器，看这些垃圾邮件与非垃圾邮件的例子（左侧是垃圾邮件，右侧是非垃圾邮件）：</p>
+<p><img src="/img/16_12_18/001.png" alt=""></p>
+<h4 id="建立特征向量">建立特征向量</h4><p>左侧这封邮件想要向你推销某个商品。注意这封垃圾邮件有意的拼错一些单词，例如<code>w4tchs</code>,<code>Med1cine</code>。右边的邮件显然不是一个垃圾邮件。假设我们已经有一些加过标签的训练集，包括标注的垃圾邮件（<code>y=1</code>）和非垃圾邮件(<code>y=0</code>)。我们如何以监督学习的方法来构造一个分类器来区分垃圾邮件和非垃圾邮件呢？</p>
+<p>为了应用监督学习，我们首先必须确定的是如何用邮件的特征构造向量$x$。给出训练集中的特征$x$和标签$y$，我们就能够训练出某种分类器，比如用逻辑回归的方法。</p>
+<ul>
+<li>$x = features\ of\ email\ (邮件的特征)$</li>
+<li>$y = spam(1)\ or\ not\ spam(0)\ (是否为垃圾邮件：1是、0否)$</li>
+</ul>
+<p>这里有一种选择邮件的一些特征变量的方法，比如说我们可能会想出一系列单词，我们可以认为这些单词能够用来区分垃圾邮件或非垃圾邮件。</p>
+<p>比如说，如果有封邮件，包含单词<code>deal</code>，那么它就很有可能是一封垃圾邮件，同时包含单词<code>buy</code>的邮件也很有可能是一封垃圾邮件，包含<code>discount</code>的邮件也很有可能是垃圾邮件。</p>
+<p>如果一封邮件中包含了我的名字，这有可能是一个知道我的人写的，说明这封邮件不太可能是垃圾邮件。因为某些原因，我认为<code>now</code>这个单词表明了这封邮件可能并不是垃圾邮件，因为我经常收到一些很紧急的邮件，当然还有别的单词。我们可以选出这样成百上千的单词。</p>
+<p>给出一封这样的邮件：</p>
+<p><img src="/img/16_12_18/002.png" alt=""></p>
+<p>我们可以将这封邮件用一个特征向量来表示，方法如下：</p>
+<p>首先根据字母顺序排序列出我之前选好的单词：</p>
+<p><code>andrew</code>,<code>buy</code>,<code>deal</code>,<code>discount</code>,…,<code>now</code>,…</p>
+<p>然后对当前这封邮件检查一下这些词汇是否出现在这封邮件中。</p>
+<p>我用一个特征向量x来表示这些词汇是否出现在了邮件中：</p>
+<p>$$<br>x=<br>\begin{bmatrix}<br>   0(andrew) \\<br>   1(buy) \\<br>   1(deal) \\<br>   0(discont) \\<br>   … \\<br>   1(now) \\<br>   …<br>\end{bmatrix}<br>$$</p>
+<p>在这个例子中，我选择了100个词用于表示是否可能为垃圾邮件，所以这个特征向量的维度是100。</p>
+<p>并且:</p>
+<p>$$<br>x_{j} =<br>\begin{matrix}<br>   1\ 如果单词出现在email中 \\<br>   0\ 如果单词没出现在email中<br>\end{matrix}<br>$$</p>
+<p>这样我们就可以用特征向量来表示这封邮件。</p>
+<p>顺便说一句，虽然我所描述的这个过程是我自己选取的100个词，但是在实际工作中最普遍的做法是遍历整个训练集，然后在训练集中选出出现次数最多的n个单词，n一般介于10000到50000之间。然后把这些词作为你要用的特征，因此不同于手动选取，我们只用遍历训练样本，然后选出出现频率最高的词语。这些单词会构成特征，这样你就可以使用它们来做垃圾邮件分类了。</p>
+<h4 id="从何处入手来提高分类准确度？">从何处入手来提高分类准确度？</h4><p>如果你正在构造一个垃圾邮件分类器，你应该会面对这样一个问题，那就是：</p>
+<p><strong>你最该去使用哪一种改进你的方法，从而使得你的垃圾邮件分类器具有较高的准确度？</strong></p>
+<h5 id="积累大量数据">积累大量数据</h5><p>从直觉上讲，是要收集大量的数据。事实上确实好多人这么做，很多人认为收集越多的数据，算法就会表现的越好。事实上就垃圾邮件分类而言，有一个叫做<strong>“Honey  Pot”</strong>的项目，它可以建立一个假的邮箱地址，故意将这些地址泄露给发垃圾邮件的人，这样就能收集到大量的垃圾邮件了。这样的话我们就能得到非常多的垃圾邮件来训练学习算法了。</p>
+<h5 id="从email的header中提取路径等信息">从email的header中提取路径等信息</h5><p>但是在前面的课程中我们知道，大量的数据可能会有帮助，但也可能没有。对于大部分的机器学习问题，还有很多办法用来提升机器学习效果。比如对于垃圾邮件来说，也许你会想到用更复杂的特征变量，像是邮件的路径信息（这种信息通常会出现在邮件的标题中）。因此，垃圾邮件发送方在发送垃圾邮件时，他们总会试图让这个邮件的来源变得模糊一些，或者是用假的邮件标题，或者通过不常见的服务器来发送邮件，用不常用的路由来发送邮件。</p>
+<p>因此我们可以通过邮件的标题部分来构造更加复杂的特征，来获得一系列的邮件路由信息，进而判定是不是一封垃圾邮件。</p>
+<h5 id="从email的正文中提取特征">从email的正文中提取特征</h5><p>你可能还会想到别的方法，比如从邮件的正文出发，寻找一些复杂点的特征，例如单词<code>discount</code>是否和单词<code>discounts</code>是一样的，又比如单词<code>deal</code>和<code>dealer</code>是否也应视为等同？甚至像这个例子中有的单词小写，有的单词大写。或者我们是否应该用标点符号来构造复杂的特征变量，因为垃圾邮件可能更多的使用感叹号。</p>
+<h5 id="构建错词识别算法，来区分邮件中恶意拼写错误的单词">构建错词识别算法，来区分邮件中恶意拼写错误的单词</h5><p>同样的，我们也可能构造更加复杂的算法来检测或者纠正那些故意的拼写错误 ，例如<code>m0rtgage</code>,<code>med1cine</code>,<code>w4tches</code>。因为垃圾邮件发送方确实这么做了，因为如果你将4放到<code>w4tches</code>中,那么用我们之前提到的简单的方法，垃圾邮件分类器不会把<code>w4tches</code>和<code>watches</code>看成一样的，这样我们就很难区分这些故意拼错的垃圾邮件。发垃圾邮件的也很机智，他们这么做就逃避了一些过滤。</p>
+<hr>
+<p>当我们使用机器学习时，总是可以“头脑风暴”一下，想出一堆方法来试试，就像这样。顺带一提，我有一段时间研究过垃圾邮件分类的问题，尽管我能够理解垃圾邮件分类的问题，我确实懂一些这方面的东西，但是我还是很难告诉你，这四种方法中，你最该去使用哪一种。</p>
+<p>事实上，坦白地说，最常见的情况是：一个研究小组，可能会随机确定其中的一个方法，但是有时候，这种方法并不是最有成效的。你知道，你只是随机选择了其中的一种方法。<strong>实际上，当你需要通过头脑风暴来想出不同方法来尝试去提高精度的时候，你可能已经超越了很多人了。令人难过的是，大部分人他们并不尝试着列出可能的方法。</strong>他们做的只是某天早上醒来，因为某些原因，有了一个突发奇想：”让我们来试试 用Honey Pot项目 收集大量的数据吧”。不管出于什么奇怪的原因，早上的灵机一动，还是随机选一个，然后干上大半年。</p>
+<p>但是我觉得我们有更好的方法，是的，我们将在随后的课程中讲到这个，那就是<strong>误差分析</strong>。</p>
+<p>我会告诉你，<strong>怎样用一个更加系统性的方法从一堆不同的方法中选取合适的那一个。</strong>因此，你更有可能选择一个真正的好方法，能让你花上几天几周甚至是几个月去进行深入的研究。</p>
+<h2 id="误差分析，几个小窍门">误差分析，几个小窍门</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/x62iE/error-analysis" target="_blank" rel="external">视频地址</a></p>
+<p>在上一节课中，我讲到应当怎样面对机器学习问题，有很多提高算法表现的方法，在本次课程中，我们将会讲到<strong>误差分析(error analysis)</strong>的概念。这会帮助你更系统地做出决定。</p>
+<h3 id="推荐方法："><strong>推荐方法：</strong></h3><ul>
+<li>1.以一个你可以快速实现的简单的算法作为开始。实现它并且在交叉验证数据集上进行测试。</li>
+</ul>
+<blockquote>
+<p>如果你准备研究机器学习的东西，或者构造机器学习应用程序，最好的实践方法不是建立一个非常复杂的系统，拥有那么多复杂的变量，而是构建一个简单的算法，这样你可以很快地实现它。</p>
+</blockquote>
+<ul>
+<li><p>2.绘制出学习曲线来进而决定是否需要更多的数据，或者更多的特征，等等。</p>
+</li>
+<li><p>3.误差分析：主要检查出在你的算法下，有误差的（在交叉验证集中的）样本数据。</p>
+</li>
+</ul>
+<h3 id="错误分析："><strong>错误分析：</strong></h3><p>$m_{cv}=500$个在交叉验证集中的样本。</p>
+<p>算法错误的分类了100封邮件。</p>
+<p>手工的检查这100个错误邮件，然后基于下面两个条件重新进行分类：</p>
+<ul>
+<li>(i) 它们是什么类别的邮件<blockquote>
+<p>如果你发现算法对于某个类别的分类区分的很差（比如说大部分的错误分类的邮件其实都属于<strong>钓鱼邮件</strong>这种类别，就证明算法对钓鱼邮件的识别很差）这说明，你应该花更多时间来研究这种类型的邮件。然后看看你是否能通过构造更好的特征变量来正确区分这种类型的邮件。</p>
+</blockquote>
+</li>
+<li>(ii) 看看哪些特征变量可能会帮助算法正确地分类邮件<blockquote>
+<p>比如说查看邮件分别属于<strong>故意拼写错误</strong>、<strong>不正常的来源</strong>、<strong>有垃圾邮件特有的标点符号</strong>，如果你发现在错误分类的邮件中，很少有<strong>故意拼写错误</strong>的情况，那么你就可以不用花太多时间在这一类别上了。如果你发现<strong>有垃圾邮件特有的标点符号</strong>这种类别的邮件很多，那么这就是一个很强的特征，说明你应该花费时间在这种类别的分类上。</p>
+</blockquote>
+</li>
+</ul>
+<p>这种类型的误差分析是一种手动检测的过程，检测算法可能会犯的错误，这通常能够帮你找到更为有效的手段。这也解释了为什么我总是推荐先实践一种快速但不完美的算法。</p>
+<p>我们真正想要的是找出什么类型的邮件，是这种算法最难分类出来的，对于不同的机器学习算法，它们所遇到的问题一般总是相同的。通过实现一些快速即便不完美的算法，你能够更快地找到错误的所在，并且快速找出算法难以处理的例子。这样你就能集中精力在这些真正的问题上。</p>
+<h3 id="数值计算的方式来评估你的机器学习算法："><strong>数值计算的方式来评估你的机器学习算法：</strong></h3><p>如果你在构造一个学习算法，如果你能有一种评估你算法的方法，这将是非常有用的。</p>
+<p>假设我们试图决定是否把像”discount”,”discounts”,”discounter”,”discountring”这样的单词都视为等同。</p>
+<p>一种方法是检查这些单词的开头几个字母，比如检查”discoun”这几个字母，认为以这几个字母开头的单词大概可能有着相同的意思。</p>
+<blockquote>
+<p>在自然语言处理中，这种方法是通过一种叫做<strong>词干提取</strong>的软件实现的。如果你想自己来试试，你可以在网上搜索<strong>“Porter<br> Stemmer(波特词干提取法)”</strong>，这是在词干提取方面一个比较不错的软件。这个软件会将单词”discount”、”discounts”等词视为同一个单词。</p>
+<p>但是这类词干提取软件只会检查单词的开头几个字母，这虽然有用，但也可能会造成一些问题。举个例子，这个软件会把单词”universe(宇宙)”和”university(大学)”也视为同一个单词，因为他们的开头是一样的。</p>
+</blockquote>
+<p>因此，当你在决定是否应该使用词干提取软件来分类时，这总是很难说清楚到底是好还是坏。特别地，<strong>误差分析</strong>也并不能帮助你决定词干提取是不是一个好的方法。</p>
+<p>与之相对地最好的方法来发现词干提取软件对你的分类器到底有没有用，是迅速的着手试一试，来看看它表现到底怎么样。</p>
+<p>为了这么做，通过数值来评估你的算法是非常有用的，具体的说，自然而然地你应该通过<strong>交叉验证</strong>来验证不用词干提取与用词干提取的算法的错误率。</p>
+<p>因此，如果你不在你的算法中使用词干提取，然后你得到比如5%的分类错误率，然后你再使用词干提取来运行你的算法，你得到比如3%的分类错误率，那么这很大的减少了错误的发生，于是你决定词干提取是一个好方法。</p>
+<p>就这个特定的问题而言，这里有一个数量的评估数字，即<strong>交叉验证错误率</strong>。我们以后会发现这个例子中的评估数字还需要一些处理，但是我们可以在今后的课程中看到这么做还是会让你能更快地做出决定，比如是否使用词干提取。</p>
+<hr>
+<h3 id="总结一下">总结一下</h3><p>当你在研究一个新的机器学习问题时，我总是推荐你实现一个较为简单快速即便不是那么完美的算法，我几乎从未见过人们是这样做。大家经常干的事情是花费大量的时间在构造算法上，构造他们以为的简单的方法，因此，不要担心你的算法太简单，或者太不完美，而是尽可能快地实现你的算法，当你有了初始的实现之后，它会变成一个非常有力的工具，来帮助你决定下一步的做法。因为我们可以先看看算法造成的错误，通过误差分析来看看它犯了什么错，然后来决定优化的方式。</p>
+<p>另一件事，假设你有了一个快速而不完美的算法实现，又有一个数值的评估数据，这会帮助你尝试新的想法快速地发现你尝试的这些想法是否能够提高算法的表现。从而你会更快地做出决定，在算法中放弃什么，吸收什么。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/12/15/房价预测（3）-数据可视化/" itemprop="url">
                 房价预测（3）-数据可视化
               </a>
@@ -814,6 +984,264 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2016/10/24/斯坦福机器学习课程 第六周 (1)评价一个学习算法/" itemprop="url">
+                斯坦福机器学习课程 第六周 (1)评价一个学习算法
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-10-24T22:28:58+08:00" content="2016-10-24">
+            2016-10-24
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/10/24/斯坦福机器学习课程 第六周 (1)评价一个学习算法/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/24/斯坦福机器学习课程 第六周 (1)评价一个学习算法/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="如何少走弯路？">如何少走弯路？</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/OVM4M/deciding-what-to-try-next" target="_blank" rel="external">视频地址</a></p>
+<h3 id="这些坑可能会耽误你几个月">这些坑可能会耽误你几个月</h3><blockquote>
+<p>到目前为止，我们已经介绍了许多不同的学习算法。如果你一直跟着这些视频的进度学习，你会发现自己已经不知不觉地成为一个了解许多先进机器学习技术的专家了。</p>
+<p>然而，在懂机器学习的人当中，依然存在着很大的差距。一部分人确实掌握了怎样高效有力地运用这些学习算法，而另一些人他们可能对我马上要讲的东西就不那么熟悉了，他们可能没有完全理解怎样运用这些算法，因此总是把时间浪费在毫无意义的尝试上。</p>
+<p>我想做的是，确保你在设计机器学习的系统时，你能够明白怎样选择一条最合适、最正确的道路。</p>
+<p>因此，在这节视频和之后的几段视频中，我将向你介绍一些实用的建议和指导，帮助你明白怎样进行选择。</p>
+<p>具体来讲，我将重点关注的问题是：假如你在开发一个机器学习系统，或者想试着改进一个机器学习系统的性能，你应如何决定接下来应该选择哪条道路？</p>
+</blockquote>
+<p>以预测房价为例：</p>
+<p>假如在预测房价的例子中，你已经完成了正则化线性回归，也就是最小化代价函数$J$的值。</p>
+<p><img src="/img/16_10_24/001.png" alt=""></p>
+<p>假如在你得到你的学习参数以后，如果你要将你的假设函数放到一组新的房屋样本上进行测试，假如说你发现在预测房价时产生了巨大的误差，现在的问题是要想改进这个算法接下来该怎么办？</p>
+<p>实际上你可以想出很多方法来改进这个算法的性能。</p>
+<p>通常情况下我们会使用这几种方法：</p>
+<ul>
+<li>通过使用更多的训练样本</li>
+</ul>
+<blockquote>
+<p>但有的时候，更多的训练样本并不能解决问题。</p>
+</blockquote>
+<ul>
+<li>尝试选用更少的特征集</li>
+</ul>
+<blockquote>
+<p>你可以从众多的特征集中仔细挑选一小部分来防止<strong>过拟合</strong>。</p>
+</blockquote>
+<ul>
+<li>尝试选用更多的特征集</li>
+</ul>
+<blockquote>
+<p>也许目前的特征集对你来讲并不是很有帮助，你希望获取更多有用的特征数据</p>
+</blockquote>
+<ul>
+<li>也可以尝试增加多项式特征的方法($x_{1}^{2}$,$x_{2}^{2}$,$x_{1}x_{2}$,etc.)</li>
+<li>通过增大正则化参数$\lambda$</li>
+<li>通过减小正则化参数$\lambda$</li>
+</ul>
+<p>上面的这些方法，都可以扩展开来，都可能是一个花费6个月甚至更长时间的项目。</p>
+<p>遗憾的是，大多数人用来选择这些方法的标准是凭感觉的。而且很多人都会错误的选择其中一种方法花费大量的时间和精力，走上了“不归路”。</p>
+<p>幸运的是，有一系列简单的方法，能让你事半功倍，排除掉上面的那个优化清单上的至少一半的方法，留下真正有用的方法。同时也有一种很简单的方法，可以很轻松的排除掉很多选择从而为你节省大量不必要花费的时间。</p>
+<h3 id="机器学习诊断法引入">机器学习诊断法引入</h3><p>在接下来的视频中，我首先介绍<strong>怎样评估机器学习算法的性能</strong>，然后在之后的几段视频中，我们将开始讨论这些方法，它们也被称为<strong>“机器学习诊断法(Machine learning diagnostic)”</strong>。</p>
+<blockquote>
+<p>Diagnostic:A test that you can run to gain insight what is/isn’t working with a learning algorithm, and gain guidance as to how best to improve its performance.</p>
+<p>诊断法：这是一种测试法，你通过执行这种测试能够深入了解某种算法到底是否有用，并且也可以告诉你如何改进算法的效果。</p>
+</blockquote>
+<p>诊断法是一种很有用的方法，可以更有效率地利用好你的时间，但同时也会花费一些时间来实现。</p>
+<h2 id="评估假设函数">评估假设函数</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/yfbJY/evaluating-a-hypothesis" target="_blank" rel="external">视频地址</a></p>
+<p>当我们确定学习算法的参数的时候，我们考虑的是选择参量来使训练误差最小化。有人认为，得到一个非常小的训练误差一定是一件好事，但我们已经知道，仅仅是因为这个假设具有很小的训练误差并不能说明它就一定是一个好的假设函数，而且我们也学习了过拟合假设函数的例子。所以这推广到新的训练集上是不适用的。</p>
+<p>那么，你该如何判断一个假设函数是过拟合的呢？对于这个简单的例子，我们可以对假设函数$h(x)$进行画图，然后观察图形趋势：</p>
+<p><img src="/img/16_10_24/002.png" alt=""></p>
+<p>但对于特征变量不止一个的这种一般情况：</p>
+<p><img src="/img/16_10_24/003.png" alt=""></p>
+<p>想要通过画出假设函数来进行观察，就会变得很难甚至是不可能实现的。</p>
+<p>因此我们需要另一种方法来评估我们的假设函数。</p>
+<h3 id="评估假设函数的方法">评估假设函数的方法</h3><p>如下给出了一种评估假设函数的标准方法：</p>
+<p>假设我们有这样一组数据组：</p>
+<p><img src="/img/16_10_24/004.png" alt=""></p>
+<p>虽然这里只有十组数据，但通常情况下我们都有成百上千组训练样本。</p>
+<p>为了确保我们可以评估我们的假设函数，我们要做的是将这些数据进行三七分：</p>
+<p><img src="/img/16_10_24/005.png" alt=""></p>
+<p>第一部分（70%）将成为我们的<strong>训练集(Training Set)</strong></p>
+<p>第二部分（30%）将成为我们的<strong>测试集(Test Set)</strong></p>
+<blockquote>
+<p>将所有数据按照7:3的比例划分，是一种常见的划分比例</p>
+</blockquote>
+<p>现在我们有了一部分训练数据集：</p>
+<p>$$<br>(x^{(1)},y^{(1)})\\<br>(x^{(2)},y^{(2)})\\<br>……\\<br>(x^{(m)},y^{(m)})<br>$$</p>
+<blockquote>
+<p>这里的$m$依然表示训练样本的总数</p>
+</blockquote>
+<p>剩下的部分数据将被用作测试数据：</p>
+<p>$$<br>(x^{(1)}_{test},y^{(1)}_{test})\\<br>(x^{(2)}_{test},y^{(2)}_{test})\\<br>……\\<br>(x^{(m_{test})}_{test},y^{(m_{test})}_{test})<br>$$</p>
+<blockquote>
+<p>这里$m_{test}$表示测试样本的总数，$_{test}$表示这些样本是来自测试集。</p>
+<p><strong>注意</strong>：如果说我们的数据是有某种规律的话，那么我们按照7:3的比例取数据时，应该是随机选取的。</p>
+</blockquote>
+<h3 id="评估步骤详解">评估步骤详解</h3><h4 id="线性回归中">线性回归中</h4><p>在线性回归中，的训练/测试流程：</p>
+<ul>
+<li>1.需要对训练集进行学习，得到参数$\theta$。</li>
+</ul>
+<blockquote>
+<p>具体来讲就是最小化训练误差$J(\theta)$。这里的是使用那70%的数据训练得出的结果。</p>
+</blockquote>
+<ul>
+<li>2.计算出测试误差</li>
+</ul>
+<blockquote>
+<p>使用$J_{test}(\theta)$来表示测试误差，我们要做的是取出之前从训练集中学习得到的参数$\theta$带入到$J_{test}(\theta)$来计算我们的测试误差。可以写成如下形式：</p>
+</blockquote>
+<p>$$<br>\begin{align*}<br>J_{test}(\theta)= \frac{1}{2m_{test}}\sum_{i=1}^{m_{test}}(<br> h_{\theta}(x_{test}^{(i)}) - y_{test}^{(i)}<br> )^{2}<br>\end{align*}<br>$$</p>
+<blockquote>
+<p>这实际上是测试集平方误差的平均值。</p>
+</blockquote>
+<hr>
+<h4 id="分类问题中">分类问题中</h4><p>当然，这是当我们使用线性回归和平方误差标准时测试误差的定义，那么如果是分类问题，比如说使用逻辑回归的时候呢？</p>
+<p>训练和测试逻辑回归与之前所说的非常类似：</p>
+<ul>
+<li>1.首先我们要从训练数据中（前70%）学习得到参数$\theta$</li>
+<li>2.然后用下面的式子计算测试数据的误差值:</li>
+</ul>
+<p><img src="/img/16_10_24/006.png" alt=""></p>
+<p>在分类问题中的测试误差$J_{test}(\theta)$其实也被称作<strong>误分类率</strong>（也被称为<strong>0/1错分率</strong>）。表示你预测到的正确或错误样本的情况。</p>
+<p>比如说可以这样定义一次预测的误差：</p>
+<ul>
+<li><p>当$h_{\theta}\ge0.5$时$y=0$</p>
+</li>
+<li><p>或者当$h_{\theta}\lt0.5$时$y=1$</p>
+</li>
+</ul>
+<p>这两种情况下我们的假设都对样本进行另外误判，否则其他情况下假设值都能正确的对样本$y$进行分类。</p>
+<p>$$<br>err(h_{\theta}^{(x)},y)<br>=\{<br>\begin{align*}<br>&amp;= 1 \ \ if\ h_{\theta}(x)\ge0.5,\ y=0<br>        \ or\ if\ h_{\theta}(x)\le0.5,\ y=1 \\<br>&amp;= 0 \ otherwise<br>\end{align*}<br>$$</p>
+<p>然后我们就能应用错分率误差来定义测试误差，也就是：</p>
+<p>$$<br>\begin{align*}<br>Test\ error =<br> \frac{1}{m_{test}}\sum_{i=1}^{m_{test}}err(<br> h_{\theta}(x_{test}^{(i)}), y_{test}^{(i)}<br> )<br>\end{align*}<br>$$</p>
+<blockquote>
+<p>以上我们介绍了一套标准技术来评价一个已经学习过的假设，在下一段视频中，我们要应用这些方法来帮助我们进行诸如特征选择一类的问题（比如多项式次数的选择，或者正则化参数的选择）。</p>
+</blockquote>
+<h2 id="多项式模型的选择以及训练集/验证集/测试集的划分">多项式模型的选择以及训练集/验证集/测试集的划分</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/QGKbr/model-selection-and-train-validation-test-sets" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>假如你想要确定对于某组数据最合适的多项式次数是几次，怎样选用正确的特征来构造学习算法，这些问题我们称之为<strong>”模型选择问题“</strong>。</p>
+<p>在我们对于这一问题的讨论中，我们还将提到如何将数据分为三组：也就是<strong>训练集、验证集和测试集</strong>，而不仅仅是前面提到的两组数据。</p>
+<p>这一节中，我们将会介绍这些内容的含义。</p>
+</blockquote>
+<h3 id="选择合适的模型解决过拟合问题">选择合适的模型解决过拟合问题</h3><p>在过拟合的情况中，学习算法在适用于训练集时表现非常完美，但这并不代表此时的假设也很完美。</p>
+<p>更一般的说，这也是为什么训练集误差通常不能正确预测出该假设是否能很好地拟合新样本的原因。</p>
+<p>具体来讲，如果你把这些参数集，比如$\theta_{0}$,$\theta_{1}$,$\theta_{2}$…调整到尽量拟合你的训练集，那么结果就是你的假设会在训练集上表现地很好，但这并不能确定当你的假设推广到训练集之外的新的样本上时，预测结果是怎样的。</p>
+<p>而更为普遍的规律是，只要你的参数非常拟合某个数据组，比如说非常拟合训练集（当然也可以是其他数据集）：</p>
+<p><img src="/img/16_10_24/007.png" alt=""></p>
+<p>那么你的假设对于相同数据组的预测误差（比如说训练误差）是不能够用来推广到一般情况的，或者说，是不能作为实际的泛化误差的（也就是说，不能说明你的假设对于新样本的效果）。</p>
+<hr>
+<p>接下来具体来说说模型选择问题：</p>
+<p>假如说你现在要选择能最好地拟合你数据的多项式次数，那么下面的式子你应该选择哪一个呢？</p>
+<p><img src="/img/16_10_24/008.png" alt=""></p>
+<p>假设$d$代表我们应该选择的多项式的次数(上面的式子次数依次为从1到10)，我们除了需要确定参数$\theta$之外，还要考虑如何确定这个多项式的次数$d$。</p>
+<p>因此，我们需要确定参数$d$最适当的取值。</p>
+<p>具体地说，比如你想要选择一个模型，那就从这10个模型中，选择一个最适当的多项式次数，并且用这个模型进行估计，预测你的假设能否很好地推广到新的样本上。</p>
+<p>那么你可以这样做：</p>
+<ul>
+<li>你可以先选择第一个模型，然后求训练误差的最小值。这样你就会得到一个参数向量$\theta$。</li>
+<li>然后你再选择第二个模型，进行同样的过程，这样你会得到另一个参数向量$\theta$。</li>
+<li>拟合三次函数模型时，同理，也能得到一个参数向量$\theta$。</li>
+<li>…</li>
+<li>用相同的方式得到第10个模型的向量$\theta$。</li>
+</ul>
+<p><img src="/img/16_10_24/009.png" alt=""></p>
+<p>如果一次模型训练后得到的参数向量为$\theta^{(1)}$,二次模型训练后得到的参数向量为$\theta^{(2)}$，依次类推，十次模型训练后得到的参数向量为$\theta^{(10)}$。</p>
+<p>接下来，我们要做的是对所有这些模型求出<strong>测试集误差</strong>。因此，我们可以算出每一个模型的$Jtest(\theta^{(1)})$、$Jtest(\theta^{(2)})$、$Jtest(\theta^{(3)})$…$Jtest(\theta^{(10)})$。</p>
+<p>接下来为了确定哪一个模型最好，我们可以找出<strong>测试集误差最小的模型</strong>。</p>
+<p>假设我们最终选择了五次多项式模型:</p>
+<p>$$<br>Choose \ \ \theta_{0} + … \theta_{5}x^{5}<br>$$</p>
+<h3 id="正确的评价某个假设函数的预测能力">正确的评价某个假设函数的预测能力</h3><blockquote>
+<p>由于我们使用的是<strong>测试结果集</strong>来衡量的代价函数，从而得到多项式次数$d$这个参数的值为5，所以这样任然不能公平地说明这个假设可以推广到一般情况。</p>
+<p>也就是说我们选择了一个能最好地拟合测试集的参数$d$的值，因此我们的参数向量$\theta^{(5)}$在拟合测试集时的结果很可能导致一个比实际泛化误差更完美的预测结果。（因为我们找到的是一个最能拟合测试集的参数$d$）。因此我们再用测试集来评价我们的假设就显得不公平了。</p>
+<p>而我们其实更关心的是对新样本的拟合效果，所以我们之前说到的如果我们用训练集来拟合参数$\theta_{0}$,$\theta_{1}$等参数时，拟合后的模型在作用于训练集上的效果是不能预测出我们将这个假设推广到新样板上时效果如何的。这是因为这些参数能够很好地拟合训练集，因此它们很有可能在对训练集的预测中表现的很好，但对其他的新样本来说就不一定那么好了。</p>
+</blockquote>
+<p>我们要做的实际上是用测试集来拟合参数$d$，但是这同样也意味着这并不能较为公平地预测出假设函数在遇到新样本时的表现。</p>
+<h4 id="方式">方式</h4><p>为了解决这一问题在模型选择中，如果我们要评价某个假设，我们通常采用以下的方法：</p>
+<p>给定某个数据集，这里我们要将其分为三段：训练集、<strong>交叉验证集（cross validation set）</strong>、测试集。</p>
+<p><img src="/img/16_10_24/010.png" alt=""></p>
+<p>一种典型的分割比例是：训练集60%，交叉验证集20%，测试集20%。（这个比例可稍作调整）</p>
+<p><img src="/img/16_10_24/011.png" alt=""></p>
+<blockquote>
+<p>$m$是训练集个数，$m_{cv}$是交叉验证集个数，$m_{test}$是测试集个数。</p>
+</blockquote>
+<p>我们可以得到 训练集/交叉验证集/测试集 的误差：</p>
+<p><img src="/img/16_10_24/012.png" alt=""></p>
+<p>现在我们的模型选择问题是这样的：我们现在要使用交叉验证集来选择合适的模型：</p>
+<p><img src="/img/16_10_24/013.png" alt=""></p>
+<p>即通过使用<strong>训练集</strong>对每一个假设函数依次去求最小化的代价函数$minJ(\theta)$，并求得对应的参数向量$\theta^{(d)}$。</p>
+<p>然后我们要做的是在<strong>交叉验证集</strong>中测试这些假设的表现，测出$J_{cv}$来看看这些假设在交叉验证集中表现如何。</p>
+<p>然后我们要选择<strong>交叉验证集</strong>误差最小的那个假设模型，假如这个模型是$J_{cv}(\theta^{(4)})$对应的那个模型，因此我们就选择这个四次多项式模型：</p>
+<p>$$<br>\theta_{0} + \theta_{1}x^{1} + … + \theta_{4}x^{4}<br>$$</p>
+<p>我们得到了拟合出最好的系数$d=4$。</p>
+<p>这个过程中，我们没有使用<strong>测试集</strong>进行拟合，这样我们就回避了<strong>测试集</strong>的嫌疑。这样我们就可以光明正大的使用<strong>测试集</strong>来估计所选模型的泛化误差了。</p>
+<p>最后，我们可以使用<strong>测试集</strong>来评价模型的表现。</p>
+<p>但最后还是要提醒大家的一点是，在如今的机器学习应用中，确实也有很多人是像我之前介绍的那样做的（用测试集来选择模型，然后用同样的测试集来评价模型的表现，报告测试误差，看起来好像还能得到比较不错的泛化误差），我说过这并不是一个好的方法，但不幸的是，现在还有很多人这样做。如果测试集足够多的话，这也许还能行得通，但大多数的机器学习开发人员是不会这么做的，因为最佳做法还是把数据分成 训练集、验证集、测试集。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/10/24/斯坦福机器学习课程 第六周 (2)偏差VS方差/" itemprop="url">
                 斯坦福机器学习课程 第六周 (2)偏差VS方差
               </a>
@@ -1104,264 +1532,6 @@ var _hmt = _hmt || [];
 <p>一般来说，使用一个大型的神经网络并使用正则化来修正过拟合问题，通常比使用一个小型的神经网络效果更好。但主要问题可能出现在计算量相对较大。</p>
 <p><strong>最后，你还要选择隐藏层的层数，你是该用一个隐藏层呢，还是用三个呢？通常来说，默认的情况是使用一个隐藏层。但是如果你确实想要选择多个隐藏层你也可以试试把数据分割为训练集、验证集和测试集，然后使用交叉验证的方法比较一个隐藏层的神经网络然后试试两个三个隐藏层以此类推，然后看看哪个神经网络在交叉验证集上表现得最理想，然后你对每一个模型都用交叉验证集数据进行测试，算出三种情况下（隐藏层分别为一层、两层、三层）的交叉验证集误差$Jcv(\theta)$，然后选出你认为最好的神经网络结构。</strong></p>
 </blockquote>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/10/24/斯坦福机器学习课程 第六周 (1)评价一个学习算法/" itemprop="url">
-                斯坦福机器学习课程 第六周 (1)评价一个学习算法
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-10-24T22:28:58+08:00" content="2016-10-24">
-            2016-10-24
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/10/24/斯坦福机器学习课程 第六周 (1)评价一个学习算法/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/24/斯坦福机器学习课程 第六周 (1)评价一个学习算法/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="如何少走弯路？">如何少走弯路？</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/OVM4M/deciding-what-to-try-next" target="_blank" rel="external">视频地址</a></p>
-<h3 id="这些坑可能会耽误你几个月">这些坑可能会耽误你几个月</h3><blockquote>
-<p>到目前为止，我们已经介绍了许多不同的学习算法。如果你一直跟着这些视频的进度学习，你会发现自己已经不知不觉地成为一个了解许多先进机器学习技术的专家了。</p>
-<p>然而，在懂机器学习的人当中，依然存在着很大的差距。一部分人确实掌握了怎样高效有力地运用这些学习算法，而另一些人他们可能对我马上要讲的东西就不那么熟悉了，他们可能没有完全理解怎样运用这些算法，因此总是把时间浪费在毫无意义的尝试上。</p>
-<p>我想做的是，确保你在设计机器学习的系统时，你能够明白怎样选择一条最合适、最正确的道路。</p>
-<p>因此，在这节视频和之后的几段视频中，我将向你介绍一些实用的建议和指导，帮助你明白怎样进行选择。</p>
-<p>具体来讲，我将重点关注的问题是：假如你在开发一个机器学习系统，或者想试着改进一个机器学习系统的性能，你应如何决定接下来应该选择哪条道路？</p>
-</blockquote>
-<p>以预测房价为例：</p>
-<p>假如在预测房价的例子中，你已经完成了正则化线性回归，也就是最小化代价函数$J$的值。</p>
-<p><img src="/img/16_10_24/001.png" alt=""></p>
-<p>假如在你得到你的学习参数以后，如果你要将你的假设函数放到一组新的房屋样本上进行测试，假如说你发现在预测房价时产生了巨大的误差，现在的问题是要想改进这个算法接下来该怎么办？</p>
-<p>实际上你可以想出很多方法来改进这个算法的性能。</p>
-<p>通常情况下我们会使用这几种方法：</p>
-<ul>
-<li>通过使用更多的训练样本</li>
-</ul>
-<blockquote>
-<p>但有的时候，更多的训练样本并不能解决问题。</p>
-</blockquote>
-<ul>
-<li>尝试选用更少的特征集</li>
-</ul>
-<blockquote>
-<p>你可以从众多的特征集中仔细挑选一小部分来防止<strong>过拟合</strong>。</p>
-</blockquote>
-<ul>
-<li>尝试选用更多的特征集</li>
-</ul>
-<blockquote>
-<p>也许目前的特征集对你来讲并不是很有帮助，你希望获取更多有用的特征数据</p>
-</blockquote>
-<ul>
-<li>也可以尝试增加多项式特征的方法($x_{1}^{2}$,$x_{2}^{2}$,$x_{1}x_{2}$,etc.)</li>
-<li>通过增大正则化参数$\lambda$</li>
-<li>通过减小正则化参数$\lambda$</li>
-</ul>
-<p>上面的这些方法，都可以扩展开来，都可能是一个花费6个月甚至更长时间的项目。</p>
-<p>遗憾的是，大多数人用来选择这些方法的标准是凭感觉的。而且很多人都会错误的选择其中一种方法花费大量的时间和精力，走上了“不归路”。</p>
-<p>幸运的是，有一系列简单的方法，能让你事半功倍，排除掉上面的那个优化清单上的至少一半的方法，留下真正有用的方法。同时也有一种很简单的方法，可以很轻松的排除掉很多选择从而为你节省大量不必要花费的时间。</p>
-<h3 id="机器学习诊断法引入">机器学习诊断法引入</h3><p>在接下来的视频中，我首先介绍<strong>怎样评估机器学习算法的性能</strong>，然后在之后的几段视频中，我们将开始讨论这些方法，它们也被称为<strong>“机器学习诊断法(Machine learning diagnostic)”</strong>。</p>
-<blockquote>
-<p>Diagnostic:A test that you can run to gain insight what is/isn’t working with a learning algorithm, and gain guidance as to how best to improve its performance.</p>
-<p>诊断法：这是一种测试法，你通过执行这种测试能够深入了解某种算法到底是否有用，并且也可以告诉你如何改进算法的效果。</p>
-</blockquote>
-<p>诊断法是一种很有用的方法，可以更有效率地利用好你的时间，但同时也会花费一些时间来实现。</p>
-<h2 id="评估假设函数">评估假设函数</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/yfbJY/evaluating-a-hypothesis" target="_blank" rel="external">视频地址</a></p>
-<p>当我们确定学习算法的参数的时候，我们考虑的是选择参量来使训练误差最小化。有人认为，得到一个非常小的训练误差一定是一件好事，但我们已经知道，仅仅是因为这个假设具有很小的训练误差并不能说明它就一定是一个好的假设函数，而且我们也学习了过拟合假设函数的例子。所以这推广到新的训练集上是不适用的。</p>
-<p>那么，你该如何判断一个假设函数是过拟合的呢？对于这个简单的例子，我们可以对假设函数$h(x)$进行画图，然后观察图形趋势：</p>
-<p><img src="/img/16_10_24/002.png" alt=""></p>
-<p>但对于特征变量不止一个的这种一般情况：</p>
-<p><img src="/img/16_10_24/003.png" alt=""></p>
-<p>想要通过画出假设函数来进行观察，就会变得很难甚至是不可能实现的。</p>
-<p>因此我们需要另一种方法来评估我们的假设函数。</p>
-<h3 id="评估假设函数的方法">评估假设函数的方法</h3><p>如下给出了一种评估假设函数的标准方法：</p>
-<p>假设我们有这样一组数据组：</p>
-<p><img src="/img/16_10_24/004.png" alt=""></p>
-<p>虽然这里只有十组数据，但通常情况下我们都有成百上千组训练样本。</p>
-<p>为了确保我们可以评估我们的假设函数，我们要做的是将这些数据进行三七分：</p>
-<p><img src="/img/16_10_24/005.png" alt=""></p>
-<p>第一部分（70%）将成为我们的<strong>训练集(Training Set)</strong></p>
-<p>第二部分（30%）将成为我们的<strong>测试集(Test Set)</strong></p>
-<blockquote>
-<p>将所有数据按照7:3的比例划分，是一种常见的划分比例</p>
-</blockquote>
-<p>现在我们有了一部分训练数据集：</p>
-<p>$$<br>(x^{(1)},y^{(1)})\\<br>(x^{(2)},y^{(2)})\\<br>……\\<br>(x^{(m)},y^{(m)})<br>$$</p>
-<blockquote>
-<p>这里的$m$依然表示训练样本的总数</p>
-</blockquote>
-<p>剩下的部分数据将被用作测试数据：</p>
-<p>$$<br>(x^{(1)}_{test},y^{(1)}_{test})\\<br>(x^{(2)}_{test},y^{(2)}_{test})\\<br>……\\<br>(x^{(m_{test})}_{test},y^{(m_{test})}_{test})<br>$$</p>
-<blockquote>
-<p>这里$m_{test}$表示测试样本的总数，$_{test}$表示这些样本是来自测试集。</p>
-<p><strong>注意</strong>：如果说我们的数据是有某种规律的话，那么我们按照7:3的比例取数据时，应该是随机选取的。</p>
-</blockquote>
-<h3 id="评估步骤详解">评估步骤详解</h3><h4 id="线性回归中">线性回归中</h4><p>在线性回归中，的训练/测试流程：</p>
-<ul>
-<li>1.需要对训练集进行学习，得到参数$\theta$。</li>
-</ul>
-<blockquote>
-<p>具体来讲就是最小化训练误差$J(\theta)$。这里的是使用那70%的数据训练得出的结果。</p>
-</blockquote>
-<ul>
-<li>2.计算出测试误差</li>
-</ul>
-<blockquote>
-<p>使用$J_{test}(\theta)$来表示测试误差，我们要做的是取出之前从训练集中学习得到的参数$\theta$带入到$J_{test}(\theta)$来计算我们的测试误差。可以写成如下形式：</p>
-</blockquote>
-<p>$$<br>\begin{align*}<br>J_{test}(\theta)= \frac{1}{2m_{test}}\sum_{i=1}^{m_{test}}(<br> h_{\theta}(x_{test}^{(i)}) - y_{test}^{(i)}<br> )^{2}<br>\end{align*}<br>$$</p>
-<blockquote>
-<p>这实际上是测试集平方误差的平均值。</p>
-</blockquote>
-<hr>
-<h4 id="分类问题中">分类问题中</h4><p>当然，这是当我们使用线性回归和平方误差标准时测试误差的定义，那么如果是分类问题，比如说使用逻辑回归的时候呢？</p>
-<p>训练和测试逻辑回归与之前所说的非常类似：</p>
-<ul>
-<li>1.首先我们要从训练数据中（前70%）学习得到参数$\theta$</li>
-<li>2.然后用下面的式子计算测试数据的误差值:</li>
-</ul>
-<p><img src="/img/16_10_24/006.png" alt=""></p>
-<p>在分类问题中的测试误差$J_{test}(\theta)$其实也被称作<strong>误分类率</strong>（也被称为<strong>0/1错分率</strong>）。表示你预测到的正确或错误样本的情况。</p>
-<p>比如说可以这样定义一次预测的误差：</p>
-<ul>
-<li><p>当$h_{\theta}\ge0.5$时$y=0$</p>
-</li>
-<li><p>或者当$h_{\theta}\lt0.5$时$y=1$</p>
-</li>
-</ul>
-<p>这两种情况下我们的假设都对样本进行另外误判，否则其他情况下假设值都能正确的对样本$y$进行分类。</p>
-<p>$$<br>err(h_{\theta}^{(x)},y)<br>=\{<br>\begin{align*}<br>&amp;= 1 \ \ if\ h_{\theta}(x)\ge0.5,\ y=0<br>        \ or\ if\ h_{\theta}(x)\le0.5,\ y=1 \\<br>&amp;= 0 \ otherwise<br>\end{align*}<br>$$</p>
-<p>然后我们就能应用错分率误差来定义测试误差，也就是：</p>
-<p>$$<br>\begin{align*}<br>Test\ error =<br> \frac{1}{m_{test}}\sum_{i=1}^{m_{test}}err(<br> h_{\theta}(x_{test}^{(i)}), y_{test}^{(i)}<br> )<br>\end{align*}<br>$$</p>
-<blockquote>
-<p>以上我们介绍了一套标准技术来评价一个已经学习过的假设，在下一段视频中，我们要应用这些方法来帮助我们进行诸如特征选择一类的问题（比如多项式次数的选择，或者正则化参数的选择）。</p>
-</blockquote>
-<h2 id="多项式模型的选择以及训练集/验证集/测试集的划分">多项式模型的选择以及训练集/验证集/测试集的划分</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/QGKbr/model-selection-and-train-validation-test-sets" target="_blank" rel="external">视频地址</a></p>
-<blockquote>
-<p>假如你想要确定对于某组数据最合适的多项式次数是几次，怎样选用正确的特征来构造学习算法，这些问题我们称之为<strong>”模型选择问题“</strong>。</p>
-<p>在我们对于这一问题的讨论中，我们还将提到如何将数据分为三组：也就是<strong>训练集、验证集和测试集</strong>，而不仅仅是前面提到的两组数据。</p>
-<p>这一节中，我们将会介绍这些内容的含义。</p>
-</blockquote>
-<h3 id="选择合适的模型解决过拟合问题">选择合适的模型解决过拟合问题</h3><p>在过拟合的情况中，学习算法在适用于训练集时表现非常完美，但这并不代表此时的假设也很完美。</p>
-<p>更一般的说，这也是为什么训练集误差通常不能正确预测出该假设是否能很好地拟合新样本的原因。</p>
-<p>具体来讲，如果你把这些参数集，比如$\theta_{0}$,$\theta_{1}$,$\theta_{2}$…调整到尽量拟合你的训练集，那么结果就是你的假设会在训练集上表现地很好，但这并不能确定当你的假设推广到训练集之外的新的样本上时，预测结果是怎样的。</p>
-<p>而更为普遍的规律是，只要你的参数非常拟合某个数据组，比如说非常拟合训练集（当然也可以是其他数据集）：</p>
-<p><img src="/img/16_10_24/007.png" alt=""></p>
-<p>那么你的假设对于相同数据组的预测误差（比如说训练误差）是不能够用来推广到一般情况的，或者说，是不能作为实际的泛化误差的（也就是说，不能说明你的假设对于新样本的效果）。</p>
-<hr>
-<p>接下来具体来说说模型选择问题：</p>
-<p>假如说你现在要选择能最好地拟合你数据的多项式次数，那么下面的式子你应该选择哪一个呢？</p>
-<p><img src="/img/16_10_24/008.png" alt=""></p>
-<p>假设$d$代表我们应该选择的多项式的次数(上面的式子次数依次为从1到10)，我们除了需要确定参数$\theta$之外，还要考虑如何确定这个多项式的次数$d$。</p>
-<p>因此，我们需要确定参数$d$最适当的取值。</p>
-<p>具体地说，比如你想要选择一个模型，那就从这10个模型中，选择一个最适当的多项式次数，并且用这个模型进行估计，预测你的假设能否很好地推广到新的样本上。</p>
-<p>那么你可以这样做：</p>
-<ul>
-<li>你可以先选择第一个模型，然后求训练误差的最小值。这样你就会得到一个参数向量$\theta$。</li>
-<li>然后你再选择第二个模型，进行同样的过程，这样你会得到另一个参数向量$\theta$。</li>
-<li>拟合三次函数模型时，同理，也能得到一个参数向量$\theta$。</li>
-<li>…</li>
-<li>用相同的方式得到第10个模型的向量$\theta$。</li>
-</ul>
-<p><img src="/img/16_10_24/009.png" alt=""></p>
-<p>如果一次模型训练后得到的参数向量为$\theta^{(1)}$,二次模型训练后得到的参数向量为$\theta^{(2)}$，依次类推，十次模型训练后得到的参数向量为$\theta^{(10)}$。</p>
-<p>接下来，我们要做的是对所有这些模型求出<strong>测试集误差</strong>。因此，我们可以算出每一个模型的$Jtest(\theta^{(1)})$、$Jtest(\theta^{(2)})$、$Jtest(\theta^{(3)})$…$Jtest(\theta^{(10)})$。</p>
-<p>接下来为了确定哪一个模型最好，我们可以找出<strong>测试集误差最小的模型</strong>。</p>
-<p>假设我们最终选择了五次多项式模型:</p>
-<p>$$<br>Choose \ \ \theta_{0} + … \theta_{5}x^{5}<br>$$</p>
-<h3 id="正确的评价某个假设函数的预测能力">正确的评价某个假设函数的预测能力</h3><blockquote>
-<p>由于我们使用的是<strong>测试结果集</strong>来衡量的代价函数，从而得到多项式次数$d$这个参数的值为5，所以这样任然不能公平地说明这个假设可以推广到一般情况。</p>
-<p>也就是说我们选择了一个能最好地拟合测试集的参数$d$的值，因此我们的参数向量$\theta^{(5)}$在拟合测试集时的结果很可能导致一个比实际泛化误差更完美的预测结果。（因为我们找到的是一个最能拟合测试集的参数$d$）。因此我们再用测试集来评价我们的假设就显得不公平了。</p>
-<p>而我们其实更关心的是对新样本的拟合效果，所以我们之前说到的如果我们用训练集来拟合参数$\theta_{0}$,$\theta_{1}$等参数时，拟合后的模型在作用于训练集上的效果是不能预测出我们将这个假设推广到新样板上时效果如何的。这是因为这些参数能够很好地拟合训练集，因此它们很有可能在对训练集的预测中表现的很好，但对其他的新样本来说就不一定那么好了。</p>
-</blockquote>
-<p>我们要做的实际上是用测试集来拟合参数$d$，但是这同样也意味着这并不能较为公平地预测出假设函数在遇到新样本时的表现。</p>
-<h4 id="方式">方式</h4><p>为了解决这一问题在模型选择中，如果我们要评价某个假设，我们通常采用以下的方法：</p>
-<p>给定某个数据集，这里我们要将其分为三段：训练集、<strong>交叉验证集（cross validation set）</strong>、测试集。</p>
-<p><img src="/img/16_10_24/010.png" alt=""></p>
-<p>一种典型的分割比例是：训练集60%，交叉验证集20%，测试集20%。（这个比例可稍作调整）</p>
-<p><img src="/img/16_10_24/011.png" alt=""></p>
-<blockquote>
-<p>$m$是训练集个数，$m_{cv}$是交叉验证集个数，$m_{test}$是测试集个数。</p>
-</blockquote>
-<p>我们可以得到 训练集/交叉验证集/测试集 的误差：</p>
-<p><img src="/img/16_10_24/012.png" alt=""></p>
-<p>现在我们的模型选择问题是这样的：我们现在要使用交叉验证集来选择合适的模型：</p>
-<p><img src="/img/16_10_24/013.png" alt=""></p>
-<p>即通过使用<strong>训练集</strong>对每一个假设函数依次去求最小化的代价函数$minJ(\theta)$，并求得对应的参数向量$\theta^{(d)}$。</p>
-<p>然后我们要做的是在<strong>交叉验证集</strong>中测试这些假设的表现，测出$J_{cv}$来看看这些假设在交叉验证集中表现如何。</p>
-<p>然后我们要选择<strong>交叉验证集</strong>误差最小的那个假设模型，假如这个模型是$J_{cv}(\theta^{(4)})$对应的那个模型，因此我们就选择这个四次多项式模型：</p>
-<p>$$<br>\theta_{0} + \theta_{1}x^{1} + … + \theta_{4}x^{4}<br>$$</p>
-<p>我们得到了拟合出最好的系数$d=4$。</p>
-<p>这个过程中，我们没有使用<strong>测试集</strong>进行拟合，这样我们就回避了<strong>测试集</strong>的嫌疑。这样我们就可以光明正大的使用<strong>测试集</strong>来估计所选模型的泛化误差了。</p>
-<p>最后，我们可以使用<strong>测试集</strong>来评价模型的表现。</p>
-<p>但最后还是要提醒大家的一点是，在如今的机器学习应用中，确实也有很多人是像我之前介绍的那样做的（用测试集来选择模型，然后用同样的测试集来评价模型的表现，报告测试误差，看起来好像还能得到比较不错的泛化误差），我说过这并不是一个好的方法，但不幸的是，现在还有很多人这样做。如果测试集足够多的话，这也许还能行得通，但大多数的机器学习开发人员是不会这么做的，因为最佳做法还是把数据分成 训练集、验证集、测试集。</p>
 </span>
         
       
@@ -2101,378 +2271,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/09/11/斯坦福机器学习课程 第四周 (3)神经网络应用实例/" itemprop="url">
-                斯坦福机器学习课程 第四周 (3)神经网络应用实例
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-09-11T19:22:00+08:00" content="2016-09-11">
-            2016-09-11
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/09/11/斯坦福机器学习课程 第四周 (3)神经网络应用实例/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/11/斯坦福机器学习课程 第四周 (3)神经网络应用实例/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="神经网络应用实例">神经网络应用实例</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/rBZmG/examples-and-intuitions-i" target="_blank" rel="external">视频地址 part1</a></p>
-<p><a href="https://www.coursera.org/learn/machine-learning/lecture/solUx/examples-and-intuitions-ii" target="_blank" rel="external">视频地址 part2</a></p>
-<blockquote>
-<p>接下来将通过一个具体的例子来解释神经网络是如何计算关于输入的复杂的非线性函数的。</p>
-</blockquote>
-<h3 id="问题引入">问题引入</h3><p>考虑下面的问题：</p>
-<p>我们有二进制的输入特征$x_{1}$和$x_{2}$，它们的取值要么是0，要么是1。这个例子中，我画出了两个正样本和两个负样本。</p>
-<p><img src="/img/16_09_11/001.png" alt=""></p>
-<p>但你可以认为这是更复杂的学习问题的简化版本。在这个复杂问题中，我们可能在右上角有一堆正样本，在右下方有一堆用圆圈来表示的负样本。</p>
-<p><img src="/img/16_09_11/002.png" alt=""></p>
-<p>我们想要做到的就是有一个非线性的决策边界来区分正负样本：</p>
-<p><img src="/img/16_09_11/003.png" alt=""></p>
-<p>那么，神经网络是如何做到的呢？为了描述方便，我继续使用上面二进制输入特征的例子。</p>
-<p>具体来讲，我们要计算的目标函数:</p>
-<p>$$y=x_{1} XNOR x_{2}$$</p>
-<blockquote>
-<p>求同或(都为真或都为假时，结果为真，否则结果为假)</p>
-</blockquote>
-<p>或者也可以写作：</p>
-<p>$$NOT(y=x_{1} XOR x_{2})$$</p>
-<blockquote>
-<p>求异或(都为真或都为假时，结果为假，否则结果为真)再取反</p>
-</blockquote>
-<h3 id="AND、OR、NOT的实现">AND、OR、NOT的实现</h3><h4 id="AND">AND</h4><p>为了解释神经网络模型如何来拟合这种训练集。我们先讲解一个稍微简单一些的神经网络，它拟合了<strong>“且运算”(AND)</strong>：</p>
-<p><img src="/img/16_09_11/004.png" alt=""></p>
-<p>假设我们有二进制输入$x_{1}$和$x_{2}$，目标函数是$y=x_{1}ANDx_{2}$，那么我们怎样得到一个具有单个神经元的神经网络来计算这个<strong>逻辑与</strong>呢？为了做到这一点，我们也需要画出偏置单元（即下图中+1的单元）：</p>
-<p><img src="/img/16_09_11/005.png" alt=""></p>
-<p>接下来让我给这个网络分配一些权重(参数)：</p>
-<p><img src="/img/16_09_11/006.png" alt=""></p>
-<p>所以我的假设函数是：</p>
-<p>$$<br>h_{Θ}(x)=g(-30 + 20x_{1} + 20x_{2})<br>$$</p>
-<p>这里$Θ^{(1)}_{10}$就是$-30$、$Θ^{(2)}_{11}$就是$20$、$Θ^{(3)}_{12}$就是$20$。</p>
-<p>接下来介绍一下这个小神经元是怎样计算的。</p>
-<p>回忆一下激励函数$g(z)$看起来是这样的：</p>
-<p><img src="/img/16_09_11/007.png" alt=""></p>
-<p>再来看看我们的假设在各种情况下的输出：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">$x_{1}$</th>
-<th style="text-align:center">$x_{2}$</th>
-<th style="text-align:center">$h_{Θ}(x)$</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">0</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">$g(-30)\approx0$</td>
-</tr>
-<tr>
-<td style="text-align:center">0</td>
-<td style="text-align:center">1</td>
-<td style="text-align:center">$g(-10)\approx0$</td>
-</tr>
-<tr>
-<td style="text-align:center">1</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">$g(-10)\approx0$</td>
-</tr>
-<tr>
-<td style="text-align:center">1</td>
-<td style="text-align:center">1</td>
-<td style="text-align:center">$g(10)\approx1$</td>
-</tr>
-</tbody>
-</table>
-<p>这就是逻辑“与”的计算结果。</p>
-<hr>
-<h4 id="OR">OR</h4><p>下面的神经网络使用同样的原理实现了“或”的功能：</p>
-<p><img src="/img/16_09_11/008.png" alt=""></p>
-<p>假设函数为：</p>
-<p>$$<br>h_{Θ}(x)=g(-10 + 20x_{1} + 20x_{2})<br>$$</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">$x_{1}$</th>
-<th style="text-align:center">$x_{2}$</th>
-<th style="text-align:center">$h_{Θ}(x)$</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">0</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">$g(-10)\approx0$</td>
-</tr>
-<tr>
-<td style="text-align:center">0</td>
-<td style="text-align:center">1</td>
-<td style="text-align:center">$g(10)\approx1$</td>
-</tr>
-<tr>
-<td style="text-align:center">1</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">$g(10)\approx1$</td>
-</tr>
-<tr>
-<td style="text-align:center">1</td>
-<td style="text-align:center">1</td>
-<td style="text-align:center">$g(30)\approx1$</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h4 id="NOT">NOT</h4><p>下面的神经网络使用同样的原理实现了“非”的功能：</p>
-<p><img src="/img/16_09_11/009.png" alt=""></p>
-<p>假设函数为：</p>
-<p>$$<br>h_{Θ}(x)=g(10 - 20x_{1})<br>$$</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">$x_{1}$</th>
-<th style="text-align:center">$h_{Θ}(x)$</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">0</td>
-<td style="text-align:center">$g(10)\approx1$</td>
-</tr>
-<tr>
-<td style="text-align:center">1</td>
-<td style="text-align:center">$g(-10)\approx0$</td>
-</tr>
-</tbody>
-</table>
-<h3 id="一个更复杂的例子">一个更复杂的例子</h3><p>下面的神经网络使用同样的原理实现了“$(NOTx_{1})AND(NOTx_{2})$”的功能：</p>
-<p><img src="/img/16_09_11/010.png" alt=""></p>
-<p>假设函数为：</p>
-<p>$$<br>h_{Θ}(x)=g(10 - 20x_{1} - 20x_{2})<br>$$</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">$x_{1}$</th>
-<th style="text-align:center">$x_{2}$</th>
-<th style="text-align:center">$h_{Θ}(x)$</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">0</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">$g(10)\approx1$</td>
-</tr>
-<tr>
-<td style="text-align:center">0</td>
-<td style="text-align:center">1</td>
-<td style="text-align:center">$g(-10)\approx0$</td>
-</tr>
-<tr>
-<td style="text-align:center">1</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">$g(-10)\approx0$</td>
-</tr>
-<tr>
-<td style="text-align:center">1</td>
-<td style="text-align:center">1</td>
-<td style="text-align:center">$g(-30)\approx0$</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h3 id="求解_XNOR">求解    XNOR</h3><p>接下来我们使用上面求解的以下三个神经网络，就可以来运算$x_{1}XNORx_{2}$了：</p>
-<p><img src="/img/16_09_11/011.png" alt=""></p>
-<p>为了拟合$x_{1}XNORx_{2}$的非线性的样本分布：</p>
-<p><img src="/img/16_09_11/001.png" alt=""></p>
-<p>我们可以构建以下神经网络的隐藏层：</p>
-<p><img src="/img/16_09_11/012.png" alt=""></p>
-<p>对应的真值表如下：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">$x_{1}$</th>
-<th style="text-align:center">$x_{2}$</th>
-<th style="text-align:center">$a_{1}^{(2)}$</th>
-<th style="text-align:center">$a_{2}^{(2)}$</th>
-<th style="text-align:center">$h_{Θ}(x)$</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">0</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center"><strong>0</strong></td>
-<td style="text-align:center"><strong>1</strong></td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:center">0</td>
-<td style="text-align:center">1</td>
-<td style="text-align:center"><strong>0</strong></td>
-<td style="text-align:center"><strong>0</strong></td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:center">1</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center"><strong>0</strong></td>
-<td style="text-align:center"><strong>0</strong></td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:center">1</td>
-<td style="text-align:center">1</td>
-<td style="text-align:center"><strong>1</strong></td>
-<td style="text-align:center"><strong>0</strong></td>
-<td style="text-align:center"></td>
-</tr>
-</tbody>
-</table>
-<p>有了$a_{1}^{(2)}$、$a_{2}^{(2)}$后，我们加入偏置单元，然后就可以得到输出层了：</p>
-<p><img src="/img/16_09_11/012.png" alt=""></p>
-<p>最终的真值表如下：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">$x_{1}$</th>
-<th style="text-align:center">$x_{2}$</th>
-<th style="text-align:center">$a_{1}^{(2)}$</th>
-<th style="text-align:center">$a_{2}^{(2)}$</th>
-<th style="text-align:center">$h_{Θ}(x)$</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">0</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">1</td>
-<td style="text-align:center"><strong>1</strong></td>
-</tr>
-<tr>
-<td style="text-align:center">0</td>
-<td style="text-align:center">1</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center"><strong>0</strong></td>
-</tr>
-<tr>
-<td style="text-align:center">1</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center"><strong>0</strong></td>
-</tr>
-<tr>
-<td style="text-align:center">1</td>
-<td style="text-align:center">1</td>
-<td style="text-align:center">1</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center"><strong>1</strong></td>
-</tr>
-</tbody>
-</table>
-<p>通过一个含有输入层、隐藏层、输出层的神经网络，我们最终拟合了$x_{1}XNORx_{2}$。</p>
-<blockquote>
-<p>更一般的理解是：在输入层中，我们有原始输入值，然后我们建立了一个隐藏层，用来计算稍微复杂一些的输入量的函数，然后通过添加另一个层我们得到了一个更复杂一点的函数，这就是神经网络可以计算较复杂函数的某种直观解释。</p>
-<p>我们知道，当层数很多的时候，你有一个相对简单的输入量的函数作为第二层，而第三层可以建立在此基础上来计算更加复杂一些的函数，然后再下一层，又可以计算再复杂一些的函数：</p>
-</blockquote>
-<p><img src="/img/16_09_11/014.png" alt=""></p>
-<h3 id="手写识别的展示">手写识别的展示</h3><p>接下来，将展示一段视频，来源于<strong>阳乐昆(Yann LeCun)</strong>，他是一名教授，供职于纽约大学，也是神经网络研究早期的奠基者之一，也是这一领域 大牛。他的很多理论和想法现在都已经被应用于各种各样的产品和应用中，遍布全世界。所以我想向大家展示一段他早期工作中的视频，这段视频中，他使用神经网络算法进行手写数字的识别。你也许记得，这门课刚开始的时候，我说过关于神经网络的一个早期成就，就是应用神经网络读取邮政编码，以帮助我们进行邮递。那么这便是其中的一项尝试。</p>
-<p>视频说明：</p>
-<p><img src="/img/16_09_11/015.png" alt=""></p>
-<p>视频如下：</p>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/yxuRnBEczUU" frameborder="0" allowfullscreen></iframe>
-
-<h2 id="神经网络的多类别分类">神经网络的多类别分类</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/gFpiW/multiclass-classification" target="_blank" rel="external">视频地址</a></p>
-<blockquote>
-<p>这一节将介绍<strong>如何使用神经网络做多类别分类</strong>。</p>
-<p>在多类别分类中，通常有不止一个类别需要我们去区分，在上一节最后的视频中，我们提到了有关手写数字识别的问题，这实际上正是一个多类别分类的问题。因为识别数字从0到9，正好是10个类别。</p>
-</blockquote>
-<p>我们处理多类别分类的方法实际上是基于一个<strong>多神经网络算法</strong>而延伸出来的。</p>
-<p>让我们来看看下面这个例子：</p>
-<p>还是一个有关计算机视觉识别的例子，就像我之前介绍过的识别汽车的例子一样，但与之不同的是现在我们希望处理的是四个类别的分类问题，四个类别分别是行人、轿车、摩托车、卡车：</p>
-<p><img src="/img/16_09_11/016.png" alt=""></p>
-<p>任意给出一副图片，我们需要知道图片上是这四个类别中的哪一个。</p>
-<p>对于这样的一个问题，我们的做法是，<strong>建立一个具有四个输出单元的神经网络</strong>：</p>
-<p><img src="/img/16_09_11/017.png" alt=""></p>
-<p>也就是说，此时神经网络的输出是一个思维向量。因此现在的输出需要用一个向量来表示，这个向量中有四个元素，而我们要做的是对第一个输出元素进行分辨图片上是不是一个行人(Pedestrian)，然后对第二个元素分辨它是不是一辆轿车(Car)，对第三个元素分辨它是不是摩托车(Motorcycle)，对第四个元素分辨它是不是一辆卡车(Truck)。</p>
-<p>因此，如果图上是行人的话，我希望输出结果是：</p>
-<p>$$<br>h_{Θ}(x)\approx<br>\begin{bmatrix}<br>1 \\<br>0 \\<br>0 \\<br>0<br>\end{bmatrix}<br>$$</p>
-<p>如果图上是轿车的话，我希望输出结果是：</p>
-<p>$$<br>h_{Θ}(x)\approx<br>\begin{bmatrix}<br>0 \\<br>1 \\<br>0 \\<br>0<br>\end{bmatrix}<br>$$</p>
-<p>如果图上是摩托车的话，我希望输出结果是：</p>
-<p>$$<br>h_{Θ}(x)\approx<br>\begin{bmatrix}<br>0 \\<br>0 \\<br>1 \\<br>0<br>\end{bmatrix}<br>$$</p>
-<p>如果图上是卡车的话，我希望输出结果是：</p>
-<p>$$<br>h_{Θ}(x)\approx<br>\begin{bmatrix}<br>0 \\<br>0 \\<br>0 \\<br>1<br>\end{bmatrix}<br>$$</p>
-<p>所以，这和我们介绍逻辑回归时讨论过的一对多方法其实是一样的，只不过现在我们有四个逻辑回归的分类器，而我们需要对每一个分类器都分别进行识别分类。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2511,7 +2309,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">109</span>
+              <span class="site-state-item-count">110</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

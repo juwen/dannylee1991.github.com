@@ -199,6 +199,252 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2017/05/26/斯坦福机器学习课程 第九周 (3)多元高斯分布（选学）/" itemprop="url">
+                斯坦福机器学习课程 第九周 (3)多元高斯分布（选学）
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-05-26T21:00:00+08:00" content="2017-05-26">
+            2017-05-26
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/05/26/斯坦福机器学习课程 第九周 (3)多元高斯分布（选学）/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/26/斯坦福机器学习课程 第九周 (3)多元高斯分布（选学）/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="多元高斯分布">多元高斯分布</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/Cf8DF/multivariate-gaussian-distribution" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>接下来我将介绍<strong>多元高斯分布 (multivariate Gaussian distribution)</strong>。它是我们目前所学的异常检测算法的延伸，它有一些优势也有一些劣势，它能捕捉到一些之前的算法检测不出来的异常。</p>
+</blockquote>
+<h3 id="异常检测算法无法解决的问题">异常检测算法无法解决的问题</h3><p>还是现以一个例子来解释：</p>
+<p>假设在数据中心监控机器的例子中，我们有如下的内存和CPU使用数据：</p>
+<p><img src="/img/17_05_26/001.png" alt=""></p>
+<p>其中对于这两个维度的数据，都服从正态分布：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$x_1$</th>
+<th style="text-align:center">$x_2$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="/img/17_05_26/002.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/003.png" alt=""></td>
+</tr>
+</tbody>
+</table>
+<p>如果现在在我们的测试集中，有一个异常数据点出现在下图的位置中：</p>
+<p><img src="/img/17_05_26/004.png" alt=""></p>
+<p>那么在这种情况下我们会发现，这一点对应的两个维度下的概率其实都不低，从$p(x)$的结果上，我们无法准确预测这个样本是否属于异常。</p>
+<p>产生这个问题的实际原因其实是这样的，从$x_1$和$x_2$这两个维度来看，我们的正常数据及时大多数集中分布在这样一个范围内：</p>
+<p><img src="/img/17_05_26/005.png" alt=""></p>
+<p>但我们使用之前的异常检测算法，其实是以中心区域向外以正圆的形式扩散的。也就是说距离中心区域距离相等的点，对应的$p(x)$都是一样的，所以我们可能无法检测到这一个异常样本，因为它也处在一个$p(x)$比较大的范围内：</p>
+<p><img src="/img/17_05_26/006.png" alt=""></p>
+<p>所以，为了解决异常检测算法的这一问题，接下来我解释改良版的异常检测算法，要用到叫做<strong>多元高斯分布（多元正态分布）</strong>的东西。</p>
+<h3 id="通过多元高斯分布改良异常检测算法">通过多元高斯分布改良异常检测算法</h3><p>在多元高斯分布中，对于n维特征$x \in R^n$，不要把模型$p(x_1)$,$p(x_2)$,…,$p(x_n)$分开，而要建立$p(x)$整体的模型。</p>
+<p>多元高斯分布的参数包括向量$µ$和一个$n×n$的矩阵$Σ$。</p>
+<p>$$<br>µ \in R^n  \\<br>Σ \in R^{n×n}<br>$$</p>
+<p>$Σ$被称为<strong>协方差矩阵</strong>，它类似于我们之前学习PCA的时候所见到的协方差矩阵。</p>
+<p>带入之后计算$p(x)$：</p>
+<p>$$<br>p(x;µ,Σ)=<br>\frac{1}{(2π)^{\frac{n}{2}}|Σ|^{\frac{1}{2}}}<br>exp(-\frac{1}{2}(x-µ)^TΣ^{-1}(x-µ))<br>$$</p>
+<blockquote>
+<p>这个公式不用背，用的时候再去查。</p>
+</blockquote>
+<p>注意，公式中的$|Σ|$这一项，代表矩阵$Σ$的<strong>行列式</strong>。在Octave中可以用下面的代码来计算：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="title">det</span><span class="params">(Sigma)</span></span></div></pre></td></tr></table></figure>
+<p>其实这个公式是什么样并不重要，更重要的是$p(x)$到底是什么样。</p>
+<h3 id="多元高斯分布的样子">多元高斯分布的样子</h3><p>我们来对比一下不同的$µ$和不同的$Σ$组合后，对应的$p(x)$的形状。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$\begin{equation}µ=\left[\begin{matrix}0\\0\end{matrix}\right]Σ=\left[\begin{matrix}1&amp;0\\0&amp;1\end{matrix}\right]\end{equation}$</th>
+<th style="text-align:center">$\begin{equation}µ=\left[\begin{matrix}0\\0\end{matrix}\right]Σ=\left[\begin{matrix}0.6&amp;0\\0&amp;0.6\end{matrix}\right]\end{equation}$</th>
+<th style="text-align:center">$\begin{equation}µ=\left[\begin{matrix}0\\0\end{matrix}\right]Σ=\left[\begin{matrix}2&amp;0\\0&amp;2\end{matrix}\right]\end{equation}$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="/img/17_05_26/007.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/009.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/011.png" alt=""></td>
+</tr>
+<tr>
+<td style="text-align:center"><img src="/img/17_05_26/008.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/010.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/012.png" alt=""></td>
+</tr>
+</tbody>
+</table>
+<p>表格从上到下依次是三种情况对应的参数、三维图像以及俯视图。</p>
+<p>$µ$作为均值，象征着中心区域对应的坐标点。$Σ$是协方差矩阵，它衡量的是特征$x_1$和$x_2$的方差。</p>
+<p>从图中可以看出来，当缩小协方差$Σ$时，中心区域的凸起就会变得更细长；当扩大协方差$Σ$时，中心区域的凸起就会变得更扁平。因为概率分布的积分必须等于1，所以如果你缩小方差，就会变得细长，反之就会变得扁平。</p>
+<p>接下来我们尝试对协方差中使用不同的数值，来观测$p(x)$形状的变化：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$\begin{equation}µ=\left[\begin{matrix}0\\0\end{matrix}\right]Σ=\left[\begin{matrix}1&amp;0\\0&amp;1\end{matrix}\right]\end{equation}$</th>
+<th style="text-align:center">$\begin{equation}µ=\left[\begin{matrix}0\\0\end{matrix}\right]Σ=\left[\begin{matrix}0.6&amp;0\\0&amp;1\end{matrix}\right]\end{equation}$</th>
+<th style="text-align:center">$\begin{equation}µ=\left[\begin{matrix}0\\0\end{matrix}\right]Σ=\left[\begin{matrix}2&amp;0\\0&amp;1\end{matrix}\right]\end{equation}$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="/img/17_05_26/007.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/013.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/015.png" alt=""></td>
+</tr>
+<tr>
+<td style="text-align:center"><img src="/img/17_05_26/008.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/014.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/016.png" alt=""></td>
+</tr>
+</tbody>
+</table>
+<p>在协方差$Σ$中，左上角元素对应的是$x_1$特征，右下角元素对应的是$x_2$特征。</p>
+<p>在第二组图中，我们可以看到，当我们缩小$x_1$到原先的0.6倍而$x_2$保持原先的大小时，由于相当于是对特征$x_1$的方差进行了缩小，所以图像在$x_1$的方向上，会显得更细长。</p>
+<p>在第三组图中，我们可以看到，当我们放大$x_1$到原先的2倍而$x_2$保持原先的大小时，由于相当于是对特征$x_1$的方差进行了放大，所以图像在$x_1$的方向上，会显得更扁平。</p>
+<p>对于多元高斯分布来说，一个很棒的事情就是我们可以用它来<strong>对数据的相关性建模</strong>。也就是说，我们可以用它来给$x_1$和$x_2$高度相关的情况建立模型。具体来说，我们可以通过改变协方差$Σ$非对角线上的元素来得到不同的高斯分布：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$\begin{equation}µ=\left[\begin{matrix}0\\0\end{matrix}\right]Σ=\left[\begin{matrix}1&amp;0\\0&amp;1\end{matrix}\right]\end{equation}$</th>
+<th style="text-align:center">$\begin{equation}µ=\left[\begin{matrix}0\\0\end{matrix}\right]Σ=\left[\begin{matrix}1&amp;0.5\\0.5&amp;1\end{matrix}\right]\end{equation}$</th>
+<th style="text-align:center">$\begin{equation}µ=\left[\begin{matrix}0\\0\end{matrix}\right]Σ=\left[\begin{matrix}1&amp;0.8\\0.8&amp;1\end{matrix}\right]\end{equation}$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="/img/17_05_26/007.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/017.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/019.png" alt=""></td>
+</tr>
+<tr>
+<td style="text-align:center"><img src="/img/17_05_26/008.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/018.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/020.png" alt=""></td>
+</tr>
+</tbody>
+</table>
+<p>可以看出来，当我改变了非对角线上元素的值时，$p(x)$的图像也变得倾斜了；当我增大了这些元素时，这个倾斜的分布图像变得更细长了。</p>
+<p>上面是我们把这些非对角线上元素设置为正数时的样子，那么如果我们把它们设置为负数时，会是什么样呢？</p>
+<p>它们的倾斜方向会发生改变：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$\begin{equation}µ=\left[\begin{matrix}0\\0\end{matrix}\right]Σ=\left[\begin{matrix}1&amp;0\\0&amp;1\end{matrix}\right]\end{equation}$</th>
+<th style="text-align:center">$\begin{equation}µ=\left[\begin{matrix}0\\0\end{matrix}\right]Σ=\left[\begin{matrix}1&amp;-0.5\\-0.5&amp;1\end{matrix}\right]\end{equation}$</th>
+<th style="text-align:center">$\begin{equation}µ=\left[\begin{matrix}0\\0\end{matrix}\right]Σ=\left[\begin{matrix}1&amp;-0.8\\-0.8&amp;1\end{matrix}\right]\end{equation}$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="/img/17_05_26/007.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/021.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/023.png" alt=""></td>
+</tr>
+<tr>
+<td style="text-align:center"><img src="/img/17_05_26/008.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/022.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/024.png" alt=""></td>
+</tr>
+</tbody>
+</table>
+<p>如果我们改变$µ$，会对图像$p(x)$产生什么影响呢？</p>
+<p>它们会发生平移：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$\begin{equation}µ=\left[\begin{matrix}0\\0\end{matrix}\right]Σ=\left[\begin{matrix}1&amp;0\\0&amp;1\end{matrix}\right]\end{equation}$</th>
+<th style="text-align:center">$\begin{equation}µ=\left[\begin{matrix}0\\0.5\end{matrix}\right]Σ=\left[\begin{matrix}1&amp;0\\0&amp;1\end{matrix}\right]\end{equation}$</th>
+<th style="text-align:center">$\begin{equation}µ=\left[\begin{matrix}1.5\\-0.5\end{matrix}\right]Σ=\left[\begin{matrix}1&amp;0\\0&amp;1\end{matrix}\right]\end{equation}$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="/img/17_05_26/007.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/025.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/027.png" alt=""></td>
+</tr>
+<tr>
+<td style="text-align:center"><img src="/img/17_05_26/008.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/026.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_26/028.png" alt=""></td>
+</tr>
+</tbody>
+</table>
+<p>$µ$有两个元素，第一个元素对应的是图像在$x_1$方向上的位移，第二个元素对应的是图像在$x_2$方向上的位移。当为正数时，是沿着增大的方向平移，反之是沿着缩小的方向平移。</p>
+<h3 id="总结">总结</h3><p>不同的图片，能够帮助你了解<strong>多元高斯分布</strong>所能描述的概率分布是什么样。它最重要的优势就是能够描述当两个特征变量之间可能存在正相关或者是负相关关系的情况。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2017/05/25/斯坦福机器学习课程 第九周 (2)构建一个异常检测系统/" itemprop="url">
                 斯坦福机器学习课程 第九周 (2)构建一个异常检测系统
               </a>
@@ -333,6 +579,96 @@ var _hmt = _hmt || [];
 <p>关于上面表格中，有关<strong>异常检测</strong>中的不同类型的异常情况，我们用之前的垃圾邮件的例子来说明。</p>
 <p>在那个例子中，垃圾邮件的类型其实也有很多种。有的是想卖东西给你、有的是想钓出你的密码(这种就叫钓鱼邮件)、还有其他一些类型的垃圾邮件…但对于垃圾邮件的问题，我们能得到绝大多数不同类型的垃圾邮件，因为我们有大量的垃圾邮件样本的集合。因此这也是为什么我们通常把垃圾邮件问题看作是监督学习问题的原因，虽然垃圾邮件的种类通常有太多太多 。</p>
 <p>因此，我们可以看看一些异常检测的应用和监督学习应用的比较，我们不难发现对于欺诈检测(fraud detection)，如果你掌握了许多种不同类型的诈骗方法，并且只有相对较小的训练集（只有很少一部分用户有异常行为）那我会使用异常检测算法。当然，有时候欺诈检测的方法也可能会偏向于使用监督学习算法，但是如果你并没有看到许多在你网站上进行异常行为的用户样本，那么欺诈检测通常还是被当做是一个异常检测算法，而不是一个监督学习算法。</p>
+<h2 id="选择使用什么特征">选择使用什么特征</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/LSpXm/choosing-what-features-to-use" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>前面我们讲到了异常检测算法，并且我们也讨论了如何评估一个异常检测算法。</p>
+<p>事实上当你应用异常检测时，对它的效率影响最大的因素之一，是你使用什么特征变量。那么在本节，我将给出一些关于如何设计或选择异常检测算法的特征变量建议。</p>
+</blockquote>
+<h3 id="对不服从高斯分布的数据进行转换">对不服从高斯分布的数据进行转换</h3><p>在我们的异常检测算法中，我们做的事情之一就是使用正态(高斯)分布来对特征向量建模。通常情况下，我们都需要用直方图来可视化这些数据，如下图：</p>
+<p><img src="/img/17_05_25/001.png" alt=""></p>
+<p>这么做的原因是为了在使用算法之前，确保我们的数据看起来是服从高斯分布的（当然即使你的数据并不是高斯分布，它也基本上可以良好地运行，但最好转换成高斯分布的样式之后在带入计算）。</p>
+<p>如果你的样本的某个特征展示效果完全不像一个正态分布的形状：</p>
+<p><img src="/img/17_05_25/002.png" alt=""></p>
+<p>那么我们就需要对数据进行一些转换，来确保这些数据能看起来更像高斯分布。这样你的算法才能效果更好。</p>
+<p>一般情况下，我们都会对原始数据尝试求对数或者开根号操作进行转换，下图是通过对数来转换的：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$x$</th>
+<th style="text-align:center">$log(x)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="/img/17_05_25/002.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_25/003.png" alt=""></td>
+</tr>
+</tbody>
+</table>
+<p>你也可以尝试使用以下的方式来带入：</p>
+<p>$$<br>x←log(x)  \\<br>x←log(x + c) \\<br>x←\sqrt x<br>$$</p>
+<p>选择哪一个都可以，唯一的原则就是保证转换后的分布看起来更像高斯分布(正态分布)一些。</p>
+<hr>
+<p>下面是对于一个不服从高斯分布的数据进行转换的过程：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">原始数据</th>
+<th style="text-align:center">$x^{0.5}$</th>
+<th style="text-align:center">$x^{0.2}$</th>
+<th style="text-align:center">$x^{0.1}$</th>
+<th style="text-align:center">$x^{0.05}$</th>
+<th style="text-align:center">$log(x)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="/img/17_05_25/004.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_25/005.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_25/006.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_25/007.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_25/008.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_25/009.png" alt=""></td>
+</tr>
+</tbody>
+</table>
+<p>我们对原始数据尝试了不同的转换之后，图像最终趋于了正太分布的样式。在Octive中实现的过程如下：</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">hist(<span class="name">x</span>,<span class="number">50</span>)</div><div class="line">hist(<span class="name">x</span>.^<span class="number">0.5</span>,<span class="number">50</span>)</div><div class="line">hist(<span class="name">x</span>.^<span class="number">0.2</span>,<span class="number">50</span>)</div><div class="line">hist(<span class="name">x</span>.^<span class="number">0.1</span>,<span class="number">50</span>)</div><div class="line">hist(<span class="name">x</span>.^<span class="number">0.05</span>,<span class="number">50</span>)</div><div class="line">hist(<span class="name">log</span>(<span class="name">x</span>),<span class="number">50</span>)</div><div class="line">xNew = log(<span class="name">x</span>)<span class="comment">;</span></div></pre></td></tr></table></figure>
+<p>最终我们选择了$log(x)$来代替原来的$x$。</p>
+<h3 id="异常检测算法的特征变量的获取">异常检测算法的特征变量的获取</h3><p>对于异常检测算法的特征变量的获取的方法，其实和之前学习的误差分析步骤是类似的。</p>
+<ul>
+<li>首先我们先训练处一个异常检测学习算法。</li>
+<li>然后在一组交叉验证集上运行算法。</li>
+<li>然后找出那些异常样本。</li>
+<li>然后我们尝试其他的特征变量，看是否能让我们的算法变得更好。</li>
+</ul>
+<h4 id="举例说明">举例说明</h4><p>我们用一个具体的例子来说明上面的过程：</p>
+<p>在异常检测中，我们希望$p(x)$的值对正常样本来说是比较大的，而对异常样本来说，值是很小的。但一个很常见的问题是$p(x)$是具有可比性的（即对于两者都很大）。</p>
+<p>这是我的一组无标签数据：</p>
+<p><img src="/img/17_05_25/010.png" alt=""></p>
+<p>这里我只有一个特征变量$x_1$，我要用高斯分布来拟合它。</p>
+<p>假设我们绘制出它的高斯分布，如下图所示：</p>
+<p><img src="/img/17_05_25/011.png" alt=""></p>
+<p>假设我们遇到了一个有异常的样本：</p>
+<p><img src="/img/17_05_25/012.png" alt=""></p>
+<p>但是，从图中我们能看出这个样本在这一特征下的$p(x_1)$并不低，我们无法从这一特征下区分出这一异常样本。</p>
+<p>如果我们引入另一个特征$x_2$，图像如下：</p>
+<p><img src="/img/17_05_25/013.png" alt=""></p>
+<p>再来看看我们的异常样本，出现在了这两个特征所分布的区域的外侧：</p>
+<p><img src="/img/17_05_25/014.png" alt=""></p>
+<p>这个时候，我们的异常检测算法就会给出很小的值来验证这一点代表的样本属于异常样本。</p>
+<blockquote>
+<p><strong>总结</strong>:选择异常检测需要考虑的特征时，先找出异常样本，然后尝试通过引入新的特征来验证对异常样本的识别的准确性。如果有所提高，就可以考虑引入这个特征。</p>
+</blockquote>
+<h4 id="关于特征选择的思考">关于特征选择的思考</h4><p>最后我想与你分享一些我平时在为异常检查算法选择特征变量时的一些思考。</p>
+<p>通常，我会选择那些既不是特别大也不是特别小的特征变量。以数据中心异常计算机的监测的例子为例，我们有以下四个特征：</p>
+<p>$$<br>x_1=机器内存使用  \\<br>x_2=硬盘资源使用  \\<br>x_3=CPU使用  \\<br>x_4=网络情况<br>$$</p>
+<p>我假设CPU使用情况和网络情况呈线性关系，正常情况下如果其中一个服务器正在运行时，CPU负载和流量都很大。</p>
+<p>现在，假设有一种异常情况，就是流量消耗很小，但CPU负载却很高，因为可能是机器遇到了某个死循环导致CPU负载飙升，因此我们可以定义一个新的特征变量来更好的说明这一情况：</p>
+<p>$$<br>x_5=\frac{CPU 负载}{流量消耗}<br>$$</p>
+<p>同样，你也可以尝试使用下面这种特征变量：</p>
+<p>$$<br>x_6=\frac{(CPU 负载)^2}{流量消耗}<br>$$</p>
+<p>其实，解决这类问题的思路就是尝试组合新的特征，从而能更好的检测异常情况。</p>
 </span>
         
       
@@ -2365,196 +2701,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2017/03/07/【Tensorflow r1.0 文档翻译】TensorBoard-嵌入可视化/" itemprop="url">
-                【Tensorflow r1.0 文档翻译】TensorBoard:嵌入可视化
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2017-03-07T21:07:58+08:00" content="2017-03-07">
-            2017-03-07
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-                ， 
-              
-
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/Tensorflow/" itemprop="url" rel="index">
-                  <span itemprop="name">Tensorflow</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2017/03/07/【Tensorflow r1.0 文档翻译】TensorBoard-嵌入可视化/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/07/【Tensorflow r1.0 文档翻译】TensorBoard-嵌入可视化/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><p>嵌入在机器学习中无处不在，出现在推荐系统，NLP和许多其他应用程序中。事实上，在TensorFlow的上下文中，将tensor（或tensor切片）视为空间中的点是自然的，因此几乎任何TensorFlow系统将自然地产生各种嵌入。</p>
-<p>要了解有关嵌入和如何训练它们的更多信息，请参阅<a href="https://www.tensorflow.org/tutorials/word2vec" target="_blank" rel="external">单词向量表示教程</a>。如果你对图像的嵌入感兴趣，请查看<a href="http://colah.github.io/posts/2014-10-Visualizing-MNIST/" target="_blank" rel="external">这篇文章</a>，了解MNIST图像的有趣的可视化。另一方面，如果你对单词嵌入感兴趣，那么<a href="http://colah.github.io/posts/2014-10-Visualizing-MNIST/" target="_blank" rel="external">这篇文章</a>会给你一个很好的介绍。</p>
-<p>TensorBoard有一个内置的可视化工具，称为嵌入投影仪，用于交互式可视化和分析高维数据，例如嵌入。这意味着对开发人员和研究人员同样有用。它从保存tensorflow变量的检查点文件读取。虽然它对嵌入最有用，它将加载任何2D tensor，可能包括您的训练权重。</p>
-<video height="363" width="710" id="video" controls preload="none" poster="/img/17_03_07/002.png"><br>    <source id="mp4" src="/img/17_03_07/001.mp4" type="video/mp4"><br>    <p>Your user agent does not support the HTML5 Video element.</p><br></video>
-
-<p>默认情况下，嵌入投影仪执行三维<a href="https://en.wikipedia.org/wiki/Principal_component_analysis" target="_blank" rel="external">主成分分析</a>，这意味着它接受你的高维数据，并试图找到一个结构保留投影到三维空间。基本上，它通过旋转你的数据，使前三个维度显示尽可能多的数据方差。<a href="http://setosa.io/ev/principal-component-analysis/" target="_blank" rel="external">这里</a>有一个很好的视觉解释。另一个非常有用的投影是<a href="https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding" target="_blank" rel="external">t-SNE</a>。我们稍后在教程中讨论更多的t-SNE。</p>
-<p>如果您使用嵌入，您可能需要将标签/图像附加到数据点，以告诉可视化器每个数据点对应的标签/图像。您可以通过生成元数据文件，使用我们的Python API将其附加到tensor，或将其上传到已经运行的TensorBoard来完成。</p>
-<h2 id="构建">构建</h2><p>有关如何运行TensorBoard并确保您记录所有必要的信息，请参阅<a href="/2017/03/07/【Tensorflow%20r1.0%20文档翻译】TensorBoard-可视化学习/">TensorBoard-可视化学习/</a>。</p>
-<p>要可视化您的嵌入，您需要做3件事：</p>
-<p>1）设置一个二维tensor变量来保存你的嵌入。</p>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attr">embedding_var</span> = tf.Variable(....)</div></pre></td></tr></table></figure>
-<p>2）定期将您的嵌入保存在<code>LOG_DIR</code>中。</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">saver = tf<span class="selector-class">.train</span><span class="selector-class">.Saver</span>()</div><div class="line">saver.save(session, os<span class="selector-class">.path</span><span class="selector-class">.join</span>(LOG_DIR, <span class="string">"model.ckpt"</span>), step)</div></pre></td></tr></table></figure>
-<p>以下步骤不是必要的，但是如果您有与嵌入相关联的任何元数据（标签，图像），则需要将它们链接到tensor上，以便TensorBoard知道它。</p>
-<p>3）将元数据与嵌入关联。</p>
-<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">from tensorflow.contrib.tensorboard.plugins <span class="built_in">import</span> projector</div><div class="line"><span class="comment"># Use the same LOG_DIR where you stored your checkpoint.</span></div><div class="line"><span class="attr">summary_writer</span> = tf.train.SummaryWriter(LOG_DIR)</div><div class="line"></div><div class="line"><span class="comment"># Format: tensorflow/contrib/tensorboard/plugins/projector/projector_config.proto</span></div><div class="line"><span class="attr">config</span> = projector.ProjectorConfig()</div><div class="line"></div><div class="line"><span class="comment"># You can add multiple embeddings. Here we add only one.</span></div><div class="line"><span class="attr">embedding</span> = config.embeddings.add()</div><div class="line">embedding.<span class="attr">tensor_name</span> = embedding_var.name</div><div class="line"><span class="comment"># Link this tensor to its metadata file (e.g. labels).</span></div><div class="line">embedding.<span class="attr">metadata_path</span> = os.path.join(LOG_DIR, 'metadata.tsv')</div><div class="line"></div><div class="line"><span class="comment"># Saves a configuration file that TensorBoard will read during startup.</span></div><div class="line">projector.visualize_embeddings(summary_writer, config)</div></pre></td></tr></table></figure>
-<p>运行模型并训练嵌入后，运行TensorBoard并将其指向job的<code>LOG_DIR</code>。</p>
-<figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tensorboard <span class="comment">--logdir=LOG_DIR</span></div></pre></td></tr></table></figure>
-<p>然后单击顶部窗格上的<em>Embeddings</em>选项卡，并选择适当的运行（如果有多个运行）。</p>
-<h2 id="元数据（可选）">元数据（可选）</h2><p>通常嵌入具有与其相关联的元数据（例如，标签，图像）。元数据应存储在模型检查点之外的单独文件中，因为元数据不是模型的可训练参数。格式应为TSV文件，第一行包含列标题，后续行包含元数据值。这里有一个例子：</p>
-<figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Name<span class="symbol">\t</span>Type<span class="symbol">\n</span></div><div class="line">Caterpie<span class="symbol">\t</span>Bug<span class="symbol">\n</span></div><div class="line">Charmeleon<span class="symbol">\t</span>Fire<span class="symbol">\n</span></div><div class="line">…</div></pre></td></tr></table></figure>
-<p>没有与主数据文件共享的显式键;相反，假设元数据文件中的顺序与嵌入tensor中的顺序匹配。换句话说，第一行是头信息，元数据文件中的第(i+1)行对应于存储在检查点中的嵌入tensor的第i行。</p>
-<blockquote>
-<p><strong>注意：</strong>如果TSV元数据文件只有一个列，那么我们不需要一个标题行，并且假设每一行都是嵌入的标签。我们包含此异常，因为它匹配常用的“词汇文件”格式。</p>
-</blockquote>
-<h3 id="图">图</h3><p>如果您有与嵌入关联的图像，则需要生成包含每个数据点的小缩略图的单个图像。这被称为<a href="https://www.google.com/webhp#q=what+is+a+sprite+image" target="_blank" rel="external">精灵图像（sprite image）</a>。精灵应具有相同数目的行和列，缩略图按行首先顺序存储：第一个数据点放置在左上角，最后一个数据点在右下角：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center"></th>
-<th style="text-align:center"></th>
-<th style="text-align:center"></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">0</td>
-<td style="text-align:center">1</td>
-<td style="text-align:center">2</td>
-</tr>
-<tr>
-<td style="text-align:center">3</td>
-<td style="text-align:center">4</td>
-<td style="text-align:center">5</td>
-</tr>
-<tr>
-<td style="text-align:center">6</td>
-<td style="text-align:center">7</td>
-</tr>
-</tbody>
-</table>
-<p>请注意，在上面的示例中，最后一行不必填写。对于精灵的一个具体示例，请看这个<a href="https://www.tensorflow.org/images/mnist_10k_sprite.png" target="_blank" rel="external">精灵图像</a>的10,000 MNIST数字（100x100）。</p>
-<blockquote>
-<p><strong>注意：</strong>我们目前支持高达8192px X 8192px.的精灵。</p>
-</blockquote>
-<p>构造精灵后，您需要告诉嵌入投影机在哪里可以找到它：</p>
-<figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">embedding.sprite.image_path = PATH_TO_SPRITE_IMAGE</div><div class="line"><span class="comment"># Specify the width and height of a single thumbnail.</span></div><div class="line">embedding.sprite.single_image_dim.<span class="keyword">extend</span>([w, h])</div></pre></td></tr></table></figure>
-<h2 id="相互作用">相互作用</h2><p>嵌入式投影机有三个面板</p>
-<ul>
-<li>1.位于左上方的数据面板，你可以选择你指定的运行、嵌入tensor和数据列来着色和标记点。</li>
-<li>2.位于左下方的预测面板，用于选择投影类型（例如PCA，t-SNE）。</li>
-<li>3.位于右侧的监视面板，在那里你可以搜索特定的点，并查看最近的邻居列表。</li>
-</ul>
-<h3 id="预测">预测</h3><p>嵌入投影仪具有减少数据集的维度的三种方法：两个线性的和一个非线性的。每个方法可用于创建二维或三维视图。</p>
-<p><strong>主成分分析（Principal Component Analysis）</strong>减少维度的主要技术是主成分分析（PCA）。嵌入投影仪计算前10个主要元素。该菜单允许您将这些元素投影到两个或三个任意组合。PCA是一个线性投影，通常用于检查全局几何。</p>
-<p><strong>t-SNE</strong>一种流行的非线性降维技术是T-SNE。嵌入投影机提供二维和三维t-SNE视图。布局是在客户端对算法的每一步执行动画。因为t-SNE经常保留一些局部结构，所以它对于探索局部邻域和找到簇是有用的。虽然对于可视化高维数据非常有用，但t-SNE图有时可能会产生迷惑或者误导的作用。想要了解如何有效地使用t-SNE，可以看看这篇<a href="http://distill.pub/2016/misread-tsne/" target="_blank" rel="external">很棒的文章</a>。</p>
-<p><strong>自定义（Custom）</strong>您还可以基于文本搜索来构造专门的线性投影，以在空间中找到有意义的方向。要定义投影轴，请输入两个搜索字符串或正则表达式。程序计算出其标签与这些搜索匹配的点集合的质心，并使用质心之间的差向量作为投影轴。</p>
-<h3 id="导航">导航</h3><p>要探索数据集，您可以在2D或3D模式中浏览视图，使用自然的点击和拖动手势进行缩放，旋转和平移。单击一个点会使右窗格显示最近邻居的显式文本列表，以及到当前点的距离。最近邻点本身在投影上突出显示。</p>
-<p>放大集群会提供一些信息，但有时更有帮助的是将视图限制为点的子集，并仅对这些点执行投影。为此，您可以通过多种方式选择点：</p>
-<ul>
-<li>1.点击一个点后，也选择其最近的邻居。</li>
-<li>2.搜索后，选择与查询匹配的点。</li>
-<li>3.启用选择，单击点并拖动定义选择球体。</li>
-</ul>
-<p>选择一组点后，您可以使用右侧“检查器”窗格中的“隔离点”按钮单独隔离这些点以进行进一步分析。</p>
-<p><img src="/img/17_03_07/003.png" alt=""></p>
-<p><em>在词嵌入数据集中选择“重要”的最近邻。</em></p>
-<p>过滤与自定义投影的组合的功能是非常强大的。下面，我们过滤了“politics”的100个最接近的邻居，并将它们投影到“best” - “worst”向量作为x轴。 y轴是随机的。</p>
-<p>你可以看到，在右边我们有“ideas”，“science”，“perspective”，“journalism”，而在左边我们有“crisis”，“violence”和“conflict”。</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left"><img src="/img/17_03_07/006.png" alt=""></th>
-<th style="text-align:left"><img src="/img/17_03_07/004.png" alt=""></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">自定义投影控件。</td>
-<td style="text-align:left">将“politics”的邻居定义为“best” - “worst”向量。</td>
-</tr>
-</tbody>
-</table>
-<h3 id="共同特征">共同特征</h3><p>如果你想要分享您的发现，您可以使用右下角的书签面板，并将当前状态（包括任何投影的计算坐标）保存为小文件。投影仪可以同时打开并展示一个或多个这些小文件。这样一来，其他用户就可以浏览这些书签了。</p>
-<p><img src="/img/17_03_07/005.png" alt=""></p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2593,7 +2739,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">109</span>
+              <span class="site-state-item-count">110</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

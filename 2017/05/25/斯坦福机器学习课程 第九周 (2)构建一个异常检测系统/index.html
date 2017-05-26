@@ -51,7 +51,22 @@
 在上一节中，我们推导了异常检测算法。在本节，我想介绍一下如何开发一个异常检测的应用来解决一个实际问题。
 
 在之前，我们已经提到了使用实数评估法的重要性。这样做的想法是，当你在用某个学习算法来开发一个具体的机器学习应用时，你常常需要做出很多决定，比如说选择用什么样的特征等等。而如果你找到某种评估算法的方式，比如直接返回一个数字，来告诉你算法的好坏，那么你做这些决定">
-<meta property="og:updated_time" content="2017-05-25T16:00:32.000Z">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_25/001.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_25/002.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_25/002.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_25/003.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_25/004.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_25/005.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_25/006.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_25/007.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_25/008.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_25/009.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_25/010.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_25/011.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_25/012.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_25/013.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_25/014.png">
+<meta property="og:updated_time" content="2017-05-26T12:57:15.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="斯坦福机器学习课程 第九周 (2)构建一个异常检测系统">
 <meta name="twitter:description" content="异常检测系统的开发与评估视频地址
@@ -59,6 +74,7 @@
 在上一节中，我们推导了异常检测算法。在本节，我想介绍一下如何开发一个异常检测的应用来解决一个实际问题。
 
 在之前，我们已经提到了使用实数评估法的重要性。这样做的想法是，当你在用某个学习算法来开发一个具体的机器学习应用时，你常常需要做出很多决定，比如说选择用什么样的特征等等。而如果你找到某种评估算法的方式，比如直接返回一个数字，来告诉你算法的好坏，那么你做这些决定">
+<meta name="twitter:image" content="http://dannylee1991.github.io/img/17_05_25/001.png">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -341,6 +357,96 @@ var _hmt = _hmt || [];
 <p>关于上面表格中，有关<strong>异常检测</strong>中的不同类型的异常情况，我们用之前的垃圾邮件的例子来说明。</p>
 <p>在那个例子中，垃圾邮件的类型其实也有很多种。有的是想卖东西给你、有的是想钓出你的密码(这种就叫钓鱼邮件)、还有其他一些类型的垃圾邮件…但对于垃圾邮件的问题，我们能得到绝大多数不同类型的垃圾邮件，因为我们有大量的垃圾邮件样本的集合。因此这也是为什么我们通常把垃圾邮件问题看作是监督学习问题的原因，虽然垃圾邮件的种类通常有太多太多 。</p>
 <p>因此，我们可以看看一些异常检测的应用和监督学习应用的比较，我们不难发现对于欺诈检测(fraud detection)，如果你掌握了许多种不同类型的诈骗方法，并且只有相对较小的训练集（只有很少一部分用户有异常行为）那我会使用异常检测算法。当然，有时候欺诈检测的方法也可能会偏向于使用监督学习算法，但是如果你并没有看到许多在你网站上进行异常行为的用户样本，那么欺诈检测通常还是被当做是一个异常检测算法，而不是一个监督学习算法。</p>
+<h2 id="选择使用什么特征">选择使用什么特征</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/LSpXm/choosing-what-features-to-use" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>前面我们讲到了异常检测算法，并且我们也讨论了如何评估一个异常检测算法。</p>
+<p>事实上当你应用异常检测时，对它的效率影响最大的因素之一，是你使用什么特征变量。那么在本节，我将给出一些关于如何设计或选择异常检测算法的特征变量建议。</p>
+</blockquote>
+<h3 id="对不服从高斯分布的数据进行转换">对不服从高斯分布的数据进行转换</h3><p>在我们的异常检测算法中，我们做的事情之一就是使用正态(高斯)分布来对特征向量建模。通常情况下，我们都需要用直方图来可视化这些数据，如下图：</p>
+<p><img src="/img/17_05_25/001.png" alt=""></p>
+<p>这么做的原因是为了在使用算法之前，确保我们的数据看起来是服从高斯分布的（当然即使你的数据并不是高斯分布，它也基本上可以良好地运行，但最好转换成高斯分布的样式之后在带入计算）。</p>
+<p>如果你的样本的某个特征展示效果完全不像一个正态分布的形状：</p>
+<p><img src="/img/17_05_25/002.png" alt=""></p>
+<p>那么我们就需要对数据进行一些转换，来确保这些数据能看起来更像高斯分布。这样你的算法才能效果更好。</p>
+<p>一般情况下，我们都会对原始数据尝试求对数或者开根号操作进行转换，下图是通过对数来转换的：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$x$</th>
+<th style="text-align:center">$log(x)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="/img/17_05_25/002.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_25/003.png" alt=""></td>
+</tr>
+</tbody>
+</table>
+<p>你也可以尝试使用以下的方式来带入：</p>
+<p>$$<br>x←log(x)  \\<br>x←log(x + c) \\<br>x←\sqrt x<br>$$</p>
+<p>选择哪一个都可以，唯一的原则就是保证转换后的分布看起来更像高斯分布(正态分布)一些。</p>
+<hr>
+<p>下面是对于一个不服从高斯分布的数据进行转换的过程：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">原始数据</th>
+<th style="text-align:center">$x^{0.5}$</th>
+<th style="text-align:center">$x^{0.2}$</th>
+<th style="text-align:center">$x^{0.1}$</th>
+<th style="text-align:center">$x^{0.05}$</th>
+<th style="text-align:center">$log(x)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="/img/17_05_25/004.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_25/005.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_25/006.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_25/007.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_25/008.png" alt=""></td>
+<td style="text-align:center"><img src="/img/17_05_25/009.png" alt=""></td>
+</tr>
+</tbody>
+</table>
+<p>我们对原始数据尝试了不同的转换之后，图像最终趋于了正太分布的样式。在Octive中实现的过程如下：</p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">hist(<span class="name">x</span>,<span class="number">50</span>)</div><div class="line">hist(<span class="name">x</span>.^<span class="number">0.5</span>,<span class="number">50</span>)</div><div class="line">hist(<span class="name">x</span>.^<span class="number">0.2</span>,<span class="number">50</span>)</div><div class="line">hist(<span class="name">x</span>.^<span class="number">0.1</span>,<span class="number">50</span>)</div><div class="line">hist(<span class="name">x</span>.^<span class="number">0.05</span>,<span class="number">50</span>)</div><div class="line">hist(<span class="name">log</span>(<span class="name">x</span>),<span class="number">50</span>)</div><div class="line">xNew = log(<span class="name">x</span>)<span class="comment">;</span></div></pre></td></tr></table></figure>
+<p>最终我们选择了$log(x)$来代替原来的$x$。</p>
+<h3 id="异常检测算法的特征变量的获取">异常检测算法的特征变量的获取</h3><p>对于异常检测算法的特征变量的获取的方法，其实和之前学习的误差分析步骤是类似的。</p>
+<ul>
+<li>首先我们先训练处一个异常检测学习算法。</li>
+<li>然后在一组交叉验证集上运行算法。</li>
+<li>然后找出那些异常样本。</li>
+<li>然后我们尝试其他的特征变量，看是否能让我们的算法变得更好。</li>
+</ul>
+<h4 id="举例说明">举例说明</h4><p>我们用一个具体的例子来说明上面的过程：</p>
+<p>在异常检测中，我们希望$p(x)$的值对正常样本来说是比较大的，而对异常样本来说，值是很小的。但一个很常见的问题是$p(x)$是具有可比性的（即对于两者都很大）。</p>
+<p>这是我的一组无标签数据：</p>
+<p><img src="/img/17_05_25/010.png" alt=""></p>
+<p>这里我只有一个特征变量$x_1$，我要用高斯分布来拟合它。</p>
+<p>假设我们绘制出它的高斯分布，如下图所示：</p>
+<p><img src="/img/17_05_25/011.png" alt=""></p>
+<p>假设我们遇到了一个有异常的样本：</p>
+<p><img src="/img/17_05_25/012.png" alt=""></p>
+<p>但是，从图中我们能看出这个样本在这一特征下的$p(x_1)$并不低，我们无法从这一特征下区分出这一异常样本。</p>
+<p>如果我们引入另一个特征$x_2$，图像如下：</p>
+<p><img src="/img/17_05_25/013.png" alt=""></p>
+<p>再来看看我们的异常样本，出现在了这两个特征所分布的区域的外侧：</p>
+<p><img src="/img/17_05_25/014.png" alt=""></p>
+<p>这个时候，我们的异常检测算法就会给出很小的值来验证这一点代表的样本属于异常样本。</p>
+<blockquote>
+<p><strong>总结</strong>:选择异常检测需要考虑的特征时，先找出异常样本，然后尝试通过引入新的特征来验证对异常样本的识别的准确性。如果有所提高，就可以考虑引入这个特征。</p>
+</blockquote>
+<h4 id="关于特征选择的思考">关于特征选择的思考</h4><p>最后我想与你分享一些我平时在为异常检查算法选择特征变量时的一些思考。</p>
+<p>通常，我会选择那些既不是特别大也不是特别小的特征变量。以数据中心异常计算机的监测的例子为例，我们有以下四个特征：</p>
+<p>$$<br>x_1=机器内存使用  \\<br>x_2=硬盘资源使用  \\<br>x_3=CPU使用  \\<br>x_4=网络情况<br>$$</p>
+<p>我假设CPU使用情况和网络情况呈线性关系，正常情况下如果其中一个服务器正在运行时，CPU负载和流量都很大。</p>
+<p>现在，假设有一种异常情况，就是流量消耗很小，但CPU负载却很高，因为可能是机器遇到了某个死循环导致CPU负载飙升，因此我们可以定义一个新的特征变量来更好的说明这一情况：</p>
+<p>$$<br>x_5=\frac{CPU 负载}{流量消耗}<br>$$</p>
+<p>同样，你也可以尝试使用下面这种特征变量：</p>
+<p>$$<br>x_6=\frac{(CPU 负载)^2}{流量消耗}<br>$$</p>
+<p>其实，解决这类问题的思路就是尝试组合新的特征，从而能更好的检测异常情况。</p>
 </span>
       
     </div>
@@ -359,6 +465,8 @@ var _hmt = _hmt || [];
       
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/26/斯坦福机器学习课程 第九周 (3)多元高斯分布（选学）/" rel="prev">斯坦福机器学习课程 第九周 (3)多元高斯分布（选学）</a>
             
           </div>
 
@@ -453,7 +561,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">109</span>
+              <span class="site-state-item-count">110</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -507,7 +615,7 @@ var _hmt = _hmt || [];
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#异常检测系统的开发与评估"><span class="nav-number">1.</span> <span class="nav-text">异常检测系统的开发与评估</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据集划分"><span class="nav-number">1.1.</span> <span class="nav-text">数据集划分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异常检测算法的推导和评估方法"><span class="nav-number">1.2.</span> <span class="nav-text">异常检测算法的推导和评估方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ε是怎么得到的呢？"><span class="nav-number">1.2.1.</span> <span class="nav-text">ε是怎么得到的呢？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异常检测_VS_监督学习"><span class="nav-number">2.</span> <span class="nav-text">异常检测 VS 监督学习</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#异常检测系统的开发与评估"><span class="nav-number">1.</span> <span class="nav-text">异常检测系统的开发与评估</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据集划分"><span class="nav-number">1.1.</span> <span class="nav-text">数据集划分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异常检测算法的推导和评估方法"><span class="nav-number">1.2.</span> <span class="nav-text">异常检测算法的推导和评估方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ε是怎么得到的呢？"><span class="nav-number">1.2.1.</span> <span class="nav-text">ε是怎么得到的呢？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异常检测_VS_监督学习"><span class="nav-number">2.</span> <span class="nav-text">异常检测 VS 监督学习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选择使用什么特征"><span class="nav-number">3.</span> <span class="nav-text">选择使用什么特征</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对不服从高斯分布的数据进行转换"><span class="nav-number">3.1.</span> <span class="nav-text">对不服从高斯分布的数据进行转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异常检测算法的特征变量的获取"><span class="nav-number">3.2.</span> <span class="nav-text">异常检测算法的特征变量的获取</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#举例说明"><span class="nav-number">3.2.1.</span> <span class="nav-text">举例说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#关于特征选择的思考"><span class="nav-number">3.2.2.</span> <span class="nav-text">关于特征选择的思考</span></a></li></ol></li></ol></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
