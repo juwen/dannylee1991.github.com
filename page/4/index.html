@@ -199,6 +199,121 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2017/01/13/【Android文档翻译】测试你的Content Provider/" itemprop="url">
+                【Android文档翻译】测试你的Content Provider
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-01-13T08:55:58+08:00" content="2017-01-13">
+            2017-01-13
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/Android/" itemprop="url" rel="index">
+                  <span itemprop="name">Android</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/01/13/【Android文档翻译】测试你的Content Provider/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/13/【Android文档翻译】测试你的Content Provider/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p><a href="https://developer.android.google.cn/training/testing/integration-testing/content-provider-testing.html" target="_blank" rel="external">https://developer.android.google.cn/training/testing/integration-testing/content-provider-testing.html</a></p>
+<p>如果要实施content provider来存储和检索数据或使数据可供其他应用程序访问，则应测试提供程序以确保其不会以意外的方式运行。本课程介绍如何测试公共content provider，并且也适用于您对自己的应用保持私有的content provider。</p>
+<h2 id="为content_provider创建集成测试">为content provider创建集成测试</h2><p>在Android中，应用程式将content provider视为提供资料表的资料API，而内部资讯提供不可见。content provider可以具有许多公共常量，但是它通常具有很少的公共方法并且没有公共变量。因此，您应该仅根据提供程序的公共成员编写测试。这样设计的content provider在其本身与其用户之间提供合同。</p>
+<p>content provider允许您访问实际的用户数据，因此确保在隔离的测试环境中测试内容提供程序很重要。这种方法允许您只运行在测试用例中明确设置的数据依赖关系。这也意味着您的测试不会修改实际的用户数据。例如，您应避免编写失败的测试，因为上一个测试中遗留了数据。同样，您的测试应避免在content provider中添加或删除实际联系人信息。</p>
+<p>要单独测试content provider程序，请使用<a href="https://developer.android.google.cn/reference/android/test/ProviderTestCase2.html" target="_blank" rel="external">ProviderTestCase2</a>类。此类允许您使用Android模拟对象类（如<a href="https://developer.android.google.cn/reference/android/test/IsolatedContext.html" target="_blank" rel="external">IsolatedContext</a>和<a href="https://developer.android.google.cn/reference/android/test/mock/MockContentResolver.html" target="_blank" rel="external">MockContentResolver</a>）访问文件和数据库信息，而不会影响实际的用户数据。</p>
+<p>您的集成测试应写为JUnit 4测试类。要了解有关创建JUnit 4测试类和使用JUnit 4断言的更多信息，请参阅<a href="/2017/01/11/【Android文档翻译】构建本地单元测试/#创建本地单元测试类">创建本地单元测试类</a>。</p>
+<p>要为内容提供商创建集成测试，您必须执行以下步骤：</p>
+<ul>
+<li>创建您的测试类作为<a href="https://developer.android.google.cn/reference/android/test/ProviderTestCase2.html" target="_blank" rel="external">ProviderTestCase2</a>的子类。</li>
+<li>在你的测试类的定义部分加入<code>@RunWith(AndroidJUnit4.class)</code>注解。</li>
+<li>指定<a href="https://developer.android.google.cn/tools/testing-support-library/index.html" target="_blank" rel="external">Android测试支持库</a>提供的<a href="https://developer.android.google.cn/reference/android/support/test/runner/AndroidJUnitRunner.html" target="_blank" rel="external">AndroidJUnitRunner</a>类作为默认测试运行程序。此步骤在<a href="/2017/01/11/【Android文档翻译】入门测试/">测试入门</a>中有更详细的描述。</li>
+<li>从<a href="https://developer.android.google.cn/reference/android/support/test/InstrumentationRegistry.html" target="_blank" rel="external">InstrumentationRegistry</a>类设置Context对象。有关示例，请参阅下面的代码段。</li>
+</ul>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">void</span> <span class="title">setUp</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">    setContext(InstrumentationRegistry.getTargetContext());</div><div class="line">    <span class="keyword">super</span>.setUp();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="ProviderTestCase2的工作原理">ProviderTestCase2的工作原理</h3><p>你通过<a href="https://developer.android.google.cn/reference/android/test/ProviderTestCase2.html" target="_blank" rel="external">ProviderTestCase2</a>测试provider。这个基类扩展了<a href="https://developer.android.google.cn/reference/android/test/AndroidTestCase.html" target="_blank" rel="external">AndroidTestCase</a>，因此它提供了JUnit测试框架以及特定于Android的测试应用程序权限的方法。这个类的最重要的特性是它的初始化，它创建隔离的测试环境。</p>
+<p>初始化在<a href="https://developer.android.google.cn/reference/android/test/ProviderTestCase2.html" target="_blank" rel="external">ProviderTestCase2</a>的构造函数中完成，它在自己的构造函数中调用子类。<a href="https://developer.android.google.cn/reference/android/test/ProviderTestCase2.html" target="_blank" rel="external">ProviderTestCase2</a>构造函数创建一个<a href="https://developer.android.google.cn/reference/android/test/IsolatedContext.html" target="_blank" rel="external">IsolatedContext</a>对象，允许文件和数据库操作，但存根与Android系统的其他交互。文件和数据库操作本身发生在设备或模拟器本地的目录中，并且具有特殊的前缀。</p>
+<p>然后，构造函数创建一个<a href="https://developer.android.google.cn/reference/android/test/mock/MockContentResolver.html" target="_blank" rel="external">MockContentResolver</a>以用作测试的解析器。</p>
+<p>最后，构造函数创建一个被测试提供者的实例。这是一个正常的<a href="https://developer.android.google.cn/reference/android/content/ContentProvider.html" target="_blank" rel="external">ContentProvider</a>对象，但它从<a href="https://developer.android.google.cn/reference/android/test/IsolatedContext.html" target="_blank" rel="external">IsolatedContext</a>获取其所有环境信息，因此它被限制在隔离的测试环境中工作。在测试用例类中执行的所有测试都针对这个孤立的对象运行。</p>
+<p>您对content provider运行集成测试的方式与仪表化单元测试相同。要对content provider运行集成测试，请按照<a href="/2017/01/11/【Android文档翻译】构建仪表化单元测试/#运行仪表单元测试">运行仪表单元测试</a>中所述的步骤操作。</p>
+<h2 id="测试什么">测试什么</h2><p>以下是测试content provider的一些具体指南。</p>
+<ul>
+<li>使用解析器方法测试：即使您可以在<a href="https://developer.android.google.cn/reference/android/test/ProviderTestCase2.html" target="_blank" rel="external">ProviderTestCase2</a>中实例化一个content provider对象，您应该始终使用适当的URI测试解析器对象。这样做可确保您通过执行常规应用程序的相同交互方式来测试content provider。</li>
+<li><p>测试公共provider作为合同：如果您打算将您的provider公开并可供其他应用程序使用，那么您应该将其作为合同进行测试。下面是一些实例：</p>
+<ul>
+<li>使用您的provider公开的常量进行测试。例如，查找在provider的数据表之一中引用列名的常量。这些名称通常都是由provider公开定义的常量。</li>
+<li>测试您的provider提供的所有URI。您的provider可能会提供多个URI，每个URI指向数据的不同方面。</li>
+<li>测试无效URI：您的单元测试应故意调用具有无效URI的provider，并查找错误。一个好的provider设计是抛出一个IllegalArgumentException无效的URI。</li>
+</ul>
+</li>
+<li>测试标准provider交互：大多数provider提供六种访问方法：<code>query(), insert()</code>,<code>delete()</code>,<code>update()</code>,<code>getType()</code>, and <code>onCreate()</code>。你的测试应该验证所有这些方法的工作情况。这些方法在topic Content Providers中有更详细的描述。</li>
+<li>测试业务逻辑：如果content provider实现业务逻辑，您应该测试它。业务逻辑包括处理无效值，财务或算术计算，消除或组合重复。</li>
+</ul>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2017/01/13/【Android文档翻译】测试你的Service/" itemprop="url">
                 【Android文档翻译】测试你的Service
               </a>
@@ -1407,154 +1522,11 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2017/01/09/部署Django到Apach/" itemprop="url">
-                部署Django到Apach
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2017-01-09T14:21:58+08:00" content="2017-01-09">
-            2017-01-09
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/django/" itemprop="url" rel="index">
-                  <span itemprop="name">django</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2017/01/09/部署Django到Apach/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/09/部署Django到Apach/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><p>以ubuntu为例，部署Django到Apache上</p>
-<h2 id="1-安装apache2">1.安装apache2</h2><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="keyword">get</span> install apache2</div></pre></td></tr></table></figure>
-<h2 id="2-安装mod_wsgi">2.安装mod_wsgi</h2><p>Python2：</p>
-<figure class="highlight applescript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="keyword">get</span> install libapache2-<span class="keyword">mod</span>-wsgi</div></pre></td></tr></table></figure>
-<p>Python3:</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="built_in">get</span> install libapache2-<span class="keyword">mod</span>-wsgi-<span class="keyword">py3</span></div></pre></td></tr></table></figure>
-<h2 id="3-准备一个新网站的配置文件">3.准备一个新网站的配置文件</h2><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo vi <span class="meta-keyword">/etc/</span>apache2<span class="meta-keyword">/sites-available/</span>sitename.conf</div></pre></td></tr></table></figure>
-<p>内容如下：</p>
-<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="params">&lt;VirtualHost *:<span class="number">8888</span>&gt;</span></div><div class="line">    ServerName www.yourdomain.com</div><div class="line">    ServerAlias otherdomain.com</div><div class="line">    ServerAdmin tuweizhong@<span class="number">163.</span>com</div><div class="line">  </div><div class="line">    Alias <span class="meta-keyword">/media/</span> <span class="meta-keyword">/home/</span>tu<span class="meta-keyword">/blog/</span>media/</div><div class="line">    Alias <span class="meta-keyword">/static/</span> <span class="meta-keyword">/home/</span>tu<span class="meta-keyword">/blog/</span>static/</div><div class="line">  </div><div class="line">    <span class="params">&lt;Directory /home/tu/blog/media&gt;</span></div><div class="line">        Require all granted</div><div class="line">    <span class="params">&lt;/Directory&gt;</span></div><div class="line">  </div><div class="line">    <span class="params">&lt;Directory /home/tu/blog/static&gt;</span></div><div class="line">        Require all granted</div><div class="line">    <span class="params">&lt;/Directory&gt;</span></div><div class="line">  </div><div class="line">    WSGIScriptAlias / <span class="meta-keyword">/home/</span>tu<span class="meta-keyword">/blog/</span>blog/wsgi.py</div><div class="line">  </div><div class="line">    <span class="params">&lt;Directory /home/tu/blog/blog&gt;</span></div><div class="line">    <span class="params">&lt;Files wsgi.py&gt;</span></div><div class="line">        Require all granted</div><div class="line">    <span class="params">&lt;/Files&gt;</span></div><div class="line">    <span class="params">&lt;/Directory&gt;</span></div><div class="line"><span class="params">&lt;/VirtualHost&gt;</span></div></pre></td></tr></table></figure>
-<h2 id="4-修改Django项目中wsgi-py文件">4.修改Django项目中wsgi.py文件</h2><p>上面的配置中写的 WSGIScriptAlias / /home/tu/blog/blog/wsgi.py</p>
-<p>就是把apache2和你的网站project联系起来了</p>
-<figure class="highlight capnproto"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> os</div><div class="line"><span class="keyword">from</span> os.path <span class="keyword">import</span> join,dirname,abspath</div><div class="line"> </div><div class="line">PROJECT_DIR = dirname(dirname(abspath(__file__)))<span class="comment">#3</span></div><div class="line"><span class="keyword">import</span> sys <span class="comment"># 4</span></div><div class="line">sys.path.insert(<span class="number">0</span>,PROJECT_DIR) <span class="comment"># 5</span></div><div class="line"> </div><div class="line">os.environ[<span class="string">"DJANGO_SETTINGS_MODULE"</span>] = <span class="string">"blog.settings"</span> <span class="comment"># 7</span></div><div class="line"> </div><div class="line"><span class="keyword">from</span> django.core.wsgi <span class="keyword">import</span> get_wsgi_application</div><div class="line">application = get_wsgi_application()</div></pre></td></tr></table></figure>
-<blockquote>
-<p>第 3，4，5 行为新加的内容，作用是让脚本找到django项目的位置，也可以在sitename.conf中做，用WSGIPythonPath,想了解的自行搜索, 第 7 行如果一台服务器有多个django project时一定要修改成上面那样，否则访问的时候会发生网站互相串的情况，即访问A网站到了B网站，一会儿正常，一会儿又不正常（当然也可以使用 mod_wsgi daemon 模式,点击这里查看）</p>
-</blockquote>
-<h2 id="5-监听端口">5.监听端口</h2><figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo <span class="keyword">vim</span> /etc/apache2/ports.<span class="keyword">conf</span></div></pre></td></tr></table></figure>
-<p>将网站的端口加入监听列表：</p>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="attribute"><span class="nomarkup">Listen</span></span> 80</div><div class="line"><span class="attribute"><span class="nomarkup">Listen</span></span> 8888</div><div class="line"></div><div class="line"><span class="section">&lt;IfModule ssl_module&gt;</span></div><div class="line">	<span class="attribute"><span class="nomarkup">Listen</span></span> 443</div><div class="line"><span class="section">&lt;/IfModule&gt;</span></div><div class="line"></div><div class="line"><span class="section">&lt;IfModule mod_gnutls.c&gt;</span></div><div class="line">	<span class="attribute"><span class="nomarkup">Listen</span></span> 443</div><div class="line"><span class="section">&lt;/IfModule&gt;</span></div><div class="line"></div><div class="line"><span class="comment"># vim: syntax=apache ts=4 sw=4 sts=4 sr noet</span></div></pre></td></tr></table></figure>
-<h2 id="6-设置目录和文件权限">6.设置目录和文件权限</h2><p>一般目录权限设置为 755，文件权限设置为 644 </p>
-<p>假如项目位置在 /home/tu/zqxt （在zqxt 下面有一个 manage.py，zqxt 是项目名称）</p>
-<figure class="highlight dos"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">cd</span> /home/tu/</div><div class="line">sudo chmod -R <span class="number">644</span> zqxt</div><div class="line">sudo <span class="built_in">find</span> zqxt -<span class="built_in">type</span> d -exec chmod <span class="number">755</span> \&#123;\&#125; \;</div></pre></td></tr></table></figure>
-<p><strong>apache 服务器运行用户可以在 /etc/apache2/envvars 文件里面改，这里使用的是默认值，当然也可以更改成自己的当前用户，这样的话权限问题就简单很多，但在服务器上推荐有 www-data 用户，更安全。以下是默认设置：</strong></p>
-<figure class="highlight gams"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># Since there is <span class="keyword">no</span> sane way to get the parsed apache2 config in scripts, some</div><div class="line"># settings are defined via environment <span class="keyword">variables</span> and <span class="comment">then used in apache2ctl,</span></div><div class="line"># /etc/init.d/apache2, /etc/logrotate.d/apache2, etc.</div><div class="line"> </div><div class="line">export <span class="comment">APACHE_RUN_USER=www-data</span></div><div class="line">export <span class="comment">APACHE_RUN_GROUP=www-data</span></div></pre></td></tr></table></figure>
-<h3 id="上传文件夹权限">上传文件夹权限</h3><p>media 文件夹一般用来存放用户上传文件，static 一般用来放自己网站的js，css，图片等，在settings.py中的相关设置</p>
-<p>STATIC_URL 为静态文件的网址 STATIC_ROOT 为静态文件的根目录，</p>
-<p>MEDIA_URL 为用户上传文件夹的根目录，MEDIA_URL为对应的访问网址</p>
-<p>在settings.py中设置：</p>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Static files (CSS, JavaScript, Images)</span></div><div class="line"><span class="comment"># https://docs.djangoproject.com/en/dev/howto/static-files/</span></div><div class="line"><span class="attr">STATIC_URL</span> = <span class="string">'/static/'</span></div><div class="line"><span class="attr">STATIC_ROOT</span> = os.path.join(BASE_DIR,<span class="string">'static'</span>)</div><div class="line"> </div><div class="line"><span class="comment"># upload folder</span></div><div class="line"><span class="attr">MEDIA_URL</span> = <span class="string">'/media/'</span></div><div class="line"><span class="attr">MEDIA_ROOT</span> = os.path.join(BASE_DIR,<span class="string">'media'</span>)</div></pre></td></tr></table></figure>
-<p>在 Linux 服务器上，用户上传目录还要设置给 www-data 用户的写权限，下面的方法比较好，不影响原来的用户的编辑。</p>
-<p>假如上传目录为 zqxt/media/uploads 文件夹,进入media文件夹，将 uploads 用户组改为www-data，并且赋予该组写权限:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">cd</span> media/ <span class="comment"># 进入media文件夹</span></div><div class="line">sudo chgrp -R www-data uploads</div><div class="line">sudo chmod -R g+w uploads</div></pre></td></tr></table></figure>
-<blockquote>
-<p><strong>备注</strong>：这两条命令，比直接用sudo chown -R www-data:www-data uploads 好，因为下面的命令不影响文件原来所属用户编辑文件，fedora系统应该不用设置上面的权限，但是个人强烈推荐用ubuntu,除非你对linux非常熟悉，你自己选择。</p>
-</blockquote>
-<p>如果你使用的是sqlite3数据库，还会提示 Attempt to write a readonly database,同样要给www-data写数据库的权限</p>
-<p>进入项目目录的上一级，比如project目录为 /home/tu/blog 那就进入 /home/tu 执行下面的命令（和修改上传文件夹类似）</p>
-<figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">sudo</span> chgrp www-<span class="meta">data</span> <span class="keyword">blog</span></div><div class="line"><span class="symbol">sudo</span> chmod g+w <span class="keyword">blog</span></div><div class="line"><span class="symbol">sudo</span> chgrp www-<span class="meta">data</span> <span class="keyword">blog/db.sqlite3 </span> # 更改为你的数据库名称</div><div class="line"><span class="symbol">sudo</span> chmod g+w <span class="keyword">blog/db.sqlite3</span></div></pre></td></tr></table></figure>
-<blockquote>
-<p><strong>备注</strong>：上面的不要加 -R ,-R是更改包括所有的子文件夹和文件，这样不安全。个人建议可以专门弄一个文件夹,用它来放sqlite3数据库，给该文件夹www-data写权限，而不是整个项目给写权限，有些文件只要读的权限就够了，给写权限会造成不安全。</p>
-</blockquote>
-<h2 id="7-激活新网站">7.激活新网站</h2><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">sudo</span> <span class="selector-tag">a2ensite</span> <span class="selector-tag">sitename</span> 或 <span class="selector-tag">sudo</span> <span class="selector-tag">a2ensite</span> <span class="selector-tag">sitename</span><span class="selector-class">.conf</span></div></pre></td></tr></table></figure>
-<h3 id="8-如果遇到了错误">8.如果遇到了错误</h3><p>如果你重启apache时遇到了以下错误：</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Job <span class="keyword">for</span> apache2<span class="selector-class">.service</span> failed. See <span class="string">"systemctl status apache2.service"</span> and <span class="string">"journalctl -xe"</span> <span class="keyword">for</span> <span class="selector-tag">details</span>.</div></pre></td></tr></table></figure>
-<p>尝试运行</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">systemctl</span> <span class="selector-tag">status</span> <span class="selector-tag">apache2</span><span class="selector-class">.service</span></div></pre></td></tr></table></figure>
-<p>得到如下结果时：</p>
-<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">apache2.service - (null)</div><div class="line"><span class="symbol">   Loaded:</span> loaded (<span class="meta-keyword">/etc/</span>init.d/apache2)</div><div class="line"><span class="symbol">   Active:</span> failed (Result: exit-code) since Sat <span class="number">2015</span><span class="number">-05</span><span class="number">-30</span> <span class="number">02</span>:<span class="number">22</span>:<span class="number">41</span> IST; <span class="number">12</span>s ago</div><div class="line"><span class="symbol">     Docs:</span> man:systemd-sysv-generator(<span class="number">8</span>)</div><div class="line"><span class="symbol">  Process:</span> <span class="number">4866</span> ExecStart=<span class="meta-keyword">/etc/</span>init.d/apache2 start (code=exited, status=<span class="number">1</span>/FAILURE)</div></pre></td></tr></table></figure>
-<p>你可以考虑完全卸载apache，并清空配置，重新再来配置一次：</p>
-<p>重装APACHE2：</p>
-<p>替换已经删除的配置文件，而不重新安装:</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="built_in">get</span> -<span class="keyword">o</span> DPk<span class="variable">g:</span>:Option<span class="variable">s:</span>:=<span class="string">"--force-confmiss"</span> --reinstall install apache2</div></pre></td></tr></table></figure>
-<p>完全移除apache2</p>
-<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="keyword">get</span> purge apache2</div></pre></td></tr></table></figure>
-<p>安装apache2</p>
-<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-<span class="keyword">get</span> install apache2</div></pre></td></tr></table></figure>
-<p>参考文章：</p>
-<ul>
-<li><a href="http://www.ziqiangxuetang.com/django/django-deploy.html" target="_blank" rel="external">Django 部署(Apache)</a></li>
-<li><a href="http://askubuntu.com/questions/629995/apache-not-able-to-restart" target="_blank" rel="external">Apache not able to restart</a></li>
-</ul>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/">&laquo;</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/5/">&raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/3/">&laquo;</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/5/">&raquo;</a>
   </nav>
 
  </div>
@@ -1588,7 +1560,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">110</span>
+              <span class="site-state-item-count">111</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

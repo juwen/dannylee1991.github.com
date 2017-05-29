@@ -1,0 +1,952 @@
+<!doctype html>
+<html class="theme-next use-motion ">
+<head>
+  
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <link rel="stylesheet" type="text/css" href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5"/>
+
+
+
+
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=0.4.5.1"/>
+
+
+    <meta name="description" content="一只在迈向机器学习道路上狂奔的程序猿." />
+
+
+
+  <meta name="keywords" content="机器学习,斯坦福课程," />
+
+
+
+
+
+  <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
+
+
+<meta name="description" content="问题制定视频地址
+在接下来的内容中，我想介绍给你们有关推荐系统(recommender systems)的内容。
+我想讨论推荐系统有两个原因：
+
+原因一：对工业界有至关重要的作用
+  在过去的几年中，我有时会去参观硅谷的各种科技类公司。我经常在那些公司里与开发机器学习应用的人交流。然后我问他们什么才是机器学习最重要的应用？或者什么样的机器学习的应用是你最想让它的表现得到改进的？我最常听到的回答其中">
+<meta property="og:type" content="article">
+<meta property="og:title" content="斯坦福机器学习课程 第九周 (4)预测电影评分">
+<meta property="og:url" content="http://dannylee1991.github.io/2017/05/28/斯坦福机器学习课程 第九周 (4)预测电影评分/index.html">
+<meta property="og:site_name" content="DannyLee">
+<meta property="og:description" content="问题制定视频地址
+在接下来的内容中，我想介绍给你们有关推荐系统(recommender systems)的内容。
+我想讨论推荐系统有两个原因：
+
+原因一：对工业界有至关重要的作用
+  在过去的几年中，我有时会去参观硅谷的各种科技类公司。我经常在那些公司里与开发机器学习应用的人交流。然后我问他们什么才是机器学习最重要的应用？或者什么样的机器学习的应用是你最想让它的表现得到改进的？我最常听到的回答其中">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_28/001.png">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_28/002.gif">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_28/003.gif">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_28/003.gif">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_28/004.gif">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_28/004.gif">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_28/005.gif">
+<meta property="og:image" content="http://dannylee1991.github.io/img/17_05_28/006.gif">
+<meta property="og:updated_time" content="2017-05-29T10:29:21.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="斯坦福机器学习课程 第九周 (4)预测电影评分">
+<meta name="twitter:description" content="问题制定视频地址
+在接下来的内容中，我想介绍给你们有关推荐系统(recommender systems)的内容。
+我想讨论推荐系统有两个原因：
+
+原因一：对工业界有至关重要的作用
+  在过去的几年中，我有时会去参观硅谷的各种科技类公司。我经常在那些公司里与开发机器学习应用的人交流。然后我问他们什么才是机器学习最重要的应用？或者什么样的机器学习的应用是你最想让它的表现得到改进的？我最常听到的回答其中">
+<meta name="twitter:image" content="http://dannylee1991.github.io/img/17_05_28/001.png">
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: '',
+    sidebar: 'post'
+  };
+</script>
+
+<!--baidu统计-->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?2f967e5ec4f276411160d27aeace7722";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+  <title> 斯坦福机器学习课程 第九周 (4)预测电影评分 | DannyLee </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><h1 class="site-meta">
+  <span class="logo-line-before"><i></i></span>
+  <a href="/" class="brand" rel="start">
+      <span class="logo">
+        <i class="icon-next-logo"></i>
+      </span>
+      <span class="site-title">DannyLee</span>
+  </a>
+  <span class="logo-line-after"><i></i></span>
+</h1>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon icon-next-home"></i> <br />
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            <i class="menu-item-icon icon-next-categories"></i> <br />
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            <i class="menu-item-icon icon-next-archives"></i> <br />
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            <i class="menu-item-icon icon-next-tags"></i> <br />
+            标签
+          </a>
+        </li>
+      
+
+      
+      
+        <li class="menu-item menu-item-search">
+          <a href="#" class="st-search-show-outputs">
+            <i class="menu-item-icon icon-next-search"></i> <br />
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'ss9-_Hsd4DyhyGw4m99P','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content"> 
+
+  <div id="posts" class="posts-expand">
+    
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
+              斯坦福机器学习课程 第九周 (4)预测电影评分
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-05-28T08:44:00+08:00" content="2017-05-28">
+            2017-05-28
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/05/28/斯坦福机器学习课程 第九周 (4)预测电影评分/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/28/斯坦福机器学习课程 第九周 (4)预测电影评分/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><h2 id="问题制定">问题制定</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/Rhg6r/problem-formulation" target="_blank" rel="external">视频地址</a></p>
+<p>在接下来的内容中，我想介绍给你们有关<strong>推荐系统(recommender systems)</strong>的内容。</p>
+<p>我想讨论推荐系统有两个原因：</p>
+<ul>
+<li><p><strong>原因一：对工业界有至关重要的作用</strong></p>
+<p>  在过去的几年中，我有时会去参观硅谷的各种科技类公司。我经常在那些公司里与开发机器学习应用的人交流。然后我问他们什么才是机器学习最重要的应用？或者什么样的机器学习的应用是你最想让它的表现得到改进的？我最常听到的回答其中之一就是 现在硅谷有好多个团队正试图建立更好的推荐系统。</p>
+<p>  亚马逊、Netflix、eBay又或者苹果公司的iTunes Genius等，很多网站或者很多系统，试图向用户推荐新产品。比如说亚马逊向你推荐新书，Netflix 向你推荐新电影…。而这些推荐系统可能会看看你以前购买过什么书，或者以前你给哪些电影进行过评分。</p>
+<p>  这些系统贡献了现今亚马逊收入的相当大一部分。而对像Netflix这样的公司，他们向用户推荐的电影占了用户观看的电影的相当大一部分。于是一个推荐系统其表现的一些改进，就能带来显著且即刻产生的影响。这种影响关系到许多公司的最终业绩。</p>
+<p>  推荐系统在机器学习学术界是个很有意思的问题。如果我们去参加一个学术类的机器学习会议，<br>推荐系统的问题几乎得不到什么关注至少它是学术界当前动向里较小的一部分。但如果你看看正在发生的事对很多科技类公司而言，建立这些推荐系统似乎是优先要办的事。这就是我想在这门课中谈论推荐系统的原因之一。</p>
+</li>
+<li><p><strong>原因二：自动学习到优良特征</strong></p>
+<p>  对于机器学习来说，特征量是重要的。你选择的特征对你学习算法的表现有很大影响。</p>
+<p>  在机器学习领域有这么一个宏大的想法，就是对于一些问题而言（可能不是所有问题），存在一些算法能<strong>试图自动地替你学习到一组优良的特征量</strong>。这样与其手动设计或者手动编写特征，你或许能够采用一种算法来自动学习到使用什么特征量。而推荐系统就是这种情形的一个例子。</p>
+</li>
+</ul>
+<h3 id="推荐系统_问题表述">推荐系统 问题表述</h3><p>以预测电影评分这个时兴的问题为例，假想你是一个销售或出租电影的网站，你让用户使用1至5颗星 给不同的电影评分：</p>
+<p><img src="/img/17_05_28/001.png" alt=""></p>
+<p>假设下面的表格是几个用户针对五部电影给出的评分。其中”?”代表用户没有给出评分：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">电影</th>
+<th style="text-align:center">Alice(1)</th>
+<th style="text-align:center">Bob(2)</th>
+<th style="text-align:center">Carol(3)</th>
+<th style="text-align:center">Dave(4)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">《爱到最后》</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+</tr>
+<tr>
+<td style="text-align:center">《浪漫永远》</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">0</td>
+</tr>
+<tr>
+<td style="text-align:center">《小爱犬》</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">?</td>
+</tr>
+<tr>
+<td style="text-align:center">《无尽狂飙》</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">4</td>
+</tr>
+<tr>
+<td style="text-align:center">《剑与空手道》</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">?</td>
+</tr>
+</tbody>
+</table>
+<p>引入以下几个变量：</p>
+<p>$$<br>n_u=用户数量<br>n_m=电影数量<br>r(i,j)=如果用户j对电影i投过票，则记为1<br>y^{(i,j)}=用户j对电影i投票的分值（只有在r(i,j)=1时，才有这个值）<br>$$</p>
+<p>推荐系统问题就是：</p>
+<p>在给定上面的这些数据（即$r(i,j)$和$y^{(i,j)}$）时，然后视图去预测上面表格中那些”?”的值。这样我们就可以向用户推荐他们可能还没看过的新电影了。</p>
+<h2 id="基于内容的推荐">基于内容的推荐</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/uG59z/content-based-recommendations" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>上一节，我们引出了<strong>推荐系统</strong>的问题，这一节，我将介绍一种<strong>基于内容的推荐</strong>方法。</p>
+</blockquote>
+<p>这是上一节中的数据：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">电影</th>
+<th style="text-align:center">Alice(1)</th>
+<th style="text-align:center">Bob(2)</th>
+<th style="text-align:center">Carol(3)</th>
+<th style="text-align:center">Dave(4)</th>
+<th style="text-align:center">$x_1$(爱情片)</th>
+<th style="text-align:center">$x_2$(动作片)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">《爱到最后》</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0.9</td>
+<td style="text-align:center">0</td>
+</tr>
+<tr>
+<td style="text-align:center">《浪漫永远》</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1.0</td>
+<td style="text-align:center">0.01</td>
+</tr>
+<tr>
+<td style="text-align:center">《小爱犬》</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">0.99</td>
+<td style="text-align:center">0</td>
+</tr>
+<tr>
+<td style="text-align:center">《无尽狂飙》</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">0.1</td>
+<td style="text-align:center">1.0</td>
+</tr>
+<tr>
+<td style="text-align:center">《剑与空手道》</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0.9</td>
+</tr>
+</tbody>
+</table>
+<p>重申一下之前的定义：</p>
+<p>$$<br>n_u=用户数量 \\<br>n_m=电影数量 \\<br>r(i,j)=如果用户j对电影i投过票，则记为1 \\<br>y^{(i,j)}=用户j对电影i投票的分值（只有在r(i,j)=1时，才有这个值）<br>$$</p>
+<p>在这里的数据中：</p>
+<p>$$<br>n_u=4 \\<br>n_m=5<br>$$</p>
+<p>并且我们又追加了两列特征$x_1$和$x_2$，分别表示当前电影属于<strong>爱情片</strong>和<strong>动作片</strong>的程度。我们用$n=2$来代表特征数（这里不包括$x_0$）。</p>
+<p>有了每部电影的类型特征数据，我们就可以用一个特征矩阵表示某一部电影了。假设上面五部电影，从上到下我们依次使用数字$1、2、3、4、5$来代替。那么对于第一部电影《爱到最后》的特征向量表示为：</p>
+<p>$$<br>\begin{equation}<br>x^{(1)}=\left[<br>\begin{matrix}<br>1\\<br>0.9\\<br>0<br>\end{matrix}<br>\right]<br>\end{equation}<br>$$</p>
+<blockquote>
+<p>这三个数分别代表三个特征的值:$x_0$、$x_1$和$x_2$。其中$x_0$是截距特征变量，值为1。</p>
+</blockquote>
+<h3 id="使用一个已经训练好的模型进行预测">使用一个已经训练好的模型进行预测</h3><p>为了进行预测，我们可以把对每个观众打分的预测当成一个独立的线性回归问题。</p>
+<p>具体来说，比如每一个用户$j$，都学习出一个参数$\theta^{(j)}$（一般情况下，$\theta^{(j)}$的维度都是$n+1$，$n$是特征数，不包括截距项$x_0$）。</p>
+<p>然后我们要根据参数向量$\theta^{(j)}$与特征$x^{(i)}$的内积来预测用户对电影$i$的评分：</p>
+<p>$$<br>(\theta^{(j)})^Tx^{(i)}<br>$$</p>
+<h4 id="举例">举例</h4><p>我们以用户1 Alice为例，Alice对应的特征向量应该是$\theta^{(1)}$，我们要预测Alice对于电影《小爱犬》的评分，这部电影的特征向量为：</p>
+<p>$$<br>\begin{equation}<br>x^{(3)}=\left[<br>\begin{matrix}<br>1\\<br>0.99\\<br>0<br>\end{matrix}<br>\right]<br>\end{equation}<br>$$</p>
+<p>假如你已经得到了Alice的特征参数向量$\theta^{(1)}$的值（后面我们会具体讲如何得到这个值）：</p>
+<p>$$<br>\begin{equation}<br>\theta^{(1)}=\left[<br>\begin{matrix}<br>0\\<br>5\\<br>0<br>\end{matrix}<br>\right]<br>\end{equation}<br>$$</p>
+<p>那么对于Alice关于《小爱犬》的平分预测如下：</p>
+<p>$$<br>(\theta^{(1)})^Tx^{(3)}=5×0.99=4.95<br>$$</p>
+<p>这里我们实际在做的事情就是：<strong>对每个用户应用不同的线性回归模型</strong>。</p>
+<h3 id="更正式的描述">更正式的描述</h3><p>关于这个计算过程，更正式的描述如下：</p>
+<p>已知：</p>
+<p>$$<br>r(i,j)=如果用户j对电影i投过票，则记为1 \\<br>y^{(i,j)}=用户j对电影i投票的分值（只有在r(i,j)=1时，才有这个值）\\<br>\theta^{(j)} = 用户j的参数向量 \\<br>x^{(i)} = 电影i的特征向量<br>$$</p>
+<p>对于用户$j$关于电影$i$的预测评分为：</p>
+<p>$$<br>(\theta^{(j)})^Tx^{(i)}<br>$$</p>
+<h3 id="训练预测模型：计算参数向量$\theta$">训练预测模型：计算参数向量$\theta$</h3><p>通过以下运算，可以学习到参数$\theta^{(j)}$：</p>
+<p><img src="/img/17_05_28/002.gif" alt=""></p>
+<blockquote>
+<p><strong>公式解读：</strong></p>
+<p>其中$\sum_{i:r(i,j)=1}$代表对所有满足$r(i,j)=1$的元素进行求和。</p>
+<p>$(\theta^{(j)})^T(x^{(i)})-y^{(i,j)}$代表预测用户$j$对电影$i$的平分减去用户对这部电影的实际评分。</p>
+<p>$\frac{\lambda}{2m^{(j)}}\sum_{k=1}^n((\theta_k^{(j)}))^2$是正则化项。</p>
+</blockquote>
+<p>对上面的式子通过求最小化，我们最终可以得到一个表现良好的$\theta^{(j)}$。</p>
+<p>为了让公式变得更简单一些，我们可以去除掉常数项$\frac{1}{m^{(j)}}$，对最终结果无影响：</p>
+<p><img src="/img/17_05_28/003.gif" alt=""></p>
+<h4 id="完整的描述">完整的描述</h4><p>接下来对训练过程进行完整的描述一遍：</p>
+<h5 id="优化目标">优化目标</h5><p>为了学习第$j$个用户的参数$\theta^{(j)}$，我们执行以下运算：</p>
+<p><img src="/img/17_05_28/003.gif" alt=""></p>
+<p>为了学习全部用户的参数$\theta^{(1)},\theta^{(2)},…,\theta^{(n_u)}$，我们执行以下运算：</p>
+<p><img src="/img/17_05_28/004.gif" alt=""></p>
+<p>通过这一运算，我们就能得出所有用户的参数向量$\theta^{(1)},\theta^{(2)},…,\theta^{(n_u)}$，从而对所有用户作出预测了。</p>
+<h5 id="优化算法">优化算法</h5><p><img src="/img/17_05_28/004.gif" alt=""></p>
+<p>是我们最优化目标，记为$J(\theta^{(1)},\theta^{(2)},…,\theta^{(n_u)})$。</p>
+<p>为了最小化这个目标函数$J(\theta^{(1)},\theta^{(2)},…,\theta^{(n_u)})$，我们需要使用梯度下降算法来计算：</p>
+<ul>
+<li><strong>k=0时</strong></li>
+</ul>
+<p><img src="/img/17_05_28/005.gif" alt=""></p>
+<ul>
+<li><strong>k≠0时</strong></li>
+</ul>
+<p><img src="/img/17_05_28/006.gif" alt=""></p>
+<blockquote>
+<p><strong>注意：</strong>其中$\alpha$是学习率。</p>
+</blockquote>
+<p>上面的过程实际上是在对优化目标函数$J(\theta^{(1)},\theta^{(2)},…,\theta^{(n_u)})$求偏微分的过程：</p>
+<p>$$<br>\frac{\partial}{\partial\theta_k^{j}}<br>J(\theta^{(1)},\theta^{(2)},…,\theta^{(n_u)})<br>$$</p>
+<p>以上就是通过梯度下降来最小化代价函数$J$的全过程，当然，如果你愿意的话，你可以尝试使用更高级的优化算比如<strong>聚类下降</strong>或者<em>L-BFGS(Limited-memory Broyden–Fletcher–Goldfarb–Shanno Algorithm)*</em>或者别的方法来最小化代价函数J。</p>
+<blockquote>
+<p>以上内容，我们介绍了使用一种线性回归的变体来预测不同用户对不同电影评分的算法，这种算法被称作<strong>“基于内容的推荐”</strong>，因为我们已知了不同电影的特征（比如电影是爱情片的程度，是动作片的程度等），从而来进行预测。但事实上，对于很多电影，我们并没有这些特征，或者很难得到这些特征。所以，在下一节中，我们将介绍一种<strong>“不基于内容的推荐系统”</strong>。</p>
+</blockquote>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/机器学习/" rel="tag">#机器学习</a>
+          
+            <a href="/tags/斯坦福课程/" rel="tag">#斯坦福课程</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/26/斯坦福机器学习课程 第九周 (3)多元高斯分布（选学）/" rel="next">斯坦福机器学习课程 第九周 (3)多元高斯分布（选学）</a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+ </div>
+
+        
+
+        
+          <div class="comments" id="comments">
+            
+              <div class="ds-thread" data-thread-key="2017/05/28/斯坦福机器学习课程 第九周 (4)预测电影评分/"
+                   data-title="斯坦福机器学习课程 第九周 (4)预测电影评分" data-url="http://dannylee1991.github.io/2017/05/28/斯坦福机器学习课程 第九周 (4)预测电影评分/">
+              </div>
+            
+          </div>
+        
+      </div>
+
+      
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="http://dannylee1991.github.io/images/avatar.jpg" alt="DannyLee佳楠" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">DannyLee佳楠</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">一只在迈向机器学习道路上狂奔的程序猿.</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">111</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">19</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/DannyLee1991" target="_blank">GitHub</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="http://creativecommons.org/licenses/by-nc-sa/4.0" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator"></div>
+          <div class="post-toc">
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#问题制定"><span class="nav-number">1.</span> <span class="nav-text">问题制定</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#推荐系统_问题表述"><span class="nav-number">1.1.</span> <span class="nav-text">推荐系统 问题表述</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于内容的推荐"><span class="nav-number">2.</span> <span class="nav-text">基于内容的推荐</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用一个已经训练好的模型进行预测"><span class="nav-number">2.1.</span> <span class="nav-text">使用一个已经训练好的模型进行预测</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#举例"><span class="nav-number">2.1.1.</span> <span class="nav-text">举例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更正式的描述"><span class="nav-number">2.2.</span> <span class="nav-text">更正式的描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#训练预测模型：计算参数向量$\theta$"><span class="nav-number">2.3.</span> <span class="nav-text">训练预测模型：计算参数向量$\theta$</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#完整的描述"><span class="nav-number">2.3.1.</span> <span class="nav-text">完整的描述</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#优化目标"><span class="nav-number">2.3.1.1.</span> <span class="nav-text">优化目标</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#优化算法"><span class="nav-number">2.3.1.2.</span> <span class="nav-text">优化算法</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator"></div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner"> <div class="copyright" >
+  
+  &copy; &nbsp; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="icon-next-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">DannyLee佳楠</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT
+  </a>
+</div>
+
+
+ </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"dannylee1991"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+  	<script src="/js/ua-parser.min.js"></script>
+  	<script src="/js/hook-duoshuo.js"></script>
+  
+
+    
+  
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.1"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.1"></script>
+  
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/js/motion_global.js?v=0.4.5.1" id="motion.global"></script>
+
+
+
+
+  <script type="text/javascript" src="/js/nav-toggle.js?v=0.4.5.1"></script>
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.1" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 0.4 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    var $tocContent = $('.post-toc-content');
+    if (isDesktop() && CONFIG.sidebar === 'post') {
+      if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+        displaySidebar();
+      }
+    }
+  });
+</script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      if (CONFIG.sidebar === 'always') {
+        displaySidebar();
+      }
+      if (isMobile()) {
+        FastClick.attach(document.body);
+      }
+    });
+  </script>
+
+  
+
+  
+  
+
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"16"},"slide":{"type":"slide","bdImg":"3","bdPos":"left","bdTop":"250"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+  
+  <script type="text/javascript" src="/js/lazyload.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#posts").find('img').lazyload({
+        placeholder: "/images/loading.gif",
+        effect: "fadeIn"
+      });
+    });
+  </script>
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+</html>
