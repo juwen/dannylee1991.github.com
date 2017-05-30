@@ -450,6 +450,190 @@ var _hmt = _hmt || [];
 <blockquote>
 <p>以上内容，我们介绍了使用一种线性回归的变体来预测不同用户对不同电影评分的算法，这种算法被称作<strong>“基于内容的推荐”</strong>，因为我们已知了不同电影的特征（比如电影是爱情片的程度，是动作片的程度等），从而来进行预测。但事实上，对于很多电影，我们并没有这些特征，或者很难得到这些特征。所以，在下一节中，我们将介绍一种<strong>“不基于内容的推荐系统”</strong>。</p>
 </blockquote>
+<h2 id="协同过滤">协同过滤</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/2WoBV/collaborative-filtering" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>这一节，我们将介绍一种叫做<strong>协同过滤(collaborative filtering)</strong>的推荐算法。</p>
+<p>关于这个算法值得一提的一个特点，那就是它能实现<strong>对特征的学习</strong>。就是说这个算法可以实现自动学习要使用的特征值。</p>
+</blockquote>
+<p>在之前的电影评分的例子中，我们有下面的这组数据：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">电影</th>
+<th style="text-align:center">Alice(1)</th>
+<th style="text-align:center">Bob(2)</th>
+<th style="text-align:center">Carol(3)</th>
+<th style="text-align:center">Dave(4)</th>
+<th style="text-align:center">$x_1$(爱情片)</th>
+<th style="text-align:center">$x_2$(动作片)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">《爱到最后》</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0.9</td>
+<td style="text-align:center">0</td>
+</tr>
+<tr>
+<td style="text-align:center">《浪漫永远》</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1.0</td>
+<td style="text-align:center">0.01</td>
+</tr>
+<tr>
+<td style="text-align:center">《小爱犬》</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">0.99</td>
+<td style="text-align:center">0</td>
+</tr>
+<tr>
+<td style="text-align:center">《无尽狂飙》</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">0.1</td>
+<td style="text-align:center">1.0</td>
+</tr>
+<tr>
+<td style="text-align:center">《剑与空手道》</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0.9</td>
+</tr>
+</tbody>
+</table>
+<p>我们除了有每个用户对不同电影的评分之外，同时也有每个电影属于不同类别特征的程度值$x_1$和$x_2$。</p>
+<p>但是，在实际情况中，这样做的难度很大，因为我们很难对所有的电影给出相关特征的评分。而且通常情况，我们还希望能得到除了这两个特征之外的其他特征。</p>
+<p>为了能做到这一点，我们换一种形式，假设我们并不知道每部电影具体的特征值是多少：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">电影</th>
+<th style="text-align:center">Alice(1)</th>
+<th style="text-align:center">Bob(2)</th>
+<th style="text-align:center">Carol(3)</th>
+<th style="text-align:center">Dave(4)</th>
+<th style="text-align:center">$x_1$(爱情片)</th>
+<th style="text-align:center">$x_2$(动作片)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">《爱到最后》</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">?</td>
+</tr>
+<tr>
+<td style="text-align:center">《浪漫永远》</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">?</td>
+</tr>
+<tr>
+<td style="text-align:center">《小爱犬》</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">?</td>
+</tr>
+<tr>
+<td style="text-align:center">《无尽狂飙》</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">?</td>
+</tr>
+<tr>
+<td style="text-align:center">《剑与空手道》</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">?</td>
+</tr>
+</tbody>
+</table>
+<p>假设我们采访了每一位用户，而且每一位用户都告诉我们他们是否喜欢爱情电影；以及他们是否喜欢动作电影，这样Alice、Bob、Carol以及Dave就有了他们对应的参数：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Alice(1)</th>
+<th style="text-align:center">Bob(2)</th>
+<th style="text-align:center">Carol(3)</th>
+<th style="text-align:center">Dave(4)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">$\begin{equation}\theta^{(1)}=\left[\begin{matrix}0\\5\\0\end{matrix}\right]\end{equation}$</td>
+<td style="text-align:center">$\begin{equation}\theta^{(2)}=\left[\begin{matrix}0\\5\\0\end{matrix}\right]\end{equation}$</td>
+<td style="text-align:center">$\begin{equation}\theta^{(3)}=\left[\begin{matrix}0\\0\\5\end{matrix}\right]\end{equation}$</td>
+<td style="text-align:center">$\begin{equation}\theta^{(4)}=\left[\begin{matrix}0\\0\\5\end{matrix}\right]\end{equation}$</td>
+</tr>
+</tbody>
+</table>
+<p>每个特征向量的第二个元素表示对爱情片的喜欢程度，第三个元素表示对动作片的喜欢程度。可以看出来Alice和Bob更喜欢爱情片，而Carol和Dave更喜欢动作片。</p>
+<p>有了这些数据，我们就可以着眼于用户，看看任意用户$j$对应的不同题材电影的喜欢程度$\theta^{(j)}$。有了这些参数值，理论上我们就能推测出每部电影的特征变量$x_1$和$x_2$的值。</p>
+<p>举个例子：</p>
+<p>我们看第一个电影，假设我们不知道这部电影的主要内容，我们只知道Alice和Bob喜欢这部电影，而Carol和Dave不喜欢它。从他们四个人的特征向量就可以看出，Alice和Bob给出了5分，而Carol和Dave给出了0分。因此我们可以推断，这部电影可能是一部爱情片，而不太可也能是动作片。所以可能$x_1=1.0$而$x_2=0.0$。</p>
+<p>其实这说明了我们在寻找能使得以下式子成立的$x^{(1)}$：</p>
+<p>$$<br>(\theta^{(1)})^Tx^{(1)}≈5 \\<br>(\theta^{(2)})^Tx^{(1)}≈5 \\<br>(\theta^{(3)})^Tx^{(1)}≈0 \\<br>(\theta^{(4)})^Tx^{(1)}≈0<br>$$</p>
+<p>因此，我们可以得出$x^{(1)}$的值为：</p>
+<p>$$<br>\begin{equation}<br>x^{(1)}<br>=\left[<br>\begin{matrix}<br>1\\<br>1.0\\<br>0.0<br>\end{matrix}<br>\right]<br>\end{equation}<br>$$</p>
+<blockquote>
+<p>第一个元素$x^{(1)}_0$是截距。</p>
+</blockquote>
+<p>我们可以按照这种方式把其他电影的特征预测出来。</p>
+<h3 id="协同过滤算法的正式描述">协同过滤算法的正式描述</h3><p><strong>优化算法：</strong></p>
+<p>在已知给定参数$\theta^{(1)},…,\theta^{(n_u)}$的情况下，对下面函数最小化，得到特征值$x^{(i)}$：</p>
+<p><img src="/img/17_05_28/007.gif" alt=""></p>
+<p>这就是我们如何从一部特定的电影中学习到特征的方法。</p>
+<p>那么对于所有的电影，计算所有的特征，我们通过最小化下面的函数可以得到：</p>
+<p><img src="/img/17_05_28/008.gif" alt=""></p>
+<p>这里我们对所有$n_m$个电影的特征代价函数求和，然后最小化这个整体的代价函数，这样就能得到针对所有电影的合理的特征值了。</p>
+<h3 id="鸡生蛋？蛋生鸡？">鸡生蛋？蛋生鸡？</h3><p>在上一节中，我们提到了如果给定了一系列的特征值$x^{(1)},…,x^{(n_m)}$，以及用户对电影的评分，我们就可以得到不同用户对应的参数向量$\theta^{(1)},…,\theta^{(n_u)}$。</p>
+<p>在本节内容中，我们又讲到了在给定参数$\theta^{(1)},…,\theta^{(n_u)}$的情况下，我们可以预测每个电影的特征向量$x^{(1)},…,x^{(n_m)}$。</p>
+<p>这有点类似<strong>先有鸡还是先有蛋</strong>的问题。我们知道了$x$就能预测出$\theta$，反之，如果我们知道了$\theta$，我们就能预测出$x$。</p>
+<p>这样一来，我们能做到的就是首先随机初始化参数向量$\theta$，然后根据这些初始化得到的$\theta$来得到不同电影的特征值$x$:</p>
+<p>$$<br>Guess \ \ \ \ \theta → x<br>$$</p>
+<p>有了这些特征值$x$，我们就可以得到对参数$\theta$更好的估计：</p>
+<p>$$<br>x → \theta<br>$$</p>
+<p>同样，我们可以根据这个更好的$\theta$来得到更好的特征集$x$：</p>
+<p>$$<br>\theta → x<br>$$</p>
+<p>如此循环往复。</p>
+<p>如果你一直重复上述的计算过程，你的算法将会收敛到一组合理的特征值$x$，以及一组合理的对不同用户参数的估计值$\theta$。</p>
+<p>这就是基本的<strong>协同过滤算法</strong>，但这实际上不是我们最终使用的算法。在下一节中，我们将改进这个算法，让其在计算时更为高效。但这节课希望能让你基本了解这个算法的基本原理。</p>
+<blockquote>
+<p>总结一下，在本节，我们了解了最基本的协同过滤算法。</p>
+<p>协同过滤算法指的是当你针对一大批用户数据执行这个算法时，这些用户实际上在高效地进行了协同合作来得到每个人对电影的评分值。只要用户对某几部电影进行评分，每个用户就都在帮助算法更好的学习出特征。这样以来，通过自己对几部电影评分之后，我就能帮助系统更好的学习到特征。这些特征可以被系统运用，为其他人做出更准确的电影预测。</p>
+<p>协同的另一层意思是说每位用户都在为了大家的利益，而学习出更好的特征。这就是协同过滤。</p>
+</blockquote>
 </span>
         
       
