@@ -199,6 +199,215 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2017/03/09/【Tensorflow r1.0 文档翻译】使用tf.contrib.learn记录和监视的基本知识/" itemprop="url">
+                【Tensorflow r1.0 文档翻译】使用tf.contrib.learn记录和监视的基本知识
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-03-09T00:07:58+08:00" content="2017-03-09">
+            2017-03-09
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+                ， 
+              
+
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/Tensorflow/" itemprop="url" rel="index">
+                  <span itemprop="name">Tensorflow</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/03/09/【Tensorflow r1.0 文档翻译】使用tf.contrib.learn记录和监视的基本知识/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/09/【Tensorflow r1.0 文档翻译】使用tf.contrib.learn记录和监视的基本知识/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p>在训练模型时，实时跟踪和评估进度通常很有价值。在本教程中，您将学习如何使用TensorFlow的日志记录功能和<code>Monitor</code> API来审计用于分类鸢尾花的神经网络分类器的正在进行中的训练。本教程基于在<a href="/2017/03/05/【Tensorflow%20r1.0%20文档翻译】【tf.contrib.learn快速入门】/">tf.contrib.learn快速入门</a>中开发的代码，所以如果你还没有完成该教程，你可能想先探索它， 特别是如果你正在寻找一个tf.contrib.learn基础介绍/复习文章时。</p>
+<h2 id="创建">创建</h2><p>在本教程中，你将在从<a href="/2017/03/05/【Tensorflow%20r1.0%20文档翻译】【tf.contrib.learn快速入门】/">tf.contrib.learn快速入门</a>中的下面的代码来进行构建：</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line">from __future__ <span class="built_in">import</span> absolute_import</div><div class="line">from __future__ <span class="built_in">import</span> division</div><div class="line">from __future__ <span class="built_in">import</span> print_function</div><div class="line"></div><div class="line"><span class="built_in">import</span> os</div><div class="line"></div><div class="line"><span class="built_in">import</span> numpy as np</div><div class="line"><span class="built_in">import</span> tensorflow as tf</div><div class="line"></div><div class="line"><span class="comment"># Data sets</span></div><div class="line"><span class="attr">IRIS_TRAINING</span> = os.path.join(os.path.dirname(__file__), <span class="string">"iris_training.csv"</span>)</div><div class="line"><span class="attr">IRIS_TEST</span> = os.path.join(os.path.dirname(__file__), <span class="string">"iris_test.csv"</span>)</div><div class="line"></div><div class="line">def main(unused_argv):</div><div class="line">    <span class="comment"># Load datasets.</span></div><div class="line">    <span class="attr">training_set</span> = tf.contrib.learn.datasets.base.load_csv_with_header(</div><div class="line">        <span class="attr">filename=IRIS_TRAINING,</span> <span class="attr">target_dtype=np.int,</span> <span class="attr">features_dtype=np.float32)</span></div><div class="line">    <span class="attr">test_set</span> = tf.contrib.learn.datasets.base.load_csv_with_header(</div><div class="line">        <span class="attr">filename=IRIS_TEST,</span> <span class="attr">target_dtype=np.int,</span> <span class="attr">features_dtype=np.float32)</span></div><div class="line"></div><div class="line">    <span class="comment"># Specify that all features have real-value data</span></div><div class="line">    <span class="attr">feature_columns</span> = [tf.contrib.layers.real_valued_column(<span class="string">""</span>, <span class="attr">dimension=4)]</span></div><div class="line"></div><div class="line">    <span class="comment"># Build 3 layer DNN with 10, 20, 10 units respectively.</span></div><div class="line">    <span class="attr">classifier</span> = tf.contrib.learn.DNNClassifier(<span class="attr">feature_columns=feature_columns,</span></div><div class="line">                                                <span class="attr">hidden_units=[10,</span> <span class="number">20</span>, <span class="number">10</span>],</div><div class="line">                                                <span class="attr">n_classes=3,</span></div><div class="line">                                                <span class="attr">model_dir="/tmp/iris_model")</span></div><div class="line"></div><div class="line">    <span class="comment"># Fit model.</span></div><div class="line">    classifier.fit(<span class="attr">x=training_set.data,</span></div><div class="line">                   <span class="attr">y=training_set.target,</span></div><div class="line">                   <span class="attr">steps=2000)</span></div><div class="line"></div><div class="line">    <span class="comment"># Evaluate accuracy.</span></div><div class="line">    <span class="attr">accuracy_score</span> = classifier.evaluate(<span class="attr">x=test_set.data,</span></div><div class="line">                                         <span class="attr">y=test_set.target)["accuracy"]</span></div><div class="line">    print('Accuracy: &#123;<span class="number">0</span>:f&#125;'.format(accuracy_score))</div><div class="line"></div><div class="line">    <span class="comment"># Classify two new flower samples.</span></div><div class="line">    <span class="attr">new_samples</span> = np.array(</div><div class="line">        [[<span class="number">6.4</span>, <span class="number">3.2</span>, <span class="number">4.5</span>, <span class="number">1.5</span>], [<span class="number">5.8</span>, <span class="number">3.1</span>, <span class="number">5.0</span>, <span class="number">1.7</span>]], <span class="attr">dtype=float)</span></div><div class="line">    <span class="attr">y</span> = list(classifier.predict(new_samples, <span class="attr">as_iterable=True))</span></div><div class="line">    print('Predictions: &#123;&#125;'.format(str(y)))</div><div class="line"></div><div class="line"><span class="keyword">if</span> <span class="attr">__name__</span> == <span class="string">"__main__"</span>:</div><div class="line">  tf.app.run()</div></pre></td></tr></table></figure>
+<p>将上述代码复制到一个文件中，并将相应的<a href="http://download.tensorflow.org/data/iris_training.csv" target="_blank" rel="external">训练</a>和<a href="https://www.tensorflow.org/api_docs/python/tf/test" target="_blank" rel="external">tf.test</a>数据集下载到同一目录。</p>
+<p>在以下部分中，您将逐步更新上述代码以添加日志记录和监视功能。包含所有更新的最终代码可在<a href="https://www.tensorflow.org/code/tensorflow/examples/tutorials/monitors/iris_monitors.py" target="_blank" rel="external">此处</a>下载。</p>
+<h2 id="概述">概述</h2><p><a href="/2017/03/05/【Tensorflow%20r1.0%20文档翻译】【tf.contrib.learn快速入门】/">tf.contrib.learn快速入门</a>教程中通过如何实现一个神经网络分类器实现了将鸢尾花的样本分为三种类型之一。</p>
+<p>但是，当运行本教程的<a href="https://www.tensorflow.org/get_started/monitors#setup" target="_blank" rel="external">代码</a>时，输​​出并不包含日志记录跟踪模型训练如何进行 - 仅包含打印语句的结果：</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">Accuracy:</span> <span class="number">0.933333</span></div><div class="line"><span class="symbol">Predictions:</span> [<span class="number">1</span> <span class="number">2</span>]</div></pre></td></tr></table></figure>
+<p>没有任何日志记录，模型训练感觉就像一个黑盒子;你不能看到发生了什么，因此TensorFlow通过逐步的梯度下降，了解模型是否适当的收敛、或者确定是否可以提前停止训练是有必要的。</p>
+<p>解决这个问题的一种方法是将模型训练分成具有较少步骤的多个<code>fit</code>(拟合)调用，以便逐步评估准确性。然而，这不是推荐的做法，因为它大大减慢了模型的训练过程。幸运的是，tf.contrib.learn提供了另一个解决方案：一个<a href="https://www.tensorflow.org/api_docs/python/tf/contrib/learn/monitors" target="_blank" rel="external">Monitor API</a>，旨在帮助您在训练正在进行时记录指标并评估模型。在以下部分中，您将学习如何在TensorFlow中启用日志记录，设置ValidationMonitor进行流评估，以及使用TensorBoard可视化您的度量。</p>
+<h2 id="启用TensorFlow的日志记录">启用TensorFlow的日志记录</h2><p>TensorFlow对日志消息使用五个不同的级别。按照严重性递增的顺序，它们是<code>DEBUG</code>，<code>INFO</code>，<code>WARN</code>，<code>ERROR</code>和<code>FATAL</code>。当您在配置任何这些级别的日志记录时，TensorFlow将输出与该级别以及所有严重性级别高于该级别的相对应的所有日志消息。例如，如果您设置为<code>ERROR</code>的日志级别，您将获得包含<code>ERROR</code>和<code>FATAL</code>消息的日志输出，如果设置为<code>DEBUG</code>级别，则将获取所有五个级别的日志消息。</p>
+<p>默认情况下，TensorFlow的日志级别为<code>WARN</code>，但是在跟踪模型训练时，您需要将级别调整为<code>INFO</code>，这将在适配操作正在进行时提供其他反馈。</p>
+<p>将以下行添加到代码的开头（在<code>import</code>之后）：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tf<span class="selector-class">.logging</span><span class="selector-class">.set_verbosity</span>(tf<span class="selector-class">.logging</span><span class="selector-class">.INFO</span>)</div></pre></td></tr></table></figure>
+<p>现在当你运行代码，你会看到额外的日志输出，如下所示：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="string">INFO:</span><span class="string">tensorflow:</span>loss = <span class="number">1.18812</span>, step = <span class="number">1</span></div><div class="line"><span class="string">INFO:</span><span class="string">tensorflow:</span>loss = <span class="number">0.210323</span>, step = <span class="number">101</span></div><div class="line"><span class="string">INFO:</span><span class="string">tensorflow:</span>loss = <span class="number">0.109025</span>, step = <span class="number">201</span></div></pre></td></tr></table></figure>
+<p>使用<code>INFO</code>级别日志记录，tf.contrib.learn每100步后自动向标准错误（stderr）输出<a href="https://en.wikipedia.org/wiki/Loss_function" target="_blank" rel="external">训练损失指标</a>。</p>
+<h2 id="为流式处理评估配置验证监视器">为流式处理评估配置验证监视器</h2><p>记录训练损失有助于了解您的模型是否收敛，但如果您想进一步了解训练期间发生的情况怎么办？tf.contrib.learn提供了几个高级监视器，您可以附加到您的合适的操作中，以进一步在模型训练期间跟踪指标和/或调试较低级别的TensorFlow操作，包括：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Monitor</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>CaptureVariable</code></td>
+<td style="text-align:left">在训练的每n个步骤中将指定变量的值保存到集合中</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>PrintTensor</code></td>
+<td style="text-align:left">在训练的每n个步骤记录指定的tensor的值</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>SummarySaver</code></td>
+<td style="text-align:left">在每n个训练步骤使用<a href="https://www.tensorflow.org/api_docs/python/tf/summary/FileWriter" target="_blank" rel="external"><code>tf.summary.FileWriter</code></a>保存给定tensor的<a href="https://www.tensorflow.org/api_docs/python/tf/Summary" target="_blank" rel="external"><code>tf.Summary</code></a><a href="https://developers.google.com/protocol-buffers/" target="_blank" rel="external">protocol buffers</a></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>ValidationMonitor</code></td>
+<td style="text-align:left">在训练的每n个步骤记录指定的一组评估度量，并且如果需要，可以在某些条件下实现提前停止训练</td>
+</tr>
+</tbody>
+</table>
+<h3 id="评估每N个步骤">评估每N个步骤</h3><p>对于鸢尾花神经网络分类器，在记录训练损失时，您可能还需要同时评估测试数据，以了解模型的泛化程度。您可以通过使用测试数据（<code>test_set.data</code>和<code>test_set.target</code>）配置一个<code>ValidationMonitor</code>并设置使用<code>every_n_steps</code>进行求值的频率来实现此目的。<code>every_n_steps</code>的默认值为<code>100</code>;这里，设置<code>every_n_steps</code>为<code>50</code>，以评估后每50步的模型训练：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">validation_monitor = tf<span class="selector-class">.contrib</span><span class="selector-class">.learn</span><span class="selector-class">.monitors</span><span class="selector-class">.ValidationMonitor</span>(</div><div class="line">    test_set<span class="selector-class">.data</span>,</div><div class="line">    test_set<span class="selector-class">.target</span>,</div><div class="line">    every_n_steps=<span class="number">50</span>)</div></pre></td></tr></table></figure>
+<p>将此代码放置在实例化<code>classifier</code>的行之前。</p>
+<p><code>ValidationMonitor</code>依赖于保存的检查点来执行评估操作，因此您需要通过修改分类器的实例化，来添加包含<code>save_checkpoints_secs</code>的来指定在训练运行期间每个checkpoint之间消耗了多少秒的<a href="https://www.tensorflow.org/api_docs/python/tf/contrib/learn/RunConfig" target="_blank" rel="external"><code>tf.contrib.learn.RunConfig</code></a>。由于鸢尾花数据集非常小，因此可以快速进行训练，将<code>save_checkpoints_secs</code>设置为1（每秒保存一个检查点）以确保有足够数量的检查点：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">classifier = tf<span class="selector-class">.contrib</span><span class="selector-class">.learn</span><span class="selector-class">.DNNClassifier</span>(</div><div class="line">    feature_columns=feature_columns,</div><div class="line">    hidden_units=[<span class="number">10</span>, <span class="number">20</span>, <span class="number">10</span>],</div><div class="line">    n_classes=<span class="number">3</span>,</div><div class="line">    model_dir=<span class="string">"/tmp/iris_model"</span>,</div><div class="line">    config=tf<span class="selector-class">.contrib</span><span class="selector-class">.learn</span><span class="selector-class">.RunConfig</span>(save_checkpoints_secs=<span class="number">1</span>))</div></pre></td></tr></table></figure>
+<p>注意：<code>model_dir</code>参数为要存储的模型数据指定显式目录（<code>/tmp/iris_model</code>）;此目录路径将比后面自动生成的路径更容易引用。每次运行代码时，在<code>/tmp/iris_model</code>目录下的任何的数据都会被加载，并且模型训练将会在上次停止的位置继续进行（例如，连续运行两次2000步<code>fit</code>操作的脚本将在训练期间执行4000步操作）。如果想要从头开始模型训练，那么需要在执行训练前删除<code>/tmp/iris_model</code>目录。</p>
+<p>最后，为了附加您的<code>validation_monitor</code>，更新<code>fit</code>调用，来包含一个包含在模型训练期间运行的所有监视器的列表的监视器参数：</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">classifier.fit(<span class="attr">x=training_set.data,</span></div><div class="line">               <span class="attr">y=training_set.target,</span></div><div class="line">               <span class="attr">steps=2000,</span></div><div class="line">               <span class="attr">monitors=[validation_monitor])</span></div></pre></td></tr></table></figure>
+<p>现在，当您重新运行代码时，您应该会在日志输出中看到验证指标，例如：</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">INFO:tensorflow:Validation (step <span class="number">50</span>): <span class="attr">loss</span> = <span class="number">1.71139</span>, <span class="attr">global_step</span> = <span class="number">0</span>, <span class="attr">accuracy</span> = <span class="number">0.266667</span></div><div class="line">...</div><div class="line">INFO:tensorflow:Validation (step <span class="number">300</span>): <span class="attr">loss</span> = <span class="number">0.0714158</span>, <span class="attr">global_step</span> = <span class="number">268</span>, <span class="attr">accuracy</span> = <span class="number">0.966667</span></div><div class="line">...</div><div class="line">INFO:tensorflow:Validation (step <span class="number">1750</span>): <span class="attr">loss</span> = <span class="number">0.0574449</span>, <span class="attr">global_step</span> = <span class="number">1729</span>, <span class="attr">accuracy</span> = <span class="number">0.966667</span></div></pre></td></tr></table></figure>
+<h3 id="使用MetricSpec自定义评估指标">使用MetricSpec自定义评估指标</h3><p>默认情况下，如果未指定评估指标，<code>ValidationMonitor</code>将同时记录loss和accuracy精确度，但您可以自定义将每隔50个步骤运行的指标列表。要指定要在每个评估传递中运行的确切指标，您可以向<code>ValidationMonitor</code>构造函数添加一个<code>metrics</code>参数。<code>metrics</code>接受一个key/value的字典，其中字典的每个键是您要为该指标记录的名称，对应的值是<a href="https://www.tensorflow.org/code/tensorflow/contrib/learn/python/learn/metric_spec.py" target="_blank" rel="external"><code>MetricSpec</code></a>对象。</p>
+<p><code>MetricSpec</code>构造函数接受四个参数：</p>
+<ul>
+<li><p><code>metric_fn</code> 计算和返回指标值的函数。这可以是<a href="https://www.tensorflow.org/api_docs/python/tf/contrib/metrics" target="_blank" rel="external">tf.contrib.metrics</a>模块中可用的预定义函数，例如<a href="https://www.tensorflow.org/api_docs/python/tf/contrib/metrics/streaming_precision" target="_blank" rel="external">tf.contrib.metrics.streaming_precision</a>或<a href="https://www.tensorflow.org/api_docs/python/tf/contrib/metrics/streaming_recall" target="_blank" rel="external">tf.contrib.metrics.streaming_recall</a>。或者，您可以定义自己的自定义指标函数，必须将<code>predictions</code>和<code>labels</code>tensor作为参数(还可以可选地提供<code>weights</code>参数)。函数必须以以下两种格式之一返回度量的值：</p>
+<ul>
+<li>单个的tensor </li>
+<li>一对操作(<code>value_op</code>, <code>update_op</code>)，其中<code>value_op</code>返回度量值，<code>update_op</code>执行相应的操作以更新内部模型状态。</li>
+</ul>
+</li>
+<li><p><code>prediction_key</code> 包含模型返回的预测的tensor的key。如果模型返回单个tensor或带有单个条目的字典，则可以省略此参数。对于<code>DNNClassifier</code>模型，类别预测将在带有关键字<a href="https://www.tensorflow.org/api_docs/python/tf/contrib/learn/PredictionKey#CLASSES" target="_blank" rel="external"><code>tf.contrib.learn.PredictionKey.CLASSES</code></a>的tensor中返回。</p>
+</li>
+<li><code>label_key</code> tensor的键包含模型返回的标签，由模型的<a href="https://www.tensorflow.org/get_started/input_fn" target="_blank" rel="external"><code>input_fn</code></a>指定。与<code>prediction_key</code>一样，如果<code>input_fn</code>返回单个tensor或具有单个条目的字典，则可以省略此参数。在本教程的鸢尾花样本中，<code>DNNClassifier</code>没有<code>input_fn</code>（<code>x</code>，<code>y</code>数据直接传递给<code>fit</code>），因此没有必要提供<code>label_key</code>。</li>
+<li><code>weights_key</code> 可选参数。tensor的键（由<a href="https://www.tensorflow.org/get_started/input_fn" target="_blank" rel="external"><code>input_fn</code></a>返回），包含<code>metric_fn</code>的权重输入。</li>
+</ul>
+<p>以下代码创建了一个<code>validation_metrics</code>字典，它定义了在模型评估期间要记录的三个指标：</p>
+<ul>
+<li><code>&quot;accuracy&quot;(准确性)</code>,使用<a href="https://www.tensorflow.org/api_docs/python/tf/contrib/metrics/streaming_accuracy" target="_blank" rel="external"><code>tf.contrib.metrics.streaming_accuracy</code></a>作为<code>metric_fn</code>。</li>
+<li><code>&quot;precision&quot;(精确)</code>,使用<a href="https://www.tensorflow.org/api_docs/python/tf/contrib/metrics/streaming_precision" target="_blank" rel="external"><code>tf.contrib.metrics.streaming_precision</code></a>作为<code>metric_fn</code>。</li>
+<li><code>&quot;recall&quot;(召回)</code>,使用<a href="https://www.tensorflow.org/api_docs/python/tf/contrib/metrics/streaming_recall" target="_blank" rel="external"><code>tf.contrib.metrics.streaming_recall</code></a>作为<code>metric_fn</code>。</li>
+</ul>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">validation_metrics = &#123;</div><div class="line">    <span class="string">"accuracy"</span>:</div><div class="line">        tf<span class="selector-class">.contrib</span><span class="selector-class">.learn</span><span class="selector-class">.metric_spec</span><span class="selector-class">.MetricSpec</span>(</div><div class="line">            metric_fn=tf<span class="selector-class">.contrib</span><span class="selector-class">.metrics</span><span class="selector-class">.streaming_accuracy</span>,</div><div class="line">            prediction_key=tf<span class="selector-class">.contrib</span><span class="selector-class">.learn</span><span class="selector-class">.prediction_key</span><span class="selector-class">.PredictionKey</span>.</div><div class="line">            CLASSES),</div><div class="line">    <span class="string">"precision"</span>:</div><div class="line">        tf<span class="selector-class">.contrib</span><span class="selector-class">.learn</span><span class="selector-class">.metric_spec</span><span class="selector-class">.MetricSpec</span>(</div><div class="line">            metric_fn=tf<span class="selector-class">.contrib</span><span class="selector-class">.metrics</span><span class="selector-class">.streaming_precision</span>,</div><div class="line">            prediction_key=tf<span class="selector-class">.contrib</span><span class="selector-class">.learn</span><span class="selector-class">.prediction_key</span><span class="selector-class">.PredictionKey</span>.</div><div class="line">            CLASSES),</div><div class="line">    <span class="string">"recall"</span>:</div><div class="line">        tf<span class="selector-class">.contrib</span><span class="selector-class">.learn</span><span class="selector-class">.metric_spec</span><span class="selector-class">.MetricSpec</span>(</div><div class="line">            metric_fn=tf<span class="selector-class">.contrib</span><span class="selector-class">.metrics</span><span class="selector-class">.streaming_recall</span>,</div><div class="line">            prediction_key=tf<span class="selector-class">.contrib</span><span class="selector-class">.learn</span><span class="selector-class">.prediction_key</span><span class="selector-class">.PredictionKey</span>.</div><div class="line">            CLASSES)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在<code>ValidationMonitor</code>构造函数之前添加上面的代码。然后按如下所示修改<code>ValidationMonitor</code>构造函数，以添加度量参数以记录<code>validation_metrics</code>中指定的accuracy，precision和recall指标（loss是始终被记录的，不需要显示的设定）：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">validation_monitor = tf<span class="selector-class">.contrib</span><span class="selector-class">.learn</span><span class="selector-class">.monitors</span><span class="selector-class">.ValidationMonitor</span>(</div><div class="line">    test_set<span class="selector-class">.data</span>,</div><div class="line">    test_set<span class="selector-class">.target</span>,</div><div class="line">    every_n_steps=<span class="number">50</span>,</div><div class="line">    metrics=validation_metrics)</div></pre></td></tr></table></figure>
+<p>重新运行代码，您应该会在日志输出中看到precision和recall，例如：</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">INFO:tensorflow:Validation (step <span class="number">50</span>): <span class="attr">recall</span> = <span class="number">0.0</span>, <span class="attr">loss</span> = <span class="number">1.20626</span>, <span class="attr">global_step</span> = <span class="number">1</span>, <span class="attr">precision</span> = <span class="number">0.0</span>, <span class="attr">accuracy</span> = <span class="number">0.266667</span></div><div class="line">...</div><div class="line">INFO:tensorflow:Validation (step <span class="number">600</span>): <span class="attr">recall</span> = <span class="number">1.0</span>, <span class="attr">loss</span> = <span class="number">0.0530696</span>, <span class="attr">global_step</span> = <span class="number">571</span>, <span class="attr">precision</span> = <span class="number">1.0</span>, <span class="attr">accuracy</span> = <span class="number">0.966667</span></div><div class="line">...</div><div class="line">INFO:tensorflow:Validation (step <span class="number">1500</span>): <span class="attr">recall</span> = <span class="number">1.0</span>, <span class="attr">loss</span> = <span class="number">0.0617403</span>, <span class="attr">global_step</span> = <span class="number">1452</span>, <span class="attr">precision</span> = <span class="number">1.0</span>, <span class="attr">accuracy</span> = <span class="number">0.966667</span></div></pre></td></tr></table></figure>
+<h3 id="通过ValidationMonitor来提前停止">通过ValidationMonitor来提前停止</h3><p>注意，在上述日志输出中，通过600步训练，模型已经实现了1.0的精确度和召回率。这体现出了一个问题，即模型训练是否可以从<a href="https://en.wikipedia.org/wiki/Early_stopping" target="_blank" rel="external">提前停止</a>中受益。</p>
+<p>除了记录eval指标外，<code>ValidationMonitor</code>还可以通过三个参数轻松实现提前停止：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">参数</th>
+<th style="text-align:left">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>early_stopping_metric</code></td>
+<td style="text-align:left">在<code>early_stopping_rounds</code>和<code>early_stopping_metric_minimize</code>中指定的条件下触发提前停止的指标（例如，loss或accuracy）。默认为“loss”。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>early_stopping_metric_minimize</code></td>
+<td style="text-align:left">如果期望的模型行为是最小化<code>early_stopping_metric</code>的值，则为<code>True</code>;如果期望的模型行为是最大化<code>early_stopping_metric</code>的值，则为<code>False</code>。默认值是<code>True</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>early_stopping_rounds</code></td>
+<td style="text-align:left">设置如果<code>early_stopping_metric</code>不减小（如果<code>early_stopping_metric_minimize</code>为<code>True</code>）或增加（如果<code>early_stopping_metric_minimize</code>为<code>False</code>）的步骤数，训练将会停止。默认值为<code>None</code>，这意味着永远不会发生提前停止。</td>
+</tr>
+</tbody>
+</table>
+<p>对<code>ValidationMonitor</code>的构造函数进行以下修改，其指定如果在200个步骤（<code>early_stopping_rounds = 200</code>）的时段内loss（<code>early_stopping_metric =“loss”</code>）不减小（<code>early_stopping_metric_minimize = True</code>），模型训练将在该点立即停止，并且不会完成<code>fit</code>中指定的2000步训练：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">validation_monitor = tf<span class="selector-class">.contrib</span><span class="selector-class">.learn</span><span class="selector-class">.monitors</span><span class="selector-class">.ValidationMonitor</span>(</div><div class="line">    test_set<span class="selector-class">.data</span>,</div><div class="line">    test_set<span class="selector-class">.target</span>,</div><div class="line">    every_n_steps=<span class="number">50</span>,</div><div class="line">    metrics=validation_metrics,</div><div class="line">    early_stopping_metric=<span class="string">"loss"</span>,</div><div class="line">    early_stopping_metric_minimize=True,</div><div class="line">    early_stopping_rounds=<span class="number">200</span>)</div></pre></td></tr></table></figure>
+<p>重新运行代码以查看模型训练是否提前停止：</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">...</div><div class="line">INFO:tensorflow:Validation (step <span class="number">1150</span>): <span class="attr">recall</span> = <span class="number">1.0</span>, <span class="attr">loss</span> = <span class="number">0.056436</span>, <span class="attr">global_step</span> = <span class="number">1119</span>, <span class="attr">precision</span> = <span class="number">1.0</span>, <span class="attr">accuracy</span> = <span class="number">0.966667</span></div><div class="line">INFO:tensorflow:Stopping. Best step: <span class="number">800</span> <span class="keyword">with</span> <span class="attr">loss</span> = <span class="number">0.048313818872</span>.</div></pre></td></tr></table></figure>
+<p>实际上，这里的训练在第1150步时停止，这说明对于过去的200步，损失没有减少，并且总体上，第800步针对测试数据集产生最小损失值。这表明通过减少步数来额外校准超参数可以进一步改善模型。</p>
+<h2 id="使用TensorBoard可视化日志数据">使用TensorBoard可视化日志数据</h2><p>通过<code>ValidationMonitor</code>生成的日志读取提供了大量关于模型在训练期间的性能的原始数据，这也对数据可视化以进一步了解趋势是有帮助的 - 例如，精确度是如何随着步数变化而变化的。您可以使用TensorBoard（与TensorFlow一起打包的单独程序）通过将<code>logdir</code>命令行参数设置为保存模型训练数据的目录（此处为<code>/tmp/iris_model</code>）来绘制这样的图。在命令行上运行以下命令：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ tensorboard <span class="comment">--logdir=/tmp/iris_model/</span></div><div class="line">Starting TensorBoard <span class="number">39</span> <span class="keyword">on</span> port <span class="number">6006</span></div></pre></td></tr></table></figure>
+<p>然后在你的浏览器中打开<code>http://0.0.0.0:&lt;port_number&gt;</code>，<code>&lt;port_number&gt;</code>是在命令行输出中指定的端口（此处为<code>6006</code>）。</p>
+<p>如果单击accuracy(准确度)字段，您将看到类似以下的图像，其中显示了针对步数的精确度：</p>
+<p><img src="/img/17_03_07/031.png" alt=""></p>
+<p>有关使用TensorBoard的更多信息，请参阅<a href="/2017/03/07/【Tensorflow%20r1.0%20文档翻译】TensorBoard-可视化学习/">TensorBoard:可视化学习</a>和<a href="/2017/03/07/【Tensorflow%20r1.0%20文档翻译】TensorBoard-图的可视化/">TensorBoard:图的可视化</a>。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2017/03/07/【Tensorflow r1.0 文档翻译】TensorBoard-图的可视化/" itemprop="url">
                 【Tensorflow r1.0 文档翻译】TensorBoard:图的可视化
               </a>
@@ -2099,198 +2308,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2017/02/20/【Tensorflow r1.0 文档翻译】TensorFlow入门/" itemprop="url">
-                【Tensorflow r1.0 文档翻译】TensorFlow入门
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2017-02-20T21:42:58+08:00" content="2017-02-20">
-            2017-02-20
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-                ， 
-              
-
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/Tensorflow/" itemprop="url" rel="index">
-                  <span itemprop="name">Tensorflow</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2017/02/20/【Tensorflow r1.0 文档翻译】TensorFlow入门/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2017/02/20/【Tensorflow r1.0 文档翻译】TensorFlow入门/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="TensorFlow入门">TensorFlow入门</h2><p>这是一个TensorFlow的入门指南。在你使用这份指南之前，请先<a href="https://www.tensorflow.org/install/" target="_blank" rel="external">安装TensorFlow</a>。在充分的使用本指南之前，您应该了解以下内容：</p>
-<ul>
-<li>如何使用Python进行编程。</li>
-<li>至少对矩阵有一些了解</li>
-<li>最好是对<strong>机器学习</strong>有一点了解。但即使你对<strong>机器学习</strong>有一点了解、或者甚至完全不了解，那么你很有必要读一读这一篇指南了。</li>
-</ul>
-<p>TensorFlow提供了多种API。即使是最低版本的TensorFlow 核心 API，也为您提供了完整的编程控制。如果您是机器学习研究人员，或需要对模型进行精细控制的人，那么我们建议你使用TensorFlow 核心代码，否则我们建议您使用TensorFlow Core API。这些更高级的API通常比TensorFlow 核心代码更容易学习和使用。此外，较高级别的API使重复性任务更容易上手，并且在不同用户之间更一致。高级API（如<strong>tf.contrib.learn</strong>）可帮助您管理数据集、估计量、训练和推断。注意，在一些高级TensorFlow API 中，方法名称包含<code>contrib</code>的API表示仍在开发中。一些<code>contrib</code>方法可能会在随后的TensorFlow版本中发生改变或过时。</p>
-<p>本指南从TensorFlow 核心教程开始。稍后，我们将演示如何在<code>tf.contrib.learn</code>中实现相同的模型。了解TensorFlow核心原则将会给你提供一个很棒的心理模型，这个模型是用于说明当您使用更紧凑的更高级别的API时，内部是如何工作的。</p>
-<h2 id="Tensors（张量）">Tensors（张量）</h2><p>TensorFlow中的数据的中心单元是<strong>Tensors(张量)</strong>。tensor是由一组原始数据组成，这些原始数据是由一组任意数量维度的数组形成。一个tensor的<strong>rank</strong>是表示它尺寸的一个数值。下面是几个tensor的例子：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="number">3</span> # a rank <span class="number">0</span> tensor; this is a scalar with shape []</div><div class="line">[<span class="number">1.</span> ,<span class="number">2.</span>, <span class="number">3.</span>] # a rank <span class="number">1</span> tensor; this is a <span class="type">vector</span> with shape [<span class="number">3</span>]</div><div class="line">[[<span class="number">1.</span>, <span class="number">2.</span>, <span class="number">3.</span>], [<span class="number">4.</span>, <span class="number">5.</span>, <span class="number">6.</span>]] # a rank <span class="number">2</span> tensor; a matrix with shape [<span class="number">2</span>, <span class="number">3</span>]</div><div class="line">[[[<span class="number">1.</span>, <span class="number">2.</span>, <span class="number">3.</span>]], [[<span class="number">7.</span>, <span class="number">8.</span>, <span class="number">9.</span>]]] # a rank <span class="number">3</span> tensor with shape [<span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>]</div></pre></td></tr></table></figure>
-<h2 id="TensorFlow核心教程">TensorFlow核心教程</h2><h3 id="导入TensorFlow">导入TensorFlow</h3><p>TensorFlow程序的标准导入语句如下：</p>
-<figure class="highlight elm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</div></pre></td></tr></table></figure>
-<p>这样做可以使得Python能够正常访问TensorFlow的所有类、方法和符号。我们的大多数文档都假设你已经这样做了。</p>
-<h3 id="用于计算的Graph（图）">用于计算的Graph（图）</h3><p>也许你会认为TensorFlow Core的程序包含下面两部分组成：</p>
-<ul>
-<li>1.构建<strong>computational graph（用于计算的图）</strong></li>
-<li>2.运行<strong>computational graph（用于计算的图）</strong></li>
-</ul>
-<p>一个<strong>computational graph（用于计算的图）</strong>是一系列排列在graph的节点上的TensorFlow操作单元。让我们来构建一个简单的<strong>computational graph</strong>。每个节点接受0个或多个tensor作为输入，并且产生一个tensor作为输出。<strong>常量类型</strong>是节点的一种类型。正如所有的TensorFlow常量一样，它是不接收输入的，并且输出一个它内部存储的值。我们可以按照下面的方式来创建两个浮点Tensor节点<code>node1</code>和<code>node2</code>：</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">node1 = <span class="keyword">tf</span>.constant(<span class="number">3.0</span>, <span class="keyword">tf</span>.float32)</div><div class="line">node2 = <span class="keyword">tf</span>.constant(<span class="number">4.0</span>) # also <span class="keyword">tf</span>.float32 implicitly</div><div class="line"><span class="keyword">print</span>(node1, node2)</div></pre></td></tr></table></figure>
-<p>执行结果如下：</p>
-<figure class="highlight lisp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Tensor(<span class="string">"Const:0"</span>, shape=(), dtype=float32) Tensor(<span class="string">"Const_1:0"</span>, shape=(), dtype=float32)</div></pre></td></tr></table></figure>
-<p>你会注意到，打印节点并不会如你所想的输出<code>3.0</code>和<code>4.0</code>。相反，这些节点会在计算时分别产生<code>3.0</code>和<code>4.0</code>。为了实际评估这些节点，我们必须以一个 <strong>session（会话）</strong> 来运行 <strong>computational graph</strong>。<strong>session（会话）</strong> 封装了TensorFlow运行时的控件和状态。</p>
-<p>下面的代码创建了一个<code>Session</code>对象，并且执行了它的<code>run</code>方法来运行包含了<code>node1</code>和<code>node2</code>的<strong>computational graph</strong>的计算结果。通过在<strong>session</strong>中运行<strong>computational graph</strong>的代码如下：</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sess = tf.Session()</div><div class="line"><span class="function"><span class="title">print</span><span class="params">(sess.run([node1, node2])</span></span>)</div></pre></td></tr></table></figure>
-<p>我们看到了我们期望看到的<code>3.0</code>和<code>4.0</code>的输出:</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[<span class="number">3.0</span>, <span class="number">4.0</span>]</div></pre></td></tr></table></figure>
-<p>我们可以通过将<code>Tensor</code>节点与操作节点（操作也是一种节点）组合起来的方式来构建更复杂的计算。例如，我们可以将两个常量节点执行加法操作，并且产生一个新的graph，代码如下：</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">node3 = tf.add(node1, node2)</div><div class="line"><span class="function"><span class="title">print</span><span class="params">(<span class="string">"node3: "</span>, node3)</span></span></div><div class="line"><span class="function"><span class="title">print</span><span class="params">(<span class="string">"sess.run(node3): "</span>,sess.run(node3)</span></span>)</div></pre></td></tr></table></figure>
-<p>输出结果如下：</p>
-<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">node3:  Tensor(<span class="string">"Add_2:0"</span>, shape=(), dtype=float32)</div><div class="line">sess.run(node3):  7.0</div></pre></td></tr></table></figure>
-<p>TensorFlow提供了一个叫做<strong>TensorBoard</strong>的很实用的程序，它可以将computational graph可视化的展示出来。下面是通过TensorBoard来可视化一个graph的效果：</p>
-<p><img src="/img/17_02_20/001.png" alt=""></p>
-<p>由于我们用到的是常量，因此这个图看起来并不是特别有趣，因为它总是产生一个恒定的结果。graph可以被参数化，并且通过<strong>placeholders（占位符）</strong>来接受外部的输入。<strong>placeholders（占位符）</strong>表示对稍后所提供的值的一个承诺。</p>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="attr">a</span> = tf.placeholder(tf.float32)</div><div class="line"><span class="attr">b</span> = tf.placeholder(tf.float32)</div><div class="line"><span class="attr">adder_node</span> = a + b  # + 是tf.add(a, b)的缩写形式</div></pre></td></tr></table></figure>
-<p>上面三行的表达形式看起来有点像一个方法，或lambda表达式：其中我们定义两个输入参数（<code>a</code>和<code>b</code>），然后对它们执行一个操作。我们可以通过多个输入来计算这个graph的执行结果，其中我们的输入是通过<code>feed_dict</code>参数来指定对这些<strong>placeholders（占位符）</strong>提供具体值的<code>Tensors</code>的输入的：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">print</span>(<span class="selector-tag">sess</span><span class="selector-class">.run</span>(<span class="selector-tag">adder_node</span>, &#123;<span class="attribute">a</span>: <span class="number">3</span>, b:<span class="number">4.5</span>&#125;))</div><div class="line"><span class="selector-tag">print</span>(<span class="selector-tag">sess</span><span class="selector-class">.run</span>(<span class="selector-tag">adder_node</span>, &#123;<span class="attribute">a</span>: [<span class="number">1</span>,<span class="number">3</span>], b: [<span class="number">2</span>, <span class="number">4</span>]&#125;))</div></pre></td></tr></table></figure>
-<p>输出结果：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="number">7.5</span></div><div class="line">[ <span class="number">3.</span>  <span class="number">7.</span>]</div></pre></td></tr></table></figure>
-<p>在TensorBoard中，graph看起来是这个样子：</p>
-<p><img src="/img/17_02_20/002.png" alt=""></p>
-<p>我们可以通过添加其他操作，来让我们的<strong>computational graph</strong>看起来更复杂。例如：</p>
-<figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">add_and_triple </span>= <span class="keyword">adder_node </span>* <span class="number">3</span>.</div><div class="line"><span class="symbol">print</span>(sess.run(<span class="keyword">add_and_triple, </span>&#123;a: <span class="number">3</span>, <span class="keyword">b:4.5&#125;))</span></div></pre></td></tr></table></figure>
-<p>输出结果：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">22<span class="selector-class">.5</span></div></pre></td></tr></table></figure>
-<p>上面的computational graph在TensorBoard中看起来是这样的：</p>
-<p><img src="/img/17_02_20/003.png" alt=""></p>
-<p>在机器学习中，我们通常需要一个可以接受任意输入的模型，例如上面的模型。为了使模型可训练，我们需要能够修改<code>graph</code>以获得具有相同输入的新输出。<strong>Variables（变量）</strong>允许我们向graph中添加可训练的参数。它们由一个类型和初始值组成：</p>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="attr">W</span> = tf.Variable([.<span class="number">3</span>], tf.float32)</div><div class="line"><span class="attr">b</span> = tf.Variable([-.<span class="number">3</span>], tf.float32)</div><div class="line"><span class="attr">x</span> = tf.placeholder(tf.float32)</div><div class="line"><span class="attr">linear_model</span> = W * x + b</div></pre></td></tr></table></figure>
-<p>当调用<code>tf.constant</code>时，常量被初始化，它们的值永远不会改变。相比之下，变量<code>tf.Variable</code>在调用时不会被初始化。要初始化TensorFlow程序中的所有变量，必须显式调用特殊的初始化操作，如下所示：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">init</span> = tf.global_variables_initializer()</div><div class="line">sess.run(<span class="keyword">init</span>)</div></pre></td></tr></table></figure>
-<p><code>init</code>是TensorFlow的sub-graph的一个重要的操作，它用于初始化所有的全局变量。在这里直到我们调用<code>sess.run</code>之前，变量是未初始化的。</p>
-<p>由于<code>x</code>是一个占位符，因此我们可以同时计算<code>linear_model</code>几个值，如下所示：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">print</span>(<span class="selector-tag">sess</span><span class="selector-class">.run</span>(<span class="selector-tag">linear_model</span>, &#123;<span class="attribute">x</span>:[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]&#125;))</div></pre></td></tr></table></figure>
-<p>产生如下输出：</p>
-<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[ <span class="number">0.</span>          <span class="number">0.30000001</span>  <span class="number">0.60000002</span>  <span class="number">0.90000004</span>]</div></pre></td></tr></table></figure>
-<p>我们创建了一个模型，但目前我们还不知道它是好是坏。为了评估训练数据的模型，我们需要一个<strong>loss function（损失函数）</strong>，我们可以用一个<code>y</code>占位符来提供所需的值。</p>
-<p>损失函数会计算出当前训练出的模型和所提供的数据之间的距离。我们将使用用于线性回归的标准损失模型，其原理是将当前模型和提供的数据之间的增量的平方求和。<code>linear_model - y</code>创建一个向量，其中每个元素是相应的样本的误差增量。我们称之为<code>tf.square</code>平方误差。然后，我们使用<code>tf.reduce_sum</code>将所有平方误差求和，以创建一个单一的标量，用于提取出表示所有样本的总误差值：</p>
-<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">y</span> = <span class="keyword">tf</span>.placeholder(<span class="keyword">tf</span>.float32)</div><div class="line">squared_deltas = <span class="keyword">tf</span>.square(linear_model - <span class="keyword">y</span>)</div><div class="line">loss = <span class="keyword">tf</span>.reduce_sum(squared_deltas)</div><div class="line"><span class="keyword">print</span>(sess.run(loss, &#123;<span class="keyword">x</span>:[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>], <span class="keyword">y</span>:[<span class="number">0</span>,-<span class="number">1</span>,-<span class="number">2</span>,-<span class="number">3</span>]&#125;))</div></pre></td></tr></table></figure>
-<p>输出损失值：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">23<span class="selector-class">.66</span></div></pre></td></tr></table></figure>
-<p>我们可以通过手动的将<code>W</code>和<code>b</code>的值重新赋值为<code>-1</code>和<code>1</code>的方式来提高我们的算法的效果。变量可以初始化后将数据提供给<code>tf.Variable</code>对象，也可以使用像<code>tf.assign</code>这样的操作来更改。例如，<code>W=-1</code>和<code>b=1</code>是我们的模型中的最佳参数。因此我们可以更改<code>W</code>和<code>b</code>的值：</p>
-<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">fixW = tf.assign(W, <span class="string">[-1.]</span>)</div><div class="line">fixb = tf.assign(b, <span class="string">[1.]</span>)</div><div class="line">sess.run(<span class="string">[fixW, fixb]</span>)</div><div class="line">print(sess.run(loss, &#123;x:<span class="string">[1,2,3,4]</span>, y:<span class="string">[0,-1,-2,-3]</span>&#125;))</div></pre></td></tr></table></figure>
-<p>最终输出结果的损失是0：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">0<span class="selector-class">.0</span></div></pre></td></tr></table></figure>
-<p>我们猜到了“最完美”的参数<code>W</code>和<code>b</code>的值，但机器学习的目标是<strong>自动</strong>找到正确的模型参数。我们将在下一节中说明如何完成这一任务。</p>
-<h2 id="tf-train_API">tf.train API</h2><p>机器学习的完整讨论超出了本教程的范围。然而，TensorFlow提供了缓慢地改变每个变量以便<strong>最小化损失函数</strong>的<strong>optimizers（优化器）</strong>。其中最简单的优化器是<strong>gradient descent（梯度下降）</strong>。其原理是根据相对于该变量的损失导数的大小修改每个变量的值。一般来说，人工计算导数是繁琐的并且容易出错。因此，TensorFlow可以使用<code>tf.gradients</code>函数，来自动的产生当前所给模型描述的导数。为了简化操作，优化器通常会自动地为您执行此操作。例如：</p>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="attr">optimizer</span> = tf.train.GradientDescentOptimizer(<span class="number">0.01</span>)</div><div class="line"><span class="attr">train</span> = optimizer.minimize(loss)</div></pre></td></tr></table></figure>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">sess</span><span class="selector-class">.run</span>(<span class="selector-tag">init</span>) # 将值重置为不正确的默认值</div><div class="line"><span class="selector-tag">for</span> <span class="selector-tag">i</span> <span class="selector-tag">in</span> <span class="selector-tag">range</span>(1000):</div><div class="line">  <span class="selector-tag">sess</span><span class="selector-class">.run</span>(<span class="selector-tag">train</span>, &#123;<span class="attribute">x</span>:[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>], y:[<span class="number">0</span>,-<span class="number">1</span>,-<span class="number">2</span>,-<span class="number">3</span>]&#125;)</div><div class="line"></div><div class="line"><span class="selector-tag">print</span>(<span class="selector-tag">sess</span><span class="selector-class">.run</span>(<span class="selector-attr">[W, b]</span>))</div></pre></td></tr></table></figure>
-<p>最终训练得出的模型参数：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[array([<span class="number">-0.9999969</span>], dtype=float32), array([ <span class="number">0.99999082</span>],</div><div class="line"> dtype=float32)]</div></pre></td></tr></table></figure>
-<p>现在我们已经完成了实际的机器学习！完成这个简单的线性回归不需要太多的TensorFlow核心代码，但是更复杂的学习模型和方法通常需要更多的代码。因此，TensorFlow为通用模式、结构和功能提供了一套更高级别的抽象实现。我们将在下一节中学习如何使用这些抽象实现。</p>
-<h3 id="完整的程序">完整的程序</h3><p>完成的可训练线性回归模型程序如下所示：</p>
-<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">import</span> numpy as np</div><div class="line"><span class="built_in">import</span> tensorflow as tf</div><div class="line"></div><div class="line"><span class="comment"># Model parameters</span></div><div class="line"><span class="attr">W</span> = tf.Variable([.<span class="number">3</span>], tf.float32)</div><div class="line"><span class="attr">b</span> = tf.Variable([-.<span class="number">3</span>], tf.float32)</div><div class="line"><span class="comment"># Model input and output</span></div><div class="line"><span class="attr">x</span> = tf.placeholder(tf.float32)</div><div class="line"><span class="attr">linear_model</span> = W * x + b</div><div class="line"><span class="attr">y</span> = tf.placeholder(tf.float32)</div><div class="line"><span class="comment"># loss</span></div><div class="line"><span class="attr">loss</span> = tf.reduce_sum(tf.square(linear_model - y)) <span class="comment"># sum of the squares</span></div><div class="line"><span class="comment"># optimizer</span></div><div class="line"><span class="attr">optimizer</span> = tf.train.GradientDescentOptimizer(<span class="number">0.01</span>)</div><div class="line"><span class="attr">train</span> = optimizer.minimize(loss)</div><div class="line"><span class="comment"># training data</span></div><div class="line"><span class="attr">x_train</span> = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>]</div><div class="line"><span class="attr">y_train</span> = [<span class="number">0</span>,-<span class="number">1</span>,-<span class="number">2</span>,-<span class="number">3</span>]</div><div class="line"><span class="comment"># training loop</span></div><div class="line"><span class="attr">init</span> = tf.global_variables_initializer()</div><div class="line"><span class="attr">sess</span> = tf.Session()</div><div class="line">sess.run(init) <span class="comment"># reset values to wrong</span></div><div class="line">for i <span class="keyword">in</span> range(<span class="number">1000</span>):</div><div class="line">  sess.run(train, &#123;x:x_train, y:y_train&#125;)</div><div class="line"></div><div class="line"><span class="comment"># evaluate training accuracy</span></div><div class="line">curr_W, curr_b, <span class="attr">curr_loss</span>  = sess.run([W, b, loss], &#123;x:x_train, y:y_train&#125;)</div><div class="line">print(<span class="string">"W: %s b: %s loss: %s"</span>%(curr_W, curr_b, curr_loss))</div></pre></td></tr></table></figure>
-<p>当执行它时，会产生如下结果：</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">W</span>: <span class="selector-attr">[-0.9999969]</span> <span class="selector-tag">b</span>: <span class="selector-attr">[ 0.99999082]</span> <span class="selector-tag">loss</span>: 5<span class="selector-class">.69997e-11</span></div></pre></td></tr></table></figure>
-<p>这个更复杂的程序也可以在TensorBoard中可视化：</p>
-<p><img src="/img/17_02_20/004.png" alt=""></p>
-<h2 id="tf-contrib-learn">tf.contrib.learn</h2><p><code>tf.contrib.learn</code>是一个高级别的TensorFlow库，它简化了机器学习的机制，包括：</p>
-<ul>
-<li>运行训练循环</li>
-<li>运行评估循环</li>
-<li>管理数据集</li>
-<li>管理数据导入</li>
-</ul>
-<p><code>tf.contrib.learn</code>定义了许多常见的模型。</p>
-<h3 id="基本用法">基本用法</h3><p>请注意，线性回归在使用<code>tf.contrib.learn</code>的情况下变得更简单了：</p>
-<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">import</span> tensorflow as tf</div><div class="line"><span class="comment"># NumPy is often used to load, manipulate and preprocess data.</span></div><div class="line"><span class="built_in">import</span> numpy as np</div><div class="line"></div><div class="line"><span class="comment"># Declare list of features. We only have one real-valued feature. There are many</span></div><div class="line"><span class="comment"># other types of columns that are more complicated and useful.</span></div><div class="line"><span class="attr">features</span> = [tf.contrib.layers.real_valued_column(<span class="string">"x"</span>, <span class="attr">dimension=1)]</span></div><div class="line"></div><div class="line"><span class="comment"># An estimator is the front end to invoke training (fitting) and evaluation</span></div><div class="line"><span class="comment"># (inference). There are many predefined types like linear regression,</span></div><div class="line"><span class="comment"># logistic regression, linear classification, logistic classification, and</span></div><div class="line"><span class="comment"># many neural network classifiers and regressors. The following code</span></div><div class="line"><span class="comment"># provides an estimator that does linear regression.</span></div><div class="line"><span class="attr">estimator</span> = tf.contrib.learn.LinearRegressor(<span class="attr">feature_columns=features)</span></div><div class="line"></div><div class="line"><span class="comment"># TensorFlow provides many helper methods to read and set up data sets.</span></div><div class="line"><span class="comment"># Here we use `numpy_input_fn`. We have to tell the function how many batches</span></div><div class="line"><span class="comment"># of data (num_epochs) we want and how big each batch should be.</span></div><div class="line"><span class="attr">x</span> = np.array([<span class="number">1</span>., <span class="number">2</span>., <span class="number">3</span>., <span class="number">4</span>.])</div><div class="line"><span class="attr">y</span> = np.array([<span class="number">0</span>., -<span class="number">1</span>., -<span class="number">2</span>., -<span class="number">3</span>.])</div><div class="line"><span class="attr">input_fn</span> = tf.contrib.learn.io.numpy_input_fn(&#123;<span class="string">"x"</span>:x&#125;, y, <span class="attr">batch_size=4,</span></div><div class="line">                                              <span class="attr">num_epochs=1000)</span></div><div class="line"></div><div class="line"><span class="comment"># We can invoke 1000 training steps by invoking the `fit` method and passing the</span></div><div class="line"><span class="comment"># training data set.</span></div><div class="line">estimator.fit(<span class="attr">input_fn=input_fn,</span> <span class="attr">steps=1000)</span></div><div class="line"></div><div class="line"><span class="comment"># Here we evaluate how well our model did. In a real example, we would want</span></div><div class="line"><span class="comment"># to use a separate validation and testing data set to avoid overfitting.</span></div><div class="line">estimator.evaluate(<span class="attr">input_fn=input_fn)</span></div></pre></td></tr></table></figure>
-<p>当执行它时，会产生如下结果：</p>
-<figure class="highlight xquery"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&#123;<span class="string">'global_step'</span>: <span class="number">1000</span>, <span class="string">'loss'</span>: <span class="number">1.9650059</span>e-<span class="number">11</span>&#125;</div></pre></td></tr></table></figure>
-<h3 id="定制模型">定制模型</h3><p><code>tf.contrib.learn</code>不会将你锁定在预定义模型中。假设我们想创建一个未内置到TensorFlow中的自定义模型。我们仍然可以保留<code>tf.contrib.learn</code>的数据集、馈送、训练等的高级抽象。为了说明，我们将演示如何使用我们的较低级别TensorFlow API的知识来实现​​我们自己的等效模型到<code>LinearRegressor</code>。</p>
-<p>要定义与<code>tf.contrib.learn</code>一起使用的自定义模型，我们需要使用<code>tf.contrib.learn.Estimator</code>。 <code>tf.contrib.learn.LinearRegressor</code>实际上是<code>tf.contrib.learn.Estimator</code>的子类。替代子类<code>Estimator</code>，我们只是提供<code>Estimator</code>一个<code>model_fn</code>函数，用于告诉<code>tf.contrib.learn</code>如何评估预测、训练步骤和损失。代码如下：</p>
-<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">import</span> numpy as np</div><div class="line"><span class="built_in">import</span> tensorflow as tf</div><div class="line"><span class="comment"># Declare list of features, we only have one real-valued feature</span></div><div class="line">def model(features, labels, mode):</div><div class="line">  <span class="comment"># Build a linear model and predict values</span></div><div class="line">  <span class="attr">W</span> = tf.get_variable(<span class="string">"W"</span>, [<span class="number">1</span>], <span class="attr">dtype=tf.float64)</span></div><div class="line">  <span class="attr">b</span> = tf.get_variable(<span class="string">"b"</span>, [<span class="number">1</span>], <span class="attr">dtype=tf.float64)</span></div><div class="line">  <span class="attr">y</span> = W*features['x'] + b</div><div class="line">  <span class="comment"># Loss sub-graph</span></div><div class="line">  <span class="attr">loss</span> = tf.reduce_sum(tf.square(y - labels))</div><div class="line">  <span class="comment"># Training sub-graph</span></div><div class="line">  <span class="attr">global_step</span> = tf.train.get_global_step()</div><div class="line">  <span class="attr">optimizer</span> = tf.train.GradientDescentOptimizer(<span class="number">0.01</span>)</div><div class="line">  <span class="attr">train</span> = tf.group(optimizer.minimize(loss),</div><div class="line">                   tf.assign_add(global_step, <span class="number">1</span>))</div><div class="line">  <span class="comment"># ModelFnOps connects subgraphs we built to the</span></div><div class="line">  <span class="comment"># appropriate functionality.</span></div><div class="line">  return tf.contrib.learn.ModelFnOps(</div><div class="line">      <span class="attr">mode=mode,</span> <span class="attr">predictions=y,</span></div><div class="line">      <span class="attr">loss=</span> loss,</div><div class="line">      <span class="attr">train_op=train)</span></div><div class="line"></div><div class="line"><span class="attr">estimator</span> = tf.contrib.learn.Estimator(<span class="attr">model_fn=model)</span></div><div class="line"><span class="comment"># define our data set</span></div><div class="line"><span class="attr">x=np.array([1.,</span> <span class="number">2</span>., <span class="number">3</span>., <span class="number">4</span>.])</div><div class="line"><span class="attr">y=np.array([0.,</span> -<span class="number">1</span>., -<span class="number">2</span>., -<span class="number">3</span>.])</div><div class="line"><span class="attr">input_fn</span> = tf.contrib.learn.io.numpy_input_fn(&#123;<span class="string">"x"</span>: x&#125;, y, <span class="number">4</span>, <span class="attr">num_epochs=1000)</span></div><div class="line"></div><div class="line"><span class="comment"># train</span></div><div class="line">estimator.fit(<span class="attr">input_fn=input_fn,</span> <span class="attr">steps=1000)</span></div><div class="line"><span class="comment"># evaluate our model</span></div><div class="line">print(estimator.evaluate(<span class="attr">input_fn=input_fn,</span> <span class="attr">steps=10))</span></div></pre></td></tr></table></figure>
-<p>当执行它时，会产生如下结果：</p>
-<figure class="highlight xquery"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&#123;<span class="string">'loss'</span>: <span class="number">5.9819476</span>e-<span class="number">11</span>, <span class="string">'global_step'</span>: <span class="number">1000</span>&#125;</div></pre></td></tr></table></figure>
-<p>注意，自定义<code>model()</code>函数的内容与低版本API的手册中的模型训练循环非常相似。</p>
-<h2 id="下一步">下一步</h2><p>现在你了解到了TensorFlow的基本运作的知识。我们还有几个教程，您可以查看以了解更多。如果你是机器学习的初学者，请参阅<a href="/2017/02/22/【Tensorflow%20r1.0%20文档翻译】机器学习的HelloWorld%20--%20MNIST手写数字识别/">【深度学习的HelloWorld – MNIST手写数字识别】</a>，否则请参阅<a href="/2017/02/26/【Tensorflow%20r1.0%20文档翻译】深入MNIST--专家级/">【深入MNIST – 专家级】</a>。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2329,7 +2346,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">111</span>
+              <span class="site-state-item-count">112</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

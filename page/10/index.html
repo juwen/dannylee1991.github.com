@@ -199,6 +199,89 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2016/01/06/Scala(01)基础/" itemprop="url">
+                Scala(01)
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-01-06T09:43:55+08:00" content="2016-01-06">
+            2016-01-06
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/scala/" itemprop="url" rel="index">
+                  <span itemprop="name">scala</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/01/06/Scala(01)基础/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/06/Scala(01)基础/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="Scala安装">Scala安装</h2><h2 id="Scala解释器">Scala解释器</h2></span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/01/05/Numpy快速入门/" itemprop="url">
                 NumPy快速入门
               </a>
@@ -1366,98 +1449,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2015/11/29/线性代数01-矩阵乘法/" itemprop="url">
-                线性代数01-矩阵乘法
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2015-11-29T18:01:55+08:00" content="2015-11-29">
-            2015-11-29
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/线性代数/" itemprop="url" rel="index">
-                  <span itemprop="name">线性代数</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2015/11/29/线性代数01-矩阵乘法/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/29/线性代数01-矩阵乘法/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="矩阵的乘法：">矩阵的乘法：</h2><p>矩阵A与矩阵B相乘，运算方式是矩阵A的行的每一项 去乘B矩阵的每一列 并且加起来 构成相乘之后的矩阵</p>
-<p>$$<br> \begin{bmatrix}<br>   a &amp; b \\<br>   c &amp; d<br>  \end{bmatrix}<br>  {*}<br>  \begin{bmatrix}<br>   e &amp; f \\<br>   g &amp; h<br>  \end{bmatrix}<br>  {=}<br>  \begin{bmatrix}<br>   (ae + bg) &amp; (af + bh) \\<br>   (ce + dg) &amp; (cf + dh)<br>  \end{bmatrix}<br>$$</p>
-<h2 id="关于交换律：">关于交换律：</h2><p>矩阵乘法是不满足交换律的：</p>
-<p>$$<br>AB != BA<br>$$</p>
-<h2 id="行列不相同的矩阵相乘：">行列不相同的矩阵相乘：</h2><p>一个3x2的矩阵与一个2x3的矩阵相乘，得到的是一个2x2的矩阵：</p>
-<p>$$<br> \begin{bmatrix}<br>   3 &amp; 1 &amp; 2 \\<br>   -2 &amp; 0 &amp; 5<br>  \end{bmatrix}<br>  {+}<br>  \begin{bmatrix}<br>   1 &amp; 3 \\<br>   0 &amp; 5 \\<br>   2 &amp; 5<br>  \end{bmatrix}<br>  {=}<br>  \begin{bmatrix}<br>   (3\cdot(-1) + 1\cdot0 + 2\cdot2) &amp; (3\cdot3 + 1\cdot5 + 2\cdot5) \\<br>   ((-2)\cdot1 + 0\cdot0 + 5\cdot2) &amp; ((-2)\cdot3 + 0\cdot5 + 5\cdot5)<br>  \end{bmatrix}<br>  {=}<br>  \begin{bmatrix}<br>   1 &amp; 24 \\<br>   8 &amp; 19<br>  \end{bmatrix}<br>$$</p>
-<p>只有<strong>第一个矩阵到列数和第二个矩阵的行数相同</strong>，才能做矩阵乘法运算：</p>
-<p>A[m:n] 和 B[n:p] 向量是可以相乘的，结果是C[m:p] </p>
-<p>A[m:n] 和 B[p:q] 向量是不可以做乘法运算的</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1496,7 +1487,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">111</span>
+              <span class="site-state-item-count">112</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

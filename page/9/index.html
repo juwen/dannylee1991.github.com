@@ -199,6 +199,181 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2016/05/08/Linux学习笔记（1）基本操作/" itemprop="url">
+                Linux学习笔记（1）基本操作
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-05-08T18:06:55+08:00" content="2016-05-08">
+            2016-05-08
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/linux/" itemprop="url" rel="index">
+                  <span itemprop="name">linux</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/05/08/Linux学习笔记（1）基本操作/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/08/Linux学习笔记（1）基本操作/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="常用快捷键">常用快捷键</h2><table>
+<thead>
+<tr>
+<th style="text-align:left">快捷键</th>
+<th style="text-align:left">功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">ctrl + c</td>
+<td style="text-align:left">结束当前程序</td>
+</tr>
+<tr>
+<td style="text-align:left">ctrl + d</td>
+<td style="text-align:left">键盘输入结束或退出终端</td>
+</tr>
+<tr>
+<td style="text-align:left">ctrl + s</td>
+<td style="text-align:left">暂停当前程序，暂停后按下任意键恢复运行</td>
+</tr>
+<tr>
+<td style="text-align:left">ctrl + z</td>
+<td style="text-align:left">将当前程序放到后台运行，恢复到前台的命令fg</td>
+</tr>
+<tr>
+<td style="text-align:left">ctrl + a</td>
+<td style="text-align:left">将光标移至输入行头，相当于Home键</td>
+</tr>
+<tr>
+<td style="text-align:left">ctrl + e</td>
+<td style="text-align:left">将光标移至输入行末，相当于End键</td>
+</tr>
+<tr>
+<td style="text-align:left">ctrl + k</td>
+<td style="text-align:left">删除从光标所在位置到行末</td>
+</tr>
+<tr>
+<td style="text-align:left">Alt + Backspace</td>
+<td style="text-align:left">向前删除一个单词</td>
+</tr>
+<tr>
+<td style="text-align:left">Shift + pgUp</td>
+<td style="text-align:left">将终端显示向上滚动</td>
+</tr>
+<tr>
+<td style="text-align:left">Shift + PgDn</td>
+<td style="text-align:left">将终端显示向下滚动</td>
+</tr>
+</tbody>
+</table>
+<h2 id="使用通配符">使用通配符</h2><p>shell常用通配符：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">字符</th>
+<th style="text-align:left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">*</td>
+<td style="text-align:left">匹配0或多个字符</td>
+</tr>
+<tr>
+<td style="text-align:left">?</td>
+<td style="text-align:left">匹配任意一个字符</td>
+</tr>
+<tr>
+<td style="text-align:left">[list]</td>
+<td style="text-align:left">匹配list中的任意单一字符</td>
+</tr>
+<tr>
+<td style="text-align:left">[!list]</td>
+<td style="text-align:left">匹配 除list 中的任意单一字符以外的字符</td>
+</tr>
+<tr>
+<td style="text-align:left">[c1-c2]</td>
+<td style="text-align:left">匹配c1-c2中的任意单一字符 如：[0-9][a-z]</td>
+</tr>
+<tr>
+<td style="text-align:left">{string1,string2,…}</td>
+<td style="text-align:left">匹配string1或string2（或更多）其一字符串</td>
+</tr>
+<tr>
+<td style="text-align:left">{c1..c2}</td>
+<td style="text-align:left">匹配c1-c2中全部字符如{1..10}</td>
+</tr>
+</tbody>
+</table>
+<p>通过通配符创建十个文件：</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ <span class="section">touch</span> love_&#123;<span class="number">1.</span><span class="number">.10</span>&#125;_linux.txt</div></pre></td></tr></table></figure>
+<h2 id="使用man命令来查看帮助文档">使用man命令来查看帮助文档</h2><p>不再赘述</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/05/03/数学之美-技术详解(01)/" itemprop="url">
                 数学之美 技术详解(1)
               </a>
@@ -1598,89 +1773,6 @@ P(wi-<span class="number">1</span>) ≈ <span class="preprocessor">#(wi-<span cl
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/01/06/Scala(01)基础/" itemprop="url">
-                Scala(01)
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-01-06T09:43:55+08:00" content="2016-01-06">
-            2016-01-06
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/scala/" itemprop="url" rel="index">
-                  <span itemprop="name">scala</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/01/06/Scala(01)基础/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/06/Scala(01)基础/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="Scala安装">Scala安装</h2><h2 id="Scala解释器">Scala解释器</h2></span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1719,7 +1811,7 @@ P(wi-<span class="number">1</span>) ≈ <span class="preprocessor">#(wi-<span cl
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">111</span>
+              <span class="site-state-item-count">112</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
