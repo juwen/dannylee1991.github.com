@@ -199,6 +199,356 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2016/05/08/Linux学习笔记（2）用户管理，文件操作，权限管理/" itemprop="url">
+                Linux学习笔记（2）用户管理，文件操作，权限管理
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-05-08T19:06:55+08:00" content="2016-05-08">
+            2016-05-08
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/linux/" itemprop="url" rel="index">
+                  <span itemprop="name">linux</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/05/08/Linux学习笔记（2）用户管理，文件操作，权限管理/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/05/08/Linux学习笔记（2）用户管理，文件操作，权限管理/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="用户管理">用户管理</h2><h3 id="who_命令">who 命令</h3><table>
+<thead>
+<tr>
+<th style="text-align:left">命令</th>
+<th style="text-align:left">功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">-a</td>
+<td style="text-align:left">打印能打印的全部</td>
+</tr>
+<tr>
+<td style="text-align:left">-d</td>
+<td style="text-align:left">打印死掉的进程</td>
+</tr>
+<tr>
+<td style="text-align:left">-m</td>
+<td style="text-align:left">同am i，mom likes</td>
+</tr>
+<tr>
+<td style="text-align:left">-q</td>
+<td style="text-align:left">打印当前登陆用户数及用户名</td>
+</tr>
+<tr>
+<td style="text-align:left">-u</td>
+<td style="text-align:left">打印当前登录用户登录信息</td>
+</tr>
+<tr>
+<td style="text-align:left">-r</td>
+<td style="text-align:left">打印运行等级</td>
+</tr>
+</tbody>
+</table>
+<p>查看当前用户信息：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>who am i</div></pre></td></tr></table></figure>
+<h3 id="创建用户">创建用户</h3><p>创建用户需要<code>root</code>权限，这里就需要用到<code>sudo</code>这个命令了，不过使用这个命令有两个大前提：<strong>一是你要知道当前登录用户的密码，二是当前用户必须在<code>sudo</code>用户组</strong>。</p>
+<h3 id="su，su_-_与_sudo">su，su - 与 sudo</h3><table>
+<thead>
+<tr>
+<th style="text-align:left">命令</th>
+<th style="text-align:left">功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">su [user]</td>
+<td style="text-align:left">可以切换到用户user，执行时需要输入目标用户的密码。</td>
+</tr>
+<tr>
+<td style="text-align:left">su - [user]</td>
+<td style="text-align:left">也是切换用户，同时环境变量也会跟着改变成目标的环境变量。</td>
+</tr>
+<tr>
+<td style="text-align:left">sudo [cmd]</td>
+<td style="text-align:left">可以以特权级别运行cmd命令，需要当前用户属于sudo组，且需要输入当前用户密码。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="查看用户组：">查看用户组：</h3><h4 id="方式1:">方式1:</h4><figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>groups lijianan</div></pre></td></tr></table></figure>
+<p>可以看到冒号之前表示用户，冒号之后表示用户所在的组。如果新建用户时不指定用户组的话，默认会自动创建一个与用户名相同的用户组。</p>
+<p>这里如果当前用户组不是sudo用户组，却也可以执行sudo命令，可以查看一下/etc/sudoers.d/目录下是否有lijianan文件，如果有，则给lijianan用户赋予了sudo权限。</p>
+<h4 id="方式2:">方式2:</h4><p>查看/etc/group文件</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cat /etc/<span class="keyword">group</span> <span class="title">| sort</span></div></pre></td></tr></table></figure>
+<p><code>/etc/group</code> 的内容包括用户组(Group)、用户组口令、GID及该用户组所包含的用户(User)，每个用户组一条记录。<br>格式如下：</p>
+<p><code>group_name:password:GID:user_list</code></p>
+<h3 id="将其它用户加入sudo用户组：">将其它用户加入sudo用户组：</h3><p>默认情况下新创建的用户是不具有root权限的，也不在sudo用户组，可以让其加入sudo用户组从而获取root权限。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>su -l lilei</div><div class="line"><span class="variable">$ </span>sudo ls</div></pre></td></tr></table></figure>
+<p>会提示lilei不在sudoers文件中，意思就是lilei不在sudo用户组中，至于<code>sudoers</code>文件(<code>/etc/sudoers</code>)你现在最好不要动它，操作不慎会导致比较麻烦的后果。</p>
+<p>使用<code>usermod</code>命令可以为用户添加用户组，同样使用该命令你必须有<code>root</code>权限，你可以直接使用<code>root</code>用户为其它用户添加用户组，或者用其他已经在sudo用户组的用户使用<code>sudo</code>命令获取权限来执行该命令</p>
+<p>这里我使用lijianan用户执行<code>sudo</code>命令将lilei添加到<code>sudo</code>用户组，让它也可以使用<code>sudo</code>命令获得<code>root</code>权限</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>su lijianan</div><div class="line"><span class="variable">$ </span>groups lilei</div><div class="line"><span class="variable">$ </span>sudo usermod -G sudo lilei</div><div class="line"><span class="variable">$ </span>groups lilei</div></pre></td></tr></table></figure>
+<p>然后你再切换回lilei用户，现在就可以使用sudo获取root权限了。</p>
+<h3 id="删除用户">删除用户</h3><p>删除用户是很简单的事：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo deluser lilei --<span class="built_in">remove</span>-<span class="built_in">home</span></div></pre></td></tr></table></figure>
+<h2 id="文件操作">文件操作</h2><h3 id="关于文件需要知道的事：">关于文件需要知道的事：</h3><ul>
+<li>.代表当前目录</li>
+<li>..代表父目录</li>
+<li>目录也是一个文件</li>
+<li>当前目录下的 . 文件就是当前目录 .. 文件就是父目录。</li>
+<li>不过在linux下.开头的文件是隐藏文件</li>
+</ul>
+<h3 id="关于文件操作，需要记住的命令：">关于文件操作，需要记住的命令：</h3><table>
+<thead>
+<tr>
+<th style="text-align:left">命令</th>
+<th style="text-align:left">功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">cd</td>
+<td style="text-align:left">进入目录</td>
+</tr>
+<tr>
+<td style="text-align:left">pwd</td>
+<td style="text-align:left">获取当前路径</td>
+</tr>
+<tr>
+<td style="text-align:left">touch</td>
+<td style="text-align:left">新建空白文件／更新文件时间戳</td>
+</tr>
+<tr>
+<td style="text-align:left">mkdir</td>
+<td style="text-align:left">新建目录</td>
+</tr>
+<tr>
+<td style="text-align:left">mkdir -p father/son/grandson</td>
+<td style="text-align:left">创建多级目录</td>
+</tr>
+<tr>
+<td style="text-align:left">cp test father/son/grandson</td>
+<td style="text-align:left">复制文件到指定目录</td>
+</tr>
+<tr>
+<td style="text-align:left">cp -r father family</td>
+<td style="text-align:left">复制目录到指定目录</td>
+</tr>
+<tr>
+<td style="text-align:left">rm test</td>
+<td style="text-align:left">删除文件</td>
+</tr>
+<tr>
+<td style="text-align:left">rm -f test</td>
+<td style="text-align:left">删除一个文件（忽略提示,比如删除一个只有只读权限的文件）</td>
+</tr>
+<tr>
+<td style="text-align:left">rm -r family</td>
+<td style="text-align:left">删除一个目录1</td>
+</tr>
+<tr>
+<td style="text-align:left">mv file1 Documents</td>
+<td style="text-align:left">移动文件到指定目录</td>
+</tr>
+<tr>
+<td style="text-align:left">mv file1 file2</td>
+<td style="text-align:left">重命名文件</td>
+</tr>
+</tbody>
+</table>
+<h3 id="关于文件查看，需要记住的命令">关于文件查看，需要记住的命令</h3><table>
+<thead>
+<tr>
+<th style="text-align:left">命令</th>
+<th style="text-align:left">功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">cat    file1</td>
+<td style="text-align:left">查看文件</td>
+</tr>
+<tr>
+<td style="text-align:left">tac    file1</td>
+<td style="text-align:left">倒叙查看文件</td>
+</tr>
+<tr>
+<td style="text-align:left">nl    file1</td>
+<td style="text-align:left">查看文件并显示行号</td>
+</tr>
+<tr>
+<td style="text-align:left">more file1</td>
+<td style="text-align:left">分页查看文件，Enter向下滚动一行，Space向下滚动一屏，h帮助，q退出</td>
+</tr>
+<tr>
+<td style="text-align:left">head file1</td>
+<td style="text-align:left">查看文件前10行</td>
+</tr>
+<tr>
+<td style="text-align:left">tail -n 1 file1</td>
+<td style="text-align:left">查看文件第一行</td>
+</tr>
+<tr>
+<td style="text-align:left">tail</td>
+<td style="text-align:left">还可以根据参数-f 实现不停地读取某个文件内容并且显示，可以实现日志监控功能。</td>
+</tr>
+<tr>
+<td style="text-align:left">file /bin/ls</td>
+<td style="text-align:left">查看文件类型</td>
+</tr>
+</tbody>
+</table>
+<h2 id="权限管理">权限管理</h2><h3 id="文件的属性">文件的属性</h3><p>查看文件权限，使用较长的格式列出文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ ls <span class="_">-l</span></div></pre></td></tr></table></figure>
+<p>从左往右依次列出了 <strong>文件类型</strong>和<strong>权限</strong>，<strong>链接数*</strong>，<strong>*所有者</strong>，<strong>所有用户组</strong>，<strong>文件大小</strong>，<strong>最后修改时间</strong>，<strong>文件名</strong></p>
+<p>首先来说说文件类型和权限：</p>
+<p>表示文件类型：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">字符</th>
+<th style="text-align:left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">d</td>
+<td style="text-align:left">目录</td>
+</tr>
+<tr>
+<td style="text-align:center">l</td>
+<td style="text-align:left">软链接，类似windows的快捷方式</td>
+</tr>
+<tr>
+<td style="text-align:center">b</td>
+<td style="text-align:left">块设备</td>
+</tr>
+<tr>
+<td style="text-align:center">c</td>
+<td style="text-align:left">字符设备</td>
+</tr>
+<tr>
+<td style="text-align:center">s</td>
+<td style="text-align:left">socket</td>
+</tr>
+<tr>
+<td style="text-align:center">p</td>
+<td style="text-align:left">管道</td>
+</tr>
+<tr>
+<td style="text-align:center">-</td>
+<td style="text-align:left">普通文件</td>
+</tr>
+</tbody>
+</table>
+<p>表示权限：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">字符</th>
+<th style="text-align:left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">r</td>
+<td style="text-align:left">表示允许读权限</td>
+</tr>
+<tr>
+<td style="text-align:center">w</td>
+<td style="text-align:left">表示允许写权限</td>
+</tr>
+<tr>
+<td style="text-align:center">x</td>
+<td style="text-align:left">表示允许执行权限</td>
+</tr>
+</tbody>
+</table>
+<p>表示文件类型和权限的字段，第一位代表文件类型，2到4位表示拥有者权限，5到7位表示所属用户组权限，8到10位表示其他用户权限。</p>
+<blockquote>
+<p><strong>关于文件权限</strong></p>
+<p>一个目录要同时具有读权限和执行权限才可以打开，而一个目录要有写权限才允许在其中创建其他文件，这是因为目录文件实际保存着该目录里面的文件等列表等信息。</p>
+<p><strong>链接数</strong></p>
+<p>链接到该文件所在的inode结点的文件名数目</p>
+</blockquote>
+<h3 id="ls常用命令">ls常用命令</h3><p>显示隐藏文件：</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ ls -<span class="keyword">A</span></div></pre></td></tr></table></figure>
+<p>查看某一个目录的完整属性，而不是现实目录里面的文件属性    </p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ ls -<span class="selector-tag">dl</span> &lt;目录名&gt;</div></pre></td></tr></table></figure>
+<p>现实所有文件大小，并以普通人类能看懂的方式显示：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>ls -AsSh</div></pre></td></tr></table></figure>
+<p>其中s为显示文件大小，S为按文件大小排序。</p>
+<h3 id="改变文件的所有者">改变文件的所有者</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo chown <span class="tag">&lt;<span class="name">用户名</span>&gt;</span> <span class="tag">&lt;<span class="name">文件名</span>&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="修改文件权限">修改文件权限</h3><h4 id="方式1:_二进制数字表示">方式1: 二进制数字表示</h4><p><code>2^0 (1)</code>代表可执行权限，<code>2^1 (2)</code>代表可写权限, <code>2^2 (4)</code>代表可读权限。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ chmod 700 <span class="tag">&lt;<span class="name">文件名</span>&gt;</span></div></pre></td></tr></table></figure>
+<h4 id="方式2:_加减赋值操作">方式2: 加减赋值操作</h4><p><code>&#39;g&#39;</code>,<code>&#39;o&#39;</code>还有<code>&#39;u&#39;</code>，分别表示<code>group</code>，<code>others</code>，<code>user</code>,<code>&#39;+&#39;</code>，<code>&#39;-&#39;</code>就分别表示增加和去掉相应的权限。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ chmod go-rw <span class="tag">&lt;<span class="name">文件名</span>&gt;</span></div></pre></td></tr></table></figure>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/05/08/Linux学习笔记（1）基本操作/" itemprop="url">
                 Linux学习笔记（1）基本操作
               </a>
@@ -1682,97 +2032,6 @@ P(wi-<span class="number">1</span>) ≈ <span class="preprocessor">#(wi-<span cl
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/01/06/机器学习(04)Logistic回归/" itemprop="url">
-                机器学习(04)Logistic回归
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-01-06T23:26:55+08:00" content="2016-01-06">
-            2016-01-06
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/01/06/机器学习(04)Logistic回归/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/06/机器学习(04)Logistic回归/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="什么是Logistic回归">什么是Logistic回归</h2><h3 id="什么是回归？">什么是<strong>回归</strong>？</h3><p>假设现在有一些数据点，我们用一条直线对这些点进行拟合（该线称为最佳拟合直线），这个拟合过程就称作<strong>回归</strong>。</p>
-<p>Logistic回归分类的主要思想是：根据现有数据边界线建立回归公式，以此进行分类。这里的<code>&quot;回归&quot;</code>一词，源于最佳拟合，在训练分类器时的主要做法就是寻找最佳拟合参数集，这其中运用到的就是<strong>最优化算法</strong>(可以找到最优解的算法)。</p>
-<p>其中回归过程中运用到的数学原理的核心，就是<strong>Logistic函数</strong>。</p>
-<h3 id="什么是Logistic">什么是Logistic</h3><blockquote>
-<p><strong>Logistic函数</strong>或<strong>Logistic曲线</strong>是一种常见的S形函数，它是皮埃尔·弗朗索瓦·韦吕勒在1844或1845年在研究它与人口增长的关系时命名的。广义Logistic曲线可以模仿一些情况人口增长（P）的S形曲线。起初阶段大致是指数增长；然后随着开始变得饱和，增加变慢；最后，达到成熟时增加停止。</p>
-</blockquote>
-<h3 id="举个栗子">举个栗子</h3><p>简单来说如果想了解到底哪些因素是胃癌的危险因素，我们就可以使用Logistic回归来处理。</p>
-<p>想探讨胃癌发生的危险因素，可以选择两组人群，一组是胃癌组，一组是非胃癌组，两组人群肯定有不同的体征和生活方式等。这里的因变量就是是否胃癌，即“是”或“否”，为两分类变量，自变量就可以包括很多了，例如年龄、性别、饮食习惯、幽门螺杆菌感染等。自变量既可以是连续的，也可以是分类的。通过Logistic回归分析，我们可以大致了解到底哪些因素是胃癌的危险因素。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1811,7 +2070,7 @@ P(wi-<span class="number">1</span>) ≈ <span class="preprocessor">#(wi-<span cl
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">112</span>
+              <span class="site-state-item-count">113</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

@@ -199,6 +199,99 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2017/01/11/【Android文档翻译】APP测试组件集成/" itemprop="url">
+                【Android文档翻译】APP测试组件集成
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-01-11T21:48:58+08:00" content="2017-01-11">
+            2017-01-11
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/Android/" itemprop="url" rel="index">
+                  <span itemprop="name">Android</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/01/11/【Android文档翻译】APP测试组件集成/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/11/【Android文档翻译】APP测试组件集成/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p>如果您的应用使用用户不直接交互的组件（例如 Service 或 Content Provider），您应验证这些组件是否以正确的方式在您的应用程序中运行。</p>
+<p>当开发这样的组件时，您应该习惯于编写集成测试，以便在应用程序在设备或仿真器上运行时验证组件的行为。</p>
+<blockquote>
+<p><strong>注意：</strong>Android不为<code>BroadcastReceiver</code>提供单独的测试用例类。要验证<code>BroadcastReceiver</code>响应是否正确，您可以测试向其发送<code>Intent</code>对象的组件。您可以通过调用<code>InstrumentationRegistry.getTargetContext()</code>创建一个<code>BroadcastReceiver</code>的实例，然后调用要测试的<code>BroadcastReceiver</code>方法（通常是<code>onReceive()</code>方法）。</p>
+</blockquote>
+<p>该类教您使用Android平台提供的测试API和工具构建自动化集成测试。</p>
+<h2 id="课程">课程</h2><p><a href="/2017/01/13/【Android文档翻译】测试你的Service/">测试你的Service</a></p>
+<pre><code>了解如何构建集成测试，以验证服务是否能与您的应用正常工作。
+</code></pre><p><a href="/2017/01/13/【Android文档翻译】测试你的Content Provider/">测试你的Content Provider</a></p>
+<pre><code>了解如何构建集成测试，以验证<span class="attribute">Content</span> Provider是否能够与您的应用正常工作。
+</code></pre></span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2017/01/11/【Android文档翻译】最佳测试实践/" itemprop="url">
                 【Android文档翻译】最佳测试实践
               </a>
@@ -1834,101 +1927,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/10/16/斯坦福机器学习课程 第五周 (4)神经网络实现自动驾驶/" itemprop="url">
-                斯坦福机器学习课程 第五周 (4)神经网络实现自动驾驶
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-10-16T00:18:58+08:00" content="2016-10-16">
-            2016-10-16
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/10/16/斯坦福机器学习课程 第五周 (4)神经网络实现自动驾驶/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/10/16/斯坦福机器学习课程 第五周 (4)神经网络实现自动驾驶/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="使用神经网络实现自动驾驶">使用神经网络实现自动驾驶</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/zYS8T/autonomous-driving" target="_blank" rel="external">视频地址</a></p>
-<p>这一节将介绍一个具有历史意义的神经网络学习的例子，那就是使用神经网络来实现自动驾驶。也就是说汽车通过学习来自己驾驶。</p>
-<p>这是Dean Pomerleau那里得到的一段视频，Dean Pomerleau任职于美国东海岸的卡耐基梅隆大学，下面的视频中你会明白可视化技术到底是什么。</p>
-<p><img src="/img/16_10_16/001.png" alt=""></p>
-<p>在上面这张图中，左下方就是汽车所看到的前方路况图像，是汽车前方摄像头每两秒采集的并且进过压缩处理之后得到的一张30 × 32的图像。这张图片中，你依稀可以看到一条道路。</p>
-<p><img src="/img/16_10_16/002.png" alt=""></p>
-<p>左上角第一个水平的进度条显示的是驾驶员所选择的方向，就是那条白亮的区段显示的就是人类驾驶者选择的方向，白色区段偏左，就是向左转，反之，则是向右转。</p>
-<p><img src="/img/16_10_16/003.png" alt=""></p>
-<p>第二个水平的进度条则是学习算法选出的行驶方向，代表的含义和第一个条一样，白色区段偏左，就是向左转，反之，则是向右转。</p>
-<p><img src="/img/16_10_16/004.png" alt=""></p>
-<p>实际上神经网络在开始学习之前，你会看到网络的输出是一条灰色的区段，覆盖着整个区域，只有在学习算法运行足够长的时间之后，亮白色的区段才能逐渐显现。</p>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/ilP4aPDTBPE" frameborder="0" allowfullscreen></iframe>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1967,7 +1965,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">112</span>
+              <span class="site-state-item-count">113</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

@@ -37,32 +37,28 @@
   <link rel="shorticon icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.1" />
 
 
-<meta name="description" content="使用SVM
-这段视频中，我们将介绍使用SVM时，我们实际上需要做些什么。
+<meta name="description" content="在线学习视频地址
 
-支持向量机是一个特定的优化问题，但是我不建议你自己去手动实现这一算法来求解参数$\theta$。就像如今只有很少的人，或者说根本没有人会考虑自己写代码，来实现对矩阵求逆，或求一个数的平方根等。我们只需要调用库函数来实现这些功能即可。
-同样，可以用于解决SVM优化问题的软件很复杂，而且已经有专门研究数值优化很多年的学者在做这">
+在本节，我将会讨论一种新的大规模的机器学习机制，叫做在线学习机制。在拥有连续一波数据或连续的数据流涌进来，而我们又需要一个算法来从中学习的时候来模型化问题时，我们就需要用到在线学习机制。 
+今天许多大型网站，或者许多大型网络公司，都在使用不同版本的在线学习机制算法从大批的涌入又离开网站的用户身上进行学习。
+特别要提及的是，如果你有一个由连续的用户流引发的连续的数据流，用户流进入">
 <meta property="og:type" content="article">
-<meta property="og:title" content="斯坦福机器学习课程 第七周 (3)使用SVM">
-<meta property="og:url" content="http://dannylee1991.github.io/2017/04/11/斯坦福机器学习课程 第七周 (3)使用SVM/index.html">
+<meta property="og:title" content="斯坦福机器学习课程 第十周 (2)高级主题">
+<meta property="og:url" content="http://dannylee1991.github.io/2017/06/03/斯坦福机器学习课程 第十周 (2)高级主题/index.html">
 <meta property="og:site_name" content="DannyLee">
-<meta property="og:description" content="使用SVM
-这段视频中，我们将介绍使用SVM时，我们实际上需要做些什么。
+<meta property="og:description" content="在线学习视频地址
 
-支持向量机是一个特定的优化问题，但是我不建议你自己去手动实现这一算法来求解参数$\theta$。就像如今只有很少的人，或者说根本没有人会考虑自己写代码，来实现对矩阵求逆，或求一个数的平方根等。我们只需要调用库函数来实现这些功能即可。
-同样，可以用于解决SVM优化问题的软件很复杂，而且已经有专门研究数值优化很多年的学者在做这">
-<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_11/001.png">
-<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_11/002.png">
-<meta property="og:image" content="http://dannylee1991.github.io/img/17_04_11/003.png">
-<meta property="og:updated_time" content="2017-04-20T14:27:33.000Z">
+在本节，我将会讨论一种新的大规模的机器学习机制，叫做在线学习机制。在拥有连续一波数据或连续的数据流涌进来，而我们又需要一个算法来从中学习的时候来模型化问题时，我们就需要用到在线学习机制。 
+今天许多大型网站，或者许多大型网络公司，都在使用不同版本的在线学习机制算法从大批的涌入又离开网站的用户身上进行学习。
+特别要提及的是，如果你有一个由连续的用户流引发的连续的数据流，用户流进入">
+<meta property="og:updated_time" content="2017-06-04T01:23:44.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="斯坦福机器学习课程 第七周 (3)使用SVM">
-<meta name="twitter:description" content="使用SVM
-这段视频中，我们将介绍使用SVM时，我们实际上需要做些什么。
+<meta name="twitter:title" content="斯坦福机器学习课程 第十周 (2)高级主题">
+<meta name="twitter:description" content="在线学习视频地址
 
-支持向量机是一个特定的优化问题，但是我不建议你自己去手动实现这一算法来求解参数$\theta$。就像如今只有很少的人，或者说根本没有人会考虑自己写代码，来实现对矩阵求逆，或求一个数的平方根等。我们只需要调用库函数来实现这些功能即可。
-同样，可以用于解决SVM优化问题的软件很复杂，而且已经有专门研究数值优化很多年的学者在做这">
-<meta name="twitter:image" content="http://dannylee1991.github.io/img/17_04_11/001.png">
+在本节，我将会讨论一种新的大规模的机器学习机制，叫做在线学习机制。在拥有连续一波数据或连续的数据流涌进来，而我们又需要一个算法来从中学习的时候来模型化问题时，我们就需要用到在线学习机制。 
+今天许多大型网站，或者许多大型网络公司，都在使用不同版本的在线学习机制算法从大批的涌入又离开网站的用户身上进行学习。
+特别要提及的是，如果你有一个由连续的用户流引发的连续的数据流，用户流进入">
 
 
 <script type="text/javascript" id="hexo.configuration">
@@ -83,7 +79,7 @@ var _hmt = _hmt || [];
 })();
 </script>
 
-  <title> 斯坦福机器学习课程 第七周 (3)使用SVM | DannyLee </title>
+  <title> 斯坦福机器学习课程 第十周 (2)高级主题 | DannyLee </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -214,7 +210,7 @@ var _hmt = _hmt || [];
           
           
             
-              斯坦福机器学习课程 第七周 (3)使用SVM
+              斯坦福机器学习课程 第十周 (2)高级主题
             
           
         </h1>
@@ -223,8 +219,8 @@ var _hmt = _hmt || [];
       <div class="post-meta">
         <span class="post-time">
           发表于
-          <time itemprop="dateCreated" datetime="2017-04-11T22:47:58+08:00" content="2017-04-11">
-            2017-04-11
+          <time itemprop="dateCreated" datetime="2017-06-03T12:19:00+08:00" content="2017-06-03">
+            2017-06-03
           </time>
         </span>
 
@@ -249,8 +245,8 @@ var _hmt = _hmt || [];
           
             <span class="post-comments-count">
               &nbsp; | &nbsp;
-              <a href="/2017/04/11/斯坦福机器学习课程 第七周 (3)使用SVM/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2017/04/11/斯坦福机器学习课程 第七周 (3)使用SVM/" itemprop="commentsCount"></span>
+              <a href="/2017/06/03/斯坦福机器学习课程 第十周 (2)高级主题/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/06/03/斯坦福机器学习课程 第十周 (2)高级主题/" itemprop="commentsCount"></span>
               </a>
             </span>
           
@@ -264,119 +260,44 @@ var _hmt = _hmt || [];
       
 
       
-        <span itemprop="articleBody"><h2 id="使用SVM">使用SVM</h2><blockquote>
-<p>这段视频中，我们将介绍使用SVM时，我们实际上需要做些什么。</p>
-</blockquote>
-<p><strong>支持向量机</strong>是一个特定的优化问题，但是我不建议你自己去手动实现这一算法来求解参数$\theta$。就像如今只有很少的人，或者说根本没有人会考虑自己写代码，来实现对矩阵求逆，或求一个数的平方根等。我们只需要调用库函数来实现这些功能即可。</p>
-<p>同样，可以用于解决SVM优化问题的软件很复杂，而且已经有专门研究数值优化很多年的学者在做这个，因此你需要使用好的软件库来做这个。我强烈建议使用一个高度优化的软件库，而不是尝试自己去实现它。</p>
-<p>这里推荐两个我最常用到的库：liblinear和libsvm。</p>
-<p>尽管你不需要自己去实现SVM，但你也需要做以下几件事：</p>
-<ul>
-<li>选择参数$C$</li>
-<li>选择<strong>核函数</strong>（相似度函数）</li>
-</ul>
-<h3 id="核函数的选择">核函数的选择</h3><h4 id="线性核函数（无核函数）">线性核函数（无核函数）</h4><p>关于<strong>核函数</strong>其中一个选择是<strong>不用任何核函数</strong>（不用任何核函数也叫作<strong>线性核函数</strong>）:</p>
-<p>即对于预测结果$y=1$，满足$\theta^Tx\ge0$。</p>
+        <span itemprop="articleBody"><h2 id="在线学习">在线学习</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/ABO2q/online-learning" target="_blank" rel="external">视频地址</a></p>
 <blockquote>
-<p>例如这种情况下当$\theta_0 + \theta_1x_1 + … + \theta_nx_n \ge 0$时，预测$y=1$。</p>
+<p>在本节，我将会讨论一种新的大规模的机器学习机制，叫做<strong>在线学习机制</strong>。在拥有连续一波数据或连续的数据流涌进来，而我们又需要一个算法来从中学习的时候来模型化问题时，我们就需要用到<strong>在线学习机制</strong>。 </p>
+<p>今天许多大型网站，或者许多大型网络公司，都在使用不同版本的在线学习机制算法从大批的涌入又离开网站的用户身上进行学习。</p>
+<p>特别要提及的是，如果你有一个由连续的用户流引发的连续的数据流，用户流进入你的网站，你能做的是使用一个在线学习机制，从数据流中学习用户的偏好，然后使用这些信息，来优化一些关于网站的决策。</p>
 </blockquote>
-<p>对<strong>线性核函数</strong>这个术语，你可以把它理解为这个版本的SVM。它只是给你一个标准的线性分类器，因此对某些问题来说，它是一个合理的选择：</p>
-<p>具体来说，当你的特征数量$n$很大，但数据量$m$很小时，由于数据量不足，在这种情况下如果使用其他核函数，你可能会<strong>过拟合</strong>，因此，此时<strong>线性核函数</strong>是一个合理的选择。</p>
-<h4 id="高斯核函数">高斯核函数</h4><p>$$<br>f_i=exp(-\frac{||x-l^{(i)}||^2}{2\sigma^2}),<br>$$</p>
-<p>这是我们之前见过的高斯核函数。如果你选择这个核函数，那么你需要选择一个$$\sigma^2$$。</p>
-<p>我们之前讨论如何权衡偏差、方差的时候谈论过：</p>
+<h3 id="在线学习机制举例">在线学习机制举例</h3><h4 id="运输服务对于定价的预测">运输服务对于定价的预测</h4><p>假如你有一个提供运输服务的网站，在网站上提供用户选择包裹邮寄的起始地址和目的地址，并显示运输价格。然和我们需要根据用户对给出邮费价格的选择接受或者走掉，来作为正样本（$y=1$）和负样本（$y=0$），通过这些样本来构建学习算法，来帮助我们找到用户的特点，从而给出一个合理的邮费价格预测。</p>
+<p>我们使用这些优化后的价格，很有可能会提高我们的利润。</p>
+<p>对于持续运行的网站来说，以下就是在线学习算法要做的：</p>
 <ul>
-<li>如果$\sigma^2$很大，那么你就有可能得到一个<strong>较高偏差较低方差</strong>的分类器。</li>
-<li>如果$\sigma^2$很小，那么你就有可能得到一个<strong>较低偏差较高方差</strong>的分类器。</li>
-</ul>
-<p>那么，什么时候选择高斯核函数呢？</p>
-<p>如果你原来的特征变量$x$是$n$维的，而且<strong>$n$很小，样本数量$m$很大时</strong>，高斯核函数会是一个不错的选择。</p>
-<h5 id="如何使用高斯核函数">如何使用高斯核函数</h5><p>在很多SVM的软件包中，如果你需要使用SVM时，你需要提供一个核函数。</p>
-<p>具体地说，如果你决定使用高斯核函数，那么你需要做的就是根据你所用的SVM软件包，来提供一个用于计算核函数的特定特征的方法:</p>
-<p><img src="/img/17_04_11/001.png" alt=""></p>
-<p>然后它将自动地生成所有特征变量。</p>
-<blockquote>
-<p><strong>注意</strong>：如果你有大小很不一样的特征变量，在使用高斯核函数之前，对它们进行<strong>归一化</strong>是很重要的。</p>
-</blockquote>
-<p>假设你在计算$x$和$l$之间的范数(就是高斯核函数的分子项)：</p>
-<p>$||x-l||^2$</p>
-<p>这个式子所表达的含义如下：</p>
-<p>$$<br>v=x-l<br>$$</p>
-<p>$$<br>\begin{align*}<br>||v||^2 &amp;= v_1^2 + v_2^2 + … + v_n^2 \\<br>&amp;= (x_1-l_1)^2 + (x_2-l_2)^2 + … + (x_n-l_n)^2<br>\end{align*}<br>$$</p>
-<p>其中$v$、$x$、$l$都是向量，由于$x$是$n$维的，所以$v$也是$n$维的。</p>
-<p>现在如果你的特征变量取值范围很不一样。例如房价预测中，$x_1$表示1000平方英尺，$x_2$表示卧室数量为2，那么$(x_1-l_1)$可能相较于$(x_2-l_2)$大很多。</p>
-<p>因此，为了让SVM更好的工作，我们需要对特征变量进行<strong>归一化</strong>处理。这将会保证SVM能够同等地关注到所有不同的特征变量。</p>
-<h4 id="选择其他核函数">选择其他核函数</h4><p>当你尝试使用SVM时，目前你能用到的核函数就是<strong>线性核函数</strong>和<strong>高斯核函数</strong>，这里有一个警告：</p>
-<p>不是所有你可能提出来的相似度函数都是有效的核函数。线性核函数，高斯核函数，以及其他人有时会用到的其他的核函数，他们全部需要满足一个技术条件，这个条件叫做<strong>摩赛尔定理(Mercer`s Theorem)</strong>。</p>
-<p>因为支持向量机算法的实现有许多巧妙的数值优化技巧，为了有效地求解参数$\theta$，在最初的设想里，有一个这样的决定，将我们的注意力仅仅限制在可以满足<strong>摩赛尔定理</strong>的核函数上，这个定义做的是：确保所有的SVM包能够使用大量的优化方法，并且快速地得到参数$\theta$。所以，大多数人最后要么使用线性核函数、要么使用高斯核函数。也有一些其他的核函数是满足<strong>摩赛尔定理</strong>的，而我个人是很少很少使用其他核函数的。</p>
-<p>所以，我只是简单提及一下你可能会遇到的其他核函数，他们有：</p>
-<ul>
-<li><p><strong>多项式核函数（Polynomial kernel）</strong>：</p>
-<ul>
-<li><p>将$x$和$l$之间的相似度，定义为$(x^Tl)^2$：</p>
-<p>$$<br>k(x,l)=(x^Tl)^2<br>$$</p>
-<p>这就是一个$x$和$l$相似度的估量，如果$x$和$l$每一项很接近，那么这个内积就会很大。</p>
-<p>这是一个有些不寻常的核函数，它并不常用，但你可能会见到有人使用它的变体形式，比如：</p>
-<p>$$<br>k(x,l)=(x^Tl)^3<br>$$</p>
-<p>$$<br>k(x,l)=(x^Tl + 1)^3<br>$$</p>
-<p>$$<br>k(x,l)=(x^Tl + 5)^4<br>$$</p>
-<p>这些都是多项式核函数的变形形式。</p>
-<p>多项式核函数实际上有两个参数，一个是加在后面的常数项，如上面最后式子中的5；另一个是多项式的次数，如上面最后式子中的4。</p>
-<p>因此，多项式核函数的更一般的形式是：</p>
-<p>$$<br>k(x,l)=(x^Tl + constant)^{degree}<br>$$</p>
-<p>这种核函数并不像高斯核函数那样频繁的使用，通常他只用在当$x$和$l$都是严格的非负数时。这样以确保内积值永远不会是负数。</p>
-<p>这捕捉到了这样一个直观感觉：如果$x$和$l$之间非常相似，也许它们之间的内积会很大。</p>
-<p>它们也有其他的一些性质，但是人们通常用得不多。</p>
-</li>
+<li>网站一直保持在线学习状态。</li>
+<li>当一个用户偶然访问网站时，我们会得到当前用户对应的数据$(x,y)$(特征$x$是指用户所指定的起始地与目的地以及我们这一次提供给客户的价格，而$y$的取值是0或1，具体值取决于用户最终是否选择了我们的运输服务)。</li>
+<li>通过该用户的数据$(x,y)$来更新$\theta$。<ul>
+<li>$\theta_j := \theta_j - \alpha(h_{\theta}(x)-y)x_j \ \ \ \  \ \ \ (j=0,…,n)$</li>
 </ul>
 </li>
 </ul>
-<p>你也有可能会碰到其他一些更难懂的核函数，比如：</p>
-<ul>
-<li><strong>字符串核函数（String kernel）</strong>:<ul>
-<li>如果你的输入数据是文本字符串，或者其他类型的字符串，有时会用到这个核函数。</li>
-</ul>
-</li>
-<li><strong>卡方核函数（chi-square kernel）</strong></li>
-<li><strong>直方图交叉核函数（histogram intersection kernel）</strong></li>
-<li>…</li>
-</ul>
-<p>你可以用它们来度量不同对象之间的相似性。</p>
-<p>例如，你在做一些文本分类问题，在这个问题中，输入变量$x$是一个字符串，我们想要通过字符串核函数来找到两个字符串间的相似度（但是我个人很少用这些更加难懂的核函数，我想我平生可能用过一次卡方核函数，可能用过一次或两次直方图交叉核函数，我甚至没用过字符串核函数）。</p>
-<hr>
-<h3 id="两个细节">两个细节</h3><p>我想要在这个视频里讨论最后两个细节。</p>
-<h4 id="多类分类">多类分类</h4><p>在多类分类中，你有K个类别：</p>
-<p>$$<br>y \in ｛1,2,3,…,K｝<br>$$</p>
-<p>对应下图：</p>
-<p><img src="/img/17_04_11/002.png" alt=""></p>
-<p>很明显，这里$K=4$。</p>
-<p>那么怎样让SVM输出下面这种各个类别间合适的判定边界呢？</p>
-<p><img src="/img/17_04_11/003.png" alt=""></p>
-<p>大部分SVM软件包已经内置了多类分类的函数了，因此，如果你用的是这种软件包，你可以直接使用内置函数。</p>
-<p>另一种方式就是使用<strong>一对多(one-vs-all)方法</strong>。这个我们在讲逻辑回归的时候讨论过，所以，你要做的就是要训练$K$个SVM，每一个SVM把一个类同其他类区分开。这种操作会给你$K$个参数向量：</p>
-<p>$$<br>\theta^{(1)},\theta^{(2)},…,\theta^{(K)}<br>$$</p>
-<p>最后，这就与我们在逻辑回归中用到的一对多方法一样，选取使得$(\theta^{(i)})^Tx$最大的类$i$即可。</p>
-<blockquote>
-<p>其实大多数软件包都已经内置了多类分类的函数，因此你不必重新造轮子。</p>
-</blockquote>
-<h4 id="逻辑回归_vs_SVM">逻辑回归 vs SVM</h4><p>关于<strong>逻辑回归</strong>和<strong>SVM</strong>，我想讨论的是，你什么时候应该用哪个呢？</p>
-<p>假设$n$是特征变量的个数，$m$是训练样本数：</p>
-<ul>
-<li>如果$n$(相对于$m$)大很多时，使用<strong>逻辑回归</strong>，或者使用<strong>无核函数的SVM（线性核函数）</strong>。<br>  比如你有一个文本分类的问题，特征数量$n=10000$，而且如果你的训练集大小为$m=10$，在这个问题中，你有10000个特征变量，对应10000个词，但是你只有10个训练样本。这种情况下就比较适合使用逻辑回归或者线性核函数的SVM了。</li>
-<li>如果$n$较小，$m$是中等大小，（例如$n$为1到1000之间的值，$m$为10到10000之间的值）那么使用<strong>高斯核函数的SVM</strong>效果好一些。</li>
-<li>如果$n$很小，$m$很大时（例如$n=1000$,$m=100000+$），那么高斯核函数的SVM运行起来会很慢，这种情况下，需要<strong>尝试手动地创建更多的特征变量，然后使用逻辑回归或者无核函数的SVM（线性核函数）</strong>。</li>
-</ul>
-<p>逻辑回归和不带核函数的SVM它们都是非常相似的算法，他们会做相似的事情，并且表现也相似，但是根据你实现的具体情况，其中一个可能会比另一个更加有效。</p>
-<p>但是SVM的威力会随着你用不同的核函数而发挥出来。</p>
-<h4 id="什么时候使用神经网络？">什么时候使用神经网络？</h4><p>最后，神经网络应该在什么时候使用呢？</p>
-<p>对于上面所有的情况，一个设计得很好的神经网络也很可能会非常有效，它的一个缺点（或者说不使用神经网络的原因）是：神经网络训练起来可能会很慢。但是如果你有一个非常好的SVM实现包，它会运行得比较快，比神经网络快很多。</p>
-<blockquote>
-<p>SVM的优化问题，实际上是一个<strong>凸优化</strong>问题。因此好的SVM优化软件包总是会找到全局最小值，或者接近它的值。<br>对于SVM，你不需要担心局部最优。在实际应用中，局部最优对神经网络来说不是非常大，但是也不小。所以使用SVM，你不用考虑这部分问题。</p>
-</blockquote>
-<hr>
-<h3 id="总结">总结</h3><p>最后，如果你觉得上面这些使用参考有一些模糊，在面临实际问题时，仍然不能完全确定具体使用哪个算法更好，这个其实很正常。</p>
-<p>当我遇到机器学习问题时，有时确实不清楚具体使用哪个算法更好，但是正如你在之前的视频中看到的，算法确实很重要，但是通常更重要的是：<strong>你有多少数据</strong>，<strong>你有多熟练</strong>，<strong>是否擅长做误差分析和调试学习算法</strong>，<strong>想出如何设计新的特征变量</strong>，<strong>想出如何设计新的特征变量</strong>，以及<strong>找出应该输入给学习算法的其它特征变量</strong>等方面。通常这些方面会比你使用<strong>逻辑回归</strong>还是<strong>SVM</strong>更加重要。</p>
-<p>但是<strong>SVM</strong>仍然被广泛认为是<strong>最强大的学习算法之一</strong>，最强大的学习算法之一，而且SVM在一个区间内是一个非常有效地学习复杂非线性函数的方法。因此，有了<strong>逻辑回归</strong>、<strong>神经网络</strong>、<strong>SVM</strong>这三个学习算法，我想你已经具备了在广泛的应用里构建最前沿的机器学习系统的能力。</p>
+<p>与以往的学习过程不同的是，在线学习中，每次梯度下降使用的这个当前用户的样本数据$(x,y)$，我们使用一次之后就丢弃了，我们永远都不会再次使用它。这就是为什么我们在一个时间点只会处理一个样本的原因。</p>
+<p>如果你真的运行一个大型网站，在这个网站里你有一个连续的用户流登陆网站，那么这种在线学习算法，是一种非常合理的算法。因为数据本质上是自由的，而且数据本质上是无限的，那么或许就真的没必要重复处理一个样本。当然，如果我们只有少量的用户，那么我们就不选择像这样的在线学习算法，这种情况下最好是要保存好所有的数据，然后对这个数据集使用某种算法。</p>
+<p>我也必须要提到一个这种在线学习算法会带来的有趣的效果，那就是它可以对正在变化的用户偏好进行调适。</p>
+<h4 id="搜索中对于搜索结果的优化">搜索中对于搜索结果的优化</h4><p>在搜索引擎中，我们想使用一种学习机制来学习如何反馈给用户好的搜索列表。</p>
+<p>举个具体的例子，假如你有一个在线卖手机的网站，你有一个可以提供搜索的用户界面。在你的网站中，有100部正在售卖的手机，用户每次搜索时会提供10部手机的搜索结果。那么当用户输入类似“安卓 手机 1080p 摄像头”这样的搜索词时，我们应该推荐哪十部手机给用户呢？</p>
+<p>我们想要做的是拥有一个在线学习机制来帮助我们 找到在这100部手机中哪十部手机是我们真正应该反馈给用户的，而且这个返回的列表是对类似这样的用户搜索条目最佳的回应。</p>
+<p>接下来要说的是一种解决问题的思路。</p>
+<p>对于每一个手机以及一个给定的用户搜索命令，我们可以构建一个特征矢量$x$，那么这个特征矢量$x$可能会抓取手机的各种特点，它可能会抓取类似于用户搜索命令与这部电话的类似程度有多高这样的信息，我们获取类似于：这个用户搜索命令中有多少个词，可以与这部手机的名字相匹配；或者这个搜索命令中有多少词，与这部手机的描述相匹配。</p>
+<p>$$<br>x=手机的特征，\\用户的搜索词中有多少个词与手机名称匹配，\\用户的搜索词中有多少个词与手机的描述匹配，\\等等<br>$$</p>
+<p>所以特征矢量$x$获取手机的特点，并且它还会获取这部手机与搜索命令的结果在各个方面的匹配程度。我们想要做的就是估测一个概率，这个概率是指用户将会点进某一个特定的手机的链接的概率。因为我们想要给用户提供那些他们很可能在浏览器中点进去查看的手机，所以我定义$y=1$是指用户点击了手机的链接，而$y=0$是指用户没有点击链接。</p>
+<p>$$<br>y=1 （如果用户点击了链接） \\<br>y=0 （用户没有点击链接）<br>$$</p>
+<p>然后我们想要做的就是学习到用户将会点击某一个特定的手机的概率：</p>
+<p>$$<br>p(y=1|x;\theta)<br>$$</p>
+<p>你知道的，特征$x$获取了手机的特点以及搜索条目与手机的匹配程度。这类问题其实被称作<strong>预估点击率CTR</strong>，它仅仅代表这学习用户将点击某一个特定的、你提供给他们的链接的概率。所以<strong>CTR</strong>是<strong>点击率(Click Through Rate)</strong>的简称。</p>
+<p>如果你能够估计任意一个特定手机的点击率，我们可以做的就是利用这个来给用户展示十个他们最有可能点击的手机。因为从这一百个手机中，我们可以计算出每一部手机的可能的点击率，然后选择10部用户最有可能点击的手机，那么这就是一个非常合理的来决定要展示给用户的十个搜索结果的方法。</p>
+<p>更明确地说，假定每次用户进行一次搜索，我们回馈给用户十个结果。在线学习算法会真正地提供给我们十个$(x,y)$数据对样本。每当一个用户来到 我们网站时就给了我们十个样本，因为对于这十部我们选择要展示给用户的手机的每一个我们会得到 一个特征矢量x，而且对于这10部手机中的任何一个手机，我们还会得到$y$的取值。这些取值是根据用户有没有点击那个网页链接来决定的。这样运行此类网站的一种方法就是连续给用户展示你的十个最佳猜测，这十个推荐是指用户可能会喜欢的其他的手机，那么每次一个用户访问，你将会得到十个$(x,y)$样本数据对，然后利用一个在线学习 算法来更新你的参数。更新过程中会对这十个样本利用10步梯度下降法，然后你可以丢弃你的数据了。</p>
+<p>如果你真的拥有一个连续的用户流进入你的网站，这将会是一个非常合理的学习方法，来学习你的算法中的参数从而来给用户展示十部他们最有可能点击查看的手机。</p>
+<h3 id="总结">总结</h3><p>上面几个例子的原理，你应该也能懂得其他应用的原理。例如优惠券推荐、新闻推荐等。</p>
+<p>而且实际上，如果你有一个协作过滤系统，你可以想象到一个协作过滤系统可以给你更多的特征，这些特征可以整合到逻辑回归的分类器，从而可以尝试着预测对于你可能推荐给用户的不同产品的点击率。</p>
+<p>这就是<strong>在线学习机制</strong>，与<strong>随机梯度下降算法</strong>非常类似，唯一的区别的是我们不会使用一个固定的数据集，而是获取一个用户样本，从那个样本中学习，然后丢弃那个样本并继续下去。而且如果你对某一种应用有一个连续的数据流，这样的算法可能会非常值得考虑。</p>
+<p>当然在线学习的一个优点，就是如果你有一个变化的用户群、又或者你在尝试预测的事情在缓慢变化，就像你的用户的品味在缓慢变化，这个在线学习算法可以慢慢地调试你所学习到的假设，将其调节更新到最新的用户行为。</p>
 </span>
       
     </div>
@@ -396,13 +317,11 @@ var _hmt = _hmt || [];
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/04/20/斯坦福机器学习课程 第八周 (1)聚类/" rel="prev">斯坦福机器学习课程 第八周 (1)聚类</a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/03/21/通过AspectJ代码注入来实现scheme跳转条件的检查判断/" rel="next">通过AspectJ代码注入来实现scheme跳转条件的检查判断</a>
+              <a href="/2017/06/01/斯坦福机器学习课程 第十周 (1)大数据集梯度下降/" rel="next">斯坦福机器学习课程 第十周 (1)大数据集梯度下降</a>
             
           </div>
         </div>
@@ -450,8 +369,8 @@ var _hmt = _hmt || [];
         
           <div class="comments" id="comments">
             
-              <div class="ds-thread" data-thread-key="2017/04/11/斯坦福机器学习课程 第七周 (3)使用SVM/"
-                   data-title="斯坦福机器学习课程 第七周 (3)使用SVM" data-url="http://dannylee1991.github.io/2017/04/11/斯坦福机器学习课程 第七周 (3)使用SVM/">
+              <div class="ds-thread" data-thread-key="2017/06/03/斯坦福机器学习课程 第十周 (2)高级主题/"
+                   data-title="斯坦福机器学习课程 第十周 (2)高级主题" data-url="http://dannylee1991.github.io/2017/06/03/斯坦福机器学习课程 第十周 (2)高级主题/">
               </div>
             
           </div>
@@ -545,7 +464,7 @@ var _hmt = _hmt || [];
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用SVM"><span class="nav-number">1.</span> <span class="nav-text">使用SVM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#核函数的选择"><span class="nav-number">1.1.</span> <span class="nav-text">核函数的选择</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#线性核函数（无核函数）"><span class="nav-number">1.1.1.</span> <span class="nav-text">线性核函数（无核函数）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#高斯核函数"><span class="nav-number">1.1.2.</span> <span class="nav-text">高斯核函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#如何使用高斯核函数"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">如何使用高斯核函数</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#选择其他核函数"><span class="nav-number">1.1.3.</span> <span class="nav-text">选择其他核函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#两个细节"><span class="nav-number">1.2.</span> <span class="nav-text">两个细节</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#多类分类"><span class="nav-number">1.2.1.</span> <span class="nav-text">多类分类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑回归_vs_SVM"><span class="nav-number">1.2.2.</span> <span class="nav-text">逻辑回归 vs SVM</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#什么时候使用神经网络？"><span class="nav-number">1.2.3.</span> <span class="nav-text">什么时候使用神经网络？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.3.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#在线学习"><span class="nav-number">1.</span> <span class="nav-text">在线学习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#在线学习机制举例"><span class="nav-number">1.1.</span> <span class="nav-text">在线学习机制举例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#运输服务对于定价的预测"><span class="nav-number">1.1.1.</span> <span class="nav-text">运输服务对于定价的预测</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#搜索中对于搜索结果的优化"><span class="nav-number">1.1.2.</span> <span class="nav-text">搜索中对于搜索结果的优化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.2.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>

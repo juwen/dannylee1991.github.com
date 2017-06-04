@@ -199,6 +199,127 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2017/06/03/斯坦福机器学习课程 第十周 (2)高级主题/" itemprop="url">
+                斯坦福机器学习课程 第十周 (2)高级主题
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2017-06-03T12:19:00+08:00" content="2017-06-03">
+            2017-06-03
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2017/06/03/斯坦福机器学习课程 第十周 (2)高级主题/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2017/06/03/斯坦福机器学习课程 第十周 (2)高级主题/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="在线学习">在线学习</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/ABO2q/online-learning" target="_blank" rel="external">视频地址</a></p>
+<blockquote>
+<p>在本节，我将会讨论一种新的大规模的机器学习机制，叫做<strong>在线学习机制</strong>。在拥有连续一波数据或连续的数据流涌进来，而我们又需要一个算法来从中学习的时候来模型化问题时，我们就需要用到<strong>在线学习机制</strong>。 </p>
+<p>今天许多大型网站，或者许多大型网络公司，都在使用不同版本的在线学习机制算法从大批的涌入又离开网站的用户身上进行学习。</p>
+<p>特别要提及的是，如果你有一个由连续的用户流引发的连续的数据流，用户流进入你的网站，你能做的是使用一个在线学习机制，从数据流中学习用户的偏好，然后使用这些信息，来优化一些关于网站的决策。</p>
+</blockquote>
+<h3 id="在线学习机制举例">在线学习机制举例</h3><h4 id="运输服务对于定价的预测">运输服务对于定价的预测</h4><p>假如你有一个提供运输服务的网站，在网站上提供用户选择包裹邮寄的起始地址和目的地址，并显示运输价格。然和我们需要根据用户对给出邮费价格的选择接受或者走掉，来作为正样本（$y=1$）和负样本（$y=0$），通过这些样本来构建学习算法，来帮助我们找到用户的特点，从而给出一个合理的邮费价格预测。</p>
+<p>我们使用这些优化后的价格，很有可能会提高我们的利润。</p>
+<p>对于持续运行的网站来说，以下就是在线学习算法要做的：</p>
+<ul>
+<li>网站一直保持在线学习状态。</li>
+<li>当一个用户偶然访问网站时，我们会得到当前用户对应的数据$(x,y)$(特征$x$是指用户所指定的起始地与目的地以及我们这一次提供给客户的价格，而$y$的取值是0或1，具体值取决于用户最终是否选择了我们的运输服务)。</li>
+<li>通过该用户的数据$(x,y)$来更新$\theta$。<ul>
+<li>$\theta_j := \theta_j - \alpha(h_{\theta}(x)-y)x_j \ \ \ \  \ \ \ (j=0,…,n)$</li>
+</ul>
+</li>
+</ul>
+<p>与以往的学习过程不同的是，在线学习中，每次梯度下降使用的这个当前用户的样本数据$(x,y)$，我们使用一次之后就丢弃了，我们永远都不会再次使用它。这就是为什么我们在一个时间点只会处理一个样本的原因。</p>
+<p>如果你真的运行一个大型网站，在这个网站里你有一个连续的用户流登陆网站，那么这种在线学习算法，是一种非常合理的算法。因为数据本质上是自由的，而且数据本质上是无限的，那么或许就真的没必要重复处理一个样本。当然，如果我们只有少量的用户，那么我们就不选择像这样的在线学习算法，这种情况下最好是要保存好所有的数据，然后对这个数据集使用某种算法。</p>
+<p>我也必须要提到一个这种在线学习算法会带来的有趣的效果，那就是它可以对正在变化的用户偏好进行调适。</p>
+<h4 id="搜索中对于搜索结果的优化">搜索中对于搜索结果的优化</h4><p>在搜索引擎中，我们想使用一种学习机制来学习如何反馈给用户好的搜索列表。</p>
+<p>举个具体的例子，假如你有一个在线卖手机的网站，你有一个可以提供搜索的用户界面。在你的网站中，有100部正在售卖的手机，用户每次搜索时会提供10部手机的搜索结果。那么当用户输入类似“安卓 手机 1080p 摄像头”这样的搜索词时，我们应该推荐哪十部手机给用户呢？</p>
+<p>我们想要做的是拥有一个在线学习机制来帮助我们 找到在这100部手机中哪十部手机是我们真正应该反馈给用户的，而且这个返回的列表是对类似这样的用户搜索条目最佳的回应。</p>
+<p>接下来要说的是一种解决问题的思路。</p>
+<p>对于每一个手机以及一个给定的用户搜索命令，我们可以构建一个特征矢量$x$，那么这个特征矢量$x$可能会抓取手机的各种特点，它可能会抓取类似于用户搜索命令与这部电话的类似程度有多高这样的信息，我们获取类似于：这个用户搜索命令中有多少个词，可以与这部手机的名字相匹配；或者这个搜索命令中有多少词，与这部手机的描述相匹配。</p>
+<p>$$<br>x=手机的特征，\\用户的搜索词中有多少个词与手机名称匹配，\\用户的搜索词中有多少个词与手机的描述匹配，\\等等<br>$$</p>
+<p>所以特征矢量$x$获取手机的特点，并且它还会获取这部手机与搜索命令的结果在各个方面的匹配程度。我们想要做的就是估测一个概率，这个概率是指用户将会点进某一个特定的手机的链接的概率。因为我们想要给用户提供那些他们很可能在浏览器中点进去查看的手机，所以我定义$y=1$是指用户点击了手机的链接，而$y=0$是指用户没有点击链接。</p>
+<p>$$<br>y=1 （如果用户点击了链接） \\<br>y=0 （用户没有点击链接）<br>$$</p>
+<p>然后我们想要做的就是学习到用户将会点击某一个特定的手机的概率：</p>
+<p>$$<br>p(y=1|x;\theta)<br>$$</p>
+<p>你知道的，特征$x$获取了手机的特点以及搜索条目与手机的匹配程度。这类问题其实被称作<strong>预估点击率CTR</strong>，它仅仅代表这学习用户将点击某一个特定的、你提供给他们的链接的概率。所以<strong>CTR</strong>是<strong>点击率(Click Through Rate)</strong>的简称。</p>
+<p>如果你能够估计任意一个特定手机的点击率，我们可以做的就是利用这个来给用户展示十个他们最有可能点击的手机。因为从这一百个手机中，我们可以计算出每一部手机的可能的点击率，然后选择10部用户最有可能点击的手机，那么这就是一个非常合理的来决定要展示给用户的十个搜索结果的方法。</p>
+<p>更明确地说，假定每次用户进行一次搜索，我们回馈给用户十个结果。在线学习算法会真正地提供给我们十个$(x,y)$数据对样本。每当一个用户来到 我们网站时就给了我们十个样本，因为对于这十部我们选择要展示给用户的手机的每一个我们会得到 一个特征矢量x，而且对于这10部手机中的任何一个手机，我们还会得到$y$的取值。这些取值是根据用户有没有点击那个网页链接来决定的。这样运行此类网站的一种方法就是连续给用户展示你的十个最佳猜测，这十个推荐是指用户可能会喜欢的其他的手机，那么每次一个用户访问，你将会得到十个$(x,y)$样本数据对，然后利用一个在线学习 算法来更新你的参数。更新过程中会对这十个样本利用10步梯度下降法，然后你可以丢弃你的数据了。</p>
+<p>如果你真的拥有一个连续的用户流进入你的网站，这将会是一个非常合理的学习方法，来学习你的算法中的参数从而来给用户展示十部他们最有可能点击查看的手机。</p>
+<h3 id="总结">总结</h3><p>上面几个例子的原理，你应该也能懂得其他应用的原理。例如优惠券推荐、新闻推荐等。</p>
+<p>而且实际上，如果你有一个协作过滤系统，你可以想象到一个协作过滤系统可以给你更多的特征，这些特征可以整合到逻辑回归的分类器，从而可以尝试着预测对于你可能推荐给用户的不同产品的点击率。</p>
+<p>这就是<strong>在线学习机制</strong>，与<strong>随机梯度下降算法</strong>非常类似，唯一的区别的是我们不会使用一个固定的数据集，而是获取一个用户样本，从那个样本中学习，然后丢弃那个样本并继续下去。而且如果你对某一种应用有一个连续的数据流，这样的算法可能会非常值得考虑。</p>
+<p>当然在线学习的一个优点，就是如果你有一个变化的用户群、又或者你在尝试预测的事情在缓慢变化，就像你的用户的品味在缓慢变化，这个在线学习算法可以慢慢地调试你所学习到的假设，将其调节更新到最新的用户行为。</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2017/06/01/斯坦福机器学习课程 第十周 (1)大数据集梯度下降/" itemprop="url">
                 斯坦福机器学习课程 第十周 (1)大数据集梯度下降
               </a>
@@ -3079,153 +3200,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2017/03/21/通过AspectJ代码注入来实现scheme跳转条件的检查判断/" itemprop="url">
-                通过AspectJ代码注入来实现scheme跳转条件的检查判断
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2017-03-21T22:48:58+08:00" content="2017-03-21">
-            2017-03-21
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/Android/" itemprop="url" rel="index">
-                  <span itemprop="name">Android</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2017/03/21/通过AspectJ代码注入来实现scheme跳转条件的检查判断/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2017/03/21/通过AspectJ代码注入来实现scheme跳转条件的检查判断/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><p>scheme跳转是Android通过外部链接打开APP指定页面的一种常见的实现方式，如果只是简单的跳转，那么不需要做什么额外的判断就可以打开指定页面了，但我们的产品中有一个需求就是：在通过scheme跳转打开某一个页面的时候，需要判断一些前置条件，如果前置条件满足的情况下，才能执行跳转，如果前置条件不满足，那么需要缓存本次跳转，直到需要满足的条件被触发时，才去执行跳转。</p>
-<p>简单说来就是下面这张图：</p>
-<p><img src="/img/17_03_21/001.png" alt=""></p>
-<p>一开始我想到的处理方式是通过在Activity的基类里的<code>onCreate()</code>方法之前做判断逻辑，如果符合条件，则正常执行，如果条件不满足，则执行<code>finish()</code>。</p>
-<p>虽然可以满足需求，但这样的代码侵入性太高，逻辑必须侵入到Activity的基类中，容易与基类中其他逻辑产生耦合。</p>
-<p>因此为了解决这个方式，我想到的解决方式就是使用AOP的方式，在<code>onCreate()</code>之前注入我们的判断逻辑的代码，最后的使用方式可以简化到仅仅使用一行注解来添加判断条件：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@SchemeCheck</span>(conditions = &#123;Condition.LOGIN&#125;)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TargetActivityA</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">    &#125;</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这样一来，我们就不用考虑在Activity的基类中写这些可能产生冗余的逻辑了。</p>
-<p>最终实现效果如下：</p>
-<ul>
-<li>判断<strong>登录</strong>条件</li>
-</ul>
-<video width="300px" autoplay="autoplay" loop="loop" id="video" controls preload="none"><br>  <source id="mp4" src="/img/17_03_21/002.mp4" type="video/mp4"><br>  <p>Your user agent does not support the HTML5 Video element.</p><br></video>
-
-<ul>
-<li>判断<strong>下载</strong>条件</li>
-</ul>
-<video width="300px" autoplay="autoplay" loop="loop" id="video" controls preload="none"><br>  <source id="mp4" src="/img/17_03_21/003.mp4" type="video/mp4"><br>  <p>Your user agent does not support the HTML5 Video element.</p><br></video>
-
-<ul>
-<li>判断<strong>登录并且下载</strong></li>
-</ul>
-<video width="300px" align="center" autoplay="autoplay" loop="loop" id="video" controls preload="none"><br>  <source id="mp4" src="/img/17_03_21/004.mp4" type="video/mp4"><br>  <p>Your user agent does not support the HTML5 Video element.</p><br></video>
-
-<ul>
-<li>判断登录或者下载</li>
-</ul>
-<video width="300px" autoplay="autoplay" loop="loop" id="video" controls preload="none"><br>  <source id="mp4" src="/img/17_03_21/005.mp4" type="video/mp4"><br>  <p>Your user agent does not support the HTML5 Video element.</p><br></video>
-
-<p>接下来介绍一下我是如何实现的。</p>
-<h2 id="如何实现">如何实现</h2><p>首先关于<strong>依赖注入</strong>以及<strong>AspectJ</strong>的相关使用，我参考了以下文章以及代码，具体使用方式我就不再赘述：</p>
-<ul>
-<li><a href="http://www.jianshu.com/p/0fa8073fd144" target="_blank" rel="external">【翻译】Android中的AOP编程</a>  这一篇对AOP概念进行了介绍，并且通过AspectJ仿照<a href="https://github.com/JakeWharton/hugo" target="_blank" rel="external">Hugo</a>实现了一个AOP的Demo。</li>
-<li>JakeWharton大神的<a href="https://github.com/JakeWharton/hugo" target="_blank" rel="external">hugo</a> 项目，通过AspectJ实现的日志工具。</li>
-<li><a href="http://blog.csdn.net/crazy__chen/article/details/52014672" target="_blank" rel="external">使用AspectJ在Android中实现Aop</a>这一篇文章是对上面的文章和hugo项目的总结。</li>
-</ul>
-<hr>
-<p>下面是我的实现：</p>
-<p>首先，定义注解：</p>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="variable">@Retention</span>(RetentionPolicy.RUNTIME)</div><div class="line"><span class="variable">@Target</span>(&#123;ElementType.TYPE&#125;)</div><div class="line">public <span class="variable">@interface</span> SchemeCheck &#123;</div><div class="line">    Condition<span class="selector-attr">[]</span> <span class="selector-tag">conditions</span>();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>值得提醒的是，这里<code>@Retention</code>要定义为<code>RetentionPolicy.RUNTIME</code>，因为我们要在运行时检查注解的参数，来判断scheme的触发条件。如果你写成了<code>RetentionPolicy.CLASS</code>或者<code>RetentionPolicy.SOURCE</code>就检查不到了。</p>
-<p><code>Condition</code>是我们定义的需要判断的条件枚举：</p>
-<figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public <span class="class"><span class="keyword">enum</span> <span class="title">Condition</span> &#123;</span></div><div class="line">    NULL(null),</div><div class="line">    LOGIN(new LoginCondition()),</div><div class="line">    DOWNLOAD_BOOK(new BookDownloadCondition()),</div><div class="line">    LOGIN_OR_DOWNLOAD_BOOK(new LoginOrBookDownloadCondition());</div><div class="line"></div><div class="line">    BaseCondition condition;</div><div class="line">    Condition(BaseCondition condition) &#123;</div><div class="line">        this.condition = condition;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public BaseCondition getCondition() &#123;</div><div class="line">        <span class="keyword">return</span> condition;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><code>Condition</code>可以通过<code>getCondition()</code>来获取到具体的继承自<code>BaseCondition</code>的Condition对象：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseCondition</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">boolean</span> <span class="title">isSatisfied</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> String <span class="title">unSatisfiedInfo</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>由于是Demo，我们的登录条件暂时写死，到时候换成你具体的业务逻辑即可：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginCondition</span> <span class="keyword">extends</span> <span class="title">BaseCondition</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> isLogin = <span class="keyword">false</span>;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isSatisfied</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> isLogin;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">unSatisfiedInfo</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="string">"请先登录"</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>有了这些，我们就可以写注入代码了：</p>
-<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Aspect</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SchemeCheckAspect</span> </span>&#123;</div><div class="line">    <span class="meta">@Pointcut</span>(<span class="string">"within(@demo.com.aj.anno.SchemeCheck *)"</span>)</div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">withinAnnotatedClass</span><span class="params">()</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Pointcut</span>(<span class="string">"execution(!synthetic * *(..)) &amp;&amp; withinAnnotatedClass()"</span>)</div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">methodInsideAnnotatedType</span><span class="params">()</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Pointcut</span>(<span class="string">"execution(@demo.com.aj.anno.SchemeCheck * *(..)) || methodInsideAnnotatedType()"</span>)</div><div class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">method</span><span class="params">()</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Around</span>(<span class="string">"method()"</span>)</div><div class="line">    <span class="keyword">public</span> <span class="function">Object <span class="title">weaveJoinPoint</span><span class="params">(ProceedingJoinPoint joinPoint)</span> <span class="keyword">throws</span> Throwable </span>&#123;</div><div class="line">        Signature signature = joinPoint.getSignature();</div><div class="line">        String methodName = signature.getName();</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (TextUtils.equals(methodName, <span class="string">"onCreate"</span>)) &#123;</div><div class="line">            SchemeCheck anno = (SchemeCheck) signature.getDeclaringType().getAnnotation(SchemeCheck.class);</div><div class="line">            <span class="keyword">if</span> (anno != <span class="keyword">null</span>) &#123;</div><div class="line">                Condition[] conditions = anno.conditions();</div><div class="line">                Object point = joinPoint.getThis();</div><div class="line">                <span class="keyword">if</span> (point != <span class="keyword">null</span> &amp;&amp; point <span class="keyword">instanceof</span> Activity) &#123;</div><div class="line">                    Activity activity = (Activity) point;</div><div class="line">                    handleScheme(activity, conditions);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="function"><span class="keyword">return</span> joinPoint.<span class="title">proceed</span><span class="params">()</span></span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 检查前置条件</div><div class="line">     *</div><div class="line">     * <span class="doctag">@return</span> 是否通过检查</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">boolean</span> <span class="title">checkCondition</span><span class="params">(Condition[] conditions)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (conditions != <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="keyword">for</span> (Condition condition : conditions) &#123;</div><div class="line">                BaseCondition conditionObj = condition.getCondition();</div><div class="line">                <span class="keyword">if</span> (conditionObj != <span class="keyword">null</span></div><div class="line">                        &amp;&amp; !conditionObj.isSatisfied()) &#123;</div><div class="line">                    Toast.makeText(App.getContext(), conditionObj.unSatisfiedInfo(), Toast.LENGTH_SHORT).show();</div><div class="line">                    SchemeManager.Cache.save(condition);</div><div class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 通过验证</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">void</span> <span class="title">passSatisfy</span><span class="params">()</span> </span>&#123;</div><div class="line">        SchemeManager.Cache.clear();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 处理前置条件的检查结果</div><div class="line">     *</div><div class="line">     * <span class="doctag">@param</span> isPass 检查是否通过</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">void</span> <span class="title">handleCheck</span><span class="params">(Activity activity, <span class="keyword">boolean</span> isPass)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (isPass) &#123;</div><div class="line">            passSatisfy();</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="keyword">if</span> (activity != <span class="keyword">null</span>) &#123;</div><div class="line">                activity.finish();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     *</div><div class="line">     * 处理scheme相关的事情</div><div class="line">     *</div><div class="line">     * <span class="doctag">@param</span> activity</div><div class="line">     * <span class="doctag">@param</span> conditions</div><div class="line">     * <span class="doctag">@return</span> 是否通过验证</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">boolean</span> <span class="title">handleScheme</span><span class="params">(Activity activity, Condition[] conditions)</span> </span>&#123;</div><div class="line">        <span class="keyword">boolean</span> passCheck = <span class="keyword">true</span>;</div><div class="line">        <span class="keyword">if</span> (isStartByScheme(activity)) &#123;</div><div class="line">            passCheck = checkCondition(conditions);</div><div class="line">            handleCheck(activity, passCheck);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            passCheck = <span class="keyword">true</span>;</div><div class="line">            passSatisfy();</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> passCheck;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 检查是否是由scheme开启</div><div class="line">     *</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">boolean</span> <span class="title">isStartByScheme</span><span class="params">(Activity activity)</span> </span>&#123;</div><div class="line">        <span class="keyword">boolean</span> isScheme = <span class="keyword">false</span>;</div><div class="line">        <span class="keyword">if</span> (activity != <span class="keyword">null</span>) &#123;</div><div class="line">            Intent intent = activity.getIntent();</div><div class="line">            <span class="keyword">if</span> (intent != <span class="keyword">null</span>) &#123;</div><div class="line">                isScheme = intent.getBooleanExtra(KEY_IS_SCHEME, <span class="keyword">false</span>);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> isScheme;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>可以看到，我们在<code>onCreate()</code>方法开始之前，我们注入了scheme的判断逻辑，当条件满足时，直接执行了后面的逻辑；当条件不满足时，将不满足的条件进行缓存，并且<code>finish()</code>当前Activity。当正常执行了scheme跳转之后，清空缓存。</p>
-<p>其中<code>SchemeManager</code>的逻辑如下：</p>
-<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SchemeManager</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String KEY_IS_SCHEME = <span class="string">"isScheme"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Cache</span> </span>&#123;</div><div class="line">        <span class="keyword">public</span> <span class="keyword">static</span> String next = <span class="string">""</span>;</div><div class="line">        <span class="keyword">public</span> <span class="keyword">static</span> Condition unSatisfiedCondition;</div><div class="line"></div><div class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">void</span> <span class="title">save</span><span class="params">(Condition condition)</span> </span>&#123;</div><div class="line">            unSatisfiedCondition = condition;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span></span>&#123;</div><div class="line">            next = <span class="string">""</span>;</div><div class="line">            unSatisfiedCondition = <span class="keyword">null</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">void</span> <span class="title">reExecuteScheme</span><span class="params">(Activity activity, Condition condition)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (Cache.unSatisfiedCondition != <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="comment">// 当缓存的条件与当前重复执行时触发的条件一致时，再次执行scheme</span></div><div class="line">            <span class="keyword">if</span> (Cache.unSatisfiedCondition == condition) &#123;</div><div class="line">                String scheme = Cache.next;</div><div class="line">                executeScheme(activity, scheme);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">void</span> <span class="title">executeScheme</span><span class="params">(Activity activity, String schemeStr)</span> </span>&#123;</div><div class="line">        Cache.next = schemeStr;</div><div class="line">        Class&lt;? <span class="keyword">extends</span> Activity&gt; <span class="keyword">target</span> = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">switch</span> (schemeStr) &#123;</div><div class="line">            <span class="keyword">case</span> <span class="string">"startA"</span>:</div><div class="line">                <span class="keyword">target</span> = TargetActivityA.class;</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> <span class="string">"startB"</span>:</div><div class="line">                <span class="keyword">target</span> = TargetActivityB.class;</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> <span class="string">"startC"</span>:</div><div class="line">                <span class="keyword">target</span> = TargetActivityC.class;</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> <span class="string">"startD"</span>:</div><div class="line">                <span class="keyword">target</span> = TargetActivityD.class;</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (<span class="keyword">target</span> != <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="comment">// 如果当前页和目标页面是同一个页面  则清空缓存  防止递归调用产生死循环</span></div><div class="line">            <span class="keyword">if</span> (<span class="keyword">target</span>.equals(activity.getClass())) &#123;</div><div class="line">                Cache.clear();</div><div class="line">                <span class="keyword">return</span>;</div><div class="line">            &#125;</div><div class="line">            Intent intent = <span class="keyword">new</span> Intent(activity, <span class="keyword">target</span>);</div><div class="line">            intent.putExtra(KEY_IS_SCHEME, <span class="keyword">true</span>);</div><div class="line">            activity.startActivity(intent);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这里包含有缓存管理的逻辑，以及<strong>执行scheme</strong>和<strong>重复执行scheme</strong>的逻辑。</p>
-<p>其中，由于是Demo，执行scheme的逻辑用固定的字符串来代表scheme链接，这里需要你来替换为你自己的业务逻辑，因为你可能有解析scheme参数并且传递到目标Activity的逻辑。</p>
-<p>scheme缓存保存了scheme链接和最后一次没有通过的条件枚举值，当下一次条件被触发时，通过<code>reExecuteScheme</code>来执行缓存中的scheme，达到继续跳转的效果。</p>
-<p>例如，在登录成功的地方，可以执行:</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">reExecuteScheme(<span class="keyword">this</span>, Condition.LOGIN);</div></pre></td></tr></table></figure>
-<p>来达到登录成功时继续触发<strong>因未登录导致的scheme跳转失败的scheme跳转</strong>（好绕啊…）。</p>
-<h2 id="愉快的调用">愉快的调用</h2><p>接下来我们在需要加入scheme跳转判断的Activity的类上加入注解判断即可，例如我们在下面的Activity上加入<strong>登录</strong>以及<strong>词书下载</strong>的条件判断：</p>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="variable">@SchemeCheck</span>(conditions = &#123;Condition.LOGIN, Condition.DOWNLOAD_BOOK&#125;)</div><div class="line">public class TargetActivityC extends Activity &#123;</div><div class="line"></div><div class="line">    <span class="selector-tag">public</span> <span class="selector-tag">static</span> <span class="selector-tag">void</span> <span class="selector-tag">start</span>(Activity activity) &#123;</div><div class="line">        activity<span class="selector-class">.startActivity</span>(new Intent(activity, TargetActivityC.class));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="variable">@Override</span></div><div class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</div><div class="line">        super<span class="selector-class">.onCreate</span>(savedInstanceState);</div><div class="line">        setContentView(R<span class="selector-class">.layout</span><span class="selector-class">.activity_c</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>是不是很简单呢？</p>
-<h2 id="注意！这里有坑">注意！这里有坑</h2><p>目前发现的一个坑就是我们的加入scheme跳转判断的子类Activity中必须有<code>onCreate</code>方法才可以正常执行，因为<code>AspectJ</code>只能判断当前子类中所触发的子类的方法。也就是说如果即使你对Activity的基类的<code>onCreate</code>进行了一层封装，完成了<code>onCreate</code>的所有工作，子类也需要复写一下<code>onCreate</code>。就像这样：</p>
-<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line">   <span class="keyword">protected</span> <span class="function"><span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</div><div class="line">       <span class="keyword">super</span>.onCreate(savedInstanceState);</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
-<p>否则会crash。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -3264,7 +3238,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">112</span>
+              <span class="site-state-item-count">113</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
