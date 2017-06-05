@@ -199,6 +199,251 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2016/08/25/斯坦福机器学习课程 第三周 (2)Logistic回归模型/" itemprop="url">
+                斯坦福机器学习课程 第三周 (2)Logistic回归模型
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2016-08-25T23:54:00+08:00" content="2016-08-25">
+            2016-08-25
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/机器学习/" itemprop="url" rel="index">
+                  <span itemprop="name">机器学习</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2016/08/25/斯坦福机器学习课程 第三周 (2)Logistic回归模型/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/25/斯坦福机器学习课程 第三周 (2)Logistic回归模型/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><h2 id="逻辑回归的代价函数">逻辑回归的代价函数</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/1XG8G/cost-function" target="_blank" rel="external">视频地址</a></p>
+<p>这节课将讲解逻辑回归中，如何定义用来拟合参数的<strong>代价函数</strong>。</p>
+<p><img src="/img/16_08_25/001.png" alt=""></p>
+<p>如上图所示，我们现在有一组训练集，其中有$m$个训练样本，由于是一个分类问题，我们的$y$取值范围就是0和1。并且我们给出了假设函数$h_{\theta}(x)$。现在的问题就是，我们如何确定我们的参数$\theta$的值呢？也就是说如何<strong>拟合参数$\theta$</strong>呢？</p>
+<p><img src="/img/16_08_25/002.png" alt=""></p>
+<p>上图是之前求线性回归问题时的代价函数，现在我将上图的公式进行改写：</p>
+<p>$$<br>Cost(h_{\theta}(x^{(i)}),y^{(i)})=<br>\frac{1}{2}(h_{θ}(x^{(i)})-y^{(i)})^{2}<br>$$</p>
+<p>为了简写方便，去掉上标之后的代价函数如下：</p>
+<p>$$<br>Cost(h_{\theta}(x),y)=<br>\frac{1}{2}(h_{θ}(x)-y)^{2}<br>$$</p>
+<p>在线性回归问题中，代价函数会被定义为以上这种形式，但在逻辑回归里，如果我们最小化代价函数后，使用这个最小代价的值也是可以正常工作的，但是我们的这个代价函数会变成参数$\theta$的非凸函数。</p>
+<p>因为这里：</p>
+<p>$$<br>\begin{align*}<br>h_{\theta}(x)<br>= \frac{1}{1+e^{-\theta^{T}x}}<br>\end{align*}<br>$$ </p>
+<p>$h_{\theta}(x)$是非线性的，如果将这个值带入Cost函数，然后在求代价函数$J(\theta)$，我们会得到如下的有多个局部最优的函数：</p>
+<p><img src="/img/16_08_25/003.png" alt=""></p>
+<p>这种函数的官方名称叫做：<strong>非凸函数</strong>。</p>
+<p>你大概可以感觉到如果把梯度下降算法用在这样一个函数上，不能保证它会收敛到全局最小值。</p>
+<p>相应的，我们期望我们的代价函数$J(\theta)$是一个凸函数：</p>
+<p><img src="/img/16_08_25/004.png" alt=""></p>
+<p>对于这样的函数，我们使用梯度下降算法，才能够保证顺利的收敛到最小值。</p>
+<p>这里导致我们的代价函数是非凸函数的根本原因就在于使用逻辑回归的那一步：</p>
+<p>$$<br>\begin{align*}<br>h_{\theta}(x)<br>= \frac{1}{1+e^{-\theta^{T}x}}<br>\end{align*}<br>$$ </p>
+<p>所以我们想做的就是，<strong>另找一个是凸函数的代价函数</strong>使得我们能够方便的找到代价函数的全局最小值。</p>
+<p>因此对于<strong>逻辑回归的代价函数</strong>，形式如下：</p>
+<p><img src="/img/16_08_25/005.png" alt=""></p>
+<p>对应的函数的图形如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$y=1$时</th>
+<th style="text-align:center">$y=0$时</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><img src="/img/16_08_25/006.png" alt=""></td>
+<td style="text-align:center"><img src="/img/16_08_25/007.png" alt=""></td>
+</tr>
+</tbody>
+</table>
+<p>现在这种形式的代价函数，有着很多很有趣的性质：</p>
+<ul>
+<li>在$y=1$的情况下：<ul>
+<li>如果假设函数$h_{\theta}(x) = 1$，那么代价函数为0:$Cost=0$。</li>
+<li>如果假设函数$h_{\theta}(x) \rightarrow 0$，那么代价函数趋近于∞:$Cost \rightarrow ∞$</li>
+</ul>
+</li>
+<li>在$y=0$的情况下：<ul>
+<li>如果假设函数$h_{\theta}(x) \rightarrow 1$，那么代价函数为0:$Cost \rightarrow ∞ $。</li>
+<li>如果假设函数$h_{\theta}(x) = 0$，那么代价函数等于0:$Cost = 0$</li>
+</ul>
+</li>
+</ul>
+<p>这就是我们所期望的效果：<strong>当假设函数和期望值越接近时，代价函数值越小，反之越大。</strong></p>
+<h2 id="简化代价函数以及梯度下降">简化代价函数以及梯度下降</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/MtEaZ/simplified-cost-function-and-gradient-descent" target="_blank" rel="external">视频地址</a></p>
+<p>这节课我们来讲解一种<strong>稍微简单一些的方式来写代价函数</strong>，来替代我们现有的方法。同时也要讲清楚，<strong>如何运用梯度下降法来拟合出逻辑回归的参数$\theta$</strong>。因此，听了这节课，你应该就能够实现一个完整的逻辑回归算法了。</p>
+<h3 id="简化单个样本的代价函数$Cost(h_{\theta}(x),y)$">简化单个样本的代价函数$Cost(h_{\theta}(x),y)$</h3><p>之前我们讲解了逻辑回归中的代价函数：</p>
+<p><img src="/img/16_08_25/008.png" alt=""></p>
+<p>上图中有：</p>
+<ul>
+<li>我们定义的逻辑回归的整体的代价函数$J(\theta)$</li>
+<li>针对于单个样本的代价函数$Cost(h_{\theta}(x),y)$</li>
+<li>并且我们知道，作为分类问题，我们的$y$的取值永远都是0或者1。</li>
+</ul>
+<p>其中对于单个样本的代价函数$Cost(h_{\theta}(x),y)$，我们可以把$y=0$和$y=1$的两种情况合二为一，写成一个统一的式子：</p>
+<p>$$<br>Cost(h_{\theta}(x),y)=-ylog(h_{\theta}(x))-(1-y)log(1-h_{\theta}(x))<br>$$</p>
+<p>这个表达式和我们之前写的代价函数的表达式，效果是完全一样的，但后者更加紧凑。</p>
+<blockquote>
+<p>我们知道在上面的式子中，$y$的取值非0即1，如果$y=1$那么$Cost(h_{\theta}(x),y)=-log(h_{\theta}(x))$，如果$y=0$那么$Cost(h_{\theta}(x),y)=-log(1-h_{\theta}(x))$。效果和分开写是完全一样的。</p>
+</blockquote>
+<h3 id="拟合逻辑回归的参数$\theta$">拟合逻辑回归的参数$\theta$</h3><p>这样一来，我们就可以写出完整的逻辑回归的代价函数了：</p>
+<p><img src="/img/16_08_25/009.png" alt=""></p>
+<blockquote>
+<p>似乎我们有其他方式来表示单个样本的代价函数$Cost(h_{\theta}(x),y)$，但在这里不做详细的说明，但是我可以告诉你，现在我们使用的这种形式的代价函数的式子，是从统计学中的<strong>极大似然法</strong>得来的。不过如果你不理解什么是<strong>极大似然法</strong>，以及逻辑回归中的代价函数为什么是这种形式，也没关系，也不会影响你后面的学习。</p>
+</blockquote>
+<p>接下来的问题就是找到使得代价函数$j(\theta)$最小的参数$\theta$了：</p>
+<p><img src="/img/16_08_25/010.png" alt=""></p>
+<p>一旦我们得到了这个合适的$\theta$那么我们就可以对一个给定的样本进行预测了：</p>
+<p><img src="/img/16_08_25/011.png" alt=""></p>
+<blockquote>
+<p>注意：$p(y=1|x;\theta)$就是指关于$x$以$\theta$为参数，$y=1$的概率。</p>
+</blockquote>
+<p>由此可见，我们问题的核心在于求解最小化代价函数：</p>
+<p><img src="/img/16_08_25/012.png" alt=""></p>
+<p>上图就是逻辑回归问题中最小化代价函数的方法，是通过梯度下降算法来实现。</p>
+<p>对上图中的偏导数项展开后就是下面的形式：</p>
+<p><img src="/img/16_08_25/013.png" alt=""></p>
+<p>如果你把上面的式子放到线性回归问题中进行对比的话，<strong>你会发现这个式子正是用来做线性回归梯度下降的。</strong></p>
+<p>那么我们不禁要问一下自己，线性回归算法和逻辑回归算法是一样的吗？</p>
+<p>要回答这个问题，就要看从线性回归，到逻辑回归，到底发生了哪些变化。</p>
+<p>实际上对于假设函数$h_{\theta}(x)$的定义发生了变化：</p>
+<ul>
+<li>线性回归中，假设函数定义为$h_{\theta}(x)=\theta^{T}x$</li>
+<li>在逻辑回归中，假设函数的定义为$h_{\theta}(x)= \frac{1}{1+e^{-\theta^{T}x}}$</li>
+</ul>
+<p>由于假设函数的不同，实际上线性回归和逻辑回归的梯度下降是两个完全不同的东西。</p>
+<p>当我们在讨论线性回归的梯度下降算法时，我们谈到了如何监控梯度下降法以确保其收敛。其实我们通常也把这种方法运用在逻辑回归中，来检测梯度下降，以确保其正常收敛。这里就不多做介绍，可以参考<strong>斯坦福机器学习课程 第一周 (5)参数学习-梯度下降算法</strong>来实现。</p>
+<h2 id="高级优化">高级优化</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/licwf/advanced-optimization" target="_blank" rel="external">视频地址</a></p>
+<p>这节课中会介绍一些高级优化概念和技巧。利用这些技巧，我们就使通过梯度下降进行逻辑回归的速度大大提高，这也将使得算法更加适合解决大型的机器学习问题。</p>
+<h3 id="优化算法概念引入">优化算法概念引入</h3><p>现在我们换个角度来看看什么是梯度下降：</p>
+<p>我们有个代价函数$J(\theta)$，并且我们希望最小化代价函数$min_{\theta}J(\theta)$。</p>
+<p>为了得到最小化代价函数$min_{\theta}J(\theta)$，我们需要计算出$J(\theta)$关于每一项$\theta$的偏导：</p>
+<p><img src="/img/16_08_25/014.png" alt=""></p>
+<p>有了上面的$J(\theta)$关于每一项$\theta$的偏导，为了求得合适的$\theta$，我们就可以利用梯度下降算法来递减$\theta$，使其接近全局最小值了：</p>
+<p><img src="/img/16_08_25/015.png" alt=""></p>
+<p>但事实上，<strong>梯度下降并不是我们可以使用的唯一算法</strong>，下面是我们常用的几种算法：</p>
+<ul>
+<li><strong>梯度下降算法(Gradient descent)</strong></li>
+<li><strong>共轭梯度法(Conjugate gradient)</strong></li>
+<li><strong>变尺度法(BFGS)</strong></li>
+<li><strong>限制变尺度法(L-BFGS)</strong></li>
+</ul>
+<p>除了我们常说的梯度下降算法外的其他三种算法，都有着更复杂的方式来求最小化代价函数。但是这三种算法的细节，超出了本门课程的范畴(实际上如果你想要研究这些算法，可能你需要花费几周的时间，你可以专门学一门课程来提高数值计算能力)。不过我会告诉你他们的一些特性。</p>
+<h3 id="优缺点">优缺点</h3><p>这三种算法有许多优点：</p>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>不需要手动选择学习率$a$<ul>
+<li>所以对这些算法的一种思路是 给出计算导数项和代价函数$J(\theta)$的方法，你可以认为算法有一个智能的内部循环，这种智能的内部循环被称为<strong>线性搜索(line search)</strong>算法，它可以自动尝试不同的学习速率$a$，并自动选择一个好的学习速率$a$。因此它甚至可以在每次迭代时都选择不同的学习速率，那么你就不需要自己选择$a$了。</li>
+</ul>
+</li>
+<li>通常情况下收敛速度比梯度下降算法更快<ul>
+<li>这些算法实际上在做更复杂的事情，而不仅仅是选择一个好的学习速率$a$，所以他们往往最终收敛的远远快于梯度下降。不过关于它们是如何做到的细节，已经超过了本门课程的范畴。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>实际上，我过去十年我都在相当频繁的使用这几种算法。但直到前几年，我才真正搞清楚共轭梯度法、BFGS和L-BFGS的细节。因此，实际上你完全可以在不了解这些算法的内环间在做什么的的情况下使用这些算法，并应用于许多不同的学习问题。</p>
+</blockquote>
+<p>如果说这些算法优缺点的话，那么它的缺点就是：</p>
+<p><strong>缺点</strong></p>
+<ul>
+<li>比梯度下降法复杂多了<ul>
+<li>如果你不是数值计算方面的专家，不建议你亲自去写共轭梯度法、BFGS和L-BFGS，而是去使用一些现成的库。实际上Octave和Matlab都有很理想的库来实现这些先进的优化算法。值得一提的是，这些算法在不同语言上的实现，是有差别的，有的语言上的库可能会表现的不太好。所以建议对比选择合适的实现。</li>
+</ul>
+</li>
+</ul>
+<h3 id="使用实例">使用实例</h3><p>接下来来举例说明如何使用这些算法。</p>
+<p>比如你有一个包含两个参数的问题：</p>
+<p><img src="/img/16_08_25/016.png" alt=""></p>
+<p>对于上图中的代价函数，我们可以求得当$\theta_{1}=5$,$\theta_{2}=5$时，$J(\theta)$的值最小。</p>
+<p>下面就看看怎么使用Octave程序来计算$\theta_{1}$和$\theta_{2}$吧。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">function [jVal, gradient] = costFunction(theta)</div><div class="line"></div><div class="line">jVal = (theta(<span class="number">1</span>)<span class="number">-5</span>)^<span class="number">2</span> + (theta(<span class="number">2</span>)<span class="number">-5</span>)^<span class="number">2</span>;</div><div class="line"></div><div class="line">gradient = zeros(<span class="number">2</span>,<span class="number">1</span>);</div><div class="line">gradient(<span class="number">1</span>) = <span class="number">2</span>*(theta(<span class="number">1</span>)<span class="number">-5</span>);</div><div class="line">gradient(<span class="number">2</span>) = <span class="number">2</span>*(theta(<span class="number">2</span>)<span class="number">-5</span>);</div></pre></td></tr></table></figure>
+<p>上面这段代码定义了一个函数<code>costFunction(theta)</code>，参数是一个<code>theta</code>向量，包含$\theta_{1}$和$\theta_{2}$，返回值是<code>jVal</code>和<code>gradient</code>。通过函数的定义，我们可以看出来<code>jVal</code>表示的是代价函数$J(\theta)$：</p>
+<p><img src="/img/16_08_25/018.png" alt=""></p>
+<p><code>gradient</code>是一个列量，其中两个值分别代表对$\theta_{1}$和$\theta_{2}$的偏导：</p>
+<p><img src="/img/16_08_25/019.png" alt=""></p>
+<p>接下来，调用高级优化函数<code>fminunc</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">options = optimset(<span class="string">'GradObj'</span>, <span class="string">'on'</span>, <span class="string">'MaxIter'</span>, <span class="string">'100'</span>);</div><div class="line">initialTheta = zeros(2,1);</div><div class="line">[optTheta, <span class="keyword">function</span>Val, <span class="built_in">exit</span>Flag] = fminunc(@costFunction, initialTheta, options);</div></pre></td></tr></table></figure>
+<p><code>fminunc</code>表示Octave里无约束最小化函数，调用这个函数时，需要传入一个存有配置信息的变量<code>options</code>。上面的代码中，我们的设置项中<code>&#39;GradObj&#39;, &#39;on&#39;,</code>代表设置梯度目标参数为打开状态(on)，这也意味着你现在确实要给这个算法提供一个梯度。<code>&#39;MaxIter&#39;, &#39;100&#39;</code>代表设置最大迭代次数为100次。<code>initialTheta</code>代表我们给出的一个$\theta$的猜测初始值。</p>
+<p>然后我们调用<code>fminunc</code>这个函数，传入三个参数，其中第一个参数<code>@costFunction</code>这里的<code>@</code>符号代表指向之前我们定义的<code>costFunction</code>函数的指针。后面两个参数分别是我们定义的$theta$初始值和配置信息<code>options</code>。</p>
+<p>当我们调用这个<code>fminunc</code>函数时，它会自动的从众多高级优化算法中挑选一个来使用(你也可以把它当做一个可以自动选择合适的学习速率$a$的梯度下降算法)。</p>
+<p>最终我们会得到三个返回值，分别是满足最小化代价函数$J(\theta)$的$\theta$值<code>optTheta</code>，<code>costFunction</code>中定义的<code>jVal</code>的值<code>functionVal</code>，以及标记是否已经收敛的状态值<code>exitFlag</code>，如果已收敛，标记为<code>1</code>，否则为<code>0</code>。</p>
+<p>下面我们看看在Octave中具体怎么操作：</p>
+<p>首先在当前工作目录下创建costFunction.m脚本，写入costFunction函数:</p>
+<p><img src="/img/16_08_25/020.png" alt=""></p>
+<p>然后在Octave终端下带入<code>fminunc</code>函数：</p>
+<p><img src="/img/16_08_25/021.png" alt=""></p>
+<h3 id="在逻辑回归中使用优化算法">在逻辑回归中使用优化算法</h3><p>上面的例子是一个简单的二次函数中使用优化算法的例子，下面我们介绍一些在逻辑回归中使用这些算法：</p>
+<p><img src="/img/16_08_25/022.png" alt=""></p>
+<p>上图就是逻辑回归问题的代价函数的求解代码。可以看到大体流程和之前的例子是一致的，你只需要把相应的计算<code>jVal</code>以及各个<code>gradient</code>的代码，按照逻辑回归的规则填写完整即可。</p>
+<blockquote>
+<p>使用了这些复杂的优化算法之后，虽然它将使得调试变得更为困难，但是这些算法的速度远远大于普通的梯度下降算法的速度，因此可以用来处理很大的机器学习问题的时候，可以使用这些高级算法，而不是梯度下降算法。</p>
+</blockquote>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2016/08/21/斯坦福机器学习课程 第三周 (1)分类和表达式/" itemprop="url">
                 斯坦福机器学习课程 第三周 (1)分类和表达式
               </a>
@@ -2457,181 +2702,6 @@ var _hmt = _hmt || [];
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2016/07/20/斯坦福机器学习课程 第一周 (3)无监督学习/" itemprop="url">
-                斯坦福机器学习课程 第一周 (3)无监督学习
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2016-07-20T12:22:00+08:00" content="2016-07-20">
-            2016-07-20
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/机器学习/" itemprop="url" rel="index">
-                  <span itemprop="name">机器学习</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2016/07/20/斯坦福机器学习课程 第一周 (3)无监督学习/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/20/斯坦福机器学习课程 第一周 (3)无监督学习/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="无监督学习">无监督学习</h2><p><a href="https://www.coursera.org/learn/machine-learning/lecture/olRZo/unsupervised-learning" target="_blank" rel="external">视频地址</a></p>
-<p>在这段视频中我们要讲第二种主要的机器学习问题，叫做无监督学习.</p>
-<p>在上一节视频中，我们已经讲过了监督学习。回想起上次的数据集，每个样本，都已经被标明为正样本或者负样本，即良性或恶性肿瘤。</p>
-<p><img src="/img/16_07_20/001.png" alt=""></p>
-<p>因此，对于监督学习中的每一个样本，我们已经被清楚地告知了什么是所谓的正确答案，即它们是良性还是恶性。在无监督学习中，我们用的数据会和监督学习里的看起来有些不一样。在无监督学习中，没有属性或标签这一概念，也就是说所有的数据都是一样的，没有区别。</p>
-<p><img src="/img/16_07_20/002.png" alt=""></p>
-<p>所以在无监督学习中我们只有一个数据集，没人告诉我们该怎么做，我们也不知道，每个数据点究竟是什么意思。相反，它只告诉我们现在有一个数据集，你能在其中找到某种结构吗？对于给定的数据集，无监督学习算法可能判定该数据集包含两个不同的聚类。</p>
-<p>你看，这是第一个聚类。</p>
-<p><img src="/img/16_07_20/003.png" alt=""></p>
-<p>然后这是另一个聚类。</p>
-<p><img src="/img/16_07_20/004.png" alt=""></p>
-<p>你猜对了，无监督学习算法会把这些数据分成两个不同的聚类。</p>
-<p>所以这就是所谓的聚类算法，实际上它被用在许多地方。</p>
-<p>我们来举一个聚类算法的栗子。Google新闻的例子，如果你还没见过这个页面的话，你可以到这个URL <a href="http://news.google.com" target="_blank" rel="external">news.google.com</a>去看看。谷歌新闻每天都在干什么呢？他们每天会去收集成千上万的网络上的新闻，然后将他们分组，组成一个个新闻专题。</p>
-<p><img src="/img/16_07_20/005.png" alt=""></p>
-<p>比如让我们来看看这里：</p>
-<p><img src="/img/16_07_20/006.png" alt=""></p>
-<p>这里的URL链接连接着不同的有关BP油井事故的报道。所以让我们点击这些URL中的一个，然后我们会来到这样一个网页。</p>
-<p><img src="/img/16_07_20/007.png" alt=""></p>
-<p>这是一篇来自华尔街日报的，有关BP油井泄漏事故的报道，标题为《BP杀死了Macondo》。Macondo是个地名，就是那个漏油事故的地方。如果你从这个组里点击一个不同的URL，那么你可能会得到不同的新闻：这里是一则CNN的新闻，是一个有关BP石油泄漏的视频。</p>
-<p><img src="/img/16_07_20/008.png" alt=""></p>
-<p>如果你再点击第三个链接，又会出现不同的新闻。这边是英国卫报的报道，也是关于BP石油泄漏。</p>
-<p><img src="/img/16_07_20/009.png" alt=""></p>
-<p>所以，谷歌新闻所做的就是，去搜索成千上万条新闻，然后自动的将他们聚合在一起。因此，有关同一主题的新闻被显示在一起。</p>
-<p>实际上聚类算法和无监督学习算法也可以被用于许多其他的问题。这里我们举个它在基因组学中的应用。</p>
-<p>下面是一个关于基因芯片的例子，基本的思想是：给定一组不同的个体 对于每个个体，检测它们是否拥有某个特定的基因。也就是说，你要去分析有多少基因显现出来了。因此，这些颜色：红、绿、灰等等，它们 展示了这些不同的个体是否拥有一个特定基因的不同程度。</p>
-<p><img src="/img/16_07_20/010.png" alt=""></p>
-<p>然后你能做的就是，运行一个聚类算法，把不同的个体归入不同的类或归为不同类型的人。</p>
-<p><img src="/img/16_07_20/011.png" alt=""></p>
-<p>这就是无监督学习。我们没有提前告知这个算法：这些是第一类的人，这些是第二类的人，这些是第三类的人等等。相反我们只是告诉算法：你看！这儿有一堆数据，我不知道这个数据是什么东东，我不知道里面都有些什么类型，叫什么名字，我甚至不知道都有哪些类型。但是，请问你可以自动的找到这些数据中的类型吗？然后自动的按得到的类型把这些个体分类。虽然事先我并不知道哪些类型。因为对于这些数据样本来说，我们没有给算法一个正确答案，所以，这就是无监督学习。</p>
-<p>无监督学习或聚类算法在其他领域也有着大量的应用，它被用来组织大型的计算机集群。</p>
-<p>我有一些朋友在管理大型数据中心，也就是大型计算机集群，并试图找出哪些机器趋向于协同工作，如果你把这些机器放在一起，你就可以让你的数据中心更高效地工作。</p>
-<p><img src="/img/16_07_20/012.png" alt=""></p>
-<p>第二种应用是用于社交网络的分析 </p>
-<p>如果可以得知哪些朋友你用email联系的最多，或者知道你的Facebook好友或者你Google+里的朋友，知道了这些之后，我们是否可以自动识别哪些是很要好的朋友组，哪些仅仅是互相认识的朋友组。</p>
-<p><img src="/img/16_07_20/013.png" alt=""></p>
-<p>还有在市场分割中的应用中，许多公司拥有庞大的客户信息数据库。那么，给你一个客户数据集，你能否自动找出不同的市场分割，并自动将你的客户分到不同的细分市场中，从而有助于我在不同的细分市场中进行更有效的销售。</p>
-<p><img src="/img/16_07_20/014.png" alt=""></p>
-<p>这也是无监督学习。我们现在有这些客户数据，但我们预先并不知道 有哪些细分市场。而且，对于我们数据集的某个客户，我们也不能预先知道谁属于细分市场一、谁又属于细分市场二等等。但我们必须让这个算法自己去从数据中发现这一切。</p>
-<p>最后，事实上无监督学习也被用于天文数据分析。通过这些聚类算法我们发现了许多惊人的、有趣的，以及实用的，关于星系是如何诞生的理论。</p>
-<p><img src="/img/16_07_20/015.png" alt=""></p>
-<p>所有这些都是聚类算法的例子。而聚类只是无监督学习的一种，现在让我来告诉你另一种，我先来介绍一下鸡尾酒宴问题：</p>
-<p>恩，我想你参加过鸡尾酒会的，是吧？嗯，想象一下，有一个宴会，有一屋子的人，大家都坐在一起，而且在同时说话，有许多声音混杂在一起。因为每个人都是在同一时间说话的，在这种情况下你很难听清楚你面前的人说的话。</p>
-<p>因此，比如有这样一个场景：宴会上只有两个人，两个人同时说话。恩，这是个很小的鸡尾酒宴会，我们准备好了两个麦克风，把它们放在房间里，然后，因为这两个麦克风距离这两个人的距离是不同的，每个麦克风都记录下了来自两个人的声音的不同组合。也许A的声音在第一个麦克风里的声音会响一点，也许B的声音在第二个麦克风里会比较响一些。因为两个麦克风的位置相对于两个说话者的位置是不同的，但每个麦克风都会录到来自两个说话者的重叠部分的声音。</p>
-<p><img src="/img/16_07_20/016.png" alt=""></p>
-<p>这里有一个来自一个研究员录下的两个说话者的声音，让我先放给你听。第一个这是第一个麦克风录到的录音： </p>
-<p><a href="/audio/16_07_20/001.mp3">Microphone #1</a><br>一 (UNO) 二 (DOS) 三 (TRES) 四 (CUATRO) 五 (CINCO) 六 (SEIS) 七 (SIETE) 八 (ocho) 九 (NUEVE) 十 (Y DIEZ) </p>
-<p>好吧 这大概不是什么有趣的酒会…… ……在这个酒会上，有两个人，各自从1数到10。但用的是两种不同语言。你刚才听到的是第一个麦克风的录音，这里是第二个的： </p>
-<p><a href="/audio/16_07_20/001.mp3">Microphone #2</a></p>
-<p>一 (UNO) 二 (DOS) 三 (TRES) 四 (CUATRO) 五 (CINCO) 六 (SEIS) 七 (SIETE) 八 (ocho) 九 (NUEVE) 十 (Y DIEZ) </p>
-<p>所以，我们能做的就是把这两个录音输入一种无监督学习算法中，称为“鸡尾酒会算法”，让这个算法帮你找出其中蕴含的分类，然后这个算法就会去听这些录音，并且你知道这听起​​来像两个音频录音被叠加在一起，所以我们才能听到这样的效果。此外这个算法还会分离出这两个被 叠加到一起的音频源。事实上，这是我们的鸡尾酒会算法的第一个输出：</p>
-<p><a href="/audio/16_07_20/003.mp3">Output #1</a> </p>
-<p>一 二 三 四 五 六 七 八 九 十 </p>
-<p>所以我在一个录音中分离出了英文声音。这是第二个输出：</p>
-<p><a href="/audio/16_07_20/002.mp3">Output #2</a></p>
-<p>Uno dos tres quatro cinco seis siete ocho nueve y diez </p>
-<p>听起来不错嘛。再举一个例子，这是另一个录音，也是在一个类似的场景下，这是第一个麦克风的录音：</p>
-<p><a href="/audio/16_07_20/004.mp3">Microphone #1</a></p>
-<p> 一 二 三 四 五 六 七 八 九 十 </p>
-<p>OK，这个可怜的家伙从鸡尾酒会回家了，他现在独自一人坐在屋里对着录音机自言自语，这是第二个麦克风的录音：</p>
-<p><a href="/audio/16_07_20/005.mp3">Microphone #2</a></p>
-<p>一 二 三 四 五 六 七 八 九 十 </p>
-<p>当你把这两个麦克风录音送给与刚刚相同的算法处理，它所做的还是 告诉你这听起来有两种音频源，并且算法说，这里是我找到的第一个音频源：</p>
-<p><a href="/audio/16_07_20/006.mp3">Output #1</a></p>
-<p>一 二 三 四 五 六 七 八 九 十 </p>
-<p>恩，不是太完美，提取到了人声，但还有一点音乐没有剔除掉。这是算法的第二个输出：</p>
-<p><a href="/audio/16_07_20/007.mp3">Output #2</a></p>
-<p>还好，在第二个输出中，它设法剔除掉了整个人声，只是清理了下音乐剔除了从一到十的计数。</p>
-<p>所以，你可以看到，像这样的无监督学习算法，也许你想问，要实现这样的算法很复杂吧？ 看起来为了构建这个应用程序做这个音频处理似乎需要写好多代码啊，或者需要链接到一堆处理音频的Java库，貌似需要一个非常复杂的程序分离出音频等。</p>
-<p>实际上，要实现你刚刚听到的效果，只需要一行代码就可以了。写在这里呢。</p>
-<p><img src="/img/16_07_20/017.png" alt=""></p>
-<p>当然，研究人员花了很长时间才想出这行代码的^-^，我不是说这是一个简单的问题，但事实上，如果你使用正确的编程环境，许多学习算法是用很短的代码写出来的。所以这也是为什么在这门课中我们要使用Octave的编程环境。</p>
-<p>Octave是一个免费的、开放源码的软件。使用Octave或Matlab这类的工具，许多学习算法都可以用几行代码就可以实现。在后续课程中，我会教你如何使用Octave。你会学到如何在Octave中实现这些算法，或者如果你有Matlab，你可以用它。</p>
-<p>事实上，在硅谷，很多的机器学习算法，我们都是先用Octave写一个程序原型。因为在Octave中实现这些学习算法的速度快得让你无法想象。</p>
-<p>在这里每一个函数，例如：SVD意思是奇异值分解，但这其实是解线性方程的一个惯例，它被内置在Octave软件中了。</p>
-<p>如果你试图在C++或Java中做这个，将需要写N多代码，并且还要连接复杂的C++或Java库。所以，你可以在C++或Java或Python中实现这个算法，只是会更加复杂而已。</p>
-<p>在教授机器学习将近10年后，我得出的一个经验就是，如果你使用Octave的话，会学的更快。并且如果你用Octave作为你的学习工具 和开发原型的工具，你的学习和开发过程会变得更快。而事实上在硅谷 很多人会这样做。他们会先用Octave来实现这样一个学习算法原型，只有在确定这个算法可以工作后，才开始迁移到C++、Java或其它编译环境。事实证明，这样做实现的算法，比你一开始就用C++实现的算法要快多了。</p>
-<p>所以我知道，作为一个老师，我不能老是念叨：“在这个问题上相信我“ 但对于那些从来没有用过这种类似Octave的编程环境的童鞋，我还是要请你相信我这一次，我认为你的时间，研发时间，是你最宝贵的资源之一。</p>
-<p>当见过很多的人这样做以后，我觉得如果你也这样做，作为一个机器学习的研究者和开发者，你会更有效率。如果你学会先用Octave开发原型，而不是先用其他的编程语言来开发。</p>
-<p>最后，总结一下。这里有一个问题需要你来解答：</p>
-<p>我们谈到了无监督学习，它是一种学习机制，你给算法大量的数据，要求它找出数据中蕴含的类型结构，以下的四个例子中，哪一个您认为是 无监督学习算法，而不是监督学习问题？</p>
-<ul>
-<li>通过标记邮件是否为垃圾邮件来实现的垃圾邮件过滤器。</li>
-<li>从网络中爬取一些新闻，按照相同的类别进行自动分组。</li>
-<li>通过一个市场数据库，来自动的发现市场细分类别。</li>
-<li>通过一系列糖尿病患者的数据信息来学习，达到能分辨一个新的患者是否得了糖尿病。</li>
-</ul>
-<p>恩，没忘记垃圾邮件文件夹问题吧？如果你已经标记过数据，那么就有垃圾邮件和非垃圾邮件的区别，我们会将此视为一个监督学习问题。</p>
-<p>新闻故事的例子正是我们在本课中讲到的谷歌新闻的例子。我们介绍了你可以如何使用聚类算法这些文章聚合在一起，所以这是无监督学习问题。</p>
-<p>市场细分的例子，我之前有说过这也是一个无监督学习问题。因为我是要拿到数据，然后要求它自动发现细分市场。</p>
-<p>最后一个例子，糖尿病。这实际上就像我们上节课讲到的乳腺癌的例子 只不过这里不是好的或坏的癌细胞，良性或恶性肿瘤。我们现在是有糖尿病或没有糖尿病。所以这是有监督的学习问题，像处理那个乳腺癌的问题一样。我们会把它作为一个有监督的学习问题来处理。</p>
-<p>好了，关于无监督学习问题就讲这么多了，下一节课中我们会涉及到更具体的学习算法，并开始讨论这些算法是如何工作的，以及我们如何来实现它们。</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2670,7 +2740,7 @@ var _hmt = _hmt || [];
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">114</span>
+              <span class="site-state-item-count">115</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
