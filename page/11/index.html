@@ -199,6 +199,103 @@ var _hmt = _hmt || [];
           
           
             
+              <a class="post-title-link" href="/2015/11/29/线性代数03-矩阵法求解方程组/" itemprop="url">
+                线性代数03-矩阵法求解方程组
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于
+          <time itemprop="dateCreated" datetime="2015-11-29T22:01:55+08:00" content="2015-11-29">
+            2015-11-29
+          </time>
+        </span>
+
+        
+          <span class="post-category" >
+            &nbsp; | &nbsp; 分类于
+            
+              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                <a href="/categories/线性代数/" itemprop="url" rel="index">
+                  <span itemprop="name">线性代数</span>
+                </a>
+              </span>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+              &nbsp; | &nbsp;
+              <a href="/2015/11/29/线性代数03-矩阵法求解方程组/#comments" itemprop="discussionUrl">
+                <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/29/线性代数03-矩阵法求解方程组/" itemprop="commentsCount"></span>
+              </a>
+            </span>
+          
+        
+      </div>
+    </header>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody"><p>矩阵是一种思考问题的方式，我们可以用它来解决我们遇到的一些问题：</p>
+<h2 id="求解二元一次方程组">求解二元一次方程组</h2><p>$$<br>3x + 2y = 7<br>$$</p>
+<p>$$<br>-6x + 6y = 6<br>$$</p>
+<p>通过矩阵来求解，可以转换成如下格式：</p>
+<p>$$<br> \begin{bmatrix}<br>   3 &amp; 2 \\<br>   -6 &amp; 6<br>  \end{bmatrix}<br>  \<br>  \begin{bmatrix}<br>   x \\<br>   y<br>  \end{bmatrix}<br>  {=}<br>  \begin{bmatrix}<br>   7 \\<br>   6<br>  \end{bmatrix}<br>$$</p>
+<p>相当于：</p>
+<p>$$<br>A \cdot x=B<br>$$</p>
+<p>为了求解出未知数x，我们需要在等式两边乘以矩阵A的逆矩阵：</p>
+<p>$$<br>A^{-1} \cdot A \cdot x=A^{-1} \cdot B<br>$$</p>
+<p>$$<br>I \cdot x=A^{-1} \cdot B<br>$$</p>
+<p>$$<br>x=A^{-1} \cdot B<br>$$</p>
+<p>解得：</p>
+<p>$$<br> A^{-1}=<br> \dfrac{1}{30}<br> \begin{bmatrix}<br>   6 &amp; -2 \\<br>   -6 &amp; 3<br>  \end{bmatrix}<br>$$</p>
+<p>$$<br>\begin{bmatrix}<br>   x \\<br>   y<br>  \end{bmatrix}<br>  =<br>  \dfrac{1}{30}<br>  \begin{bmatrix}<br>   6 &amp; -2 \\<br>   -6 &amp; 3<br>  \end{bmatrix}<br>  \begin{bmatrix}<br>   7 \\<br>   6<br>  \end{bmatrix}<br>  =<br>  \begin{bmatrix}<br>   1 \\<br>   2<br>  \end{bmatrix}<br>$$</p>
+</span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      
+      
+        <h1 class="post-title" itemprop="name headline">
+          
+          
+            
               <a class="post-title-link" href="/2015/11/29/线性代数02-矩阵的逆/" itemprop="url">
                 线性代数02-矩阵的逆
               </a>
@@ -1157,151 +1254,6 @@ IComplexBookSearcher
 
 
     
-      
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      
-      
-        <h1 class="post-title" itemprop="name headline">
-          
-          
-            
-              <a class="post-title-link" href="/2015/09/06/里氏替换原则/" itemprop="url">
-                设计模式六大原则之 里氏替换原则
-              </a>
-            
-          
-        </h1>
-      
-
-      <div class="post-meta">
-        <span class="post-time">
-          发表于
-          <time itemprop="dateCreated" datetime="2015-09-06T22:01:55+08:00" content="2015-09-06">
-            2015-09-06
-          </time>
-        </span>
-
-        
-          <span class="post-category" >
-            &nbsp; | &nbsp; 分类于
-            
-              <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                <a href="/categories/设计模式/" itemprop="url" rel="index">
-                  <span itemprop="name">设计模式</span>
-                </a>
-              </span>
-
-              
-              
-
-            
-          </span>
-        
-
-        
-          
-            <span class="post-comments-count">
-              &nbsp; | &nbsp;
-              <a href="/2015/09/06/里氏替换原则/#comments" itemprop="discussionUrl">
-                <span class="post-comments-count ds-thread-count" data-thread-key="2015/09/06/里氏替换原则/" itemprop="commentsCount"></span>
-              </a>
-            </span>
-          
-        
-      </div>
-    </header>
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <span itemprop="articleBody"><h2 id="里氏替换原则">里氏替换原则</h2><p>里氏替换原则 英文名称<strong>Liskov Subtitution Principle, LSP</strong></p>
-<h2 id="定义">定义</h2><p>传说中最正宗的定义：</p>
-<blockquote>
-<p>If for each object o1 of type S there is an object o2 of type T such that for all programs P defined in terms of T, the behavior of P is unchanged when o1 is substituted for o2 then S is a subtype of T.</p>
-<p>如果对每一个类型为S的对象o1,都有类型为T的对象o2,使得以T定义的所有程序P在所有的对象o1都代换成o2时，程序P的行为没有发生变化，那么类型S是类型T的子类型.</p>
-</blockquote>
-<p>传说中第二种比较通俗的定义：</p>
-<blockquote>
-<p>Functions that use pointers or references to base classes must be able to use objects of derived classes without knowing it.</p>
-<p>所有引用基类的地方必须能透明地使用其子类的对象。</p>
-</blockquote>
-<p>更通俗的一种定义：</p>
-<blockquote>
-<p>只要父类能出现的地方子类就可以出现，而且替换为子类也不会产生任何错误或异常，使用者可能根本就不需要知道是父类还是子类。但是反过来就不行了，有子类出现的地方，父类未必就能适应。</p>
-</blockquote>
-<h2 id="举例">举例</h2><h3 id="子类必须完全实现父类的方法">子类必须完全实现父类的方法</h3><p>cs游戏中的枪支类图:<br><img src="/img/lishitihuan_1.png" alt="cs游戏枪支类图"></p>
-<p>代码清单：</p>
-<p>枪支的抽象类</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">AbstractGun</span> </span>&#123;</div><div class="line">	<span class="comment">//枪用来干什么的？杀敌！</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">shoot</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>手枪、步枪、机枪的实现类：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Handgun</span> <span class="keyword">extends</span> <span class="title">AbstractGun</span> </span>&#123;</div><div class="line">	<span class="comment">//手枪的特点是携带方便，射程短</span></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shoot</span><span class="params">()</span> </span>&#123;</div><div class="line">		System.out.println(<span class="string">"手枪射击..."</span>);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Rifle</span> <span class="keyword">extends</span> <span class="title">AbstractGun</span> </span>&#123;</div><div class="line">	<span class="comment">//步枪的特点是射程远，威力大</span></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shoot</span><span class="params">()</span> </span>&#123;</div><div class="line">		System.out.println(<span class="string">"步枪射击..."</span>);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MachineGun</span> <span class="keyword">extends</span> <span class="title">AbstractGun</span> </span>&#123;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shoot</span><span class="params">()</span> </span>&#123;</div><div class="line">		System.out.println(<span class="string">"机枪射击..."</span>);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>士兵的实现类:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Soldier</span> </span>&#123;</div><div class="line">	<span class="comment">//定义士兵的枪支</span></div><div class="line">	<span class="keyword">private</span> AbstractGun gun;</div><div class="line">	<span class="comment">//给士兵一支枪</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setGun</span><span class="params">(AbstractGun _gun)</span></span>&#123;</div><div class="line">		<span class="keyword">this</span>.gun = _gun;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">killEnemy</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"士兵开始杀敌人..."</span>);</div><div class="line">		gun.shoot();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>场景类:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="comment">//产生三毛这个士兵</span></div><div class="line">		Soldier sanMao = <span class="keyword">new</span> Soldier();</div><div class="line">		<span class="comment">//给三毛一支枪</span></div><div class="line">		sanMao.setGun(<span class="keyword">new</span> Rifle());</div><div class="line">		sanMao.killEnemy();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>运行结果如下:</p>
-<figure class="highlight erlang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">士兵开始杀敌人...</div><div class="line">步枪射击...</div></pre></td></tr></table></figure>
-<p>在这个程序中，我们给三毛这个士兵一把步枪，然后就开始杀敌了。如果要使用机枪，当然也可以，直接把sanMao.setGun(new Rifle())修改为sanMao.setGun(new MachineGun())即可,在编写程序时Solider士兵类根本不用知道是哪个型号的枪（子类）被传入。</p>
-<blockquote>
-<p><strong>注意</strong> 在类中调用其他类时，务必要使用父类或接口，如果不能使用父类或接口，则说明类的设计已经违背了LSP原则。</p>
-</blockquote>
-<p>如果我们要加入一把玩具枪，该如何处理呢？</p>
-<p>第一种处理方式 ToyGun继承AbstractGun<br><img src="/img/lishitihuan_2.png" alt="继承方式拓展玩具枪"></p>
-<p>但是玩具枪毕竟是玩具，不能当作真枪来杀敌人，所以这样拓展并不妥当，更好的处理方式应该是如下图：</p>
-<p><img src="/img/lishitihuan_3.png" alt="委托的方式来拓展玩具枪"></p>
-<p>ToyGun脱离继承，建立一个独立的父类，为了实现代码复用，可以与AbastractGun建立关联委托关系。例如，可以在AbstractToy中声明将声音、形状都委托给AbstractGun处理，仿真枪嘛，形状和声音都要和真实的枪一样了，然后两个基类下的子类自由延展，互不影响。</p>
-<blockquote>
-<p><strong>注意</strong> 如果子类不能完整地实现父类的方法，或者父类的某些方法在子类中已经发生“畸变”，则建议断开父子继承关系，采用依赖、聚集、组合等关系代替继承。</p>
-</blockquote>
-<h3 id="子类可以有自己的个性">子类可以有自己的个性</h3><p>子类当然可以有自己的方法和属性了，这里再次强调，是因为里氏替换原则可以正着用，但是不能反过来用。在子类出现的地方，父类未必就可以胜任。</p>
-<p>以刚才对枪支为例，步枪有几个比较“响亮”的型号，比如AK47、AUG狙击步枪等，把这两个型号的枪引入后的Rifle子类图如下：</p>
-<p><img src="/img/lishitihuan_4.png" alt="步枪扩展"></p>
-<p>代码清单：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AUG</span> <span class="keyword">extends</span> <span class="title">Rifle</span></span>&#123;</div><div class="line">	<span class="comment">//狙击枪都携带一个精准的望远镜</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">zoomOut</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"通过望远镜观察敌人..."</span>);</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shoot</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"AUG射击..."</span>);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>狙击手代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Snipper</span> </span>&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">killEnemy</span><span class="params">(AUG aug)</span></span>&#123;</div><div class="line">		<span class="comment">//首先看看敌人的情况，别杀死敌人，自己也被人干掉</span></div><div class="line">		aug.zoomOut();</div><div class="line">		<span class="comment">//开始射击</span></div><div class="line">		aug.shoot();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>场景类：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="comment">//产生三毛这个狙击手</span></div><div class="line">		Snipper sanMao = <span class="keyword">new</span> Snipper();</div><div class="line">		sanMao.setRifle(<span class="keyword">new</span> AUG());</div><div class="line">		sanMao.killEnemy();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>运行结果：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">通过望远镜观察敌人...</div><div class="line">AUG射击...</div></pre></td></tr></table></figure>
-<p>那么我们能不能传递Rifle父类给sanMao呢？如下所示：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		<span class="comment">//产生三毛这个狙击手</span></div><div class="line">		Snipper sanMao = <span class="keyword">new</span> Snipper();</div><div class="line">		sanMao.setRifle((AUG)(<span class="keyword">new</span> Rifle()));</div><div class="line">		sanMao.killEnemy();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>显示是不行的，会在运行期抛出java.lang.ClassCastException异常，这也是大家常说的向下转型（downcast）是不安全的，从里氏替换原则来看，就是有子类出现的地方父类未必就可以出现。</p>
-<h3 id="覆盖或实现父类的方法时输入参数可以被放大">覆盖或实现父类的方法时输入参数可以被放大</h3><blockquote>
-<p>即子类方法的参数应该大于父类方法的参数，即子类方法的参数应该至少与父类相同或者或者是其父类</p>
-</blockquote>
-<h3 id="复写或实现父类的方法时输出结果可以被缩小">复写或实现父类的方法时输出结果可以被缩小</h3><blockquote>
-<p>即子类方法的返回值应该小于父类方法的返回值，即子类的返回值应该至多与父类的返回值相同或者是其子类</p>
-</blockquote>
-<p>以上两点 归根结底一句话：<strong>重载或实现 子类的方法输入范围&gt;=父类，返回范围&lt;=父类</strong>L</p>
-</span>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1340,7 +1292,7 @@ IComplexBookSearcher
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">113</span>
+              <span class="site-state-item-count">114</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
